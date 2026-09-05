@@ -96,6 +96,8 @@
   .subhead{padding:16px 0 22px; border-bottom:1px solid var(--border);}
   .subhead p{margin:0 0 10px; color:var(--text-muted); font-size:16px; max-width:none;}
   .subhead p:last-of-type{margin-bottom:16px;}
+  .info-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .info-row .task-info{flex:1 1 260px;}
   .task-info{border:1px solid var(--border); border-radius:12px; background:var(--surface); box-shadow:var(--shadow);}
   .task-info summary{cursor:pointer; padding:10px 16px; font-size:13px; font-weight:600; color:var(--text-muted); list-style:none;}
   .task-info summary::-webkit-details-marker{display:none;}
@@ -308,16 +310,27 @@
 
 <div class="wrap subhead">
   <p data-i18n="subheadP1">Lược đồ các mô hình trung tâm nghiên cứu, đổi mới sáng tạo (TTO / holdings / mạng lưới) tại các đại học trên thế giới.</p>
-  <details class="task-info">
-    <summary data-i18n="aboutToggle">Về dự án</summary>
-    <div class="about-body">
-      <p><strong data-i18n="aboutPurposeLbl">Mục đích.</strong> <span data-i18n="aboutPurposeVal">Tổng hợp và trực quan hoá các mô hình trung tâm nghiên cứu, chuyển giao công nghệ, đổi mới sáng tạo (TTO / holdings / mạng lưới) tại các đại học trên thế giới, phục vụ tra cứu và tham khảo.</span></p>
-      <p><strong data-i18n="aboutIndieLbl">Dự án cá nhân.</strong> <span data-i18n="aboutIndieVal">Đây là sản phẩm cá nhân, tự thực hiện ngoài giờ, không đại diện cho bất kỳ trường, viện hay cơ quan nào.</span></p>
-      <p><strong data-i18n="aboutDataLbl">Nguồn dữ liệu.</strong> <span data-i18n="aboutDataVal">Tổng hợp từ tài liệu công khai — báo cáo thường niên, case học thuật, website chính thức của các trung tâm.</span></p>
-      <p><strong data-i18n="aboutDisclaimerLbl">Miễn trừ trách nhiệm.</strong> <span data-i18n="aboutDisclaimerVal">Đây là bản demo, số liệu mang tính tham khảo — nên tự kiểm chứng tại nguồn trước khi trích dẫn.</span></p>
-      <p><strong data-i18n="aboutContactLbl">Liên hệ.</strong> <a href="mailto:buitienson@gmail.com">buitienson@gmail.com</a></p>
-    </div>
-  </details>
+  <div class="info-row">
+    <details class="task-info">
+      <summary data-i18n="aboutToggle">Về dự án</summary>
+      <div class="about-body">
+        <p><strong data-i18n="aboutPurposeLbl">Mục đích.</strong> <span data-i18n="aboutPurposeVal">Tổng hợp và trực quan hoá các mô hình trung tâm nghiên cứu, chuyển giao công nghệ, đổi mới sáng tạo (TTO / holdings / mạng lưới) tại các đại học trên thế giới, phục vụ tra cứu và tham khảo.</span></p>
+        <p><strong data-i18n="aboutIndieLbl">Dự án cá nhân.</strong> <span data-i18n="aboutIndieVal">Đây là sản phẩm cá nhân, tự thực hiện ngoài giờ, không đại diện cho bất kỳ trường, viện hay cơ quan nào.</span></p>
+        <p><strong data-i18n="aboutDataLbl">Nguồn dữ liệu.</strong> <span data-i18n="aboutDataVal">Tổng hợp từ tài liệu công khai — báo cáo thường niên, case học thuật, website chính thức của các trung tâm.</span></p>
+        <p><strong data-i18n="aboutDisclaimerLbl">Miễn trừ trách nhiệm.</strong> <span data-i18n="aboutDisclaimerVal">Đây là bản demo, số liệu mang tính tham khảo — nên tự kiểm chứng tại nguồn trước khi trích dẫn.</span></p>
+        <p><strong data-i18n="aboutContactLbl">Liên hệ.</strong> <a href="mailto:buitienson@gmail.com">buitienson@gmail.com</a></p>
+      </div>
+    </details>
+    <details class="task-info">
+      <summary data-i18n="guideToggle">Hướng dẫn sử dụng</summary>
+      <div class="about-body">
+        <p><strong data-i18n="guideGlobalLbl">Tab Toàn cầu / Việt Nam.</strong> <span data-i18n="guideGlobalVal">Kéo chuột (hoặc vuốt) để xoay quả cầu 3D; chạm một điểm sáng để xem case; nút ⟲ ở góc đặt lại góc nhìn. Trình duyệt không hỗ trợ WebGL sẽ tự chuyển sang bản đồ 2D theo khu vực bên dưới. Danh sách case có ô tìm kiếm và lọc theo quốc gia.</span></p>
+        <p><strong data-i18n="guideRankLbl">Tab Xếp hạng.</strong> <span data-i18n="guideRankVal">Bấm vào một hạng mục (chip) phía trên bảng để lọc theo hạng mục đó, hoặc chọn "Tất cả".</span></p>
+        <p><strong data-i18n="guideNewsLbl">Tab Tin tức.</strong> <span data-i18n="guideNewsVal">Mỗi tin có tóm tắt và link nguồn — bấm vào tên nguồn để đọc bài gốc đầy đủ.</span></p>
+        <p><strong data-i18n="guideLangLbl">Ngôn ngữ.</strong> <span data-i18n="guideLangVal">Nút VI/EN ở góc trên bên phải đổi ngôn ngữ hiển thị cho toàn trang.</span></p>
+      </div>
+    </details>
+  </div>
 </div>
 
 <main class="wrap">
@@ -516,6 +529,19 @@ var STR = {
   aboutDisclaimerVal: {vi:"Đây là bản demo, số liệu mang tính tham khảo — nên tự kiểm chứng tại nguồn trước khi trích dẫn.",
     en:"This is a demo; figures are for reference only — verify against the original source before citing."},
   aboutContactLbl: {vi:"Liên hệ.", en:"Contact."},
+  guideToggle: {vi:"Hướng dẫn sử dụng", en:"How to use this site"},
+  guideGlobalLbl: {vi:"Tab Toàn cầu / Việt Nam.", en:"Global / Vietnam tabs."},
+  guideGlobalVal: {vi:"Kéo chuột (hoặc vuốt) để xoay quả cầu 3D; chạm một điểm sáng để xem case; nút ⟲ ở góc đặt lại góc nhìn. Trình duyệt không hỗ trợ WebGL sẽ tự chuyển sang bản đồ 2D theo khu vực bên dưới. Danh sách case có ô tìm kiếm và lọc theo quốc gia.",
+    en:"Drag (or swipe) to rotate the 3D globe; tap a glowing point to view its case; the ⟲ button in the corner resets the view. A browser without WebGL support automatically falls back to the 2D regional maps below. The case list has a search box and a country filter."},
+  guideRankLbl: {vi:"Tab Xếp hạng.", en:"Rankings tab."},
+  guideRankVal: {vi:"Bấm vào một hạng mục (chip) phía trên bảng để lọc theo hạng mục đó, hoặc chọn \"Tất cả\".",
+    en:"Click a category chip above the table to filter by that category, or pick \"All\"."},
+  guideNewsLbl: {vi:"Tab Tin tức.", en:"News tab."},
+  guideNewsVal: {vi:"Mỗi tin có tóm tắt và link nguồn — bấm vào tên nguồn để đọc bài gốc đầy đủ.",
+    en:"Each item has a summary and a source link — click the source name to read the full original article."},
+  guideLangLbl: {vi:"Ngôn ngữ.", en:"Language."},
+  guideLangVal: {vi:"Nút VI/EN ở góc trên bên phải đổi ngôn ngữ hiển thị cho toàn trang.",
+    en:"The VI/EN button in the top-right corner switches the display language for the whole page."},
   secGlobalTitle:{vi:"Toàn cầu", en:"Global"},
   secGlobalSub:{vi:"7 điểm đang theo dõi", en:"7 tracked locations"},
   screenGlobeLabel:{vi:"Lược đồ lục địa đơn giản hoá — không phải bản đồ vệ tinh", en:"Simplified continent schematic — not a satellite map"},
