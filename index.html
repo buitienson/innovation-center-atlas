@@ -1245,7 +1245,7 @@ function initGlobe(){
       window.__globeDebug = {frames:__frameCount, w:w, h:h, beaconCount:beacons.length};
     } catch(e){
       window.__globeError = e.message + ' | ' + e.stack;
-      document.title = 'GLOBE ERROR';
+      console.error('Globe render error:', e);
     }
   }
   animate();
@@ -1258,7 +1258,7 @@ function initGlobe(){
 applyI18n();
 if(document.documentElement.getAttribute('data-theme')!=='light'){ /* no-op, theme handled by CSS */ }
 function __safeInitGlobe(){
-  try{ initGlobe(); } catch(e){ window.__globeError = e.message + ' | ' + e.stack; document.title = 'GLOBE INIT ERROR'; }
+  try{ initGlobe(); } catch(e){ window.__globeError = e.message + ' | ' + e.stack; console.error('Globe init error:', e); }
 }
 window.addEventListener('load', __safeInitGlobe);
 if(document.readyState==='complete') __safeInitGlobe();
