@@ -103,9 +103,17 @@
     .tabnav{order:3; width:100%; justify-content:center;}
   }
 
-  .subhead{padding:14px 0 6px; border-bottom:1px solid var(--border);}
-  .subhead p{margin:0 0 12px; color:var(--text-muted); font-size:15px;}
-  .draft-badge{display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--status-partial); border:1px solid currentColor; padding:2px 8px; border-radius:999px; margin-bottom:10px;}
+  .subhead{padding:16px 0 22px; border-bottom:1px solid var(--border);}
+  .subhead p{margin:0 0 10px; color:var(--text-muted); font-size:15px; max-width:72ch;}
+  .subhead p:last-of-type{margin-bottom:16px;}
+  .draft-badge{display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#7A1F1F; background:color-mix(in srgb, var(--status-partial) 22%, transparent); border:1px solid var(--status-partial); padding:4px 12px; border-radius:999px; margin-bottom:14px;}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .draft-badge{color:#FFE1B0;} }
+  :root[data-theme="dark"] .draft-badge{color:#FFE1B0;}
+  .task-info{border:1px solid var(--border); border-radius:12px; background:var(--surface); padding:16px 20px; box-shadow:var(--shadow); max-width:640px;}
+  .task-info dl{display:grid; grid-template-columns:180px 1fr; gap:9px 16px; margin:0;}
+  .task-info dt{font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); padding-top:1px;}
+  .task-info dd{margin:0; font-size:13.5px; line-height:1.5;}
+  @media (max-width:560px){ .task-info dl{grid-template-columns:1fr;} .task-info dt{margin-top:4px;} }
 
   /* ============ TAB PANELS ============ */
   .tabpanel{display:none;}
@@ -257,8 +265,19 @@
     </div>
   </div>
   <div class="wrap subhead">
-    <span class="draft-badge" data-i18n="draftBadge">Bản nháp — v0.1</span>
-    <p data-i18n="subhead">Lược đồ các mô hình trung tâm nghiên cứu, đổi mới sáng tạo (TTO/holdings/mạng lưới) tại các đại học trên thế giới, dựng từ bộ nguồn của nhiệm vụ KHCN cấp Bộ "Phát triển trung tâm nghiên cứu, đổi mới sáng tạo trong các CSGDĐH thuộc Bộ Công Thương — mô hình đề xuất tại HaUI". Phục vụ Hội thảo giải pháp, Đại học Công nghiệp Hà Nội.</p>
+    <span class="draft-badge" data-i18n="draftBadge">⚠ Sản phẩm demo — chưa phải bản chính thức</span>
+    <p data-i18n="subheadP1">Lược đồ các mô hình trung tâm nghiên cứu, đổi mới sáng tạo (TTO / holdings / mạng lưới) tại các đại học trên thế giới.</p>
+    <p data-i18n="subheadP2">Phục vụ Hội thảo giải pháp của Trường Đại học Công nghiệp Hà Nội.</p>
+    <div class="task-info">
+      <dl>
+        <dt data-i18n="taskNameLbl">Tên nhiệm vụ</dt><dd data-i18n="taskNameVal">"Phát triển trung tâm nghiên cứu, đổi mới sáng tạo trong các cơ sở giáo dục đại học thuộc Bộ Công Thương: mô hình đề xuất tại Đại học Công nghiệp Hà Nội"</dd>
+        <dt data-i18n="taskAgencyLbl">Cơ quan chủ quản</dt><dd data-i18n="taskAgencyVal">Bộ Công Thương</dd>
+        <dt data-i18n="taskHostLbl">Đơn vị chủ trì</dt><dd data-i18n="taskHostVal">Trường Đại học Công nghiệp Hà Nội (HaUI)</dd>
+        <dt data-i18n="taskPILbl">Chủ nhiệm nhiệm vụ</dt><dd data-i18n="taskPIVal">PGS.TS. Kiều Xuân Thực</dd>
+        <dt data-i18n="taskCodeLbl">Mã số đề tài</dt><dd data-i18n="taskCodeVal">[đang cập nhật — chưa có trong hồ sơ đã đối chiếu]</dd>
+        <dt data-i18n="taskLegalLbl">Căn cứ pháp lý</dt><dd data-i18n="taskLegalVal">Quyết định số 359/QĐ-BCT ngày 27/02/2026; Hợp đồng số 10/HĐ-TCC ngày 18/3/2026</dd>
+      </dl>
+    </div>
   </div>
 </header>
 
@@ -397,9 +416,25 @@ var STR = {
   siteTitle: {vi:"Atlas Trung tâm Nghiên cứu, Đổi mới sáng tạo", en:"Atlas of University Innovation Centers"},
   tabGlobal: {vi:"Bản đồ toàn cầu", en:"Global Atlas"},
   tabCases: {vi:"Case điển hình", en:"Typical Cases"},
-  draftBadge: {vi:"Bản nháp — v0.1", en:"Draft — v0.1"},
-  subhead: {vi:'Lược đồ các mô hình trung tâm nghiên cứu, đổi mới sáng tạo (TTO/holdings/mạng lưới) tại các đại học trên thế giới, dựng từ bộ nguồn của nhiệm vụ KHCN cấp Bộ "Phát triển trung tâm nghiên cứu, đổi mới sáng tạo trong các CSGDĐH thuộc Bộ Công Thương — mô hình đề xuất tại HaUI". Phục vụ Hội thảo giải pháp, Đại học Công nghiệp Hà Nội.',
-    en:'A schematic of university research & innovation center models (TTO / holdings / network) worldwide, built from the source library of the ministry-level task "Developing research & innovation centers in higher-education institutions under MOIT — a proposed model for HaUI". Prepared for the Solutions Workshop, Hanoi University of Industry.'},
+  draftBadge: {vi:"⚠ Sản phẩm demo — chưa phải bản chính thức", en:"⚠ Demo product — not the official version"},
+  subheadP1: {vi:"Lược đồ các mô hình trung tâm nghiên cứu, đổi mới sáng tạo (TTO / holdings / mạng lưới) tại các đại học trên thế giới.",
+    en:"A schematic of research & innovation center models (TTO / holdings / network) at universities worldwide."},
+  subheadP2: {vi:"Phục vụ Hội thảo giải pháp của Trường Đại học Công nghiệp Hà Nội.",
+    en:"Prepared for the Solutions Workshop of Hanoi University of Industry."},
+  taskNameLbl: {vi:"Tên nhiệm vụ", en:"Task name"},
+  taskNameVal: {vi:'"Phát triển trung tâm nghiên cứu, đổi mới sáng tạo trong các cơ sở giáo dục đại học thuộc Bộ Công Thương: mô hình đề xuất tại Đại học Công nghiệp Hà Nội"',
+    en:'"Developing research and innovation centers in higher-education institutions under the Ministry of Industry and Trade: a proposed model for Hanoi University of Industry"'},
+  taskAgencyLbl: {vi:"Cơ quan chủ quản", en:"Governing agency"},
+  taskAgencyVal: {vi:"Bộ Công Thương", en:"Ministry of Industry and Trade (Vietnam)"},
+  taskHostLbl: {vi:"Đơn vị chủ trì", en:"Lead institution"},
+  taskHostVal: {vi:"Trường Đại học Công nghiệp Hà Nội (HaUI)", en:"Hanoi University of Industry (HaUI)"},
+  taskPILbl: {vi:"Chủ nhiệm nhiệm vụ", en:"Principal investigator"},
+  taskPIVal: {vi:"PGS.TS. Kiều Xuân Thực", en:"Assoc. Prof. Dr. Kieu Xuan Thuc"},
+  taskCodeLbl: {vi:"Mã số đề tài", en:"Task code"},
+  taskCodeVal: {vi:"[đang cập nhật — chưa có trong hồ sơ đã đối chiếu]", en:"[pending — not yet found in the records reviewed]"},
+  taskLegalLbl: {vi:"Căn cứ pháp lý", en:"Legal basis"},
+  taskLegalVal: {vi:"Quyết định số 359/QĐ-BCT ngày 27/02/2026; Hợp đồng số 10/HĐ-TCC ngày 18/3/2026",
+    en:"Decision No. 359/QĐ-BCT dated 27 Feb 2026; Contract No. 10/HĐ-TCC dated 18 Mar 2026"},
   secGlobalTitle:{vi:"Toàn cầu", en:"Global"},
   secGlobalSub:{vi:"7 điểm đang theo dõi", en:"7 tracked locations"},
   screenGlobeLabel:{vi:"Lược đồ lục địa đơn giản hoá — không phải bản đồ vệ tinh", en:"Simplified continent schematic — not a satellite map"},
@@ -1196,16 +1231,25 @@ function initGlobe(){
   if(window.ResizeObserver){ new ResizeObserver(onResize).observe(host); }
 
   var clock = new THREE.Clock();
+  var __frameCount = 0;
   function animate(){
     requestAnimationFrame(animate);
-    if(!dragging && !reduceMotion) group.rotation.y += 0.0016;
-    var t2 = clock.getElapsedTime();
-    if(!reduceMotion){
-      beacons.forEach(function(b,i){ var s = 0.30 + Math.sin(t2*2 + i)*0.03; b.scale.set(s,s,1); });
+    try{
+      if(!dragging && !reduceMotion) group.rotation.y += 0.0016;
+      var t2 = clock.getElapsedTime();
+      if(!reduceMotion){
+        beacons.forEach(function(b,i){ var s = 0.30 + Math.sin(t2*2 + i)*0.03; b.scale.set(s,s,1); });
+      }
+      renderer.render(scene, camera);
+      __frameCount++;
+      window.__globeDebug = {frames:__frameCount, w:w, h:h, beaconCount:beacons.length};
+    } catch(e){
+      window.__globeError = e.message + ' | ' + e.stack;
+      document.title = 'GLOBE ERROR';
     }
-    renderer.render(scene, camera);
   }
   animate();
+  window.__globeInitOk = true;
 }
 
 /* ======================================================================
@@ -1213,8 +1257,11 @@ function initGlobe(){
 ====================================================================== */
 applyI18n();
 if(document.documentElement.getAttribute('data-theme')!=='light'){ /* no-op, theme handled by CSS */ }
-window.addEventListener('load', function(){ initGlobe(); });
-if(document.readyState==='complete') initGlobe();
+function __safeInitGlobe(){
+  try{ initGlobe(); } catch(e){ window.__globeError = e.message + ' | ' + e.stack; document.title = 'GLOBE INIT ERROR'; }
+}
+window.addEventListener('load', __safeInitGlobe);
+if(document.readyState==='complete') __safeInitGlobe();
 
 })();
 </script>
