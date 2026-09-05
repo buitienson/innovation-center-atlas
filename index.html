@@ -221,6 +221,12 @@
   .cc-detail.open{display:block;}
   .cc-detail h5{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); margin:14px 0 8px;}
   .cc-detail h5:first-child{margin-top:0;}
+  .vn-net-card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; display:flex; flex-direction:column; gap:6px; box-shadow:var(--shadow);}
+  .vn-net-card .vnc-badge{display:inline-block; font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:2px 8px; border-radius:999px; align-self:flex-start;}
+  .vn-net-card .vnc-name{font-size:14px; font-weight:600; line-height:1.35;}
+  .vn-net-card .vnc-name-en{font-size:12px; color:var(--text-muted);}
+  .vn-net-card .vnc-meta{font-size:12px; color:var(--text-muted); display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:2px;}
+  .vn-net-card .vnc-meta a{color:var(--accent-ink); font-weight:600;}
   .timeline{list-style:none; margin:0; padding:0; border-left:2px solid var(--border); }
   .timeline li{position:relative; padding:0 0 10px 16px;}
   .timeline li::before{content:''; position:absolute; left:-5px; top:4px; width:8px; height:8px; border-radius:50%; background:var(--accent);}
@@ -273,8 +279,8 @@
     </div>
     <div class="top-controls">
       <div class="tabnav" role="tablist">
-        <button data-tab="global" class="active" data-i18n="tabGlobal">Bản đồ toàn cầu</button>
-        <button data-tab="cases" data-i18n="tabCases">Trung tâm ĐMST</button>
+        <button data-tab="global" class="active" data-i18n="tabGlobal">Toàn cầu</button>
+        <button data-tab="vietnam" data-i18n="tabVietnam">Việt Nam</button>
       </div>
       <div class="langtoggle">
         <button data-lang="vi" class="active">VI</button>
@@ -366,23 +372,6 @@
       </div>
     </div>
 
-    <div class="zoom-section" id="sec-vn">
-      <div class="zoom-head">
-        <span class="zoom-num">04</span>
-        <h2 data-i18n="secVNTitle">Việt Nam</h2>
-        <span class="zoom-sub" data-i18n="secVNSub">9 đơn vị khảo sát thực địa 2026</span>
-      </div>
-      <div class="split">
-        <div class="screen" id="screenVN"><span class="screen-label" data-i18n="vnBox">Vĩ độ 8–23°B · Kinh độ 102–110°Đ</span><svg id="mapVN" class="coordmap-svg"></svg></div>
-        <div class="side-panel" id="vnSide"></div>
-      </div>
-      <p class="unclassified-note" data-i18n="vnCaption">Vị trí trong mỗi cụm đã giãn nhẹ để dễ đọc trên lược đồ, không phản ánh khoảng cách thực giữa các đơn vị. Trạng thái khảo sát theo hồ sơ dự án tính đến 03/09/2026 — không phải dữ liệu theo thời gian thực.</p>
-    </div>
-
-  </section>
-
-  <!-- ================= TAB 2 : CASES + EXTENDED CATALOGUE ================= -->
-  <section id="panel-cases" class="tabpanel">
     <div class="catalogue-head">
       <h2 data-i18n="catalogueTitle">Case điển hình theo mô hình quản trị</h2>
       <p data-i18n="catalogueSub" style="color:var(--text-muted); font-size:14px; margin:6px 0 0;">Chọn một loại hình để xem các trung tâm tiêu biểu đã được xếp vào nhóm đó.</p>
@@ -410,6 +399,33 @@
         <tbody id="rosterBody"></tbody>
       </table>
     </div>
+
+  </section>
+
+  <!-- ================= TAB 2 : VIETNAM — MAP + INNOVATION/STARTUP NETWORK ================= -->
+  <section id="panel-vietnam" class="tabpanel">
+
+    <div class="zoom-section" id="sec-vn">
+      <div class="zoom-head">
+        <span class="zoom-num">01</span>
+        <h2 data-i18n="secVNTitle">Việt Nam</h2>
+        <span class="zoom-sub" data-i18n="secVNSub">đơn vị hỗ trợ tại các trường đại học</span>
+      </div>
+      <div class="split">
+        <div class="screen" id="screenVN"><span class="screen-label" data-i18n="vnBox">Vĩ độ 8–23°B · Kinh độ 102–110°Đ</span><svg id="mapVN" class="coordmap-svg"></svg></div>
+        <div class="side-panel" id="vnSide"></div>
+      </div>
+      <p class="unclassified-note" data-i18n="vnCaption">Vị trí trong mỗi cụm đã giãn nhẹ để dễ đọc trên lược đồ, không phản ánh khoảng cách thực giữa các đơn vị.</p>
+    </div>
+
+    <div class="catalogue-head">
+      <h2 data-i18n="vnNetTitle">Mạng lưới đổi mới sáng tạo &amp; khởi nghiệp Việt Nam</h2>
+      <p data-i18n="vnNetSub" style="color:var(--text-muted); font-size:14px; margin:6px 0 0;">Hiệp hội, mạng lưới, quỹ đầu tư và đơn vị hỗ trợ khởi nghiệp/ĐMST trong nước và quốc tế đang hoạt động tại Việt Nam.</p>
+      <div class="chips" id="vnNetChips"></div>
+    </div>
+    <div class="card-grid" id="vnNetGrid"></div>
+    <div class="note-box" data-i18n="vnNetCaveat">Tổng hợp từ nguồn công khai (website hiệp hội, mạng lưới, báo chí) — chưa phải danh sách đầy đủ; một số hiệp hội/mạng lưới công bố tổng số thành viên lớn hơn nhiều so với số tên đã xác minh được ở đây.</div>
+
   </section>
 
 </main>
@@ -440,8 +456,8 @@
 var STR = {
   eyebrow: {vi:"ĐMST ĐẠI HỌC · DỮ LIỆU TOÀN CẦU", en:"UNIVERSITY INNOVATION · GLOBAL DATA"},
   siteTitle: {vi:"Atlas Trung tâm Nghiên cứu, Đổi mới sáng tạo", en:"Atlas of University Innovation Centers"},
-  tabGlobal: {vi:"Bản đồ toàn cầu", en:"Global Atlas"},
-  tabCases: {vi:"Trung tâm ĐMST", en:"Innovation Centers"},
+  tabGlobal: {vi:"Toàn cầu", en:"Global"},
+  tabVietnam: {vi:"Việt Nam", en:"Vietnam"},
   subheadP1: {vi:"Lược đồ các mô hình trung tâm nghiên cứu, đổi mới sáng tạo (TTO / holdings / mạng lưới) tại các đại học trên thế giới.",
     en:"A schematic of research & innovation center models (TTO / holdings / network) at universities worldwide."},
   aboutToggle: {vi:"Về dự án", en:"About this project"},
@@ -481,6 +497,12 @@ var STR = {
   secSEATitle:{vi:"Đông Nam Á", en:"Southeast Asia"}, secSEASub:{vi:"lược đồ toạ độ", en:"coordinate schematic"},
   seaBox:{vi:"Vĩ độ -10–25°B · Kinh độ 90–140°Đ", en:"Lat -10–25°N · Lon 90–140°E"},
   secVNTitle:{vi:"Việt Nam", en:"Vietnam"}, secVNSub:{vi:"9 đơn vị", en:"9 institutions"},
+  vnNetTitle:{vi:"Mạng lưới đổi mới sáng tạo & khởi nghiệp Việt Nam", en:"Vietnam Innovation & Startup Network"},
+  vnNetSub:{vi:"Hiệp hội, mạng lưới, quỹ đầu tư và đơn vị hỗ trợ khởi nghiệp/ĐMST trong nước và quốc tế đang hoạt động tại Việt Nam.",
+    en:"Associations, networks, VC funds, and domestic/international startup & innovation support organizations active in Vietnam."},
+  vnNetCaveat:{vi:"Tổng hợp từ nguồn công khai (website hiệp hội/mạng lưới, báo chí) — chưa phải danh sách đầy đủ; một số hiệp hội/mạng lưới công bố tổng số thành viên lớn hơn nhiều so với số tên đã xác minh được ở đây.",
+    en:"Compiled from public sources (association/network websites, press coverage) — not an exhaustive list; some associations/networks report a total membership much larger than the number of names verified here."},
+  vnNetVisit:{vi:"Website", en:"Website"},
   vnBox:{vi:"Vĩ độ 6–23,5°B · Kinh độ 101–118°Đ — gồm Hoàng Sa, Trường Sa", en:"Lat 6–23.5°N · Lon 101–118°E — includes the Paracels & Spratlys"},
   vnCaption:{vi:"Hoàng Sa và Trường Sa là lãnh thổ Việt Nam.", en:"The Paracel and Spratly Islands are Vietnamese territory."},
   catalogueTitle:{vi:"Case điển hình theo mô hình quản trị", en:"Typical cases by governance model"},
@@ -706,6 +728,85 @@ var VN_UNITS = [
   {name:'IEC — ĐHQG-HCM', nameEn:'IEC — VNU-HCM', cluster:'hcm', lat:10.8700, lng:106.8100}
 ];
 
+
+/* Mạng lưới ĐMST & khởi nghiệp Việt Nam — HANISA/VNEI member lists and VC
+   funds/support orgs, compiled from public sources (association member
+   directories, press coverage). Not exhaustive: several networks publicly
+   claim larger total membership than could be individually sourced here —
+   see vnNetCaveat in the UI. Fields: [name, nameEn, type, city, website] and
+   VN_FUNDS additionally carries a 6th focus-description field. */
+var HANISA_MEMBERS = [
+  ['Công ty TNHH Một thành viên Đầu tư và Phát triển Công nghệ Bách Khoa Hà Nội','BK Holdings','company (startup ecosystem builder / holding company, HUST-affiliated)','Hà Nội','http://www.bkholdings.com.vn'],
+  ['Công ty Cổ phần đào tạo, triển khai dịch vụ CNTT và Viễn thông Bách Khoa Hà Nội','BK Academy','company (IT training)','Hà Nội','https://www.bkacad.edu.vn'],
+  ['Công ty Cổ phần Đầu tư Khởi nghiệp Bách Khoa','BK Fund','VC / startup investment fund','Hà Nội','https://bk-fund.hust.edu.vn'],
+  ['Công ty TNHH Một thành viên Tư vấn và Chuyển giao Công nghệ Bách Khoa','BK Contech','company (technology consulting / technology transfer)','Hà Nội','http://bkcontech.com'],
+  ['Trung tâm Hỗ trợ sinh viên Khởi nghiệp và Quan hệ doanh nghiệp (Đại học Công nghệ Giao thông vận tải)','UTT Center for Student Startup Support and Enterprise Relations','university unit','Hà Nội','https://startup.utt.edu.vn'],
+  ['Tổ chức Sáng kiến Hỗ trợ Phụ nữ Khởi nghiệp và Kinh doanh','WISE Vietnam (Women\'s Initiative for Startups and Entrepreneurship)','NGO / non-profit','','http://wisevietnam.org'],
+  ['Học viện Công nghệ BrickOne','BrickOne Technology Academy','education / training institute','Hà Nội','https://brickone.edu.vn'],
+  ['Công ty Cổ phần Nghiên cứu kỹ thuật cơ khí chính xác RPMEC','RPMEC','company (precision mechanical / factory automation)','Hà Nội','https://rpmecbk.com'],
+  ['Quỹ Hỗ trợ Phát triển Thanh niên','FYE (Fund for Youth Employment/Enterprise)','fund / NGO','Hà Nội','https://fye.org.vn'],
+  ['Công ty Cổ phần Tập đoàn PAN','The PAN Group','company (agriculture / food conglomerate)','Hà Nội','https://thepangroup.vn'],
+  ['Công ty TNHH Trung tâm Sản xuất sạch hơn Việt Nam','VNCPC (Vietnam Cleaner Production Centre)','company / NGO-affiliated center (cleaner production consulting)','Hà Nội','https://vncpc.org'],
+  ['Công ty AngelHack Vietnam','AngelHack Vietnam','company (startup hackathon / accelerator organizer)','','https://angelhack.com'],
+  ['Nền tảng TOMOCHAIN','TomoChain','company (blockchain platform)','','https://tomochain.com'],
+  ['Cộng đồng Sáng tạo Việt Nam','BEAU (Vietnam Creative Community)','creative community / company','Hà Nội','https://beau.vn'],
+  ['Công ty TNHH Một thành viên KIDSONLINE','KidsOnline','company (edtech)','Hà Nội','https://kidsonline.edu.vn'],
+  ['Công ty Tư vấn du học SM Consultancy','SM Consultancy','company (study-abroad / education consulting)','Hà Nội','http://smconsultancy.edu.vn'],
+  ['Công ty Cổ phần VTECHCOM (Minh Việt)','Vtechcom JSC','company (IT / IoT / remote healthcare & video conferencing solutions)','Hà Nội','https://vtechcom.com.vn'],
+  ['Công ty Cổ phần Nhà thông minh AnHome','AnHome Smarthome','company (smart home / IoT devices)','Hà Nội','https://anhomevn.net'],
+  ['Công ty Cổ phần Công nghệ Mới Nhật Hải (OIC NEW)','OIC Nanotechnology','company (nanotechnology / pharmaceuticals)','Hà Nội','https://oic.com.vn'],
+  ['Công ty Cổ phần/TNHH Khoa học Công nghệ Quốc tế InnoGenEx','InnoGenEx','company (biotech / diagnostics R&D)','Hà Nội','https://innogenex.vn'],
+  ['Purr Creative','Purr Creative','company (marketing / creative agency)','Hà Nội','https://purrcreative.asia']
+];
+// count: 21
+
+var VNEI_MEMBERS = [
+  ['Trường Đại học Ngoại thương','Foreign Trade University','university','Hà Nội','https://ftu.edu.vn'],
+  ['Trường Đại học Tây Nguyên','Tay Nguyen University','university','Buôn Ma Thuột','https://ttu.edu.vn'],
+  ['Trường Đại học Ngoại ngữ - Đại học Quốc gia Hà Nội','University of Languages and International Studies, Vietnam National University, Hanoi','university','Hà Nội','https://ulis.vnu.edu.vn'],
+  ['Đại học Bách khoa Hà Nội (qua BK Holdings)','Hanoi University of Science and Technology (via BK Holdings)','university','Hà Nội','https://hust.edu.vn'],
+  ['Đại học Quốc gia Hà Nội','Vietnam National University, Hanoi','university','Hà Nội','https://vnu.edu.vn'],
+  ['Trường Đại học Kinh tế Quốc dân','National Economics University','university','Hà Nội','https://neu.edu.vn'],
+  ['Trường Đại học Vinh','Vinh University','university','Vinh, Nghệ An','https://vinhuni.edu.vn'],
+  ['Đại học Huế','Hue University','university','Huế','https://hueuni.edu.vn'],
+  ['Đại học Quốc gia Thành phố Hồ Chí Minh','Vietnam National University, Ho Chi Minh City','university','Thành phố Hồ Chí Minh','https://vnuhcm.edu.vn'],
+  ['Trường Đại học Trà Vinh','Tra Vinh University','university','Trà Vinh','https://tvu.edu.vn'],
+  ['Học viện Phụ nữ Việt Nam','Vietnam Women\'s Academy','university','Hà Nội','https://hvpnvn.edu.vn'],
+  ['Học viện Công nghệ Bưu chính Viễn thông - Cơ sở Thành phố Hồ Chí Minh','Posts and Telecommunications Institute of Technology - Ho Chi Minh City Campus','university','Thành phố Hồ Chí Minh','https://ptithcm.edu.vn']
+];
+// count: 12
+
+var VN_FUNDS = [
+  ['BK Fund','BK Fund','VC fund','Hanoi','https://bkfund.vn','Early-stage/deep-tech startups founded by or involving faculty, students and alumni of Hanoi University of Science and Technology (Bach Khoa Hanoi, HUST); launched Jan 2021 by HUST alumni (Chairman: Dr. Pham Dinh Doan, Phu Thai Holdings); since June 2025 managed by ThinkZone Ventures after ThinkZone acquired a controlling stake in BK Investments Company. Confirmed affiliated with HUST\'s innovation ecosystem (alongside BK-Holdings).'],
+  ['VinaCapital Ventures','VinaCapital Ventures','VC fund','Ho Chi Minh City','https://ventures.vinacapital.com/','USD 100M+ Vietnam-focused VC platform (part of VinaCapital Group); tech-enabled solutions to inefficiencies in traditional sectors, Vietnam and Southeast Asia; launched 2018 with Mirae Asset and Naver as strategic partners; earlier had a JV with Draper Fisher Jurvetson'],
+  ['Mekong Capital','Mekong Capital','VC/private equity fund','Ho Chi Minh City','https://www.mekongcapital.com/','Established 2001; first Vietnam-focused private equity firm; growth-capital, large minority investments; consumer, retail, education, healthcare, biotech, agri-tech; 6 funds including new Mekong Earth Regeneration Fund (climate/biodiversity)'],
+  ['ESP Capital','ESP Capital','VC fund','Ho Chi Minh City','https://www.espcapital.net/','Early-stage VC founded 2017; pre-seed/seed investments in Vietnam and Southeast Asia; healthcare, education, real estate, social commerce'],
+  ['Do Ventures','Do Ventures','VC fund','Ho Chi Minh City','https://doventures.vc/en','Founded 2020 by Dzung Nguyen and Vy Le; consumer, SME digitalization, AI, climate & sustainability; Vietnam and Southeast Asia; publishes the annual Vietnam Innovation & Tech Investment Report'],
+  ['VIISA (Vietnam Innovative Startup Accelerator)','Vietnam Innovative Startup Accelerator','accelerator / seed-stage investor','Ho Chi Minh City','https://www.viisa.vn/','Seed-stage acceleration program (3-month, ~100 days idea-to-investment); backed by FPT and Dragon Capital among founding partners; global-ready tech startups'],
+  ['500 Startups Vietnam / 500 Global Vietnam','500 Startups Vietnam Fund','VC fund','Ho Chi Minh City','https://500.co/content/us-tech-venture-fund-500-startups-enters-vietnam-s-fast-growing-market','Early-stage VC fund co-managed by 500 Global and 500 Southeast Asia; closed at $14M (40% over $10M target); ~76 portfolio companies incl. ELSA, Trusting Social, Axie Infinity; led by Binh Tran and Eddie Thai'],
+  ['Ascend Vietnam Ventures','Ascend Vietnam Ventures (AVV)','VC fund','Ho Chi Minh City','https://avv.co','Founded 2021; Southeast Asia tech investments across B2C, AI, future of work, SaaS, fintech, edtech, gaming, marketplaces'],
+  ['Touchstone Partners','Touchstone Partners','VC fund','Ho Chi Minh City','https://touchstone.vc/','Founded 2020/2021 by Tran Nhat Khanh (ex-VinaCapital Ventures) and Ngo Thuy Ngoc Tu (Yola co-founder); pre-seed to Series A; fintech, real estate, healthtech, edtech, agriculture/value-chain tech; launched $10M Green Transition (climate tech) Fund'],
+  ['Nextrans Vietnam','Nextrans','VC fund','Hanoi','https://www.nextransvn.com/','South Korean VC founded 2004, active in Vietnam since 2015; e-commerce, fintech, edtech, healthcare, SaaS, proptech, mobility, climate tech; 32+ Vietnam investments incl. TopCV, BuyMed, Base.vn, Tiki; launched $50M Vietnam-focused fund'],
+  ['ThinkZone Ventures','ThinkZone Ventures','VC fund','Hanoi','https://thinkzone.vn/','Founded 2018; described as largest local/homegrown VC in Vietnam; seed to Series A, up to $3M/deal; education, fintech, insurtech, logistics, e-commerce; manages Global Minds Fund I and (since 2025) BK Fund'],
+  ['FPT Ventures','FPT Ventures','VC fund (corporate)','Hanoi','https://fpt.com/','Corporate VC arm of FPT Corporation; seed and Series A in Vietnamese tech startups; IT services, media/entertainment, mobile/apps, SaaS, telecom; ~22 portfolio companies incl. ELSA Speak, Sendo'],
+  ['ICM - Innovation Capital Management','ICM Capital','VC fund','Ho Chi Minh City','https://innocapital.com.vn/','Described as the first licensed VC fund manager under Vietnam\'s Decree 38/2018/NĐ-CP; connects global capital to Vietnam\'s innovation-driven startup ecosystem'],
+  ['ZONE Startups Vietnam (now DMZ Vietnam)','Zone Startups Vietnam','accelerator','Ho Chi Minh City','https://vietnam.zonestartups.com/','Non-cohort accelerator, part of global Zone Startups network (Canada, India); fintech, healthtech, enterprise solutions; backed in part by VinaCapital Ventures; rebranded as DMZ Vietnam'],
+  ['IDG Ventures Vietnam','IDG Ventures Vietnam (IDGVV)','VC fund','Ho Chi Minh City / Hanoi','https://idgvv.com.vn/','First technology VC fund in Vietnam, established 2004; $100M AUM; 40+ portfolio companies in tech, media, telecom, consumer; anchor LP is International Data Group (IDG)'],
+  ['VinVentures','VinVentures','VC fund (corporate, Vingroup)','Hanoi','https://www.vinventures.net/','Launched Oct 2024 by Vingroup/Pham Nhat Vuong; $150M AUM, largest VC fund in Vietnam by AUM; AI, semiconductors, cloud computing; targets Vietnamese-founder seed/Series A startups; successor to earlier Vingroup Ventures/VinTech City activity'],
+  ['Viet Capital Ventures (VCAM)','Viet Capital Ventures','VC fund','Ho Chi Minh City','https://vietcapital.com.vn/funds/ventures?locale=en','VC arm under Viet Capital Asset Management; retail, education, healthcare; portfolio includes Gene Solutions and Ecotruck'],
+  ['National Innovation Center (Vietnam)','National Innovation Center (NIC)','government-backed center','Hanoi (HQ) / Hoa Lac (operating base)','https://nic.gov.vn','Unit under Ministry of Planning and Investment (Ministry of Finance since restructuring); supports Vietnam\'s startup and innovation ecosystem; established by PM Decision No. 1269/QD-TTg (2 Oct 2019); runs programs incl. Innovate Vietnam, VietLeap AI Accelerator, NIC Scale X (with UNDP, JICA, Embassy of Japan, Mitsubishi Research Institute, Plug and Play)'],
+  ['Vietnam Silicon Valley / VSV Capital','VSV Capital (formerly Vietnam Silicon Valley Accelerator)','accelerator / VC fund','Hanoi','https://www.vsvcapital.com.vn/','First startup accelerator in Vietnam, founded 2014 as a government-linked project (Vietnam Silicon Valley Project, Ministry of Science and Technology origin); raised first VC fund 2019, now VSV Capital; pre-seed to Series B; 200+ companies accelerated, 90+ deals'],
+  ['BambuUP','BambuUP','open-innovation platform / association-like matchmaking body','Hanoi','https://bambuup.com/en','Digital open-innovation matchmaking platform connecting startups, corporates, and investors; launched 2020 by Nguyen Huong Quynh; publishes Vietnam Open Innovation Landscape Report'],
+  ['Swiss Entrepreneurship Program Vietnam (Swiss EP Vietnam)','Swiss Entrepreneurship Program (Swiss EP)','international program','Ho Chi Minh City / Hanoi / Da Nang','https://swissep.org/countries/vietnam','Financed by Swiss State Secretariat for Economic Affairs (SECO), implemented by Swisscontact; launched in Vietnam 2015, now in its 3rd phase (as of 2024 Partner Summit); works with local incubators, accelerators, VC funds, angel networks'],
+  ['Endeavor Vietnam','Endeavor Vietnam','international program / association (high-impact entrepreneur network)','Ho Chi Minh City','https://vietnam.endeavor.org/','Local affiliate of global Endeavor network; launched Oct 2018; selects and mentors \'High-Impact Entrepreneurs\'; network includes Amanotes, The Coffee House, Sky Mavis, Katalon co-founders'],
+  ['Topica Founder Institute','Topica Founder Institute (TFI)','accelerator','Ho Chi Minh City / Hanoi','https://fi.co/','Started 2012; owned by Topica Edtech Group; part of the Global Founder Institute Network (60+ countries, HQ Silicon Valley); 14-week mentor-driven pre-seed program'],
+  ['VietChallenge','VietChallenge','international program / competition-accelerator / venture fund network','Boston, MA, USA (targets Vietnamese/Vietnam-market founders globally)','https://www.vietchallenge.org/','501(c)(3) nonprofit; global startup competition since 2015 for Vietnamese founders and non-Vietnamese founders targeting Vietnam\'s market; 800+ startups from 20+ countries competed; $300,000+ awarded; runs VietLaunch and an Investor Alliance'],
+  ['Swiss Entrepreneurship Program partner: NIC Scale X (with UNDP Viet Nam Accelerator Lab)','UNDP Viet Nam Accelerator Lab','international program (UN)','Hanoi','https://www.undp.org/acceleratorlabs/undp-viet-nam-accelerator-lab','Part of UNDP\'s global network of 60 Accelerator Labs; social innovation/systemic design on sustainability challenges; co-runs NIC Scale X deep-tech accelerator (with NIC, Embassy of Japan, Mitsubishi Research Institute, Plug and Play) and Viet Nam-Japan Open Innovation program'],
+  ['USAID WISE Project (Workforce for an Innovation and Start-up Ecosystem)','USAID WISE Vietnam','international program (bilateral aid)','Hanoi','https://www.usaid.gov/vietnam','$2.2M, 2021-2024 USAID-funded project partnered with National Innovation Center (NIC) supporting Vietnam\'s National Fourth Industrial Revolution (4IR) Strategy; digital skills for the innovation/startup workforce'],
+  ['KOICA Vietnam innovation/climate-tech cooperation','KOICA (Korea International Cooperation Agency) Vietnam programs','international program (bilateral aid)','Hanoi','https://www.koica.go.kr/sites/koica_en/index.do','Bilateral South Korean aid agency; recent (2025-2026) joint initiative with Vietnam\'s Ministry of Finance and GGGI to strengthen climate-tech investment and net-zero readiness/startup acceleration in Vietnam; also runs global Creative Technology Solution (CTS) startup-partnership program (not Vietnam-specific)']
+];
+// count: 27
+
 /* Real country boundaries — Natural Earth 1:110m (public domain), decimated to
    ~70 pts/ring for a small map. Only outer rings are kept (no lake holes) since
    we only need silhouettes, not precise cartography. Vietnam (iso VNM) is
@@ -804,6 +905,8 @@ function applyI18n(){
   renderCoordMaps();
   renderChips();
   renderCards();
+  renderVNNetChips();
+  renderVNNetGrid();
   renderFooter();
   renderRosterControls();
   renderRosterTable();
@@ -821,13 +924,10 @@ document.querySelectorAll('.tabnav button').forEach(function(btn){
     btn.classList.add('active');
     var tab = btn.getAttribute('data-tab');
     document.getElementById('panel-global').classList.toggle('active', tab==='global');
-    document.getElementById('panel-cases').classList.toggle('active', tab==='cases');
+    document.getElementById('panel-vietnam').classList.toggle('active', tab==='vietnam');
   });
 });
 function goToCasesTab(caseId){
-  document.querySelectorAll('.tabnav button').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-tab')==='cases'); });
-  document.getElementById('panel-global').classList.remove('active');
-  document.getElementById('panel-cases').classList.add('active');
   if(caseId){
     var chipAll = document.querySelector('.chip[data-model="all"]');
     if(chipAll) chipAll.click();
@@ -1178,7 +1278,61 @@ function vnSideHTML(){
 }
 
 /* ======================================================================
-   RENDER: Tab 2 — chips + cards
+   RENDER: Vietnam tab — innovation/startup network (HANISA, VNEI, funds)
+====================================================================== */
+var VN_NET_CATS = {
+  univ: {label:{vi:'Đơn vị tại ĐH', en:'University units'}, color:'#8FB0F0', data:function(){
+    return VN_UNITS.map(function(u){ return {name:u.name, nameEn:u.nameEn, type:{vi:'Đơn vị hỗ trợ ĐMST tại trường đại học', en:'University innovation-support unit'}, city:'', website:''}; });
+  }},
+  hanisa: {label:{vi:'HANISA', en:'HANISA'}, color:'#4DD0C8', data:function(){
+    return HANISA_MEMBERS.map(function(r){ return {name:r[0], nameEn:r[1], type:{vi:r[2],en:r[2]}, city:r[3], website:r[4]}; });
+  }},
+  vnei: {label:{vi:'VNEI', en:'VNEI'}, color:'#B79CE8', data:function(){
+    return VNEI_MEMBERS.map(function(r){ return {name:r[0], nameEn:r[1], type:{vi:r[2],en:r[2]}, city:r[3], website:r[4]}; });
+  }},
+  funds: {label:{vi:'Quỹ & hỗ trợ', en:'Funds & support'}, color:'#FFCC4E', data:function(){
+    return VN_FUNDS.map(function(r){ return {name:r[0], nameEn:r[1], type:{vi:r[2],en:r[2]}, city:r[3], website:r[4]}; });
+  }}
+};
+var activeVNCat = 'all';
+function renderVNNetChips(){
+  var wrap = document.getElementById('vnNetChips');
+  if(!wrap) return;
+  var cats = ['all'].concat(Object.keys(VN_NET_CATS));
+  wrap.innerHTML = cats.map(function(k){
+    var label = k==='all' ? t('chipAll') : tf(VN_NET_CATS[k].label);
+    return '<button class="chip'+(k===activeVNCat?' active':'')+'" data-cat="'+k+'">'+label+'</button>';
+  }).join('');
+  wrap.querySelectorAll('.chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      activeVNCat = btn.getAttribute('data-cat');
+      renderVNNetChips(); renderVNNetGrid();
+    });
+  });
+}
+function renderVNNetGrid(){
+  var grid = document.getElementById('vnNetGrid');
+  if(!grid) return;
+  var cats = activeVNCat==='all' ? Object.keys(VN_NET_CATS) : [activeVNCat];
+  var items = [];
+  cats.forEach(function(k){
+    VN_NET_CATS[k].data().forEach(function(x){ x._cat = k; items.push(x); });
+  });
+  grid.innerHTML = items.map(function(x){
+    var color = VN_NET_CATS[x._cat].color;
+    var name = LANG==='vi' ? x.name : (x.nameEn || x.name);
+    var showEn = LANG==='vi' && x.nameEn && x.nameEn !== x.name;
+    return '<div class="vn-net-card">'+
+      '<span class="vnc-badge" style="background:color-mix(in srgb, '+color+' 22%, transparent); color:'+color+'; border:1px solid '+color+';">'+tf(VN_NET_CATS[x._cat].label)+'</span>'+
+      '<div class="vnc-name">'+name+'</div>'+
+      (showEn ? '<div class="vnc-name-en">'+x.nameEn+'</div>' : '')+
+      '<div class="vnc-meta">'+(x.city?'<span>'+x.city+'</span>':'')+(x.website?'<a href="'+x.website+'" target="_blank" rel="noopener">'+t('vnNetVisit')+'</a>':'')+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+/* ======================================================================
+   RENDER: flagship case chips + cards
 ====================================================================== */
 var activeModel = 'all';
 var MODEL_KEYS = ['tto','holdings','network','hybrid'];
