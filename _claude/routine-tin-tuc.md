@@ -47,12 +47,19 @@ tin đủ tin cậy thì bỏ qua lượt chạy, đừng cố nhét tin yếu c
      không commit gì cả.** Đây là kết quả bình thường, không phải lỗi.
 4. **Viết mỗi tin đúng khuôn** (khớp các item đã có trong `NEWS`):
    ```js
-   {date:'YYYY-MM-DD', source:'Tên nguồn', url:'link bài gốc',
+   {date:'YYYY-MM-DD', source:'Tên nguồn', url:'link bài gốc', image:'link ảnh og:image (nếu có)',
      title:{vi:'...', en:'...'},
      summary:{vi:'1-2 câu, có số liệu/mốc cụ thể nếu bài gốc có', en:'...'}}
    ```
    - `date` = ngày đăng bài gốc, không phải ngày routine chạy.
    - `title` và `summary` phải có cả `vi` lẫn `en`, dịch sát nghĩa.
+   - `image`: lấy thẻ `<meta property="og:image">` (hoặc `twitter:image`) của chính
+     bài gốc (`curl -sL --compressed -A "Mozilla/5.0 ..." <url> | grep -o '<meta[^>]*og:image[^>]*>'`
+     là cách nhanh nhất). Đây là ảnh do chính trang nguồn công bố để người khác
+     dẫn lại — không phải ảnh tự ý lấy. **Không thấy og:image thật thì bỏ trống
+     field này, đừng chèn ảnh khác/ảnh đại diện chung.** URL ảnh có ký tự `&`
+     thì giữ nguyên trong chuỗi JS bình thường — hàm render tự escape khi ghép
+     HTML, không cần escape tay.
    - Không cần chèn đúng thứ tự ngày — trang tự sort giảm dần khi render.
 5. **Chèn phần tử mới vào mảng `NEWS`** (giữ nguyên toàn bộ tin cũ — mảng chỉ
    lớn dần theo thời gian).

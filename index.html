@@ -226,12 +226,15 @@
   .vn-net-card .vnc-meta{font-size:12px; color:var(--text-muted); display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:2px;}
   .vn-net-card .vnc-meta a{color:var(--accent-ink); font-weight:600;}
   .news-list{display:flex; flex-direction:column; gap:14px; padding:22px 0 50px;}
-  .news-card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:6px;}
+  .news-card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow); display:flex; flex-direction:row; gap:16px; align-items:flex-start;}
+  .news-card .news-thumb{width:128px; height:86px; flex:0 0 128px; object-fit:cover; border-radius:8px; background:var(--surface-2); display:block;}
+  .news-card .news-body{display:flex; flex-direction:column; gap:6px; min-width:0; flex:1 1 auto;}
   .news-card .news-date{font-family:var(--font-mono); font-size:11px; letter-spacing:.05em; color:var(--accent-ink); text-transform:uppercase;}
   .news-card .news-title{font-size:16px; font-weight:700; line-height:1.4;}
-  .news-card .news-summary{font-size:13.5px; color:var(--text-muted); line-height:1.6; margin:0;}
+  .news-card .news-summary{font-size:13.5px; color:var(--text-muted); line-height:1.6; margin:0; max-width:none;}
   .news-card .news-source{font-size:12px; color:var(--text-muted);}
   .news-card .news-source a{color:var(--accent-ink); font-weight:600;}
+  @media (max-width:640px){ .news-card{flex-direction:column;} .news-card .news-thumb{width:100%; height:160px; flex:none;} }
   .news-empty{color:var(--text-muted); font-size:14px; padding:20px 0;}
   .timeline{list-style:none; margin:0; padding:0; border-left:2px solid var(--border); }
   .timeline li{position:relative; padding:0 0 10px 16px;}
@@ -1858,18 +1861,24 @@ function renderRankings(){
 /* ======================================================================
    RENDER: News tab
 ====================================================================== */
-// Each item: {date:'YYYY-MM-DD', title:{vi,en}, summary:{vi,en}, source, url}.
-// The site owner adds items here over time — this is not an automated feed.
+// Each item: {date:'YYYY-MM-DD', title:{vi,en}, summary:{vi,en}, source, url, image?}.
+// `image` is the source article's own og:image (real URL, fetched from the
+// article's meta tags) — omitted when the source page doesn't publish one,
+// never a placeholder. The site owner adds items here over time — this is
+// not an automated feed.
 var NEWS = [
   {date:'2026-08-21', source:'Báo Nhân Dân', url:'https://nhandan.vn/ket-noi-he-sinh-thai-khoi-nghiep-viet-nam-voi-mang-luoi-doi-moi-sang-tao-toan-cau-post983425.html',
+    image:'https://cdn.nhandan.vn/images/IvCZyovHroGqKo00FqhL-A0xHKHbL6LGWB_PjVe5eMQmw-Jlv_fSs62kzeOmUjE-Y6iZ3A1ZiogopEJkM3RA6A/g1-9060.jpg.webp',
     title:{vi:'Ngày hội Cộng đồng Khởi nghiệp Việt Nam 2026 kết nối hệ sinh thái trong nước với mạng lưới ĐMST toàn cầu', en:'Vietnam Startup Community Day 2026 links the domestic ecosystem to global innovation networks'},
     summary:{vi:'Hội thảo quốc tế "Khởi nghiệp trong bối cảnh toàn cầu" tại Học viện Công nghệ Bưu chính Viễn thông quy tụ gần 1.000 đại biểu, lần đầu có diễn giả từ Trung Quốc, Singapore, Canada.',
       en:'The international workshop "Entrepreneurship in a Global Context" at the Posts and Telecommunications Institute of Technology drew nearly 1,000 delegates, with speakers from China, Singapore, and Canada for the first time.'}},
   {date:'2026-08-20', source:'Tiền Phong — Sinh Viên Việt Nam', url:'https://svvn.tienphong.vn/11-du-an-doi-moi-sang-tao-cua-viet-nam-duoc-gioi-thieu-tai-innoex-2026-post1869491.tpo',
+    image:'https://cdn.tienphong.vn/images/vfxVTqNZg61oqW4AULbiyxFOFdhmsXPAhbfNHhiOakTq7pX3AvbdK__yHLcovr5CkcOVqqlJPlza80nK09ShXg/dsc04298.jpg.webp',
     title:{vi:'11 dự án đổi mới sáng tạo của Việt Nam được giới thiệu tại InnoEx 2026', en:'11 Vietnamese innovation projects presented at InnoEx 2026'},
     summary:{vi:'Tại diễn đàn InnoEx 2026 ở TP.HCM, 11 dự án ĐMST Việt Nam giới thiệu các giải pháp xử lý rác thải nhựa, đã thu gom/tái chế hơn 750 tấn nhựa trong giai đoạn thí điểm.',
       en:'At the InnoEx 2026 forum in Ho Chi Minh City, 11 Vietnamese innovation projects presented plastic-waste solutions that have collected/recycled over 750 tonnes of plastic during their pilot phase.'}},
   {date:'2026-08-26', source:'Giáo dục & Thời đại', url:'https://giaoducthoidai.vn/6-du-an-lot-vao-chung-ket-cuoc-thi-khoi-nghiep-nong-nghiep-doi-moi-sang-tao-2026-post789595.html',
+    image:'https://cdn.giaoducthoidai.vn/images/5ovQrn4KTS6E5FHG22jy1Lcgk4H2sOnyV_UliOs5dQzXNk57Jn_jNj5RoH2lWqGDqJBAQfwxJ0rLT69cCnFGng/nongnghiep.jpg.webp',
     title:{vi:'6 dự án vào chung kết Cuộc thi Khởi nghiệp Nông nghiệp Đổi mới sáng tạo 2026', en:'6 projects reach the final of the 2026 Agricultural Innovation Startup Contest'},
     summary:{vi:'Từ gần 100 dự án dự thi cả nước, 6 đội xuất sắc nhất vào chung kết ngày 28/8/2026 tại Học viện Nông nghiệp Việt Nam, chủ đề đổi mới sáng tạo nông nghiệp trong kỷ nguyên số và kinh tế xanh.',
       en:'From nearly 100 nationwide entries, the 6 strongest teams reached the August 28, 2026 final at the Vietnam National University of Agriculture, themed around agricultural innovation in the digital and green economy era.'}},
@@ -1878,14 +1887,17 @@ var NEWS = [
     summary:{vi:'Sau 8 tuần xây dựng dự án, đội Ictus (thiết bị đeo phát hiện cơn động kinh) giành giải Nhất trị giá 10.000 bảng Anh tại vòng chung kết StEP 2026 của Oxford University Innovation.',
       en:'After an 8-week venture-building programme, team Ictus (a seizure-detection wearable) won the £10,000 top prize at Oxford University Innovation\'s StEP 2026 final.'}},
   {date:'2026-08-26', source:'Cambridge Enterprise', url:'https://www.enterprise.cam.ac.uk/news/founders-at-the-university-of-cambridge-2026-cohort-heading-to-the-us-for-overseas-exposure-and-investment-opportunities/',
+    image:'https://www.enterprise.cam.ac.uk/wp-content/uploads/2026/08/START3.0-Cohort-Event_1920x1080_01.png',
     title:{vi:'Nhóm khởi nghiệp Cambridge sang Mỹ tìm nhà đầu tư và mở rộng mạng lưới', en:'Cambridge founders head to the US for investor exposure and networking'},
     summary:{vi:'Cohort START 3.0 (deep tech, AI, khoa học sự sống) của Cambridge Enterprise sẽ sang New York và San Francisco vào tháng 9/2026 để gặp nhà đầu tư quốc tế lần đầu trong khuôn khổ chương trình.',
       en:'Cambridge Enterprise\'s START 3.0 cohort (deep tech, AI, life sciences) will travel to New York and San Francisco in September 2026 for the programme\'s first international investor exposure trip.'}},
   {date:'2026-08-31', source:'VTT Technical Research Centre of Finland', url:'https://www.vttresearch.com/en/news-and-ideas/s-transistors-raises-eu26-million-pre-seed-round-introduce-unique-superconducting',
+    image:'https://www.vttresearch.com/sites/default/files/styles/social_share/public/2026-08/Team-S-Transistors-Heorhii-Bohuslavskyi-Andrey-Generalov-and-Markus-Lehtisalo.jpg?h=c9720776&itok=US5_zSJ5',
     title:{vi:'Startup tách ra từ viện nghiên cứu VTT (Phần Lan) gọi vốn 2,6 triệu euro cho transistor siêu dẫn dùng trong máy tính lượng tử', en:'VTT (Finland) spin-out raises €2.6M for superconducting quantum-computing transistors'},
     summary:{vi:'S-Transistors, startup tách ra từ VTT (Phần Lan), huy động 2,6 triệu euro vòng pre-seed do Lifeline Ventures dẫn dắt, phát triển transistor siêu dẫn giúp mở rộng quy mô điều khiển máy tính lượng tử.',
       en:'S-Transistors, a spin-out from Finland\'s VTT research centre, raised a €2.6M pre-seed round led by Lifeline Ventures to develop superconducting transistors for scaling quantum-computer control.'}},
   {date:'2026-08-18', source:'TIME', url:'https://time.com/article/2026/08/18/americas-best-incubators-accelerators-2026/',
+    image:'https://static.time.com/v3/assets/bltea6093859af6183b/blt213b2c7f842b72c1/6a74acc4bf22b24cd3951575/America_s-Best-Incu-&-Accel-2026.jpg?branch=production&width=1920&quality=75&auto=webp&crop=16:9',
     title:{vi:'TIME công bố danh sách vườn ươm & chương trình tăng tốc khởi nghiệp tốt nhất nước Mỹ 2026', en:'TIME publishes its 2026 list of America\'s best startup incubators and accelerators'},
     summary:{vi:'TIME xếp hạng 80 vườn ươm/chương trình tăng tốc hàng đầu nước Mỹ, trong đó nêu bật The Garage của Đại học Northwestern (hạng 5) như một mô hình vườn ươm gắn với đại học.',
       en:'TIME ranked 80 leading US incubators and accelerators, highlighting Northwestern University\'s The Garage (ranked 5th) as a notable university-affiliated incubator.'}}
@@ -1895,11 +1907,14 @@ function renderNews(){
   if(!listEl) return;
   var sorted = NEWS.slice().sort(function(a,b){ return b.date.localeCompare(a.date); });
   listEl.innerHTML = sorted.length ? sorted.map(function(n){
-    return '<div class="news-card">'+
-      '<span class="news-date">'+n.date+'</span>'+
-      '<div class="news-title">'+tf(n.title)+'</div>'+
-      '<p class="news-summary">'+tf(n.summary)+'</p>'+
-      '<div class="news-source">'+(n.url ? '<a href="'+n.url+'" target="_blank" rel="noopener">'+n.source+'</a>' : n.source)+'</div>'+
+    var thumb = n.image ? '<img class="news-thumb" src="'+n.image.replace(/&/g,'&amp;')+'" alt="" loading="lazy" onerror="this.remove()">' : '';
+    return '<div class="news-card">'+thumb+
+      '<div class="news-body">'+
+        '<span class="news-date">'+n.date+'</span>'+
+        '<div class="news-title">'+tf(n.title)+'</div>'+
+        '<p class="news-summary">'+tf(n.summary)+'</p>'+
+        '<div class="news-source">'+(n.url ? '<a href="'+n.url+'" target="_blank" rel="noopener">'+n.source+'</a>' : n.source)+'</div>'+
+      '</div>'+
     '</div>';
   }).join('') : '<div class="news-empty">'+t('newsEmpty')+'</div>';
 }
