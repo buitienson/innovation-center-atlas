@@ -46,22 +46,33 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-05 — điền cột Quốc gia cho bảng Xếp hạng WURI Top 100 (đã để trống ở
-lần trước vì PDF gốc của WURI không in cột này). Tra cứu độc lập từng trường (không phải từ
-WURI) — agent con xác minh qua web search, đặc biệt các tên trùng với nhiều trường thật:
-"Franklin University" → Thuỵ Sĩ (Lugano, không phải Ohio), "Saint Louis University" → Philippines
-(SLU Baguio, không phải Missouri, khác với "University of Baguio" cũng có trong danh sách),
-"National University of Management" → Campuchia. Thêm 2 quốc gia còn thiếu trong bảng ISO2 của
-trang (Bangladesh, Campuchia) để hiện đúng cờ. Một dòng ("Trinity College", hạng 73) để trống
-vì không xác minh được trong 4 trường thật cùng tên — ghi rõ lý do trong `RANKINGS_SOURCE_NOTE`
-thay vì đoán liều. Đã build, kiểm `node --check` + cân bằng thẻ, test live bằng http.server +
-browser (xem đúng cờ/tên nước từng dòng), publish Artifact, `git push`.
+**Lần cuối:** 2026-09-05 — bốn việc trong cùng một phiên:
 
-Trước đó (cùng ngày): dựng nhà cho dự án (trước đó làm hoàn toàn trong scratchpad của phiên
-chat, sẽ mất khi đóng phiên): clone lại repo GitHub Pages vào đây, tách `src/atlas.html`
-(nguồn để sửa) khỏi `index.html` (bản build qua `build.py`). Điền nốt mục Xếp hạng bằng WURI
-Ranking 2026 Top 100 (đồng hạng giữ đúng bản gốc) — **live, commit `e23fce9`.**
+1. **Cột Quốc gia bảng Xếp hạng** — điền đủ 100/101 dòng (tra độc lập qua web search, không
+   phải từ WURI — chú ý các tên trùng nhiều trường thật: "Franklin University" → Thuỵ Sĩ không
+   phải Ohio, "Saint Louis University" → Philippines không phải Missouri). Dòng "Trinity College"
+   (hạng 73) để trống vì không xác minh được — ghi rõ trong `RANKINGS_SOURCE_NOTE`. Thêm
+   Bangladesh + Campuchia vào bảng ISO2→cờ.
+2. **Routine tự động thêm tin ĐMST hằng ngày** — skill `atlas-tin-tuc` (global, tại
+   `~/.claude/skills/`) trỏ tới file canonical **trong chính repo**:
+   `_claude/routine-tin-tuc.md` (để cloud routine clone repo là đọc được ngay, không cần máy
+   Sơn). Routine cloud `"Atlas - tin ĐMST hàng ngày"` (`trig_01D8yWiiAKk8kzQbBoPsVrwD`) chạy
+   06:00 giờ VN mỗi ngày, tự tìm tin + build + `git push` thẳng lên `main` nếu tìm được tin đủ
+   tin cậy (đã xác nhận trước, routine không hỏi lại). Không có tin phù hợp thì tự bỏ qua lượt.
+   Quản lý/xem log tại claude.ai/code/routines.
+3. **Sửa lỗi hiển thị mục Tin tức** — `.news-summary` là thẻ `<p>` nên bị dính luật chung
+   `p{max-width:65ch}`, chữ bị bó hẹp dù card rộng — đã gỡ. Thêm ảnh thumbnail cho mỗi tin, lấy
+   từ `og:image` thật của chính bài gốc (6/7 tin có, 1 tin — Oxford — nguồn không có og:image
+   nên để trống, không chèn ảnh giả). Routine tự động ở mục 2 cũng đã cập nhật để lấy `image`
+   cho tin mới thêm sau này.
+4. **Thêm pill "Hướng dẫn sử dụng"** cạnh "Về dự án" — hướng dẫn ngắn song ngữ (tương tác quả
+   cầu/bản đồ, lọc bảng Xếp hạng, đọc tin). **Pill "Góp ý" (Google Form) CHƯA làm** — Drive API
+   ở đây không tạo được Google Form (chỉ Docs/Sheets/Slides), sếp tự tạo form ở forms.new rồi
+   gửi link để gắn vào pill.
 
-Việc mở còn lại: mục 24-category của WURI (cần tải lại PDF, bản trích cũ đã mất theo scratchpad
-phiên trước), cập nhật Tin tức, thêm case flagship mới. Xem thêm mục "Chờ điền" nếu có.
+Đã build, kiểm `node --check` + cân bằng thẻ mỗi lần, test bằng http.server + browser (cả
+desktop/mobile), publish Artifact, `git push` cho cả 4 việc (commit `97c3353` → `98e7818`).
+
+Việc mở còn lại: **pill Góp ý chờ link Google Form từ sếp**; mục 24-category của WURI (cần tải
+lại PDF, bản trích cũ đã mất theo scratchpad phiên trước); thêm case flagship mới.
 (Claude)
