@@ -1092,7 +1092,7 @@ function renderGlobalStats(){
   var sub = document.querySelector('#sec-globe .zoom-sub');
   if(sub) sub.textContent = totalMapped + (LANG==='vi' ? ' đơn vị trên bản đồ · v0.2' : ' units on the map · v0.2');
   var vnSub = document.querySelector('#sec-vn .zoom-sub');
-  if(vnSub) vnSub.textContent = VN_UNITS.length + (LANG==='vi' ? ' đơn vị' : ' institutions');
+  if(vnSub) vnSub.textContent = vnTotalPlottedCount() + (LANG==='vi' ? ' đơn vị' : ' units');
 }
 
 /* ======================================================================
@@ -1190,8 +1190,9 @@ function buildCoordMap(svg, bounds, points, opts){
     // scattered "twinkling" rather than every dot pulsing in lockstep.
     var delay = ((pidx*37) % 240) / 100;
     if(p.small){
-      var glow = svgEl('circle',{class:'core-glow',cx:xy[0],cy:xy[1],r:5,fill:p.color,opacity:'0.25'});
-      var core = svgEl('circle',{class:'core core-blink',cx:xy[0],cy:xy[1],r:2.1,fill:p.color,opacity:'0.95'});
+      var sizeMul = p.sizeMul || 1;
+      var glow = svgEl('circle',{class:'core-glow',cx:xy[0],cy:xy[1],r:5*sizeMul,fill:p.color,opacity:'0.25'});
+      var core = svgEl('circle',{class:'core core-blink',cx:xy[0],cy:xy[1],r:2.1*sizeMul,fill:p.color,opacity:'0.95'});
       glow.style.animationDelay = core.style.animationDelay = delay+'s';
       g.appendChild(glow); g.appendChild(core);
       var titleEl = svgEl('title',{}); titleEl.textContent = p.label; g.appendChild(titleEl);
@@ -1398,7 +1399,7 @@ function spreadCluster(units){
    outline with nothing inside it, unlike every other highlighted country. */
 function vnUnitsAsSmallPoints(){
   return spreadCluster(VN_UNITS).map(function(u){
-    return {lat:u._lat, lng:u._lng, label:(LANG==='vi'?u.name:u.nameEn), showLabel:false, small:true, color:'var(--screen-vn)'};
+    return {lat:u._lat, lng:u._lng, label:(LANG==='vi'?u.name:u.nameEn), showLabel:false, small:true, color:VN_TYPE_COLORS.university};
   });
 }
 /* City-level coordinates for the HANISA/VNEI/VN_FUNDS entries — those datasets
@@ -1411,10 +1412,28 @@ var VN_CITY_COORDS = [
   [/hà nội|hanoi|hoa lac/i, 21.0285, 105.8542],
   [/hồ chí minh|ho chi minh/i, 10.7769, 106.7009],
   [/đà nẵng|da nang/i, 16.0544, 108.2022],
-  [/huế|hue/i, 16.4637, 107.5909],
+  [/^huế$|hue/i, 16.4637, 107.5909],
   [/buôn ma thuột|buon ma thuot/i, 12.6667, 108.0500],
   [/trà vinh|tra vinh/i, 9.9347, 106.3453],
-  [/vinh,\s*nghệ an/i, 18.6733, 105.6922]
+  [/vinh,\s*nghệ an/i, 18.6733, 105.6922],
+  [/thái nguyên/i, 21.5928, 105.8442],
+  [/cần thơ/i, 10.0452, 105.7469],
+  [/hải phòng/i, 20.8449, 106.6881],
+  [/lào cai/i, 22.4809, 103.9755],
+  [/bình dương/i, 10.9804, 106.6519],
+  [/quy nhơn/i, 13.7757, 109.2237],
+  [/quảng nam/i, 15.5736, 108.4740],
+  [/bắc giang/i, 21.2731, 106.1946],
+  [/sơn la/i, 21.3256, 103.9188],
+  [/quảng ngãi/i, 15.1214, 108.8044],
+  [/phú yên/i, 13.0882, 109.0929],
+  [/thanh hóa/i, 19.8067, 105.7852],
+  [/long an/i, 10.5432, 106.4118],
+  [/đồng nai/i, 10.9574, 106.8426],
+  [/bắc ninh/i, 21.1861, 106.0763],
+  [/phú thọ/i, 21.3993, 105.2210],
+  [/vĩnh long/i, 10.2537, 105.9722],
+  [/kiên giang/i, 10.0125, 105.0809]
 ];
 function cityToLatLng(cityStr){
   if(!cityStr) return null;
@@ -1423,28 +1442,55 @@ function cityToLatLng(cityStr){
   }
   return null;
 }
+/* Colors/points for the VN network are classified by what kind of organization
+   it actually IS (university / company / state / international / fund), not
+   by which source list it came from — HANISA and VN_FUNDS carry a free-text
+   type description that's keyword-matched into one of these five buckets;
+   VN_UNITS and VNEI_MEMBERS are both entirely university-affiliated centers
+   by the nature of their source, so they're always 'university'. */
+var VN_TYPE_COLORS = {university:'#8FB0F0', company:'#4DD0C8', state:'#FFA94D', international:'#B79CE8', fund:'#FFCC4E'};
+var VN_TYPE_LABELS = {
+  university:{vi:'Đại học', en:'University'},
+  company:{vi:'Doanh nghiệp', en:'Company'},
+  state:{vi:'Tổ chức nhà nước', en:'State organization'},
+  international:{vi:'Tổ chức quốc tế', en:'International org.'},
+  fund:{vi:'Quỹ đầu tư', en:'Fund'}
+};
+function classifyVNType(typeStr){
+  var s = (typeStr||'').toLowerCase();
+  if(s.indexOf('government')>-1) return 'state';
+  if(s.indexOf('international')>-1) return 'international';
+  if(s.indexOf('fund')>-1 || s.indexOf('accelerator')>-1 || s.indexOf('vc ')>-1 || s.indexOf('vc/')>-1) return 'fund';
+  if(s.indexOf('university')>-1) return 'university';
+  return 'company';
+}
 function vnTotalPlottedCount(){
   return VN_UNITS.length + vnNetworkAsSmallPoints().length;
 }
 function vnNetworkAsSmallPoints(){
   var out = [], seedIdx = 0;
   // HANISA/VN_FUNDS rows are [name,nameEn,type,city,website]; VNEI_MEMBERS
-  // rows are [name,host,city] (no English name/website in that source) — so
-  // the city field sits at a different index per dataset.
-  function addRows(rows, catKey, cityIdx){
-    var color = VN_NET_CATS[catKey].color;
+  // rows are [name,host,city] (no English name/website in that source, and
+  // always 'university' since the whole list is university-affiliated
+  // centers) — so the city field and type source differ per dataset.
+  function addRows(rows, cityIdx, typeFn){
     rows.forEach(function(r){
       var latlng = cityToLatLng(r[cityIdx]);
       if(!latlng) return;
       seedIdx++;
       var jlat = (((seedIdx*53)%100)/100 - 0.5) * 0.10;
       var jlng = (((seedIdx*97)%100)/100 - 0.5) * 0.10;
-      out.push({lat:latlng[0]+jlat, lng:latlng[1]+jlng, label:r[0], showLabel:false, small:true, color:color});
+      var vtype = typeFn(r);
+      // Funds/state/international orgs are far fewer and often more
+      // nationally significant than any one university center, so they get
+      // a visibly bigger point instead of blending into the crowd.
+      var sizeMul = (vtype==='fund' || vtype==='state' || vtype==='international') ? 1.7 : 1;
+      out.push({lat:latlng[0]+jlat, lng:latlng[1]+jlng, label:r[0], showLabel:false, small:true, color:VN_TYPE_COLORS[vtype], sizeMul:sizeMul});
     });
   }
-  addRows(HANISA_MEMBERS, 'hanisa', 3);
-  addRows(VNEI_MEMBERS, 'vnei', 2);
-  addRows(VN_FUNDS, 'funds', 3);
+  addRows(HANISA_MEMBERS, 3, function(r){ return classifyVNType(r[2]); });
+  addRows(VNEI_MEMBERS, 2, function(){ return 'university'; });
+  addRows(VN_FUNDS, 3, function(r){ return classifyVNType(r[2]); });
   return out;
 }
 function casesInBounds(bounds){
@@ -1490,18 +1536,18 @@ function vnSideHTML(){
 ====================================================================== */
 var VN_NET_CATS = {
   univ: {label:{vi:'Đơn vị tại ĐH', en:'University units'}, color:'#8FB0F0', data:function(){
-    return VN_UNITS.map(function(u){ return {name:u.name, nameEn:u.nameEn, type:{vi:'Đơn vị hỗ trợ ĐMST tại trường đại học', en:'University innovation-support unit'}, city:'', website:''}; });
+    return VN_UNITS.map(function(u){ return {name:u.name, nameEn:u.nameEn, _vtype:'university', city:'', website:''}; });
   }},
   hanisa: {label:{vi:'HANISA', en:'HANISA'}, color:'#4DD0C8', data:function(){
-    return HANISA_MEMBERS.map(function(r){ return {name:r[0], nameEn:r[1], type:{vi:r[2],en:r[2]}, city:r[3], website:r[4]}; });
+    return HANISA_MEMBERS.map(function(r){ return {name:r[0], nameEn:r[1], _vtype:classifyVNType(r[2]), city:r[3], website:r[4]}; });
   }},
   vnei: {label:{vi:'VNEI', en:'VNEI'}, color:'#B79CE8', data:function(){
     // VNEI_MEMBERS rows are [unit name, host institution, city] — sourced
     // directly from vnei.edu.vn's own member directory, no English names.
-    return VNEI_MEMBERS.map(function(r){ return {name:r[0], host:r[1], type:{vi:'Thành viên mạng lưới VNEI',en:'VNEI network member'}, city:r[2], website:''}; });
+    return VNEI_MEMBERS.map(function(r){ return {name:r[0], host:r[1], _vtype:'university', city:r[2], website:''}; });
   }},
   funds: {label:{vi:'Quỹ & hỗ trợ', en:'Funds & support'}, color:'#FFCC4E', data:function(){
-    return VN_FUNDS.map(function(r){ return {name:r[0], nameEn:r[1], type:{vi:r[2],en:r[2]}, city:r[3], website:r[4]}; });
+    return VN_FUNDS.map(function(r){ return {name:r[0], nameEn:r[1], _vtype:classifyVNType(r[2]), city:r[3], website:r[4]}; });
   }}
 };
 var activeVNCat = 'all';
@@ -1529,11 +1575,14 @@ function renderVNNetGrid(){
     VN_NET_CATS[k].data().forEach(function(x){ x._cat = k; items.push(x); });
   });
   grid.innerHTML = items.map(function(x){
-    var color = VN_NET_CATS[x._cat].color;
+    // Badge color/label reflect what kind of organization this actually is
+    // (university/company/state/international/fund) — a different axis from
+    // the chip filter above, which is about which source list it came from.
+    var color = VN_TYPE_COLORS[x._vtype];
     var name = LANG==='vi' ? x.name : (x.nameEn || x.name);
     var showEn = LANG==='vi' && x.nameEn && x.nameEn !== x.name;
     return '<div class="vn-net-card">'+
-      '<span class="vnc-badge" style="background:color-mix(in srgb, '+color+' 22%, transparent); color:'+color+'; border:1px solid '+color+';">'+tf(VN_NET_CATS[x._cat].label)+'</span>'+
+      '<span class="vnc-badge" style="background:color-mix(in srgb, '+color+' 22%, transparent); color:'+color+'; border:1px solid '+color+';">'+tf(VN_TYPE_LABELS[x._vtype])+'</span>'+
       '<div class="vnc-name">'+name+'</div>'+
       (showEn ? '<div class="vnc-name-en">'+x.nameEn+'</div>' : '')+
       (x.host ? '<div class="vnc-name-en">'+x.host+'</div>' : '')+
