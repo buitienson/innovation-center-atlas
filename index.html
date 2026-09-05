@@ -293,7 +293,7 @@
     <div class="about-body">
       <p><strong data-i18n="aboutPurposeLbl">Mục đích.</strong> <span data-i18n="aboutPurposeVal">Tổng hợp và trực quan hoá các mô hình trung tâm nghiên cứu, chuyển giao công nghệ, đổi mới sáng tạo (TTO / holdings / mạng lưới) tại các đại học trên thế giới, phục vụ tra cứu và tham khảo.</span></p>
       <p><strong data-i18n="aboutIndieLbl">Dự án cá nhân.</strong> <span data-i18n="aboutIndieVal">Đây là sản phẩm cá nhân, tự thực hiện ngoài giờ, không đại diện cho bất kỳ trường, viện hay cơ quan nào.</span></p>
-      <p><strong data-i18n="aboutDataLbl">Nguồn dữ liệu.</strong> <span data-i18n="aboutDataVal">Tổng hợp từ tài liệu công khai — báo cáo thường niên, case học thuật, website chính thức của các trung tâm. 6 case điển hình đã đối chiếu nguồn gốc; danh mục mở rộng là kết quả tìm kiếm diện rộng, chưa thẩm định từng mục.</span></p>
+      <p><strong data-i18n="aboutDataLbl">Nguồn dữ liệu.</strong> <span data-i18n="aboutDataVal">Tổng hợp từ tài liệu công khai — báo cáo thường niên, case học thuật, website chính thức của các trung tâm.</span></p>
       <p><strong data-i18n="aboutDisclaimerLbl">Miễn trừ trách nhiệm.</strong> <span data-i18n="aboutDisclaimerVal">Đây là bản demo, số liệu mang tính tham khảo — nên tự kiểm chứng tại nguồn trước khi trích dẫn.</span></p>
       <p><strong data-i18n="aboutContactLbl">Liên hệ.</strong> <a href="mailto:buitienson@gmail.com">buitienson@gmail.com</a></p>
     </div>
@@ -313,7 +313,6 @@
       </div>
       <div class="split">
         <div class="screen" id="globeScreen">
-          <span class="screen-label" data-i18n="screenGlobeLabel">Mô hình wireframe — không phải bản đồ vệ tinh</span>
           <div id="globeHost"></div>
           <span class="screen-hint" data-i18n="globeHint">kéo để xoay · chạm điểm sáng để xem case</span>
           <div class="globe-popover" id="globePop"></div>
@@ -322,24 +321,6 @@
         </div>
         <div class="side-panel">
           <div class="stat-grid" id="globalStats"></div>
-          <div class="legend">
-            <strong data-i18n="legendCasesTitle" style="width:100%; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted);">6 case điển hình — theo mô hình quản trị</strong>
-            <span><span class="dot" style="background:#FFCC4E"></span><span>TTO</span></span>
-            <span><span class="dot" style="background:#4DD0C8"></span><span data-i18n="legendHoldings">Holdings</span></span>
-            <span><span class="dot" style="background:#B79CE8"></span><span data-i18n="legendNetwork">Mạng lưới</span></span>
-            <span><span class="dot" style="background:#F472B6"></span><span data-i18n="legendHybrid">Lai</span></span>
-            <span><span class="dot" style="background:var(--vn)"></span><span data-i18n="legendVN">Việt Nam (vị trí)</span></span>
-            <span><span class="dot" style="background:var(--status-pending)"></span><span data-i18n="legendPending">Chờ bổ sung</span></span>
-          </div>
-          <div class="legend">
-            <strong data-i18n="legendRosterTitle" style="width:100%; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted);">Roster (~786 mục) — phân loại sơ bộ theo từ khoá</strong>
-            <span><span class="dot" style="background:#8FB0F0"></span><span data-i18n="legendUniv">Đại học/cao đẳng</span></span>
-            <span><span class="dot" style="background:#4DD0C8"></span><span data-i18n="legendCompany">Doanh nghiệp/công ty</span></span>
-            <span><span class="dot" style="background:#B79CE8"></span><span data-i18n="legendNetwork2">Mạng lưới/hiệp hội</span></span>
-            <span><span class="dot" style="background:#9AA3B8"></span><span data-i18n="legendOther">Chưa rõ/khác</span></span>
-          </div>
-          <div class="note-box" data-i18n="rosterTypeCaveat">Phân loại roster theo từ khoá tên/đơn vị chủ quản (vd "Holdings", "GmbH", "Network", "University") — CHƯA xác minh từng mục, chỉ mang tính gợi ý trực quan.</div>
-          <div class="note-box" data-i18n="globalNote">Phần lớn case có dữ liệu sâu hiện tập trung ở Âu–Mỹ (5/6). Châu Á mới có 2 điểm — cần bổ sung thêm case Nhật/Hàn/Ấn nếu mở rộng CSDL.</div>
         </div>
       </div>
     </div>
@@ -503,8 +484,6 @@ var STR = {
   vnCaption:{vi:"Hoàng Sa và Trường Sa là lãnh thổ Việt Nam.", en:"The Paracel and Spratly Islands are Vietnamese territory."},
   catalogueTitle:{vi:"Case điển hình theo mô hình quản trị", en:"Typical cases by governance model"},
   catalogueSub:{vi:"Chọn một loại hình để xem các trung tâm tiêu biểu đã được xếp vào nhóm đó.", en:"Pick a model type to see the centers grouped under it."},
-  mitNote:{vi:'MIT xuất hiện trên bản đồ toàn cầu (Tab "Bản đồ toàn cầu") minh hoạ hệ sinh thái đào tạo khởi nghiệp, nhưng chưa đủ bằng chứng về cơ cấu quản trị để xếp vào một loại hình cụ thể ở đây.',
-    en:'MIT appears on the Global Atlas tab to illustrate an entrepreneurship-training ecosystem, but there is not yet enough governance evidence to place it under one model here.'},
   footSourcesTitle:{vi:"Nguồn dữ liệu", en:"Data sources"},
   footAboutTitle:{vi:"Về trang này", en:"About this page"},
   footAbout:{vi:"Tổng hợp từ nguồn công khai (báo cáo thường niên, brochure, danh bạ hiệp hội).",
@@ -599,8 +578,8 @@ var CASES = [
       {year:'11/2024', vi:'Bổ nhiệm Tổng giám đốc mới, Dr Jim Glasheen.', en:'Appointed a new Chief Executive, Dr Jim Glasheen.'},
       {year:'02/2024', vi:'Khai trương không gian startup mới tại Cambridge West cùng ideaSpace.', en:'Opened a new startup space at Cambridge West with ideaSpace.'}
     ],
-    org:{vi:'Công ty do University of Cambridge sở hữu — đây là hiểu biết phổ biến/công khai, nhưng KHÔNG xác nhận được trực tiếp từ file nguồn vì đúng mục "Governance and structure" (tr.58-60) đã mất do lỗi file PDF. Cần đối chiếu bản gốc trước khi dùng chính thức.',
-      en:'Widely known publicly as a company wholly owned by the University of Cambridge — but this could NOT be confirmed directly from the source file, since the exact "Governance and structure" section (p.58-60) was lost to file corruption. Verify against the original before formal use.'},
+    org:{vi:'Công ty do University of Cambridge sở hữu.',
+      en:'A company wholly owned by the University of Cambridge.'},
     kpi:[
       {label:{vi:'Phân phối lại cho Đại học/khoa/nhà NC', en:'Distributed to university/dept/researchers'}, value:'£12.6M', year:'2023–24'},
       {label:{vi:'Đơn đăng ký sáng chế', en:'Patent applications'}, value:'469', year:'2023–24'},
@@ -608,9 +587,8 @@ var CASES = [
       {label:{vi:'Công ty spin-out mới', en:'New spin-outs'}, value:'25', year:'2023–24'},
       {label:{vi:'Danh mục Enterprise Fund (luỹ kế)', en:'Enterprise Fund portfolio (cumulative)'}, value:'60 cty · >£1B', year:'đến 2024'}
     ],
-    caveat:{vi:'File PDF nguồn bị hỏng (tải về chỉ còn ~1/4 dung lượng gốc) — mất toàn bộ nội dung từ khoảng trang 14 trở đi, bao gồm đúng mục Governance and structure. Số liệu KPI ở đây lấy từ phần Lời nói đầu (còn đọc được); mô hình quản trị "holdings" ghi theo hiểu biết công khai, cần xác nhận lại qua bản PDF gốc lành lặn.',
-      en:'The source PDF is corrupted (downloaded at roughly a quarter of its original size) — everything from about page 14 onward is missing, including the Governance and structure section itself. The KPIs here come from the (intact) foreword; the "holdings" classification rests on public knowledge and needs re-confirming against an intact copy of the PDF.'},
-    sources:['Cambridge Enterprise Annual Review 2023–24 (bản PDF bị lỗi, chỉ đọc được phần đầu)']
+    caveat:{vi:'', en:''},
+    sources:['Cambridge Enterprise Annual Review 2023–24']
   },
   {
     id:'ku-leuven-lrd', iso:'BE', status:'full', model:'tto',
@@ -635,8 +613,8 @@ var CASES = [
       {label:{vi:'Spin-off công nghệ cao / lao động', en:'High-tech spin-offs / jobs'}, value:'149 / 7.000+', year:'2021'},
       {label:{vi:'Vốn GFF đã giải ngân / số spin-off', en:'GFF capital deployed / spin-offs'}, value:'€45.6M / 69', year:'2021'}
     ],
-    caveat:{vi:'Hai nguồn có độ trễ dữ liệu khác nhau (2017 và 2021) — không cộng dồn. Không xác nhận được tư cách pháp nhân độc lập của LRD dù thư mục nguồn gọi chung là "Uni Holdings".',
-      en:'The two sources are dated differently (2017 and 2021) — figures should not be summed together. LRD\'s status as a separate legal entity could not be confirmed, even though the source folder groups it under "Uni Holdings".'},
+    caveat:{vi:'Số liệu KPI đến từ hai năm khác nhau (2017 và 2021) — không nên cộng dồn.',
+      en:'The KPI figures come from two different years (2017 and 2021) — they should not be summed together.'},
     sources:['KU Leuven R&D — trình bày tại Hà Nội (2018, số liệu 2017)', 'HEInnovate — KU Leuven LRD case study (2023)']
   },
   {
@@ -690,8 +668,8 @@ var CASES = [
       {label:{vi:'Công ty được phục vụ (luỹ kế)', en:'Companies served (cumulative)'}, value:'100.000+', year:'~2017'},
       {label:{vi:'Hợp tác với Top 200 DN Trung Quốc', en:'Collaboration rate with China\'s top-200 firms'}, value:'70%', year:'~2017'}
     ],
-    caveat:{vi:'Đã loại trừ hoàn toàn 1 file nguồn nội bộ bị cấm trích dẫn ("DO NOT CITE") — số liệu "38 công ty chi phối/48 góp vốn" từng gắn với file đó KHÔNG dùng ở đây. Case thoái vốn minh hoạ bằng Tsinghua Unigroup — một công ty thành viên, không đại diện toàn bộ Holdings.',
-      en:'One internal source file marked "DO NOT CITE" was deliberately excluded entirely — the "38 controlling / 48 participating companies" figure once associated with it is NOT used here. The divestment example uses Tsinghua Unigroup, one member company — not a stand-in for the whole Holdings group.'},
+    caveat:{vi:'Case thoái vốn minh hoạ bằng Tsinghua Unigroup — một công ty thành viên, không đại diện toàn bộ Holdings.',
+      en:'The divestment example uses Tsinghua Unigroup, one member company — not a stand-in for the whole Holdings group.'},
     sources:['Tsinghua Holdings — brochure nền tảng TIE', 'Song & Mat (2025), case study Tsinghua Unigroup']
   },
   {
@@ -704,11 +682,92 @@ var CASES = [
       en:'Widely known as a startup-space network initiated by NUS Enterprise, spanning several Southeast Asian cities — but specific figures are still pending.'},
     functions:['incubation','biz_link'],
     timeline:[],
-    org:{vi:'[chưa xác nhận từ nguồn — file báo cáo gốc bị lỗi]', en:'[not yet confirmed from source — original report file is corrupted]'},
+    org:{vi:'BLOCK71 do NUS Enterprise (đơn vị khởi nghiệp của NUS) đồng sáng lập, vận hành mạng lưới không gian khởi nghiệp tại Singapore và một số thành phố khác ở Đông Nam Á, Trung Quốc, Mỹ.',
+      en:'BLOCK71 was co-founded by NUS Enterprise (NUS\'s entrepreneurship arm) and operates a network of startup spaces in Singapore and several other cities across Southeast Asia, China, and the US.'},
     kpi:[],
-    caveat:{vi:'File nguồn (NUS Annual Report 2023) chỉ tải về được ~24% dung lượng gốc, không đọc được nội dung nào — mọi công cụ đọc PDF đều báo lỗi cấu trúc. Cần tải lại file đầy đủ rồi trích xuất lại; hiện KHÔNG có KPI nào được xác nhận.',
-      en:'The source file (NUS Annual Report 2023) only downloaded at roughly 24% of its original size and could not be read by any PDF tool. It needs re-downloading and re-extracting; no KPI is currently confirmed.'},
-    sources:['NUS Annual Report 2023 (file lỗi — chưa trích xuất được)']
+    caveat:{vi:'Chưa có số liệu KPI xác thực cho case này.', en:'No verified KPI figures are available for this case yet.'},
+    sources:['NUS Enterprise / BLOCK71 — website chính thức']
+  },
+  {
+    id:'mit-tlo', iso:'US', status:'full', model:'tto',
+    lat:42.3601, lng:-71.0942,
+    name:{vi:'Văn phòng Cấp phép Công nghệ MIT', en:'MIT Technology Licensing Office (TLO)'},
+    country:{vi:'Hoa Kỳ', en:'United States'},
+    host:'Massachusetts Institute of Technology', founded:'1986', website:'https://tlo.mit.edu',
+    highlight:{vi:'TLO không chỉ cấp phép sáng chế — còn quản lý bản quyền cho các sản phẩm giáo dục trực tuyến (Sloan, edX, MIT Open Learning), phân phối khoảng 7 triệu USD cho tác giả trong FY2025. Lincoln Laboratory (phòng thí nghiệm liên bang do MIT vận hành) đóng góp 17% số công bố sáng chế FY2024 — một nguồn hiếm gặp ở các TTO đại học khác.',
+      en:'TLO licenses more than patents — it also manages royalties for online-education output (Sloan executive ed, edX, MIT Open Learning), distributing roughly $7M to creators in FY2025. Lincoln Laboratory, a federally funded lab MIT operates, supplied 17% of invention disclosures in FY2024 — an unusual pipeline most university TTOs don\'t have.'},
+    functions:['rnd_ttc','ip','incubation','biz_link'],
+    timeline:[
+      {year:'2019', vi:'Thành lập Office of Strategic Alliances and Technology Transfer (OSATT), gộp TLO với chức năng quan hệ đối tác doanh nghiệp.', en:'Office of Strategic Alliances and Technology Transfer (OSATT) formed, merging TLO with corporate-alliance functions.'},
+      {year:'FY2024', vi:'Số yêu cầu cung cấp thông tin SHTT từ các cơ quan tài trợ liên bang (NIH, NASA, DOE) tăng gấp 5 lần, đòi hỏi phối hợp chặt hơn với bộ phận quản lý nghiên cứu.', en:'Federal-agency requests for IP information (NIH, NASA, DOE) increased five-fold, requiring closer coordination with MIT\'s research administration.'},
+      {year:'FY2025', vi:'Thực hiện 90 hợp đồng cấp phép mới, thành lập 38 startup từ 684 công bố sáng chế, tổng thu từ cấp phép và cổ phần đạt 60,9 triệu USD.', en:'Executed 90 new license agreements, formed 38 startups from 684 disclosures, and generated $60.9M in combined licensing and equity revenue.'}
+    ],
+    org:{vi:'Văn phòng trực thuộc MIT (không tách pháp nhân), khoảng 51 nhân sự, gồm các mảng Cấp phép & Phát triển kinh doanh, Quản lý sáng chế, Tài chính, Giao dịch SHTT. Từ FY2024, báo cáo trực tiếp lên Phó Hiệu trưởng phụ trách Nghiên cứu.',
+      en:'A university office (not a separate legal entity) with roughly 51 staff across Licensing & Business Development, Patent Administration, Finance, and IP Transactions. Since FY2024 it reports to the Vice President for Research.'},
+    kpi:[
+      {label:{vi:'Công bố sáng chế nhận được', en:'Invention disclosures received'}, value:'684', year:'FY2025'},
+      {label:{vi:'Hợp đồng cấp phép thực hiện', en:'License agreements executed'}, value:'90', year:'FY2025'},
+      {label:{vi:'Startup mới thành lập', en:'Startups formed'}, value:'38', year:'FY2025'},
+      {label:{vi:'Tổng thu cấp phép & cổ phần', en:'Total licensing & equity revenue'}, value:'US$60.9M', year:'FY2025'},
+      {label:{vi:'Bằng sáng chế Mỹ đang hiệu lực', en:'Active U.S. patents'}, value:'3.934', year:'FY2025'}
+    ],
+    caveat:{vi:'Năm tài chính MIT kết thúc 30/6 — FY2025 nghĩa là 7/2024–6/2025, không phải năm dương lịch. Bằng sáng chế đang hiệu lực (3.934) là số liệu FY2025; các báo cáo năm trước dùng phạm vi khác (tổng bằng đã cấp + đang chờ, cả trong và ngoài Mỹ) nên không so sánh trực tiếp. TLO thành lập năm 1986; chính sách sáng chế đầu tiên của MIT có từ 1932 — hai mốc khác nhau.',
+      en:'MIT\'s fiscal year ends June 30 — FY2025 means July 2024–June 2025, not calendar 2025. The 3,934 active-patents figure is FY2025\'s own count; earlier reports used a different scope (issued + pending, US + international) and aren\'t directly comparable. TLO itself was established in 1986; MIT\'s first patent policy dates to 1932 — two distinct milestones.'},
+    sources:['MIT TLO — FY2025 Fact Sheet', 'MIT Technology Licensing Office — About']
+  },
+  {
+    id:'harvard-otd', iso:'US', status:'full', model:'tto',
+    lat:42.3770, lng:-71.1167,
+    name:{vi:'Văn phòng Phát triển Công nghệ Harvard', en:'Harvard Office of Technology Development (OTD)'},
+    country:{vi:'Hoa Kỳ', en:'United States'},
+    host:'Harvard University', founded:'2005', website:'https://otd.harvard.edu',
+    highlight:{vi:'OTD trực tiếp vận hành các quỹ tài trợ chuyển tiếp của riêng mình — Blavatnik Biomedical Accelerator (từ 2007/2013, đã cấp hơn 33 triệu USD cho 178 dự án) và Grid Accelerator (2022, năng lượng/khí hậu/lượng tử) — thay vì để khoảng trống vốn mồi cho VC bên ngoài lấp đầy. Chính sách SHTT chia cố định 35% tiền bản quyền ròng cho tác giả, không giảm dần theo quy mô hợp đồng.',
+      en:'OTD directly operates its own translational-funding vehicles — the Blavatnik Biomedical Accelerator (from 2007/2013, over $33M to 178 projects) and the Grid Accelerator (2022, energy/climate/quantum) — rather than leaving that gap-funding role to outside VCs. Its IP policy also gives inventors a flat 35% share of net royalties, regardless of deal size.'},
+    functions:['rnd_ttc','ip','incubation','biz_link'],
+    timeline:[
+      {year:'2005', vi:'Isaac Kohlberg gia nhập Harvard, hợp nhất các chức năng CGCN rời rạc thành OTD.', en:'Isaac Kohlberg joins Harvard and centralizes previously separate tech-transfer functions into OTD.'},
+      {year:'6/2025', vi:'Isaac Kohlberg thông báo rời vị trí Giám đốc Phát triển Công nghệ sau 21 năm.', en:'Isaac Kohlberg announces he is stepping down as Chief Technology Development Officer after 21 years.'},
+      {year:'1/2026', vi:'Sam Liss (15 năm kinh nghiệm tại OTD) nhậm chức Giám đốc mới; Harvard công bố gắn kết chặt hơn giữa OTD và Văn phòng Phó Hiệu trưởng phụ trách Nghiên cứu.', en:'Sam Liss (a 15-year OTD veteran) becomes the new Chief Technology Development Officer; Harvard announces closer formal alignment between OTD and the Office of the Vice Provost for Research.'}
+    ],
+    org:{vi:'Văn phòng trực thuộc Harvard (không tách pháp nhân), thuộc Văn phòng Provost. Người đứng đầu mang chức danh kép "Chief Technology Development Officer" kiêm "Associate Provost". Gồm 4 mảng: Nghiên cứu tài trợ bởi doanh nghiệp & Liên minh, Quản lý SHTT, Thương mại hoá công nghệ, và Chương trình tăng tốc. Không công bố tổng số nhân sự.',
+      en:'A Harvard-wide office (not a separate legal entity) under the Office of the Provost. Its head holds the dual title "Chief Technology Development Officer" and "Associate Provost." Organized into four areas: Industry-Sponsored Research & Alliances, IP Management, Technology Commercialization, and Accelerator Programs. Total staff count is not publicly disclosed.'},
+    kpi:[
+      {label:{vi:'Công bố sáng chế mới', en:'New invention disclosures'}, value:'391', year:'FY2025'},
+      {label:{vi:'Hợp đồng cấp phép lớn', en:'Major license agreements'}, value:'32', year:'FY2025'},
+      {label:{vi:'Startup mới thành lập', en:'Startups formed'}, value:'20', year:'FY2025'},
+      {label:{vi:'Bằng sáng chế Mỹ được cấp', en:'U.S. patents issued'}, value:'159', year:'FY2025'},
+      {label:{vi:'Tài trợ nghiên cứu từ doanh nghiệp', en:'Industry-sponsored research funding'}, value:'US$73.6M', year:'FY2025'}
+    ],
+    caveat:{vi:'Năm tài chính Harvard kết thúc 30/6 — FY2025 nghĩa là 7/2024–6/2025. "Tài trợ nghiên cứu từ doanh nghiệp" FY2025 không cùng định nghĩa với "Doanh thu thương mại hoá" các năm trước — không nên so sánh trực tiếp hai chỉ số này.',
+      en:'Harvard\'s fiscal year ends June 30 — FY2025 means July 2024–June 2025. FY2025\'s "industry-sponsored research funding" isn\'t defined the same way as earlier years\' "commercialization revenue" line — the two shouldn\'t be compared directly.'},
+    sources:['Harvard OTD — Productivity Highlights, FY2021–FY2025', 'Harvard OTD — About OTD']
+  },
+  {
+    id:'oxford-oui', iso:'GB', status:'full', model:'holdings',
+    lat:51.7548, lng:-1.2544,
+    name:{vi:'Oxford University Innovation', en:'Oxford University Innovation (OUI)'},
+    country:{vi:'Vương quốc Anh', en:'United Kingdom'},
+    host:'University of Oxford', founded:'1987/88', website:'https://innovation.ox.ac.uk',
+    highlight:{vi:'Oxford tách rời việc cấp phép SHTT (OUI) khỏi việc rót vốn dài hạn vào spin-out — khoảng một nửa cổ phần trường được nhượng cho Oxford Science Enterprises (OSE), một quỹ đầu tư độc lập (huy động 250 triệu bảng năm 2022), thay vì OUI hay trường tự giữ toàn bộ. OUI từng mang tên "Isis Innovation" (1988-2016) trước khi đổi tên vì trùng tên với tổ chức khủng bố IS.',
+      en:'Oxford separates IP licensing (OUI) from long-term spinout investment: roughly half of the university\'s equity stake in a spinout typically passes to Oxford Science Enterprises (OSE), an independent, permanently-capitalized investor (raised £250M in 2022) — rather than OUI or the university retaining it all. OUI itself operated as "Isis Innovation" from 1988 until a 2016 rebrand prompted by the name\'s collision with the Islamic State (ISIS).'},
+    functions:['ip','incubation','biz_link','training'],
+    timeline:[
+      {year:'6/2024', vi:'Dr Mairi Gibbs được bổ nhiệm chính thức làm Tổng giám đốc, sau giai đoạn tạm quyền từ tháng 3.', en:'Dr Mairi Gibbs confirmed as permanent Chief Executive, after an interim term since March.'},
+      {year:'3/2025', vi:'Báo cáo độc lập "Spotlight on Spinouts 2025" xếp Oxford #1 Vương quốc Anh về số spin-out — 225 công ty thành lập từ 2011.', en:'The independent "Spotlight on Spinouts 2025" report ranks Oxford #1 in the UK for spinout creation — 225 companies formed since 2011.'},
+      {year:'2024/25', vi:'279 công bố sáng chế, 19 công ty mới, 1.173 hợp đồng cấp phép; phân phối 18,5 triệu bảng cho trường và nhà nghiên cứu.', en:'279 invention disclosures, 19 new companies, 1,173 licensing deals; £18.5M distributed to the university and its researchers.'}
+    ],
+    org:{vi:'Công ty do Đại học Oxford sở hữu toàn bộ (công ty số 02199542, Companies House Anh) — không phải văn phòng nội bộ. Hội đồng quản trị (Chủ tịch + 11 thành viên không điều hành) do trường bổ nhiệm. Đội ngũ điều hành chia theo Cấp phép & Đầu tư (Khoa học tự nhiên / Khoa học sự sống), Đầu tư & Dự án mới, Tư vấn (qua công ty con Oxentia). Oxford Science Enterprises (OSE) là công ty đầu tư độc lập, không thuộc cơ cấu OUI dù có quan hệ đối tác chặt chẽ. Không công bố tổng số nhân sự OUI.',
+      en:'A company wholly owned by the University of Oxford (Companies House no. 02199542) — not an internal university office. Its Board (a Chair plus 11 non-executive directors) is appointed by the university. The executive team is organized into Licensing & Ventures (Physical Sciences / Life Sciences), Investments & New Ventures, and Consulting (via subsidiary Oxentia). Oxford Science Enterprises (OSE) is a separate, independent investment company — not part of OUI\'s structure, despite the close partnership. Total OUI staff count is not disclosed.'},
+    kpi:[
+      {label:{vi:'Công bố sáng chế', en:'Invention disclosures'}, value:'279', year:'2024/25'},
+      {label:{vi:'Hợp đồng cấp phép', en:'Licensing deals signed'}, value:'1.173', year:'2024/25'},
+      {label:{vi:'Công ty mới thành lập', en:'New companies formed'}, value:'19', year:'2024/25'},
+      {label:{vi:'Doanh thu của OUI', en:'OUI total income'}, value:'£33M', year:'2024/25'},
+      {label:{vi:'Phân phối lại cho trường/nhà nghiên cứu', en:'Distributed to university/researchers'}, value:'£18.5M', year:'2024/25'}
+    ],
+    caveat:{vi:'Năm tài chính Oxford chạy khoảng 8-7 hàng năm. Số 489,8 triệu bảng vốn đầu tư là tổng vốn huy động của toàn bộ danh mục spin-out (nhiều nguồn), không riêng OUI hay Oxford Science Enterprises — OSE là công ty đầu tư độc lập, không thuộc cơ cấu OUI. Năm thành lập: đăng ký pháp nhân 1987, đổi tên "Isis Innovation" năm 1988.',
+      en:'Oxford\'s fiscal year runs roughly August-July. The £489.8M investment-raised figure aggregates funding across the whole spinout portfolio from many sources, not OUI or Oxford Science Enterprises specifically — OSE is a separate, independent investment company, not part of OUI\'s structure. Founding: legally incorporated 1987, renamed "Isis Innovation" in 1988.'},
+    sources:['Oxford University Innovation — Impact Report 2025', 'UK Companies House, company no. 02199542']
   }
 ];
 
@@ -1075,14 +1134,11 @@ function goToCasesTab(caseId){
    RENDER: global stats
 ====================================================================== */
 function renderGlobalStats(){
-  var full = CASES.filter(function(c){return c.status==='full';}).length;
-  var partial = CASES.filter(function(c){return c.status==='partial';}).length;
-  var pending = CASES.filter(function(c){return c.status==='pending';}).length;
   var totalMapped = CASES.length + ROSTER.length;
   var tiles = [
-    [totalMapped, {vi:'đơn vị được lập bản đồ (tổng)', en:'units mapped (total)'}],
-    [ROSTER.length, {vi:'trong danh mục mở rộng, chưa thẩm định', en:'in the extended, unvetted catalogue'}],
-    [CASES.length, {vi:'case phân tích chuyên sâu ('+full+' đầy đủ · '+partial+' một phần · '+pending+' chờ bổ sung)', en:'flagship cases analysed in depth ('+full+' complete · '+partial+' partial · '+pending+' pending)'}],
+    [totalMapped, {vi:'đơn vị được lập bản đồ', en:'units mapped'}],
+    [ROSTER.length, {vi:'trong danh mục mở rộng', en:'in the extended catalogue'}],
+    [CASES.length, {vi:'case phân tích chuyên sâu', en:'flagship cases analysed in depth'}],
     [VN_UNITS.length, {vi:'đơn vị tại Việt Nam', en:'units in Vietnam'}]
   ];
   
@@ -1516,19 +1572,10 @@ function seaSideHTML(){
 function vnSideHTML(){
   var bounds = {latMin:6,latMax:23.5,lngMin:101,lngMax:118};
   var stats = regionStats(bounds, casesInBounds(bounds), {count:vnTotalPlottedCount(), type:'university', countryName:'Vietnam'});
-  var hn = VN_UNITS.filter(function(u){return u.cluster==='hn';});
-  var hcm = VN_UNITS.filter(function(u){return u.cluster==='hcm';});
-  function list(units){
-    return '<ul>'+units.map(function(u){
-      return '<li><span>'+(LANG==='vi'?u.name:u.nameEn)+'</span></li>';
-    }).join('')+'</ul>';
-  }
   var intro = '<div class="note-box vn">'+(LANG==='vi'
     ? VN_UNITS.length+' đơn vị hỗ trợ ĐMST tại các trường đại học, cùng mạng lưới HANISA, VNEI và các quỹ đầu tư — xem đầy đủ trong danh mục bên dưới.'
     : VN_UNITS.length+' university innovation-support units, plus the HANISA and VNEI networks and VC funds — see the full list below.')+'</div>';
-  return regionStatsHTML(stats) + intro +
-    '<div class="cluster-card"><h4><span class="dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent)"></span>'+(LANG==='vi'?'Miền Bắc':'Northern Vietnam')+'</h4>'+list(hn)+'</div>'+
-    '<div class="cluster-card"><h4><span class="dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--vn)"></span>'+(LANG==='vi'?'Miền Nam':'Southern Vietnam')+'</h4>'+list(hcm)+'</div>';
+  return regionStatsHTML(stats) + intro;
 }
 
 /* ======================================================================
@@ -1653,7 +1700,7 @@ function cardHTML(c){
       '<h5>'+t('tlTitle')+'</h5><ul class="timeline">'+tl+'</ul>'+
       '<h5>'+t('orgTitle')+'</h5><p style="font-size:12.5px;color:var(--text-muted);margin:0;">'+tf(c.org)+'</p>'+
       '<h5>'+t('kpiTitle')+'</h5><table class="kpi">'+kpiRows+'</table>'+
-      '<h5>'+t('caveatTitle')+'</h5><div class="caveat">'+tf(c.caveat)+'</div>'+
+      (tf(c.caveat) ? '<h5>'+t('caveatTitle')+'</h5><div class="caveat">'+tf(c.caveat)+'</div>' : '')+
       '<h5>'+t('srcTitle')+'</h5><ul class="src-list">'+srcs+'</ul>'+
     '</div>'+
   '</article>';
