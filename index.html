@@ -132,6 +132,13 @@
     font-family:var(--font-mono); font-size:10.5px; letter-spacing:.05em; color:var(--screen-text-dim); pointer-events:none;
   }
   .screen .screen-label{position:absolute; top:12px; left:14px; z-index:5; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--screen-text-dim);}
+  .reset-view-btn{
+    position:absolute; top:8px; right:8px; z-index:6; width:28px; height:28px; border-radius:50%;
+    background:rgba(17,27,54,.75); border:1px solid var(--screen-border); color:var(--screen-text);
+    font-size:15px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .reset-view-btn:hover{background:rgba(17,27,54,.95); transform:rotate(-45deg);}
   #globeHost{width:100%; height:100%; min-height:340px; touch-action:none; cursor:grab;}
   .globe-fallback{height:100%; min-height:340px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:30px; text-align:center;}
   .globe-fallback p{color:var(--screen-text); font-size:14px; max-width:36ch; margin:0;}
@@ -314,6 +321,7 @@
       <div class="split">
         <div class="screen" id="globeScreen">
           <div id="globeHost"></div>
+          <button type="button" class="reset-view-btn" data-reset="globe" title="Đặt lại góc nhìn / Reset view">⟲</button>
           <span class="screen-hint" data-i18n="globeHint">kéo để xoay · chạm điểm sáng để xem case</span>
           <div class="globe-popover" id="globePop"></div>
           <div class="globe-hover-label" id="globeHoverLabel"></div>
@@ -332,7 +340,7 @@
         <span class="zoom-sub" data-i18n="secAsiaSub">lược đồ toạ độ</span>
       </div>
       <div class="split">
-        <div class="screen" id="screenAsia"><span class="screen-label" data-i18n="asiaBox">Vĩ độ 0–55°B · Kinh độ 60–140°Đ</span><svg id="mapAsia" class="coordmap-svg"></svg></div>
+        <div class="screen" id="screenAsia"><span class="screen-label" data-i18n="asiaBox">Vĩ độ 0–55°B · Kinh độ 60–140°Đ</span><button type="button" class="reset-view-btn" data-reset="asia" title="Đặt lại góc nhìn / Reset view">⟲</button><svg id="mapAsia" class="coordmap-svg"></svg></div>
         <div class="side-panel" id="asiaSide"></div>
       </div>
     </div>
@@ -344,7 +352,7 @@
         <span class="zoom-sub" data-i18n="secSEASub">lược đồ toạ độ</span>
       </div>
       <div class="split">
-        <div class="screen" id="screenSEA"><span class="screen-label" data-i18n="seaBox">Vĩ độ -10–25°B · Kinh độ 90–140°Đ</span><svg id="mapSEA" class="coordmap-svg"></svg></div>
+        <div class="screen" id="screenSEA"><span class="screen-label" data-i18n="seaBox">Vĩ độ -10–25°B · Kinh độ 90–140°Đ</span><button type="button" class="reset-view-btn" data-reset="sea" title="Đặt lại góc nhìn / Reset view">⟲</button><svg id="mapSEA" class="coordmap-svg"></svg></div>
         <div class="side-panel" id="seaSide"></div>
       </div>
     </div>
@@ -389,7 +397,7 @@
         <span class="zoom-sub" data-i18n="secVNSub">đơn vị hỗ trợ tại các trường đại học</span>
       </div>
       <div class="split">
-        <div class="screen" id="screenVN"><span class="screen-label" data-i18n="vnBox">Vĩ độ 8–23°B · Kinh độ 102–110°Đ</span><svg id="mapVN" class="coordmap-svg"></svg></div>
+        <div class="screen" id="screenVN"><span class="screen-label" data-i18n="vnBox">Vĩ độ 8–23°B · Kinh độ 102–110°Đ</span><button type="button" class="reset-view-btn" data-reset="vn" title="Đặt lại góc nhìn / Reset view">⟲</button><svg id="mapVN" class="coordmap-svg"></svg></div>
         <div class="side-panel" id="vnSide"></div>
       </div>
       <p class="unclassified-note" data-i18n="vnCaption">Vị trí trong mỗi cụm đã giãn nhẹ để dễ đọc trên lược đồ, không phản ánh khoảng cách thực giữa các đơn vị.</p>
@@ -1098,6 +1106,14 @@ function applyI18n(){
   renderRosterControls();
   renderRosterTable();
 }
+document.addEventListener('click', function(e){
+  var btn = e.target.closest && e.target.closest('.reset-view-btn');
+  if(!btn) return;
+  var which = btn.getAttribute('data-reset');
+  if(which==='globe'){ if(window.__globeReset) window.__globeReset(); return; }
+  var pz = window.__mapPanZoom && window.__mapPanZoom[which];
+  if(pz) pz.reset();
+});
 document.querySelectorAll('.langtoggle button').forEach(function(btn){
   btn.addEventListener('click', function(){
     LANG = btn.getAttribute('data-lang');
@@ -1392,7 +1408,7 @@ function renderCoordMaps(){
   var asiaPoints = asiaCase.map(function(c){
     return {lat:c.lat,lng:c.lng,label:tf(c.name),color:c.status==='pending'?'var(--screen-pending)':(MODEL_HEX[c.model]||'var(--screen-accent)'), onClick:function(){ showGlobePopoverFor(c); }};
   }).concat(rosterPointsInBounds(boundsAsia)).concat(vnUnitsAsSmallPoints()).concat(vnNetworkAsSmallPoints());
-  buildCoordMap(document.getElementById('mapAsia'), boundsAsia, asiaPoints, {step:10, land:COUNTRIES});
+  var asiaMap = buildCoordMap(document.getElementById('mapAsia'), boundsAsia, asiaPoints, {step:10, land:COUNTRIES});
   document.getElementById('asiaSide').innerHTML = asiaSideHTML();
 
   // SEA: technical-sketch coastlines + NUS + the 9 Vietnam units as individual
@@ -1420,6 +1436,12 @@ function renderCoordMaps(){
   drawIslandGroup(vnMap.content, VN_BOUNDS, VN_W,VN_H,28, PARACEL);
   drawIslandGroup(vnMap.content, VN_BOUNDS, VN_W,VN_H,28, SPRATLY);
   document.getElementById('vnSide').innerHTML = vnSideHTML();
+
+  // Reset-view buttons look up the CURRENT panZoom instance at click time
+  // (via this shared object) rather than a closure captured at render time,
+  // since renderCoordMaps() re-runs — and rebuilds fresh panZoom objects —
+  // on every language switch.
+  window.__mapPanZoom = {asia:asiaMap.panZoom, sea:seaMap.panZoom, vn:vnMap.panZoom};
 }
 function drawIslandGroup(target, bounds, w, h, pad, group){
   var xs=[],ys=[];
@@ -1805,6 +1827,10 @@ function initGlobe(){
   host.appendChild(renderer.domElement);
 
   var group = new THREE.Group(); scene.add(group);
+  window.__globeReset = function(){
+    group.rotation.set(0,0,0);
+    camera.fov = 42; camera.updateProjectionMatrix();
+  };
   var R = 2;
   // Build the globe texture from the real satellite-derived photo, with a translucent
   // red Vietnam overlay drawn on top. The photo loads from an embedded data URI (no
@@ -1814,7 +1840,10 @@ function initGlobe(){
   // colors as the 2D regional panels, so the globe and the flat maps read as
   // one consistent instrument rather than two different visual styles.
   function buildWorldTexture(){
-    var W=2048, H=1024;
+    // 4096x2048 (double the previous resolution) so coastlines stay
+    // reasonably crisp at the globe's ~20x FOV zoom instead of visibly
+    // blurring once the texture is magnified far past its native pixel size.
+    var W=4096, H=2048;
     var c=document.createElement('canvas'); c.width=W;c.height=H;
     var ctx=c.getContext('2d');
     ctx.fillStyle='#3E7FB0'; ctx.fillRect(0,0,W,H); // light ocean blue, not the near-black used elsewhere on the instrument screen
@@ -1834,11 +1863,14 @@ function initGlobe(){
         ctx.fillStyle = 'rgba('+fillRgb+','+fillAlpha+')';
         ctx.fill();
         ctx.strokeStyle = lc.stroke;
-        ctx.lineWidth = isVN ? 2.2 : 1.1;
+        ctx.lineWidth = isVN ? 4.4 : 2.2; // scaled up with the doubled canvas resolution
         ctx.stroke();
       });
     });
     var tex = new THREE.CanvasTexture(c);
+    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.magFilter = THREE.LinearFilter;
     tex.needsUpdate = true;
     return tex;
   }
@@ -1895,11 +1927,14 @@ function initGlobe(){
   // Roster layer: hundreds of small points from bulk web search (country-level
   // approximation), tinted by a rough keyword-based institution-type guess —
   // NOT a verified classification, see rosterTypeCaveat in the UI.
+  // Vivid, saturated hues (not the pastel tones used for land/UI fills
+  // elsewhere) — at globe scale, muted colors read as dull grey specks that
+  // don't stand out from the terrain even while pulsing.
   var TYPE_HEX = {
-    university: 'rgba(143,176,240,0.95)',
-    company: 'rgba(77,208,200,0.95)',
-    network: 'rgba(183,156,232,0.95)',
-    other: 'rgba(154,163,184,0.9)'
+    university: 'rgba(64,140,255,1)',
+    company: 'rgba(0,224,198,1)',
+    network: 'rgba(190,90,255,1)',
+    other: 'rgba(200,210,230,0.95)'
   };
   var texByType = {};
   Object.keys(TYPE_HEX).forEach(function(k){ texByType[k] = glowTexture(TYPE_HEX[k], true); });
@@ -1910,8 +1945,8 @@ function initGlobe(){
     var mat = new THREE.SpriteMaterial({map:texByType[rtype], transparent:true, opacity:0.85, depthWrite:false});
     var spr = new THREE.Sprite(mat);
     spr.position.copy(latLngToVec3(r[4], r[5], R*1.015));
-    spr.scale.set(0.026,0.026,1);
-    spr.userData = {roster:r, baseScale:0.026};
+    spr.scale.set(0.044,0.044,1);
+    spr.userData = {roster:r, baseScale:0.044};
     rosterGroup.add(spr); beacons.push(spr);
   });
   group.add(rosterGroup);
