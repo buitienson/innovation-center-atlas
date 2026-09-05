@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas Trung tâm ĐMST</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Literata:ital,opsz,wght@0,18..144,400;0,18..144,500;0,18..144,600;1,18..144,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ============ TOKENS ============ */
+  :root{
+    --bg:#F5F3EE;
+    --surface:#FFFFFF;
+    --surface-2:#ECE8DD;
+    --border:#DDD6C6;
+    --text:#1B2130;
+    --text-muted:#5B6478;
+    --accent:#B5691A;
+    --accent-ink:#7A4712;
+    --accent-soft:#F1DFC2;
+    --vn:#0F8F82;
+    --vn-soft:#D8F0EC;
+    --status-full:#0E9F6E;
+    --status-partial:#B8860F;
+    --status-pending:#8A93A6;
+    --shadow: 0 1px 2px rgba(30,24,10,.06), 0 8px 24px -12px rgba(30,24,10,.18);
+
+    /* always-dark "instrument screen" tokens — deliberate, independent of page theme */
+    --screen-bg:#080B12;
+    --screen-panel:#101623;
+    --screen-grid: rgba(232,236,244,0.09);
+    --screen-grid-strong: rgba(232,236,244,0.22);
+    --screen-text:#C7D0E0;
+    --screen-text-dim:#7C879C;
+    --screen-accent:#FFB454;
+    --screen-accent-dim: rgba(255,180,84,0.35);
+    --screen-vn:#5EEAD4;
+    --screen-vn-dim: rgba(94,234,212,0.35);
+    --screen-pending:#5B6478;
+
+    --font-display:'Be Vietnam Pro', system-ui, sans-serif;
+    --font-body:'Literata', Georgia, serif;
+    --font-mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B0E14; --surface:#131826; --surface-2:#1B2233; --border:#2A3346;
+      --text:#E8ECF4; --text-muted:#8A92A8;
+      --accent:#FFB454; --accent-ink:#FFD9A0; --accent-soft:rgba(255,180,84,0.14);
+      --vn:#5EEAD4; --vn-soft:rgba(94,234,212,0.14);
+      --status-full:#34D399; --status-partial:#FBBF24; --status-pending:#7C879C;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B0E14; --surface:#131826; --surface-2:#1B2233; --border:#2A3346;
+    --text:#E8ECF4; --text-muted:#8A92A8;
+    --accent:#FFB454; --accent-ink:#FFD9A0; --accent-soft:rgba(255,180,84,0.14);
+    --vn:#5EEAD4; --vn-soft:rgba(94,234,212,0.14);
+    --status-full:#34D399; --status-partial:#FBBF24; --status-pending:#7C879C;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;}
+  h1,h2,h3,h4,.disp{font-family:var(--font-display); text-wrap:balance; letter-spacing:-.01em;}
+  .mono{font-family:var(--font-mono);}
+  p{line-height:1.6; max-width:65ch;}
+  a{color:inherit;}
+  button{font-family:inherit;}
+  ::selection{background:var(--accent-soft); color:var(--text);}
+
+  .wrap{max-width:1280px; margin:0 auto; padding:0 20px;}
+  @media (min-width:900px){ .wrap{padding:0 40px;} }
+
+  /* ============ HEADER ============ */
+  header.top{
+    position:sticky; top:0; z-index:50;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px) saturate(1.1);
+    border-bottom:1px solid var(--border);
+  }
+  .top-inner{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0;}
+  .brand{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .brand .eyebrow{font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-ink); }
+  .brand h1{font-size:19px; margin:0; font-weight:700;}
+  .top-controls{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+  .langtoggle{display:flex; border:1px solid var(--border); border-radius:999px; overflow:hidden; background:var(--surface);}
+  .langtoggle button{border:0; background:transparent; padding:6px 12px; font-size:12px; font-family:var(--font-mono); font-weight:600; letter-spacing:.04em; color:var(--text-muted); cursor:pointer;}
+  .langtoggle button.active{background:var(--accent); color:#1B1206;}
+  .langtoggle button:focus-visible, .tabnav button:focus-visible, .chip:focus-visible, .beacon-dot:focus-visible {outline:2px solid var(--accent); outline-offset:2px;}
+
+  .tabnav{display:flex; gap:4px; border:1px solid var(--border); border-radius:999px; padding:3px; background:var(--surface);}
+  .tabnav button{border:0; background:transparent; padding:8px 16px; border-radius:999px; font-size:13px; font-weight:600; color:var(--text-muted); cursor:pointer; white-space:nowrap;}
+  .tabnav button.active{background:var(--surface-2); color:var(--text);}
+  @media (max-width:640px){
+    .top-inner{flex-wrap:wrap;}
+    .brand{flex-basis:100%;}
+    .brand h1{font-size:16px;}
+    .tabnav{order:3; width:100%; justify-content:center;}
+  }
+
+  .subhead{padding:14px 0 6px; border-bottom:1px solid var(--border);}
+  .subhead p{margin:0 0 12px; color:var(--text-muted); font-size:15px;}
+  .draft-badge{display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--status-partial); border:1px solid currentColor; padding:2px 8px; border-radius:999px; margin-bottom:10px;}
+
+  /* ============ TAB PANELS ============ */
+  .tabpanel{display:none;}
+  .tabpanel.active{display:block;}
+
+  .zoom-section{padding:38px 0; border-bottom:1px solid var(--border);}
+  .zoom-section:last-of-type{border-bottom:none;}
+  .zoom-head{display:flex; align-items:baseline; gap:12px; margin-bottom:16px;}
+  .zoom-num{font-family:var(--font-mono); font-size:13px; color:var(--accent-ink); border:1px solid var(--border); border-radius:999px; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .zoom-head h2{font-size:22px; margin:0;}
+  .zoom-head .zoom-sub{font-family:var(--font-mono); font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.08em;}
+
+  .split{display:grid; grid-template-columns:1.3fr 1fr; gap:24px; align-items:stretch;}
+  @media (max-width:880px){ .split{grid-template-columns:1fr;} }
+
+  /* the "instrument screen" — always dark regardless of page theme */
+  .screen{
+    background:var(--screen-bg); border-radius:14px; border:1px solid rgba(255,255,255,0.06);
+    position:relative; overflow:hidden; box-shadow: inset 0 0 60px rgba(0,0,0,.5), var(--shadow);
+    min-height:340px;
+  }
+  .screen .screen-hint{
+    position:absolute; left:0; right:0; bottom:10px; text-align:center; z-index:5;
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:.05em; color:var(--screen-text-dim); pointer-events:none;
+  }
+  .screen .screen-label{position:absolute; top:12px; left:14px; z-index:5; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--screen-text-dim);}
+  #globeHost{width:100%; height:100%; min-height:340px; touch-action:none; cursor:grab;}
+  #globeHost:active{cursor:grabbing;}
+  .coordmap-svg{width:100%; height:100%; display:block; min-height:300px;}
+  .coordmap-svg text{font-family:var(--font-mono); fill:var(--screen-text-dim); font-size:8.5px;}
+  .coordmap-svg .grid{stroke:var(--screen-grid);}
+  .coordmap-svg .grid.strong{stroke:var(--screen-grid-strong);}
+  .coordmap-svg .region-box{fill:none; stroke:var(--screen-grid-strong); stroke-dasharray:3 3;}
+  .beacon{cursor:pointer;}
+  .beacon .core{transition:r .15s ease;}
+  .beacon:hover .core, .beacon:focus .core{r:5.5;}
+  .beacon-label{font-family:var(--font-mono); font-size:9px; fill:var(--screen-text); pointer-events:none;}
+
+  .side-panel{display:flex; flex-direction:column; gap:14px;}
+  .stat-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .stat-tile{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow);}
+  .stat-tile .num{font-family:var(--font-mono); font-size:24px; font-weight:600; font-variant-numeric:tabular-nums; color:var(--text);}
+  .stat-tile .lbl{font-size:11.5px; color:var(--text-muted); margin-top:2px; line-height:1.3;}
+  .legend{display:flex; flex-wrap:wrap; gap:10px 16px; font-size:12px; color:var(--text-muted); background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:10px 14px;}
+  .legend .dot{display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; vertical-align:middle;}
+  .note-box{background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:0 12px 12px 0; padding:12px 14px; font-size:13.5px; color:var(--text-muted);}
+  .note-box.vn{border-left-color:var(--vn);}
+  .cluster-card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow);}
+  .cluster-card h4{margin:0 0 8px; font-size:13px; display:flex; align-items:center; gap:8px;}
+  .cluster-card ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:6px;}
+  .cluster-card li{font-size:12.5px; display:flex; justify-content:space-between; gap:8px; border-bottom:1px dashed var(--border); padding-bottom:6px;}
+  .cluster-card li:last-child{border-bottom:0; padding-bottom:0;}
+  .cluster-card .unit-status{font-family:var(--font-mono); font-size:10px; padding:1px 6px; border-radius:999px; white-space:nowrap;}
+  .st-full{background:color-mix(in srgb, var(--status-full) 18%, transparent); color:var(--status-full);}
+  .st-partial{background:color-mix(in srgb, var(--status-partial) 18%, transparent); color:var(--status-partial);}
+  .st-pending{background:color-mix(in srgb, var(--status-pending) 18%, transparent); color:var(--status-pending);}
+
+  .globe-popover{position:absolute; z-index:20; max-width:230px; background:var(--screen-panel); border:1px solid rgba(255,255,255,0.14); border-radius:10px; padding:12px 14px; box-shadow:0 12px 30px rgba(0,0,0,.5); color:var(--screen-text); font-size:12.5px; display:none;}
+  .globe-popover.show{display:block;}
+  .globe-popover h4{margin:0 0 4px; font-size:13px; color:#fff; font-family:var(--font-display);}
+  .globe-popover p{margin:0 0 8px; font-size:11.5px; color:var(--screen-text-dim); max-width:none;}
+  .globe-popover button{background:var(--screen-accent); color:#1B1206; border:0; border-radius:999px; padding:5px 12px; font-size:11px; font-weight:700; cursor:pointer;}
+
+  /* ============ TAB 2 : CASE CATALOGUE ============ */
+  .catalogue-head{padding:30px 0 6px;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px;}
+  .chip{border:1px solid var(--border); background:var(--surface); border-radius:999px; padding:7px 14px; font-size:12.5px; font-weight:600; color:var(--text-muted); cursor:pointer;}
+  .chip.active{background:var(--text); color:var(--bg); border-color:var(--text);}
+  .unclassified-note{font-size:12.5px; color:var(--text-muted); margin:10px 0 0;}
+
+  .card-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(min(260px,100%),1fr)); gap:16px; padding:22px 0 50px;}
+  .case-card{background:var(--surface); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column;}
+  .case-card .cc-top{padding:16px 18px 12px; display:flex; flex-direction:column; gap:8px;}
+  .cc-row1{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .iso-badge{font-family:var(--font-mono); font-size:10.5px; font-weight:600; letter-spacing:.04em; background:var(--surface-2); color:var(--text-muted); border-radius:6px; padding:2px 7px;}
+  .status-pill{font-family:var(--font-mono); font-size:10px; letter-spacing:.03em; padding:2px 8px; border-radius:999px; white-space:nowrap;}
+  .case-card h3{margin:0; font-size:17px;}
+  .case-card .host{font-size:12.5px; color:var(--text-muted); margin:0;}
+  .model-tag{display:inline-block; font-size:11px; font-weight:600; color:var(--accent-ink); background:var(--accent-soft); border-radius:6px; padding:2px 8px; width:fit-content;}
+  .highlight{font-family:var(--font-body); font-style:italic; font-size:13.5px; color:var(--text); margin:2px 0 0; line-height:1.5;}
+  .func-tags{display:flex; flex-wrap:wrap; gap:5px; padding:0 18px 14px;}
+  .func-tag{font-size:10.5px; background:var(--surface-2); color:var(--text-muted); border-radius:5px; padding:2px 7px;}
+  .cc-expand-btn{margin:0 18px 16px; align-self:flex-start; background:none; border:1px solid var(--border); color:var(--text); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; cursor:pointer;}
+  .cc-detail{display:none; border-top:1px solid var(--border); padding:16px 18px 20px; background:var(--surface-2);}
+  .cc-detail.open{display:block;}
+  .cc-detail h5{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); margin:14px 0 8px;}
+  .cc-detail h5:first-child{margin-top:0;}
+  .timeline{list-style:none; margin:0; padding:0; border-left:2px solid var(--border); }
+  .timeline li{position:relative; padding:0 0 10px 16px;}
+  .timeline li::before{content:''; position:absolute; left:-5px; top:4px; width:8px; height:8px; border-radius:50%; background:var(--accent);}
+  .timeline .yr{font-family:var(--font-mono); font-size:11px; color:var(--accent-ink); font-weight:600;}
+  .timeline .tx{font-size:12.5px; display:block; margin-top:1px;}
+  table.kpi{width:100%; border-collapse:collapse; font-size:12.5px;}
+  table.kpi td{padding:5px 0; border-bottom:1px dashed var(--border); vertical-align:top;}
+  table.kpi td.val{font-family:var(--font-mono); font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap; padding-left:10px; font-weight:600;}
+  table.kpi td.yr{font-family:var(--font-mono); color:var(--text-muted); font-size:10.5px; text-align:right; white-space:nowrap; padding-left:6px;}
+  .caveat{font-size:12px; color:var(--text-muted); background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-top:4px;}
+  .src-list{font-size:11.5px; color:var(--text-muted); margin:0; padding-left:16px;}
+  .src-list li{margin-bottom:3px;}
+
+  /* ============ TAB 3 : ROSTER ============ */
+  .roster-toolbar{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:14px 0 6px;}
+  .roster-input{border:1px solid var(--border); background:var(--surface); color:var(--text); border-radius:8px; padding:8px 12px; font-size:13px; font-family:inherit;}
+  #rosterSearch{flex:1 1 220px; min-width:160px;}
+  #rosterCountry{flex:0 0 auto;}
+  .roster-toggle{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text-muted); white-space:nowrap;}
+  .roster-count{font-family:var(--font-mono); font-size:11.5px; color:var(--text-muted); margin-left:auto;}
+  .roster-table-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:12px; margin:14px 0 50px; max-height:70vh; overflow-y:auto;}
+  table.roster-table{width:100%; border-collapse:collapse; font-size:13px; min-width:640px;}
+  table.roster-table thead th{position:sticky; top:0; background:var(--surface-2); text-align:left; padding:9px 12px; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); border-bottom:1px solid var(--border);}
+  table.roster-table td{padding:8px 12px; border-bottom:1px solid var(--border); vertical-align:top;}
+  table.roster-table tbody tr:hover{background:var(--surface-2);}
+  table.roster-table td.rc-host, table.roster-table td.rc-country{color:var(--text-muted); font-size:12.5px;}
+  table.roster-table td.rc-web a{color:var(--accent-ink); text-decoration:none; font-size:12px;}
+  table.roster-table td.rc-web a:hover{text-decoration:underline;}
+  table.roster-table td.rc-web span{color:var(--text-muted); font-size:12px;}
+
+  /* ============ FOOTER ============ */
+  footer{border-top:1px solid var(--border); padding:28px 0 40px; margin-top:10px;}
+  footer .foot-grid{display:grid; grid-template-columns:2fr 1fr; gap:24px;}
+  @media (max-width:700px){ footer .foot-grid{grid-template-columns:1fr;} }
+  footer h5{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); margin:0 0 10px;}
+  footer .src-list{columns:2; column-gap:24px;}
+  @media (max-width:520px){ footer .src-list{columns:1;} }
+  .version-line{font-family:var(--font-mono); font-size:11px; color:var(--text-muted); margin-top:14px; padding-top:14px; border-top:1px dashed var(--border);}
+
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms !important; transition-duration:.001ms !important;} }
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="wrap top-inner">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">ĐMST ĐẠI HỌC · TƯ LIỆU HỘI THẢO</span>
+      <h1 data-i18n="siteTitle">Atlas Trung tâm Nghiên cứu, Đổi mới sáng tạo</h1>
+    </div>
+    <div class="top-controls">
+      <div class="tabnav" role="tablist">
+        <button data-tab="global" class="active" data-i18n="tabGlobal">Bản đồ toàn cầu</button>
+        <button data-tab="cases" data-i18n="tabCases">Case điển hình</button>
+        <button data-tab="roster" data-i18n="tabRoster">Danh sách đầy đủ</button>
+      </div>
+      <div class="langtoggle">
+        <button data-lang="vi" class="active">VI</button>
+        <button data-lang="en">EN</button>
+      </div>
+    </div>
+  </div>
+  <div class="wrap subhead">
+    <span class="draft-badge" data-i18n="draftBadge">Bản nháp — v0.1</span>
+    <p data-i18n="subhead">Lược đồ các mô hình trung tâm nghiên cứu, đổi mới sáng tạo (TTO/holdings/mạng lưới) tại các đại học trên thế giới, dựng từ bộ nguồn của nhiệm vụ KHCN cấp Bộ "Phát triển trung tâm nghiên cứu, đổi mới sáng tạo trong các CSGDĐH thuộc Bộ Công Thương — mô hình đề xuất tại HaUI". Phục vụ Hội thảo giải pháp, Đại học Công nghiệp Hà Nội.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ================= TAB 1 : GLOBAL MAP ================= -->
+  <section id="panel-global" class="tabpanel active">
+
+    <div class="zoom-section" id="sec-globe">
+      <div class="zoom-head">
+        <span class="zoom-num">01</span>
+        <h2 data-i18n="secGlobalTitle">Toàn cầu</h2>
+        <span class="zoom-sub" data-i18n="secGlobalSub">7 điểm đang theo dõi</span>
+      </div>
+      <div class="split">
+        <div class="screen" id="globeScreen">
+          <span class="screen-label" data-i18n="screenGlobeLabel">Mô hình wireframe — không phải bản đồ vệ tinh</span>
+          <div id="globeHost"></div>
+          <span class="screen-hint" data-i18n="globeHint">kéo để xoay · chạm điểm sáng để xem case</span>
+          <div class="globe-popover" id="globePop"></div>
+        </div>
+        <div class="side-panel">
+          <div class="stat-grid" id="globalStats"></div>
+          <div class="legend">
+            <span><span class="dot" style="background:var(--accent)"></span><span data-i18n="legendIntl">Case quốc tế</span></span>
+            <span><span class="dot" style="background:var(--vn)"></span><span data-i18n="legendVN">Đơn vị khảo sát VN</span></span>
+            <span><span class="dot" style="background:var(--status-pending)"></span><span data-i18n="legendPending">Dữ liệu chờ bổ sung</span></span>
+          </div>
+          <div class="note-box" data-i18n="globalNote">Phần lớn case có dữ liệu sâu hiện tập trung ở Âu–Mỹ (5/6). Châu Á mới có 2 điểm — cần bổ sung thêm case Nhật/Hàn/Ấn nếu mở rộng CSDL.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="zoom-section" id="sec-asia">
+      <div class="zoom-head">
+        <span class="zoom-num">02</span>
+        <h2 data-i18n="secAsiaTitle">Châu Á</h2>
+        <span class="zoom-sub" data-i18n="secAsiaSub">lược đồ toạ độ</span>
+      </div>
+      <div class="split">
+        <div class="screen"><span class="screen-label" data-i18n="asiaBox">Vĩ độ 0–55°B · Kinh độ 60–140°Đ</span><svg id="mapAsia" class="coordmap-svg"></svg></div>
+        <div class="side-panel" id="asiaSide"></div>
+      </div>
+    </div>
+
+    <div class="zoom-section" id="sec-sea">
+      <div class="zoom-head">
+        <span class="zoom-num">03</span>
+        <h2 data-i18n="secSEATitle">Đông Nam Á</h2>
+        <span class="zoom-sub" data-i18n="secSEASub">lược đồ toạ độ</span>
+      </div>
+      <div class="split">
+        <div class="screen"><span class="screen-label" data-i18n="seaBox">Vĩ độ -10–25°B · Kinh độ 90–140°Đ</span><svg id="mapSEA" class="coordmap-svg"></svg></div>
+        <div class="side-panel" id="seaSide"></div>
+      </div>
+    </div>
+
+    <div class="zoom-section" id="sec-vn">
+      <div class="zoom-head">
+        <span class="zoom-num">04</span>
+        <h2 data-i18n="secVNTitle">Việt Nam</h2>
+        <span class="zoom-sub" data-i18n="secVNSub">9 đơn vị khảo sát thực địa 2026</span>
+      </div>
+      <div class="split">
+        <div class="screen"><span class="screen-label" data-i18n="vnBox">Vĩ độ 8–23°B · Kinh độ 102–110°Đ</span><svg id="mapVN" class="coordmap-svg"></svg></div>
+        <div class="side-panel" id="vnSide"></div>
+      </div>
+      <p class="unclassified-note" data-i18n="vnCaption">Vị trí trong mỗi cụm đã giãn nhẹ để dễ đọc trên lược đồ, không phản ánh khoảng cách thực giữa các đơn vị. Trạng thái khảo sát theo hồ sơ dự án tính đến 03/09/2026 — không phải dữ liệu theo thời gian thực.</p>
+    </div>
+
+  </section>
+
+  <!-- ================= TAB 2 : CASE CATALOGUE ================= -->
+  <section id="panel-cases" class="tabpanel">
+    <div class="catalogue-head">
+      <h2 data-i18n="catalogueTitle">Case điển hình theo mô hình quản trị</h2>
+      <p data-i18n="catalogueSub" style="color:var(--text-muted); font-size:14px; margin:6px 0 0;">Chọn một loại hình để xem các trung tâm tiêu biểu đã được xếp vào nhóm đó.</p>
+      <div class="chips" id="modelChips"></div>
+      <p class="unclassified-note" data-i18n="mitNote">MIT xuất hiện trên bản đồ toàn cầu (Tab "Bản đồ toàn cầu") minh hoạ hệ sinh thái đào tạo khởi nghiệp, nhưng chưa đủ bằng chứng về cơ cấu quản trị để xếp vào một loại hình cụ thể ở đây.</p>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+  </section>
+
+  <!-- ================= TAB 3 : FULL ROSTER ================= -->
+  <section id="panel-roster" class="tabpanel">
+    <div class="catalogue-head">
+      <h2 data-i18n="rosterTitle">Danh sách đầy đủ — trung tâm CGCN/ĐMST đại học</h2>
+      <p data-i18n="rosterSub" style="color:var(--text-muted); font-size:14px; margin:6px 0 0;">Danh sách rộng, nông — chỉ tên, đại học/quốc gia, website nếu tìm được. Chưa qua thẩm định từng mục như 6 case điển hình ở tab trên.</p>
+      <div class="roster-toolbar">
+        <input type="text" id="rosterSearch" class="roster-input" data-i18n-ph="rosterSearchPh">
+        <select id="rosterCountry" class="roster-input"></select>
+        <label class="roster-toggle"><input type="checkbox" id="rosterGlobeToggle" checked> <span data-i18n="rosterShowGlobe">Hiện trên quả cầu (tab Bản đồ toàn cầu)</span></label>
+        <span class="roster-count" id="rosterCount"></span>
+      </div>
+      <p class="unclassified-note" data-i18n="rosterCaveat">Tổng hợp từ tìm kiếm hàng loạt (danh bạ hội TTO, xếp hạng vườn ươm, top danh sách bằng sáng chế...) — CHƯA xác minh từng mục, nhiều tên/website còn thiếu hoặc có thể lỗi thời. Vị trí trên quả cầu chỉ đúng ở mức QUỐC GIA (có giãn nhẹ để nhìn rõ), không phải toạ độ chính xác của từng đơn vị.</p>
+    </div>
+    <div class="roster-table-wrap">
+      <table class="roster-table">
+        <thead><tr>
+          <th data-i18n="rosterColName">Tên đơn vị</th>
+          <th data-i18n="rosterColHost">Đại học / mạng lưới</th>
+          <th data-i18n="rosterColCountry">Quốc gia</th>
+          <th data-i18n="rosterColWeb">Website</th>
+        </tr></thead>
+        <tbody id="rosterBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <div class="foot-grid">
+    <div>
+      <h5 data-i18n="footSourcesTitle">Nguồn dữ liệu</h5>
+      <ul class="src-list" id="footSources"></ul>
+    </div>
+    <div>
+      <h5 data-i18n="footAboutTitle">Về trang này</h5>
+      <p style="font-size:12.5px; color:var(--text-muted); margin:0;" data-i18n="footAbout">Dựng từ tài liệu thứ cấp công khai (báo cáo thường niên, case học thuật, brochure) trong kho nguồn của nhiệm vụ. Không dùng để trích dẫn chính thức — đối chiếu văn bản gốc trước khi trích số liệu ra ngoài.</p>
+    </div>
+  </div>
+  <div class="version-line" id="versionLine"></div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+"use strict";
+
+/* ======================================================================
+   I18N
+====================================================================== */
+var STR = {
+  eyebrow: {vi:"ĐMST ĐẠI HỌC · TƯ LIỆU HỘI THẢO", en:"UNIVERSITY INNOVATION · CONFERENCE MATERIAL"},
+  siteTitle: {vi:"Atlas Trung tâm Nghiên cứu, Đổi mới sáng tạo", en:"Atlas of University Innovation Centers"},
+  tabGlobal: {vi:"Bản đồ toàn cầu", en:"Global Atlas"},
+  tabCases: {vi:"Case điển hình", en:"Typical Cases"},
+  draftBadge: {vi:"Bản nháp — v0.1", en:"Draft — v0.1"},
+  subhead: {vi:'Lược đồ các mô hình trung tâm nghiên cứu, đổi mới sáng tạo (TTO/holdings/mạng lưới) tại các đại học trên thế giới, dựng từ bộ nguồn của nhiệm vụ KHCN cấp Bộ "Phát triển trung tâm nghiên cứu, đổi mới sáng tạo trong các CSGDĐH thuộc Bộ Công Thương — mô hình đề xuất tại HaUI". Phục vụ Hội thảo giải pháp, Đại học Công nghiệp Hà Nội.',
+    en:'A schematic of university research & innovation center models (TTO / holdings / network) worldwide, built from the source library of the ministry-level task "Developing research & innovation centers in higher-education institutions under MOIT — a proposed model for HaUI". Prepared for the Solutions Workshop, Hanoi University of Industry.'},
+  secGlobalTitle:{vi:"Toàn cầu", en:"Global"},
+  secGlobalSub:{vi:"7 điểm đang theo dõi", en:"7 tracked locations"},
+  screenGlobeLabel:{vi:"Lược đồ lục địa đơn giản hoá — không phải bản đồ vệ tinh", en:"Simplified continent schematic — not a satellite map"},
+  globeHint:{vi:"kéo để xoay · chạm điểm sáng để xem case", en:"drag to rotate · tap a beacon to view the case"},
+  legendIntl:{vi:"Case quốc tế", en:"International case"},
+  legendVN:{vi:"Đơn vị khảo sát VN", en:"VN survey unit"},
+  legendPending:{vi:"Dữ liệu chờ bổ sung", en:"Data pending"},
+  globalNote:{vi:"Phần lớn case có dữ liệu sâu hiện tập trung ở Âu–Mỹ (5/6). Châu Á mới có 2 điểm — cần bổ sung thêm case Nhật/Hàn/Ấn nếu mở rộng CSDL.",
+    en:"Most in-depth cases currently sit in Europe/US (5 of 6). Asia has only 2 points so far — Japan/Korea/India cases would need adding if the database expands."},
+  secAsiaTitle:{vi:"Châu Á", en:"Asia"}, secAsiaSub:{vi:"lược đồ toạ độ", en:"coordinate schematic"},
+  asiaBox:{vi:"Vĩ độ 0–55°B · Kinh độ 60–140°Đ", en:"Lat 0–55°N · Lon 60–140°E"},
+  secSEATitle:{vi:"Đông Nam Á", en:"Southeast Asia"}, secSEASub:{vi:"lược đồ toạ độ", en:"coordinate schematic"},
+  seaBox:{vi:"Vĩ độ -10–25°B · Kinh độ 90–140°Đ", en:"Lat -10–25°N · Lon 90–140°E"},
+  secVNTitle:{vi:"Việt Nam", en:"Vietnam"}, secVNSub:{vi:"9 đơn vị khảo sát thực địa 2026", en:"9 field-survey units, 2026"},
+  vnBox:{vi:"Vĩ độ 6–23,5°B · Kinh độ 101–118°Đ — gồm Hoàng Sa, Trường Sa", en:"Lat 6–23.5°N · Lon 101–118°E — includes the Paracels & Spratlys"},
+  vnCaption:{vi:"Vị trí trong mỗi cụm đã giãn nhẹ để dễ đọc trên lược đồ, không phản ánh khoảng cách thực giữa các đơn vị. Hai quần đảo Hoàng Sa, Trường Sa thể hiện theo chủ quyền Việt Nam; vị trí từng chấm trong quần đảo mang tính minh hoạ khu vực, không phải toạ độ từng đảo cụ thể. Trạng thái khảo sát theo hồ sơ dự án tính đến 03/09/2026 — không phải dữ liệu theo thời gian thực.",
+    en:"Positions within each cluster are lightly spread out for readability and do not reflect real distances. The Paracel and Spratly Islands are shown as Vietnamese sovereign territory; individual dots within each archipelago are illustrative of the area, not exact islet coordinates. Survey status reflects project records as of 2026-09-03 — not a live feed."},
+  catalogueTitle:{vi:"Case điển hình theo mô hình quản trị", en:"Typical cases by governance model"},
+  catalogueSub:{vi:"Chọn một loại hình để xem các trung tâm tiêu biểu đã được xếp vào nhóm đó.", en:"Pick a model type to see the centers grouped under it."},
+  mitNote:{vi:'MIT xuất hiện trên bản đồ toàn cầu (Tab "Bản đồ toàn cầu") minh hoạ hệ sinh thái đào tạo khởi nghiệp, nhưng chưa đủ bằng chứng về cơ cấu quản trị để xếp vào một loại hình cụ thể ở đây.',
+    en:'MIT appears on the Global Atlas tab to illustrate an entrepreneurship-training ecosystem, but there is not yet enough governance evidence to place it under one model here.'},
+  footSourcesTitle:{vi:"Nguồn dữ liệu", en:"Data sources"},
+  footAboutTitle:{vi:"Về trang này", en:"About this page"},
+  footAbout:{vi:"Dựng từ tài liệu thứ cấp công khai (báo cáo thường niên, case học thuật, brochure) trong kho nguồn của nhiệm vụ. Không dùng để trích dẫn chính thức — đối chiếu văn bản gốc trước khi trích số liệu ra ngoài.",
+    en:"Built from public secondary sources (annual reports, academic case studies, brochures) in the task's source library. Not for formal citation — verify against original documents before quoting figures elsewhere."},
+  chipAll:{vi:"Tất cả", en:"All"},
+  modelTTO:{vi:"TTO nội bộ trong trường", en:"Internal TTO"},
+  modelHoldings:{vi:"Holdings tách pháp nhân", en:"Separate holdings company"},
+  modelNetwork:{vi:"Mạng lưới / nền tảng mở", en:"Open network / platform"},
+  modelHybrid:{vi:"Mô hình lai", en:"Hybrid model"},
+  statusFull:{vi:"Đầy đủ", en:"Complete"},
+  statusPartial:{vi:"Một phần", en:"Partial"},
+  statusPending:{vi:"Chờ bổ sung", en:"Pending"},
+  expand:{vi:"Xem chi tiết", en:"View detail"},
+  collapse:{vi:"Thu gọn", en:"Collapse"},
+  tlTitle:{vi:"Mốc phát triển", en:"Milestones"},
+  orgTitle:{vi:"Cơ cấu tổ chức", en:"Organization"},
+  fnTitle:{vi:"Chức năng", en:"Functions"},
+  kpiTitle:{vi:"Chỉ số nổi bật", en:"Key figures"},
+  caveatTitle:{vi:"Giới hạn dữ liệu", en:"Data limitations"},
+  srcTitle:{vi:"Nguồn", en:"Sources"},
+  jumpBtn:{vi:"Xem case →", en:"View case →"},
+  fnKey:{
+    rnd_ttc:{vi:"NCKH→CGCN", en:"R&D → tech transfer"},
+    ip:{vi:"SHTT / cấp bằng sáng chế", en:"IP / patent licensing"},
+    incubation:{vi:"Ươm tạo khởi nghiệp", en:"Startup incubation"},
+    biz_link:{vi:"Kết nối doanh nghiệp", en:"Industry liaison"},
+    training:{vi:"Đào tạo ĐMST", en:"Innovation training"},
+    vc:{vi:"Đầu tư vốn mạo hiểm", en:"Venture investment"},
+    space:{vi:"Không gian / hạ tầng", en:"Space / facilities"}
+  },
+  tabRoster:{vi:"Danh sách đầy đủ", en:"Full roster"},
+  rosterTitle:{vi:"Danh sách đầy đủ — trung tâm CGCN/ĐMST đại học", en:"Full roster — university tech-transfer/innovation centers"},
+  rosterSub:{vi:"Danh sách rộng, nông — chỉ tên, đại học/quốc gia, website nếu tìm được. Chưa qua thẩm định từng mục như 6 case điển hình ở tab trên.",
+    en:"A broad, shallow list — name, host university/country, website where found. Not individually vetted the way the 6 detailed cases on the other tab are."},
+  rosterSearchPh:{vi:"Tìm theo tên, đại học, quốc gia...", en:"Search by name, university, country..."},
+  rosterShowGlobe:{vi:"Hiện trên quả cầu (tab Bản đồ toàn cầu)", en:"Show on the globe (Global Atlas tab)"},
+  rosterCaveat:{vi:"Tổng hợp từ tìm kiếm hàng loạt (danh bạ hội TTO, xếp hạng vườn ươm, top danh sách bằng sáng chế...) — CHƯA xác minh từng mục, nhiều tên/website còn thiếu hoặc có thể lỗi thời. Vị trí trên quả cầu chỉ đúng ở mức QUỐC GIA (có giãn nhẹ để nhìn rõ), không phải toạ độ chính xác của từng đơn vị.",
+    en:"Compiled from bulk searches (TTO association directories, incubator rankings, patent top-lists...) — NOT individually verified; many names/websites are missing or may be outdated. Globe positions are only accurate at the COUNTRY level (lightly spread out for visibility), not each unit's real coordinates."},
+  rosterColName:{vi:"Tên đơn vị", en:"Unit name"}, rosterColHost:{vi:"Đại học / mạng lưới", en:"University / network"},
+  rosterColCountry:{vi:"Quốc gia", en:"Country"}, rosterColWeb:{vi:"Website", en:"Website"},
+  rosterAllCountries:{vi:"Tất cả quốc gia", en:"All countries"},
+  rosterCountLabel:{vi:" mục", en:" entries"},
+  rosterNoWebsite:{vi:"chưa có", en:"none found"}
+};
+var LANG = (function(){ try{ return localStorage.getItem('ica_lang') || 'vi'; }catch(e){ return 'vi'; } })();
+function t(key){ var e = STR[key]; if(!e) return key; return e[LANG] || e.vi; }
+function tf(field){ return field ? (field[LANG] || field.vi) : ''; }
+
+/* ======================================================================
+   DATA — international cases
+====================================================================== */
+var CASES = [
+  {
+    id:'stanford-otl', iso:'US', status:'full', model:'tto',
+    lat:37.4275, lng:-122.1697,
+    name:{vi:'Stanford Office of Technology Licensing', en:'Stanford Office of Technology Licensing (OTL)'},
+    country:{vi:'Hoa Kỳ', en:'United States'},
+    host:'Stanford University', founded:'—',
+    highlight:{vi:'Vận hành song song hai nhánh: cấp phép IP truyền thống và Industrial Contracts Office (ICO) chuyên hợp đồng công nghiệp — chỉ 13/968 công nghệ nhóm cao nhất đã chiếm khoảng 64% tổng doanh thu bản quyền.',
+      en:'Runs two parallel arms — traditional IP licensing and an Industrial Contracts Office (ICO) for industry agreements. Just 13 of 968 income-generating technologies accounted for roughly 64% of total royalty income.'},
+    functions:['rnd_ttc','ip','incubation','biz_link'],
+    timeline:[
+      {year:'2024', vi:'Gia hạn liên minh chiến lược với Parker Institute for Cancer Immunotherapy (PICI): 90 sáng chế đang quản lý, 18 đã cấp phép ra công ty, 10 startup.', en:'Renewed the Parker Institute for Cancer Immunotherapy (PICI) alliance: 90 active patents managed, 18 licensed to companies, 10 startups.'},
+      {year:'2024', vi:'High Impact Technology (HIT) Fund tuyển cohort thứ 4, luỹ kế 45 đội, 128 nhà nghiên cứu.', en:'High Impact Technology (HIT) Fund enrolled its 4th cohort — 45 teams and 128 researchers to date.'},
+      {year:'11/2024', vi:'Bổ nhiệm Giám đốc mới cho Industrial Contracts Office (ICO).', en:'Appointed a new Director for the Industrial Contracts Office (ICO).'}
+    ],
+    org:{vi:'Văn phòng trực thuộc trường (không tách pháp nhân), đứng đầu là Associate Vice Provost, OTL, nằm trong khối Vice Provost and Dean of Research.',
+      en:'A university office (not a separate legal entity), headed by the Associate Vice Provost, OTL, under the Vice Provost and Dean of Research.'},
+    kpi:[
+      {label:{vi:'Công nghệ mới được đánh giá', en:'New technologies evaluated'}, value:'541', year:'FY2024'},
+      {label:{vi:'Tổng thu bản quyền + cổ phần', en:'Total royalty + equity income'}, value:'US$68.6M', year:'FY2024'},
+      {label:{vi:'Thoả thuận cấp phép đã ký', en:'Licensing agreements signed'}, value:'114', year:'FY2024'},
+      {label:{vi:'Startup mới thành lập', en:'New startups formed'}, value:'23', year:'FY2024'},
+      {label:{vi:'Tài trợ nghiên cứu qua ICO', en:'Sponsored research via ICO'}, value:'US$80M', year:'FY2024'}
+    ],
+    caveat:{vi:'Năm tài chính Stanford kết thúc 31/8 — không phải năm dương lịch, cần lưu ý khi so sánh case khác. Không có trong nguồn: năm thành lập, sơ đồ tổ chức chính thức.',
+      en:'Stanford\'s fiscal year ends Aug 31 — not a calendar year; keep this in mind when comparing to other cases. Not in source: founding year, an official org chart.'},
+    sources:['Stanford OTL Annual Report 2024']
+  },
+  {
+    id:'cambridge-enterprise', iso:'UK', status:'partial', model:'holdings',
+    lat:52.2043, lng:0.1218,
+    name:{vi:'Cambridge Enterprise', en:'Cambridge Enterprise'},
+    country:{vi:'Vương quốc Anh', en:'United Kingdom'},
+    host:'University of Cambridge', founded:'—',
+    highlight:{vi:'Kết hợp CGCN/SHTT truyền thống với một quỹ đầu tư mạo hiểm riêng (Enterprise Fund I–X) và hạ tầng ươm tạo (START, SYNC, ideaSpace) trong cùng một pháp nhân.',
+      en:'Combines traditional IP/tech-transfer work with its own venture fund family (Enterprise Fund I–X) and incubation infrastructure (START, SYNC, ideaSpace) inside one entity.'},
+    functions:['rnd_ttc','ip','incubation','biz_link','training','vc','space'],
+    timeline:[
+      {year:'2024', vi:'Ra mắt Enterprise Fund X (với Parkwalk Advisors); hoàn thành khoá đầu chương trình tăng tốc START với 11 công ty; ra mắt chương trình ghép đồng sáng lập SYNC.', en:'Launched Enterprise Fund X (with Parkwalk Advisors); completed the first START accelerator cohort (11 companies); launched the SYNC co-founder matching programme.'},
+      {year:'11/2024', vi:'Bổ nhiệm Tổng giám đốc mới, Dr Jim Glasheen.', en:'Appointed a new Chief Executive, Dr Jim Glasheen.'},
+      {year:'02/2024', vi:'Khai trương không gian startup mới tại Cambridge West cùng ideaSpace.', en:'Opened a new startup space at Cambridge West with ideaSpace.'}
+    ],
+    org:{vi:'Công ty do University of Cambridge sở hữu — đây là hiểu biết phổ biến/công khai, nhưng KHÔNG xác nhận được trực tiếp từ file nguồn vì đúng mục "Governance and structure" (tr.58-60) đã mất do lỗi file PDF. Cần đối chiếu bản gốc trước khi dùng chính thức.',
+      en:'Widely known publicly as a company wholly owned by the University of Cambridge — but this could NOT be confirmed directly from the source file, since the exact "Governance and structure" section (p.58-60) was lost to file corruption. Verify against the original before formal use.'},
+    kpi:[
+      {label:{vi:'Phân phối lại cho Đại học/khoa/nhà NC', en:'Distributed to university/dept/researchers'}, value:'£12.6M', year:'2023–24'},
+      {label:{vi:'Đơn đăng ký sáng chế', en:'Patent applications'}, value:'469', year:'2023–24'},
+      {label:{vi:'Hợp đồng cấp phép', en:'Licences granted'}, value:'778', year:'2023–24'},
+      {label:{vi:'Công ty spin-out mới', en:'New spin-outs'}, value:'25', year:'2023–24'},
+      {label:{vi:'Danh mục Enterprise Fund (luỹ kế)', en:'Enterprise Fund portfolio (cumulative)'}, value:'60 cty · >£1B', year:'đến 2024'}
+    ],
+    caveat:{vi:'File PDF nguồn bị hỏng (tải về chỉ còn ~1/4 dung lượng gốc) — mất toàn bộ nội dung từ khoảng trang 14 trở đi, bao gồm đúng mục Governance and structure. Số liệu KPI ở đây lấy từ phần Lời nói đầu (còn đọc được); mô hình quản trị "holdings" ghi theo hiểu biết công khai, cần xác nhận lại qua bản PDF gốc lành lặn.',
+      en:'The source PDF is corrupted (downloaded at roughly a quarter of its original size) — everything from about page 14 onward is missing, including the Governance and structure section itself. The KPIs here come from the (intact) foreword; the "holdings" classification rests on public knowledge and needs re-confirming against an intact copy of the PDF.'},
+    sources:['Cambridge Enterprise Annual Review 2023–24 (bản PDF bị lỗi, chỉ đọc được phần đầu)']
+  },
+  {
+    id:'ku-leuven-lrd', iso:'BE', status:'full', model:'tto',
+    lat:50.8798, lng:4.7005,
+    name:{vi:'KU Leuven Research & Development (LRD)', en:'KU Leuven Research & Development (LRD)'},
+    country:{vi:'Bỉ', en:'Belgium'},
+    host:'KU Leuven', founded:'1972',
+    highlight:{vi:'Một trong những TTO ra đời sớm nhất châu Âu (1972); giữ thu nhập CGCN lại trong từng "LRD division" theo nhóm nghiên cứu thay vì gom về ngân sách trường — một cơ chế chia sẻ lợi ích mạnh, hiếm gặp ở mô hình tập trung.',
+      en:'One of Europe\'s earliest TTOs (1972); it keeps tech-transfer income inside each research-group-based "LRD division" rather than pooling it into central university funds — a strong benefit-sharing mechanism rarely seen in centralised models.'},
+    functions:['rnd_ttc','ip','incubation','biz_link','training','vc','space'],
+    timeline:[
+      {year:'1972', vi:'Thành lập LRD, trở thành "nhiệm vụ cốt lõi thứ ba" của trường bên cạnh đào tạo và nghiên cứu.', en:'LRD founded, becoming the university\'s "third core mission" alongside teaching and research.'},
+      {year:'1997/2002', vi:'Thành lập Gemma Frisius Fund (GFF) và GFF II — quỹ vốn mồi cho spin-off; hai quỹ hợp nhất cuối 2009.', en:'Gemma Frisius Fund (GFF) and GFF II launched as seed-capital vehicles for spin-offs; the two merged at the end of 2009.'},
+      {year:'2021', vi:'149 spin-off công nghệ cao, hơn 7.000 lao động trực tiếp; thành viên duy nhất ở lục địa châu Âu trong mạng lưới TenU (10 TTO hàng đầu thế giới).', en:'149 high-tech spin-offs, 7,000+ direct jobs; the only continental-European member of TenU, a network of 10 leading world TTOs.'}
+    ],
+    org:{vi:'Đơn vị kinh doanh tự chủ (autonomous business unit) trong trường, không xác nhận được là pháp nhân tách biệt kiểu công ty. Gồm 4 mảng (~98 người): Hợp tác nghiên cứu, Sở hữu trí tuệ, Spin-off & ĐMST, Tài chính-Nhân sự — cộng thêm các "LRD division" ảo theo từng nhóm nghiên cứu.',
+      en:'An autonomous business unit inside the university — not confirmed as a separate corporate legal entity. Four functional teams (~98 people): Research Collaboration, IP, Spin-off & Innovation, Finance/HR — plus virtual "LRD divisions" organised around individual research groups.'},
+    kpi:[
+      {label:{vi:'Thoả thuận hợp tác nghiên cứu mới', en:'New research-collaboration agreements'}, value:'2.078', year:'2017'},
+      {label:{vi:'Doanh thu cấp phép (license income)', en:'License income'}, value:'€72M', year:'2017'},
+      {label:{vi:'Spin-off đã thành lập / còn hoạt động', en:'Spin-offs founded / still active'}, value:'124 / 99', year:'2017'},
+      {label:{vi:'Spin-off công nghệ cao / lao động', en:'High-tech spin-offs / jobs'}, value:'149 / 7.000+', year:'2021'},
+      {label:{vi:'Vốn GFF đã giải ngân / số spin-off', en:'GFF capital deployed / spin-offs'}, value:'€45.6M / 69', year:'2021'}
+    ],
+    caveat:{vi:'Hai nguồn có độ trễ dữ liệu khác nhau (2017 và 2021) — không cộng dồn. Không xác nhận được tư cách pháp nhân độc lập của LRD dù thư mục nguồn gọi chung là "Uni Holdings".',
+      en:'The two sources are dated differently (2017 and 2021) — figures should not be summed together. LRD\'s status as a separate legal entity could not be confirmed, even though the source folder groups it under "Uni Holdings".'},
+    sources:['KU Leuven R&D — trình bày tại Hà Nội (2018, số liệu 2017)', 'HEInnovate — KU Leuven LRD case study (2023)']
+  },
+  {
+    id:'lund-holdings', iso:'SE', status:'full', model:'hybrid',
+    lat:55.7047, lng:13.1910,
+    name:{vi:'LU Innovation / LU Holding AB', en:'LU Innovation / LU Holding AB'},
+    country:{vi:'Thuỵ Điển', en:'Sweden'},
+    host:'Lund University', founded:'1999',
+    highlight:{vi:'Tách riêng chức năng đầu tư vốn cổ phần thành một pháp nhân độc lập (LU Holding AB, từ 1999) vận hành song song đơn vị hỗ trợ nội bộ (LU Innovation) — một trong những case tiên phong ở châu Âu theo mô hình lai này.',
+      en:'Splits equity investment into a separate legal entity (LU Holding AB, since 1999) running alongside an internal support unit (LU Innovation) — one of Europe\'s pioneering cases of this hybrid model.'},
+    functions:['rnd_ttc','ip','incubation','biz_link','training','vc'],
+    timeline:[
+      {year:'1999', vi:'LU Holding AB bắt đầu đầu tư vốn cổ phần vào các spin-off từ nghiên cứu.', en:'LU Holding AB began taking equity stakes in research spin-offs.'},
+      {year:'2001', vi:'VentureLab thành lập, hỗ trợ khởi nghiệp sinh viên.', en:'VentureLab founded to support student entrepreneurship.'},
+      {year:'2016', vi:'VentureLab chính thức sáp nhập vào LU Innovation.', en:'VentureLab formally merged into LU Innovation.'}
+    ],
+    org:{vi:'Hai lớp: LU Innovation (đơn vị nội bộ của trường) + LU Holding AB (công ty cổ phần Thuỵ Điển, do trường sở hữu, Hội đồng quản trị riêng) chuyên đầu tư vốn cổ phần.',
+      en:'Two layers: LU Innovation (an internal university unit) and LU Holding AB (a Swedish joint-stock company, university-owned, with its own board) dedicated to equity investment.'},
+    kpi:[
+      {label:{vi:'Ý tưởng mới (giảng viên + sinh viên)', en:'New ideas (faculty + student)'}, value:'125 + 220', year:'2016'},
+      {label:{vi:'Công ty được thành lập', en:'Companies formed'}, value:'20', year:'2016'},
+      {label:{vi:'LU Holding AB đã đầu tư (luỹ kế) / hiện là cổ đông', en:'LU Holding AB invested to date / current stakes'}, value:'86 / 46 cty', year:'đến 2016'},
+      {label:{vi:'Việc làm tích luỹ tại DN danh mục', en:'Cumulative jobs at portfolio firms'}, value:'~3.400', year:'1999–2015'},
+      {label:{vi:'Đóng góp thuế tích luỹ', en:'Cumulative tax contribution'}, value:'>1 tỷ SEK', year:'1999–2015'}
+    ],
+    caveat:{vi:'Số liệu chủ yếu từ báo cáo 2016 — khá cũ, cần bản cập nhật gần đây hơn trước khi dùng để so sánh KPI hiện tại.',
+      en:'Figures come mostly from a 2016 report — fairly dated; a more recent update is needed before comparing against current KPIs.'},
+    sources:['LU Innovation — "The Year in Brief" 2016']
+  },
+  {
+    id:'tsinghua-holdings', iso:'CN', status:'full', model:'holdings',
+    lat:39.9996, lng:116.3264,
+    name:{vi:'Tsinghua Holdings', en:'Tsinghua Holdings'},
+    country:{vi:'Trung Quốc', en:'China'},
+    host:'Tsinghua University', founded:'2003',
+    highlight:{vi:'Tự nhận là "doanh nghiệp lớn nhất thế giới do một đại học sở hữu"; minh chứng qua khả năng thoái vốn hoàn toàn khỏi một công ty thành viên lớn (Tsinghua Unigroup, từ 51% năm 2010 xuống 0% năm 2022) khi công ty đó khủng hoảng, mà không ảnh hưởng tới Holdings hay trường.',
+      en:'Describes itself as "the biggest university-owned enterprise in the world"; illustrated by its ability to fully divest from a major subsidiary (Tsinghua Unigroup, from 51% in 2010 to 0% in 2022) once that company hit crisis, without affecting the Holdings or the university.'},
+    functions:['rnd_ttc','ip','incubation','biz_link','vc','space'],
+    timeline:[
+      {year:'1988', vi:'Tiền thân: Tsinghua University Science and Technology Development Corporation.', en:'Predecessor entity: Tsinghua University Science and Technology Development Corporation.'},
+      {year:'2003', vi:'Tsinghua Holdings thành lập; nhận chuyển giao cổ phần Tsinghua Unigroup.', en:'Tsinghua Holdings established; took over Tsinghua Unigroup\'s shares.'},
+      {year:'2017', vi:'Ra mắt nền tảng CGCN/ĐMST quốc tế TIE (Trans-X Innovation Eco).', en:'Launched TIE (Trans-X Innovation Eco), an international tech-transfer/innovation platform.'},
+      {year:'2018–2022', vi:'Thoái vốn dần rồi rút hoàn toàn khỏi Tsinghua Unigroup (51%→15%→0%) qua giai đoạn công ty này phá sản, tái cơ cấu.', en:'Gradually divested and then fully exited Tsinghua Unigroup (51%→15%→0%) through that company\'s bankruptcy and restructuring.'}
+    ],
+    org:{vi:'Pháp nhân doanh nghiệp tách khỏi bộ máy hành chính của trường; đóng vai trò công ty mẹ nắm cổ phần tại nhiều công ty/tập đoàn thành viên với tỷ lệ sở hữu có thể thay đổi/rút hoàn toàn theo thời gian.',
+      en:'A corporate entity separate from the university\'s administration, acting as a parent holding stakes in many member companies/groups, with ownership levels that can change or be fully exited over time.'},
+    kpi:[
+      {label:{vi:'Thành tựu KH&CN quốc gia đã thương mại hoá', en:'National S&T achievements commercialised'}, value:'~50', year:'~30 năm/years'},
+      {label:{vi:'Điểm/cơ sở ươm tạo toàn cầu', en:'Global incubation points'}, value:'200+ tại 60+ thành phố', year:'~2017'},
+      {label:{vi:'Startup đã ươm tạo (luỹ kế)', en:'Startups incubated (cumulative)'}, value:'6.000+', year:'~2017'},
+      {label:{vi:'Công ty được phục vụ (luỹ kế)', en:'Companies served (cumulative)'}, value:'100.000+', year:'~2017'},
+      {label:{vi:'Hợp tác với Top 200 DN Trung Quốc', en:'Collaboration rate with China\'s top-200 firms'}, value:'70%', year:'~2017'}
+    ],
+    caveat:{vi:'Đã loại trừ hoàn toàn 1 file nguồn nội bộ bị cấm trích dẫn ("DO NOT CITE") — số liệu "38 công ty chi phối/48 góp vốn" từng gắn với file đó KHÔNG dùng ở đây. Case thoái vốn minh hoạ bằng Tsinghua Unigroup — một công ty thành viên, không đại diện toàn bộ Holdings.',
+      en:'One internal source file marked "DO NOT CITE" was deliberately excluded entirely — the "38 controlling / 48 participating companies" figure once associated with it is NOT used here. The divestment example uses Tsinghua Unigroup, one member company — not a stand-in for the whole Holdings group.'},
+    sources:['Tsinghua Holdings — brochure nền tảng TIE', 'Song & Mat (2025), case study Tsinghua Unigroup']
+  },
+  {
+    id:'nus-block71', iso:'SG', status:'pending', model:'network',
+    lat:1.2966, lng:103.7764,
+    name:{vi:'NUS Enterprise / BLOCK71', en:'NUS Enterprise / BLOCK71'},
+    country:{vi:'Singapore', en:'Singapore'},
+    host:'National University of Singapore', founded:'—',
+    highlight:{vi:'Được biết đến rộng rãi là mạng lưới không gian khởi nghiệp do NUS Enterprise khởi xướng, kết nối nhiều thành phố Đông Nam Á — nhưng số liệu cụ thể đang chờ bổ sung.',
+      en:'Widely known as a startup-space network initiated by NUS Enterprise, spanning several Southeast Asian cities — but specific figures are still pending.'},
+    functions:['incubation','biz_link'],
+    timeline:[],
+    org:{vi:'[chưa xác nhận từ nguồn — file báo cáo gốc bị lỗi]', en:'[not yet confirmed from source — original report file is corrupted]'},
+    kpi:[],
+    caveat:{vi:'File nguồn (NUS Annual Report 2023) chỉ tải về được ~24% dung lượng gốc, không đọc được nội dung nào — mọi công cụ đọc PDF đều báo lỗi cấu trúc. Cần tải lại file đầy đủ rồi trích xuất lại; hiện KHÔNG có KPI nào được xác nhận.',
+      en:'The source file (NUS Annual Report 2023) only downloaded at roughly 24% of its original size and could not be read by any PDF tool. It needs re-downloading and re-extracting; no KPI is currently confirmed.'},
+    sources:['NUS Annual Report 2023 (file lỗi — chưa trích xuất được)']
+  }
+];
+
+var VN_UNITS = [
+  {name:'HaUI (Đại học Công nghiệp Hà Nội)', nameEn:'HaUI (Hanoi University of Industry)', cluster:'hn', host:true, lat:21.0480, lng:105.7420, status:{vi:'Đơn vị chủ trì / đề xuất mô hình', en:'Lead institution / model proposer'}, st:'partial'},
+  {name:'Học viện CN Bưu chính Viễn thông', nameEn:'Posts & Telecom. Institute of Tech.', cluster:'hn', lat:20.9717, lng:105.7770, status:{vi:'Chưa chốt ngày khảo sát (cửa sổ 10–26/8)', en:'Survey date not fixed (10–26 Aug window)'}, st:'pending'},
+  {name:'Trường ĐH Điện lực', nameEn:'Electric Power University', cluster:'hn', lat:21.0450, lng:105.7890, status:{vi:'Chưa chốt ngày khảo sát', en:'Survey date not fixed'}, st:'pending'},
+  {name:'ĐH Kinh tế Kỹ thuật Công nghiệp', nameEn:'Univ. of Economics – Technology for Industries', cluster:'hn', lat:20.9930, lng:105.8730, status:{vi:'Chưa chốt ngày khảo sát', en:'Survey date not fixed'}, st:'pending'},
+  {name:'ĐH Công nghiệp Việt Trì', nameEn:'Viet Tri University of Industry', cluster:'hn', lat:21.4000, lng:105.2200, status:{vi:'Chưa chốt ngày khảo sát', en:'Survey date not fixed'}, st:'pending'},
+  {name:'Đại học Sao Đỏ', nameEn:'Sao Do University', cluster:'hn', lat:21.1600, lng:106.4200, status:{vi:'Chưa chốt ngày khảo sát', en:'Survey date not fixed'}, st:'pending'},
+  {name:'HUIT — ĐH Công Thương TP.HCM', nameEn:'HUIT — Ho Chi Minh City Univ. of Industry & Trade', cluster:'hcm', lat:10.8030, lng:106.6260, status:{vi:'Xong 19/8 — đủ biên bản', en:'Done 19 Aug — minutes on file'}, st:'full'},
+  {name:'TBI — ĐHBK, ĐHQG TP.HCM', nameEn:'TBI — HCMC Univ. of Technology, VNU-HCM', cluster:'hcm', lat:10.8802, lng:106.8030, status:{vi:'Xong 19/8 — đủ biên bản', en:'Done 19 Aug — minutes on file'}, st:'full'},
+  {name:'IUH — ĐH Công nghiệp TP.HCM', nameEn:'IUH — Industrial Univ. of HCMC', cluster:'hcm', lat:10.8231, lng:106.6660, status:{vi:'Xong 20/8 — đủ biên bản', en:'Done 20 Aug — minutes on file'}, st:'full'},
+  {name:'IEC — ĐHQG-HCM', nameEn:'IEC — VNU-HCM', cluster:'hcm', lat:10.8700, lng:106.8100, status:{vi:'Xong 21/8 — ngoài KH công tác gốc', en:'Done 21 Aug — added outside original plan'}, st:'full'}
+];
+
+/* Simplified continent/country silhouettes — stylized low-poly shapes for context,
+   NOT precise cartographic boundaries. tags[] control which panel(s) draw a shape;
+   role:'vn' gets the highlighted Vietnam fill/stroke everywhere it appears. */
+var LANDMASSES = [
+  {id:'north_america', tags:['world'], points:[[71,-156],[70,-130],[60,-95],[62,-75],[55,-60],[47,-52],[45,-66],[35,-75],[25,-80],[18,-95],[16,-97],[20,-105],[32,-117],[49,-123],[60,-140],[71,-156]]},
+  {id:'south_america', tags:['world'], points:[[12,-72],[10,-62],[5,-52],[-2,-44],[-13,-38],[-23,-43],[-34,-54],[-52,-68],[-55,-70],[-40,-73],[-18,-70],[-4,-81],[5,-77],[12,-72]]},
+  {id:'africa', tags:['world'], points:[[37,10],[33,20],[22,35],[12,43],[2,45],[-5,40],[-15,40],[-26,33],[-34,20],[-30,17],[-20,12],[-10,13],[-4,9],[5,-3],[10,-16],[15,-17],[25,-16],[33,-9],[36,3],[37,10]]},
+  {id:'madagascar', tags:['world'], points:[[-12,49],[-16,50],[-25,47],[-23,43],[-16,44],[-12,49]]},
+  {id:'europe', tags:['world'], points:[[71,25],[65,20],[60,30],[55,38],[47,40],[42,45],[41,29],[36,23],[38,15],[41,9],[43,3],[48,-2],[52,4],[58,8],[65,12],[71,25]]},
+  {id:'uk_ireland', tags:['world'], points:[[59,-3],[54,-3],[51,-5],[50,-6],[52,-10],[55,-8],[58,-6],[59,-3]]},
+  {id:'greenland', tags:['world'], points:[[83,-35],[76,-20],[65,-40],[60,-45],[70,-55],[78,-65],[83,-35]]},
+  {id:'australia', tags:['world'], points:[[-11,131],[-12,142],[-17,146],[-25,153],[-33,151],[-38,147],[-38,140],[-35,136],[-32,126],[-20,114],[-14,126],[-11,131]]},
+  {id:'new_zealand', tags:['world'], points:[[-34,173],[-38,178],[-41,175],[-46,168],[-44,167],[-34,173]]},
+  {id:'asia_mainland', tags:['world','asia'], points:[[55,60],[52,90],[50,110],[45,130],[38,124],[35,122],[30,121],[24,117],[21,109],[24,98],[28,95],[27,88],[30,80],[24,68],[26,60],[35,50],[40,48],[45,48],[55,60]]},
+  {id:'india', tags:['world','asia'], points:[[30,75],[28,80],[25,88],[22,92],[15,80],[8,77],[12,75],[22,68],[30,75]]},
+  {id:'indochina', tags:['world','asia','sea'], points:[[28,98],[24,98],[20,98],[16,98],[10,99],[6,101],[1,104],[4,108],[10,106],[14,108],[18,105],[22,103],[25,101],[28,98]]},
+  {id:'japan', tags:['world','asia'], points:[[45,142],[43,144],[38,141],[35,140],[33,131],[31,130],[34,135],[38,138],[41,140],[45,142]]},
+  {id:'korea', tags:['world','asia'], points:[[43,130],[40,128],[38,128],[35,129],[34,126],[37,124],[40,125],[43,130]]},
+  {id:'philippines', tags:['world','asia','sea'], points:[[19,121],[15,120],[10,122],[6,122],[8,125],[13,124],[17,122],[19,121]]},
+  {id:'sumatra_java', tags:['world','asia','sea'], points:[[6,95],[2,97],[-3,102],[-6,106],[-8,112],[-8,115],[-6,110],[-2,104],[2,99],[6,95]]},
+  {id:'borneo_sulawesi', tags:['world','asia','sea'], points:[[7,116],[4,118],[0,117],[-3,114],[-4,110],[0,109],[4,109],[7,113],[7,116]]},
+  {id:'vietnam', tags:['world','asia','sea','vn'], role:'vn', points:[
+    [21.5,108.0],[20.9,107.1],[20.8,106.7],[20.0,106.2],[19.3,105.9],[18.7,105.7],[18.0,106.0],[17.5,106.6],
+    [16.8,107.1],[16.1,108.2],[15.9,108.9],[14.2,109.1],[13.1,109.3],[12.2,109.2],[11.5,109.2],[11.0,108.5],
+    [10.5,107.2],[10.8,106.8],[9.8,106.7],[9.2,105.8],[8.6,104.8],[9.3,105.1],[10.0,104.8],[10.9,105.0],
+    [11.5,105.9],[12.5,107.5],[14.5,107.5],[16.5,106.5],[18.5,104.5],[20.0,103.8],[21.5,103.0],[22.8,103.2],
+    [23.3,105.3],[22.0,106.5],[21.5,108.0]
+  ]}
+];
+var PARACEL = {label:{vi:'Quần đảo Hoàng Sa (VN)', en:'Paracel Islands (VN)'}, points:[[16.8,111.8],[16.5,112.3],[16.2,111.9],[16.6,112.6]]};
+var SPRATLY = {label:{vi:'Quần đảo Trường Sa (VN)', en:'Spratly Islands (VN)'}, points:[[10.9,114.4],[9.8,115.8],[8.6,111.9],[8.0,113.0],[10.0,113.6],[7.2,112.0]]};
+function landFor(tag){ return LANDMASSES.filter(function(l){ return l.tags.indexOf(tag)>-1; }); }
+
+/* ROSTER — broad, shallow list gathered by bulk web search (association/member
+   directories, incubator rankings, official patent-office lists). Each row:
+   [name, host_university_or_network, country, website, lat, lng].
+   Coordinates are COUNTRY-level approximations with a small deterministic jitter —
+   see rosterCaveat string — not each unit's real campus location. */
+var ROSTER = /*__ROSTER_DATA__*/[["Kabushiki Kaisha Todai TLO (University of Tokyo TLO)","University of Tokyo","Japan","https://todaitlo.com/",36.66,138.04],["TLO Kyoto Co., Ltd.","Kyoto University; Ritsumeikan University","Japan","https://www.tlo-kyoto.co.jp/",35.78,138.28],["Tohoku Techno Arch Co., Ltd.","Tohoku University; Hirosaki University","Japan","https://www.t-technoarch.co.jp/",37.98,138.12],["Nihon University Industry-Academia-Government Collaboration IP Center","Nihon University","Japan","https://www.nubic.jp/",36.46,137.32],["Yamaguchi TLO Ltd.","Yamaguchi University","Japan","http://www.tlo.sangaku.yamaguchi-u.ac.jp/",37.38,139.96],["NIRO - New Industry Research Organization (TLO Hyogo)","Kobe University; Osaka University","Japan","https://www.niro.or.jp/",38.02,137.52],["Nagoya Industrial Science Research Institute","Nagoya University; Aichi Institute of Technology","Japan","https://www.nisri.jp/",37.94,137.08],["Kyushu TLO Co., Ltd. (K-UIP)","Kyushu University","Japan","https://www.k-uip.co.jp/",35.58,136.8],["Tama TLO Co., Ltd.","Tokyo Metropolitan University; Kogakuin University; Toyo University","Japan","http://www.tama-tlo.com/",37.9,136.2],["Meiji University Intellectual Property Center","Meiji University","Japan","https://www.meiji.ac.jp/tlo/",36.82,136.6],["Yokohama TLO Co., Ltd.","Yokohama National University; Kanagawa Dental University","Japan","https://yokohamatlo.co.jp/",38.38,137.72],["Techno Network Shikoku Co., Ltd.","Tokushima University; Ehime University; Kagawa University; Kochi University","Japan","https://www.s-tlo.co.jp/",37.22,138.52],["Foundation for the Promotion of Industrial Science","Institute of Industrial Science, University of Tokyo","Japan","http://www.iis.u-tokyo.ac.jp/shourei/fpis-tlo/",36.54,138.32],["Niigata TLO Inc.","Niigata University; Niigata University of Pharmacy and Applied Life Sciences","Japan","https://www.niigata-tlo.com/",35.22,138.68],["FAIS - Foundation for Advanced Industrial Science (Kitakyushu)","Kyushu Institute of Technology; University of Kitakyushu","Japan","https://www.ksrp.or.jp/",36.78,136.16],["Mie TLO Co., Ltd.","Mie University","Japan","https://www.mie-tlo.co.jp/",37.54,136.48],["Kanazawa University TLO Co., Ltd.","Kanazawa University; Kanazawa Medical University","Japan","https://kutlo.co.jp/",36.94,137.72],["Campus Create Co., Ltd.","University of Electro-Communications","Japan","https://www.campuscreate.com/",36.34,137.36],["Shinshu TLO Co., Ltd.","Shinshu University; Saitama University","Japan","https://shinshu-tlo.co.jp/",34.86,139.72],["Saga University TLO","Saga University","Japan","https://www.suric.saga-u.ac.jp/",37.74,136.56],["Gunma University Industry-Academia Collaboration Organization","Gunma University","Japan","https://research.opric.gunma-u.ac.jp/",36.7,138.48],["NAIST Research and Int'l Affairs Div.","Nara Institute of Science and Technology (NAIST)","Japan","http://www.naist.jp/sankan/",37.14,139.56],["Tokai University Research Promotion Div.","Tokai University","Japan","https://www.u-tokai.ac.jp/",37.02,136.68],["Institute of Science Tokyo Open Innovation Office","Institute of Science Tokyo (formerly Tokyo Medical and Dental University)","Japan","https://tmdu-oi.jp/",35.98,137.64],["University of Yamanashi Research Promotion & Community Collaboration Org.","University of Yamanashi","Japan","https://www.scrs.yamanashi.ac.jp/",35.94,137.36],["Shizuoka Technology Transfer LLC","Shizuoka University","Japan","http://stto.jp/",36.98,136.92],["iPS Academia Japan, Inc.","Kyoto University","Japan","https://ips-cell.net/j",35.82,136.56],["Kobe University Innovation Co., Ltd.","Kobe University","Japan","https://kobe-u-innov.jp/",35.3,139.52],["Fukushima Medical University Translational Research Foundation","Fukushima Medical University","Japan","https://ftrf.jp/",36.78,136.8],["CIIE Initiatives","Indian Institute of Management, Ahmedabad (IIMA)","India","https://ciie.co/",20.76,79.84],["Venture Center","CSIR-National Chemical Laboratory (CSIR-NCL), Pune","India","http://www.venturecenter.co.in",20.28,77.04],["Society for Innovation and Entrepreneurship (SINE)","IIT Bombay","India","http://www.sineiitb.org",23.56,77.88],["KIIT Technology Business Incubator","KIIT University","India","http://www.kiitincubator.in",21.32,79.56],["PSG-STEP (Science and Technology Entrepreneurial Park)","PSG College of Technology","India","http://www.psgstep.org",22.52,79.76],["Nanotechnology Research, Innovation and Incubation Centre (NRIIC)","PSG College of Technology","India","http://www.psgstep.org",22.76,78.28],["Vel Tech Technology Incubator","Vel Tech Rangarajan Dr Sagunthala R&D Institute of Science and Technology","India","http://www.veltechtbi.com",20.44,78.64],["FITT - Foundation for Innovation and Technology Transfer","IIT Delhi","India","https://fitt-iitd.in/",23.84,77.56],["IIT Gandhinagar Research Park","IIT Gandhinagar","India","https://iitgnrp.com/",22.84,77.96],["National Centre for Aerospace Innovation and Research (NCAIR)","Hosted near IIT Bombay","India","http://ncair.in",20.08,79.12],["AHSINE - Association for Harnessing Innovation and Entrepreneurship","Sardar Vallabhbhai National Institute of Technology (SVNIT), Surat","India","",22.64,79.44],["IIT Gandhinagar Innovation and Entrepreneurship Center","IIT Gandhinagar","India","http://iieciitgn.com/",21.0,78.08],["National Design Business Incubator (NDBI)","National Institute of Design, Ahmedabad","India","http://ndbiindia.org",20.28,77.28],["IIT Mandi Catalyst","IIT Mandi","India","http://www.iitmandicatalyst.in",22.16,77.4],["NITK-STEP","National Institute of Technology Surathkal","India","https://step.nitk.ac.in/",21.52,80.28],["IIMK LIVE (Laboratory for Innovation, Venturing and Entrepreneurship)","IIM Kozhikode","India","http://www.iimklive.org",23.32,77.8],["SCTIMST-TIMed","Sree Chitra Tirunal Institute for Medical Sciences and Technology","India","http://www.timed.org.in",21.16,78.8],["TBI-NIT Calicut","National Institute of Technology Calicut","India","http://www.tbi.nitc.ac.in",22.0,79.08],["IICE - Innovation and Incubation Centre for Entrepreneurship","IISER Bhopal","India","https://iice.iiserb.ac.in/",20.76,80.0],["MANIT-STEP","Maulana Azad National Institute of Technology (MANIT), Bhopal","India","",20.12,77.08],["FTBI - Foundation for Technology and Business Incubation","NIT Rourkela","India","https://www.ftbi-nitrkl.org/",20.56,79.56],["IIT Ropar TBI","IIT Ropar","India","https://www.tbifiitrpr.org/",23.92,77.8],["Society for Technology Business Incubator, Mohali (TBI-IISERM)","IISER Mohali","India","",21.24,77.72],["IIM Udaipur Incubation Centre","IIM Udaipur","India","https://iimuic.org/",22.44,80.6],["MNIT Innovation and Incubation Center (MIIC)","Malaviya National Institute of Technology (MNIT) Jaipur","India","http://www.miic.mnit.ac.in",21.28,79.32],["IITM Incubation Cell","IIT Madras","India","http://www.incubation.iitm.ac.in",20.76,78.76],["Rural Technology and Business Incubator (RTBI)","IIT Madras","India","http://www.rtbi.in",22.48,77.88],["MaDeIT Innovation Foundation","Indian Institute of Information Technology, Design and Manufacturing (IIITDM) Kancheepuram","India","http://www.madeit.iiitdm.ac.in",20.0,77.08],["TREC-STEP","NIT Tiruchirappalli","India","http://www.trecstep.com",23.68,78.76],["i-TIC Foundation","IIT Hyderabad","India","https://i-tic.iith.ac.in/",23.4,77.6],["SIIC - Foundation for Innovation and Research in Science and Technology","IIT Kanpur","India","https://siicincubator.com/",22.6,79.72],["Malaviya Centre for Innovation, Incubation & Entrepreneurship","IIT (Banaras Hindu University) Varanasi","India","http://mciieiitbhu.org/",21.88,78.32],["FIED - Foundation for Innovation and Entrepreneurship Development","IIM Kashipur","India","http://fied.in",20.28,80.64],["TIDES Business Incubator","IIT Roorkee","India","http://tides.iitr.ac.in/",21.2,80.88],["IIM Calcutta Innovation Park","IIM Calcutta","India","http://www.iimcip.org",23.8,77.32],["Tagore Centre for Green Technology Business Incubation (TCGTBI)","Indian Institute of Engineering Science and Technology (IIEST), Shibpur","India","",21.24,77.28],["Science and Technology Entrepreneurs' Park (STEP), IIT Kharagpur","IIT Kharagpur","India","https://www.step-iit.org/",23.88,77.2],["Technology Incubation and Entrepreneurship Training Society (SRIC)","IIT Kharagpur","India","http://www.sric.iitkgp.ac.in/",23.24,80.04],["L-Incubator","IIM Lucknow","India","http://www.iimlincubator.com/",20.88,78.64],["NITRR Innovation and Entrepreneurship Park (NIEP)","NIT Raipur","India","",21.24,77.52],["Foundation for Innovators in Science and Technology","IIT Patna","India","",20.52,80.44],["IIITD Innovation & Incubation Center","IIIT Delhi","India","http://www.iiitdic.in",22.24,78.6],["Indigram Labs Foundation","Indian Society of Agribusiness Professionals (ISAP)","India","https://indigramlabs.org/",21.6,78.76],["Anveshan Foundation (IGDTUW Incubator)","Indira Gandhi Delhi Technical University for Women (IGDTUW)","India","https://www.anveshanfoundation.org/",20.6,79.16],["IAN Mentoring and Incubation Services","Indian Angel Network","India","https://www.indianangelnetwork.com/",22.48,78.2],["PUSA Krishi","ICAR-Indian Agricultural Research Institute (IARI), Pusa","India","http://pusakrishi.iari.res.in/",21.52,78.32],["SRI-TBI","Shri Ram Institute for Industrial Research","India","http://www.sri-tbi.org",23.72,79.64],["Centre for Incubation and Business Acceleration (CIBA)","Padre Conceicao College of Engineering (PCCE), Goa","India","http://www.ciba.org.in",22.64,77.84],["FIIRE - Forum for Innovation Incubation Research and Entrepreneurship","Don Bosco College of Engineering, Goa","India","http://www.fiire.org.in",20.52,78.0],["GFEE i-create","Gujarat Foundation for Entrepreneurial Excellence","India","https://www.icreate.org.in/",23.28,78.84],["CrAdLE","Entrepreneurship Development Institute of India (EDII), Gandhinagar","India","http://www.cradle-edii.in",21.36,79.36],["GUSEC - Gujarat University Startup and Entrepreneurship Council","Gujarat University","India","http://gusec.edu.in",20.56,78.0],["IIPHG NIDHI-TBI","Indian Institute of Public Health, Gandhinagar","India","http://www.iiphgtbi.org",22.4,80.32],["Leaf GLS University Incubator","GLS University","India","http://www.glsleaf.in",22.92,77.96],["Comcubator","Mudra Institute of Communications, Ahmedabad (MICA)","India","http://www.mica-edc.org",20.76,77.8],["NIFientreC","National Innovation Foundation India (NIF)","India","http://nifientrec.org/",21.8,78.84],["Venture Studio","Ahmedabad University","India","http://www.ahduni.edu.in/vs",23.92,77.28],["EPICC - Entrepreneurship Promotion and Incubation Council","Ambala College of Engineering and Applied Research","India","http://www.epicambala.com/",22.12,78.4],["SINED - Society for Innovation & Entrepreneurship in Dairying","National Dairy Research Institute (NDRI), Karnal","India","https://www.ndritbi.com/",23.88,78.88],["IIIM-TBI","CSIR-Indian Institute of Integrative Medicine (IIIM), Jammu","India","http://www.iiimtbi.com",20.68,78.08],["SMVDU-TBIC","Shri Mata Vaishno Devi University","India","http://www.smvdutbic.org",22.56,80.12],["Artilab Foundation","Indian Red Cross Society, Bengaluru","India","https://artilab.org/",22.56,79.96],["BESST-HORT","ICAR-Indian Institute of Horticultural Research","India","http://bessthort.com",20.36,80.88],["BVVS BEC-STEP","Basaveshwar Engineering College","India","http://www.becstepbgk.edu",21.52,78.04],["DERBI Foundation","Dayananda Sagar College of Engineering","India","https://derbifoundation.com/",20.28,80.44],["Social Alpha","Foundation for Innovation and Social Entrepreneurship","India","http://www.socialalpha.in",23.24,77.64],["GINSERV - Global Incubation Services","Global Incubation Services","India","https://www.ginserv.in/",23.16,80.4],["IKP EDEN NIDHI-TBI","IKP Knowledge Park","India","http://www.ikpeden.com",23.64,80.48],["Jain University Incubation Centre","Jain (Deemed-to-be University)","India","http://www.juincubator.com",21.32,79.36],["JSSATE-STEP","JSS Academy of Technical Education, Bangalore","India","http://www.jssatebstep.in",20.16,80.6],["KLE-CTIE","KLE Technological University (formerly BVB College of Engineering & Technology)","India","http://www.klectie.com",22.88,78.56],["Manipal University Technology Business Incubator","Manipal Academy of Higher Education","India","http://www.mutbimanipal.org",21.72,80.12],["Mazumdar Shaw Medical Foundation TBI","Narayana Hrudayalaya - Mazumdar Shaw Foundation","India","http://www.tbi.ms-mf.org",21.68,78.76],["National Design Business Incubator, Bangalore","National Institute of Design, Bangalore","India","",23.32,80.2],["E-Health TBI","PES School of Engineering","India","http://www.ehealthtbi.com",21.8,79.0],["Composites Technology Park","Society for Development of Composites","India","http://www.compositestechnologypark.com",22.6,79.36],["SJCE-STEP","Sri Jayachamarajendra College of Engineering (JSS)","India","http://www.sjcestep.in",20.6,77.6],["Technovate India Innovations","Technovate India Innovations","India","",20.56,78.28],["Foundations for Sandbox Startup Initiatives","Deshpande Startups, Hubballi","India","https://www.deshpandestartups.org/",22.44,77.24],["Amrita Technology Business Incubator","Amrita Vishwa Vidyapeetham","India","http://amritatbi.com",22.24,77.0],["CET-TBI","College of Engineering Trivandrum","India","http://www.tbi.cet.ac.in",23.48,78.56],["SV.co","Startup Village / Indian Telecom Innovation Hub","India","http://sv.co",23.56,80.88],["Startups Valley","Amal Jyothi College of Engineering, Kanjirappally","India","http://www.startupsvalley.in",22.44,79.76],["Technopark Technology Business Incubator (Kerala Startup Mission)","Government of Kerala","India","http://www.startupmission.kerala.gov.in",22.24,79.96],["BIL-Ryerson Technology Startup Incubator Foundation","BSE Institute Limited","India","http://www.brtsif.com/",23.04,80.12],["CIBA Mumbai","Fr. C. Rodrigues Institute of Technology (FCRIT)","India","http://www.ciba.org.in/mumbai",20.52,77.48],["COEP's Bhau Institute of Innovation Entrepreneurship and Leadership","College of Engineering Pune (COEP)","India","https://bhau.org",23.24,78.44],["DKTE Technology Business Incubation","DKTE Textile & Engineering Institute","India","http://www.dkte.ac.in",23.84,78.08],["G H Raisoni Technology Business Incubator Foundation","G H Raisoni College of Engineering, Nagpur","India","http://www.ghrtbi.com",22.0,78.28],["MIT TBI Pune","MIT World Peace University, Pune","India","http://www.mittbi.org",21.0,77.0],["MITCON Technology Business Incubator","MITCON Consultancy & Engineering Services","India","http://www.mitconbiopharma.com",20.92,77.12],["Research Innovation Incubation Design Laboratory (RIIDL)","K J Somaiya (Somaiya Vidyavihar)","India","http://riidl.org",23.28,79.96],["Sardar Patel Technology Business Incubator","Sardar Patel Institute of Technology","India","http://www.sptbi.com",23.76,80.28],["Science and Technology Park (STEP), Pune University","Savitribai Phule Pune University","India","https://scitechpark.org.in/",21.64,80.64],["Symbiosis Centre for Entrepreneurship and Innovation","Symbiosis International (Deemed University)","India","http://scei.org.in",21.8,80.76],["VJTI Technology Business Incubator","Veermata Jijabai Technological Institute (VJTI)","India","https://vjti-tbi.in/",21.64,80.44],["Mizoram University Incubation Center","Mizoram University","India","http://www.incubemzu.com",22.2,78.96],["TBI-NITJ","Dr B R Ambedkar National Institute of Technology (NIT) Jalandhar","India","https://www.nitj.ac.in/tbi/",23.28,78.24],["CU-TBI","Chandigarh University","India","https://www.cuchd.in/research/entrepreneurship.php",20.8,80.6],["STEP, TIET Patiala","Thapar Institute of Engineering & Technology, Patiala","India","http://step.thapar.edu",21.64,78.32],["STEP GNE","Guru Nanak Dev Engineering College, Ludhiana","India","http://www.stepgne.com",20.48,80.12],["Startup Oasis (CIIE Regional Innovation Foundation)","Jaipur (regional)","India","http://www.startupoasis.in",20.28,78.08],["Pilani Innovation and Entrepreneurship Development Society (PIEDS)","Birla Institute of Technology and Science (BITS), Pilani","India","http://www.piedsociety.org",22.88,80.68],["ABIS - Technology Business Incubator","Tamil Nadu Agricultural University","India","",22.72,79.64],["DETI@ACE","Adhiyamaan College of Engineering","India","",23.04,80.16],["Technology Business Incubator, Centre for Biotechnology","Anna University","India","",22.52,80.76],["BIT-TBI","Bannari Amman Institute of Technology","India","http://bittbi.com",22.32,80.92],["Forge Incubator (CIBI)","Coimbatore Innovation and Business Incubator","India","https://www.forgeforward.in/",22.76,80.88],["CIET TBI","Coimbatore Institute of Engineering and Technology","India","http://www.thecultiv8.com",20.88,79.92],["FIRST TBI","SASTRA Deemed to be University","India","http://www.sastratbi.in",20.72,79.68],["Nehru Group Technology Business Incubator","Nehru Group of Institutions","India","http://www.ngitbi.com",22.92,79.84],["Periyar Technology Business Incubator","Periyar Maniammai Institute of Science & Technology","India","http://periyartbi.pmu.edu/",22.84,77.04],["Society of Sathyabama TBI","Sathyabama Institute of Science and Technology","India","http://www.sathyabamatbi.in/",20.76,77.24],["St. Peter's Engineering College TBI","St. Peter's Engineering College","India","https://www.spectbi.com/",22.48,78.32],["TCE Technology Business Incubator","Thiagarajar College of Engineering","India","https://www.tce.edu/",23.64,80.72],["Technology Business Incubator, University of Madras","University of Madras","India","",23.2,80.0],["TBI@KEC","Kongu Engineering College","India","http://www.tbi-kec.org",20.76,77.84],["VIT Technology Business Incubator (VITTBI)","Vellore Institute of Technology (VIT)","India","http://www.vittbi.com",20.12,79.4],["Villgro Innovations Foundation","Hosted at IIT Madras Research Park","India","https://villgro.org/",20.44,78.08],["a-IDEA","ICAR-National Academy of Agricultural Research Management (NAARM)","India","https://aidea.naarm.org.in/",23.96,78.08],["Agri-Business Incubator (ABI)","ICRISAT","India","http://www.aipicrisat.org/",23.52,77.28],["ASPIRE Technology Business Incubator","University of Hyderabad","India","http://www.tbi.uohyd.ac.in",21.6,79.28],["BITS Pilani Hyderabad TBI","BITS Pilani, Hyderabad Campus","India","https://www.bits-pilani.ac.in/hyderabad/tbi/",23.36,77.04],["DLabs Incubator Association","Indian School of Business (ISB)","India","http://www.isbdlabs.org",22.48,80.24],["IKP Life Science Incubator (IKP-LSI)","IKP Knowledge Park","India","http://www.ikpknowledgepark.com",22.96,79.32],["NIELAN Incubator","Indian Institute of Millets Research (IIMR)","India","https://nutrihub-tbi-iimr.org/",22.48,80.84],["International Advanced Research Centre STEP (ARCI)","International Advanced Research Centre for Powder Metallurgy and New Materials","India","https://www.arci.res.in/",23.68,78.44],["Centre for Innovation and Entrepreneurship (CIE)","IIIT Hyderabad","India","https://cie.iiit.ac.in",20.04,80.0],["SRIX (SR Foundation)","SR University, Warangal","India","http://www.srix.in",22.92,80.04],["Amity Innovation Incubator","Amity University, Noida","India","http://www.amity.edu/aii",20.36,78.68],["HBTI-STEP","Harcourt Butler Technological Institute (HBTI), Kanpur","India","https://www.stephbti.ac.in/",21.08,78.96],["JSS ATE STEP Noida","JSS Academy of Technical Education, NOIDA","India","http://www.jssstepnoida.org",20.92,78.96],["TBI-KIET (Krishna Path Incubation Society)","KIET Group of Institutions","India","http://www.tbi-kiet.in",21.28,78.96],["Shreetron IT UPVAN Society","Shreetron IT","India","",20.56,80.28],["TBI-GEU","Graphic Era University, Dehradun","India","https://tbigeu.com/",21.8,79.64],["EKTA Incubation Centre","Maulana Abul Kalam Azad University of Technology, West Bengal","India","",23.64,80.24],["Andhra Technology Business Incubation Center","Narasaraopeta Engineering College","India","",20.8,79.64],["Vishnu Foundation TBI","Shree Vishnu Engineering College for Women","India","",23.2,80.96],["Nirma University TBI","Nirma University","India","",20.16,77.6],["Himachal Pradesh STEP","Himachal Pradesh University","India","",23.2,79.64],["STEP-BIT Mesra","Birla Institute of Technology, Mesra, Ranchi","India","",21.4,79.04],["Aditya Global Business Incubator","Aditya Global Business School, Kakinada","India","http://www.aditya.ac.in/incubator",23.48,77.16],["SIIC (Society for Siddharth International Incubation Center)","Siddharth Institute of Engineering & Technology, Puttur","India","http://www.siic.sietk.org",22.44,79.64],["SSIIE-SPMVV","Sri Padmavati Mahila Visvavidyalayam, Tirupati","India","http://www.spmvv-tbi.com",22.24,80.16],["NTUitive Pte Ltd","Nanyang Technological University (NTU)","Singapore","https://www.ntuitive.sg",1.27,104.88],["Institute of Innovation and Entrepreneurship (SMU IIE)","Singapore Management University","Singapore","",-0.45,104.08],["SUTD Innovation Center","Singapore University of Technology and Design (SUTD)","Singapore","",0.55,101.88],["Office of Research and Development (ORD)","National Taiwan University (NTU)","Taiwan","https://ord.ntu.edu.tw",21.74,122.6],["Office of Research and Development","National Tsing Hua University (NTHU)","Taiwan","",24.74,122.68],["Office of Research and Development / Innovation and Incubation Center","National Yang Ming Chiao Tung University (NYCU)","Taiwan","",25.34,119.04],["NCKU Research and Development Foundation","National Cheng Kung University (NCKU)","Taiwan","",22.58,119.48],["KAIST Institute for Technology Value Creation","KAIST","South Korea","",35.74,126.38],["SNU R&DB Foundation","Seoul National University","South Korea","",34.5,127.82],["Yonsei University Industry-Academic Cooperation Foundation","Yonsei University","South Korea","",38.22,127.3],["Korea University Technology Holdings","Korea University","South Korea","",36.9,129.62],["POSTECH Holdings","POSTECH","South Korea","",36.38,126.18],["Sungkyunkwan University Industry-Academic Cooperation Foundation","Sungkyunkwan University (SKKU)","South Korea","",34.78,126.34],["Hanyang University Industry-University Cooperation Foundation","Hanyang University","South Korea","",35.34,129.7],["Office of Science and Technology Development / Technology Transfer Office","Peking University","China","",35.72,104.52],["Zhejiang University Technology Transfer Center (ZJU-TTC)","Zhejiang University","China","",36.76,105.84],["Shanghai Jiao Tong University Technology Transfer Center","Shanghai Jiao Tong University","China","",36.2,105.32],["Office of Industry-University-Research Cooperation","Fudan University","China","",34.56,105.8],["Nanjing University Technology Transfer Center","Nanjing University","China","",36.8,105.76],["USTC Office of Science and Technology","University of Science and Technology of China (USTC)","China","",36.32,105.88],["Xi'an Jiaotong University Technology Transfer Center","Xi'an Jiaotong University","China","",36.24,105.24],["Universiti Malaya Centre for Innovation and Consultancy (UMCIC)","Universiti Malaya (UM)","Malaysia","",5.8,102.46],["Collaborative Innovation and Commercialisation Centre (CICC)","Universiti Sains Malaysia (USM)","Malaysia","",5.2,101.9],["UKM Research and Innovation Management Centre","Universiti Kebangsaan Malaysia (UKM)","Malaysia","",3.12,100.66],["UTM Innovation and Commercialization Centre","Universiti Teknologi Malaysia (UTM)","Malaysia","",3.24,102.54],["CU Innovation Hub","Chulalongkorn University","Thailand","",15.78,100.34],["Mahidol University Institute for Innovation and Technology Transfer","Mahidol University","Thailand","",16.5,101.58],["Knowledge Exploitation and Innovation Center","King Mongkut's University of Technology Thonburi (KMUTT)","Thailand","",17.42,99.66],["Thammasat Research and Innovation Utilization Centre","Thammasat University","Thailand","",16.46,99.82],["Directorate of Innovation and Science Techno Park (DISTP)","Universitas Indonesia (UI)","Indonesia","",-4.5,117.24],["LPIK - Innovation Park","Institut Teknologi Bandung (ITB)","Indonesia","",-3.54,119.36],["Directorate of Research and Innovation","Universitas Gadjah Mada (UGM)","Indonesia","",-3.9,116.6],["Technology Transfer and Business Development Office (UP TTBDO)","University of the Philippines Diliman","Philippines","",11.34,120.16],["Ateneo Innovation Center","Ateneo de Manila University","Philippines","",13.22,121.0],["DLSU Innovation and Technology Office","De La Salle University","Philippines","",12.5,121.84],["UniQuest Pty Limited","University of Queensland","Australia","https://uniquest.com.au",-23.42,134.56],["UNSW Founders / Knowledge Exchange","UNSW Sydney","Australia","",-24.98,135.04],["Monash Innovation","Monash University","Australia","",-27.3,132.64],["ANU Research Commercialisation / Tech Transfer Office","Australian National University (ANU)","Australia","",-26.3,134.56],["Adelaide Research & Innovation","University of Adelaide","Australia","",-25.94,133.16],["UWA Innovation","University of Western Australia","Australia","",-27.02,133.0],["QUT bluebox","Queensland University of Technology (QUT)","Australia","",-25.78,135.72],["RMIT Activator / Enterprise","RMIT University","Australia","",-25.9,131.84],["Macquarie University Innovation","Macquarie University","Australia","",-24.18,132.52],["Melbourne Innovation (research commercialisation)","University of Melbourne","Australia","",-25.86,135.64],["UniServices","University of Auckland","New Zealand","https://uniservices.co.nz",-41.92,173.22],["Otago Innovation Ltd","University of Otago","New Zealand","https://www.otagoinnovation.com",-42.08,172.98],["Wellington UniVentures (truoc day la Viclink)","Victoria University of Wellington","New Zealand","https://www.wellingtonuniventures.nz",-39.8,175.9],["Canterprise","University of Canterbury","New Zealand","",-40.6,173.54],["Massey Ventures Ltd","Massey University","New Zealand","",-41.68,175.54],["AUT Ventures","Auckland University of Technology (AUT)","New Zealand","",-40.56,173.34],["Innovation & Impact Centre (Tech Transfer)","TU Delft","Netherlands","https://www.tudelft.nl/en/research-support/dissemination/tech-transfer",51.8,6.26],["Knowledge Transfer Office (The Gate)","TU Eindhoven","Netherlands","https://www.tue.nl/en/our-university/about-the-university/support-services/research-support-valorization",52.64,5.3],["Knowledge Transfer Office (KTO) / Novel-T","University of Twente","Netherlands","https://novelt.com/en/",51.84,5.42],["Incubase","University of Twente","Netherlands","https://incubase.nl/en/about-incubase/",51.36,6.66],["Value Creation / Knowledge Transfer Office (KTO)","Wageningen University & Research","Netherlands","https://www.wur.nl/en/partner-up-for-impact/innovation-entrepreneurship",51.84,6.38],["Utrecht Holdings (Knowledge Transfer Office)","Utrecht University & UMC Utrecht","Netherlands","https://utrechtholdings.nl/about1/",52.4,7.42],["UtrechtInc","Utrecht University, UMC Utrecht, HU Utrecht","Netherlands","https://utrechtinc.nl/",50.76,3.86],["LURIS (Leiden University Research & Innovation Services)","Leiden University","Netherlands","",50.96,3.94],["IXA – Innovation Exchange Amsterdam","University of Amsterdam, VU Amsterdam, Amsterdam UMC, HvA (liên trường)","Netherlands","https://www.ixa.nl/",50.4,5.7],["Erasmus Enterprise","Erasmus University Rotterdam","Netherlands","https://www.eur.nl/en/services/erasmus-enterprise",53.12,5.58],["Technology Transfer Office (TTO)","Erasmus MC (gắn với Erasmus University Rotterdam)","Netherlands","https://www.erasmusmc.nl/en/technology-transfer-office",51.6,4.66],["Knowledge Transfer (Research & Impact)","Radboud University Nijmegen","Netherlands","https://www.ru.nl/en/departments/research-impact/knowledge-transfer",51.56,4.54],["Technology Transfer Office","Radboud University Medical Center","Netherlands","",52.32,7.22],["IP & Business Development (Northern Knowledge)","University of Groningen","Netherlands","https://www.rug.nl/research/ipbd/",52.72,7.34],["Knowledge Transfer Office (KTO)","Maastricht University","Netherlands","https://www.maastrichtuniversity.nl/about-um/other-offices/knowledge-transfer-office",52.24,6.22],["LIOF (regional development agency)","Không thuộc một đại học — liên kết Maastricht University và các viện Limburg","Netherlands","https://liof.nl/en",50.6,5.94],["KU Leuven Research & Development (LRD)","KU Leuven","Belgium","https://lrd.kuleuven.be/en",51.52,2.62],["UGent TechTransfer","Ghent University","Belgium","https://techtransfer.ugent.be/en/about/technology-transfer-office",52.44,3.74],["Louvain Technology Transfer Office (LTTO)","UCLouvain","Belgium","https://uclouvain.be/en/research/ltto",51.72,5.62],["ULB Knowledge Transfer Office (ULB-KTO)","Université Libre de Bruxelles (ULB)","Belgium","https://www.ulb.be/en/innovation-and-business-services/service-technology-transfer-tto",51.4,2.54],["Interface Entreprises-ULiège (nay là RISE-ULiège)","Université de Liège","Belgium","https://www.ra-innovation.uliege.be/interface-entreprises/",48.6,6.34],["Technology Transfer & Interface (VUB TechTransfer)","Vrije Universiteit Brussel (VUB)","Belgium","https://www.vub.be/en/contact/organisation/techtransfer",49.68,2.5],["Valorisation Office","University of Antwerp","Belgium","https://www.uantwerpen.be/en/research/policy/riva/valorisation/",52.44,4.1],["Tech Transfer Office","Hasselt University (UHasselt)","Belgium","https://www.uhasselt.be/en/info-for/tech-transfer-office-for-companies-and-organisations",51.96,3.34],["TTO Flanders","Mạng lưới chung 5 đại học Flemish (KU Leuven, UGent, VUB, UAntwerp, UHasselt)","Belgium","https://www.ttoflanders.be/en",51.12,4.46],["imec (deep-tech venturing / spin-off hub)","Liên kết KU Leuven, Ghent University, VUB, University of Antwerp","Belgium","https://www.imec-int.com/",50.52,3.22],["Office for Partnership, Knowledge & Technology Transfer (PaKTT)","University of Luxembourg","Luxembourg","https://www.uni.lu/en/about/organisation/administration/partnership-knowledge-technology-transfer-office/",49.2,4.5],["Partnership & Venture Office","Luxembourg Institute of Science and Technology (LIST)","Luxembourg","https://www.list.lu/",49.16,6.18],["TUM ForTe","TU München (TUM)","Germany","https://www.forte.tum.de/en/forte/homepage/",52.12,9.1],["UnternehmerTUM","TU München (TUM)","Germany","",49.8,10.38],["LMU Innovation and Entrepreneurship Center","LMU München","Germany","https://www.iec.lmu.de/en/our-services/incubation-transfer/",49.6,11.02],["RWTH Innovation GmbH","RWTH Aachen","Germany","https://www.rwth-innovation.de/en/",51.68,10.9],["Zentrum für geistiges Eigentum (ZfgE)","TU Berlin","Germany","https://www.zfge.tu-berlin.de/",50.92,9.74],["HIGHEST – Innovations- und Gründungszentrum","TU Darmstadt","Germany","https://highest-darmstadt.de/",51.48,11.26],["KIT Innovation (gGmbH)","KIT Karlsruhe","Germany","https://kit-innovation.de/",51.64,11.82],["Innovation and Relations Management (IRM)","KIT Karlsruhe","Germany","https://www.irm.kit.edu/english/98_254.php",51.88,11.38],["TTI – Technologie-Transfer-Initiative GmbH","Universität Stuttgart","Germany","https://www.tti-stuttgart.de/",53.12,9.66],["TRACES – Transfercenter der Universität Stuttgart","Universität Stuttgart","Germany","https://www.uni-stuttgart.de/transfer/",50.04,10.54],["dresden|exists","TU Dresden","Germany","https://tu-dresden.de/forschung-transfer/transfer/ausgruendungen",52.76,10.1],["TUD|excite","TU Dresden","Germany","",52.08,8.82],["hei_INNOVATION","Universität Heidelberg","Germany","https://www.uni-heidelberg.de/en/transfer/heiinnovation",51.76,9.7],["Zentralstelle für Technologietransfer (ZFT)","Universität Freiburg","Germany","https://www.zft.uni-freiburg.de/",51.24,12.42],["Technologietransfer / Wissenstransfer und Innovation","Universität Tübingen","Germany","https://uni-tuebingen.de/forschung/innovation/technologietransfer/",52.24,12.14],["TuTech Innovation GmbH","TU Hamburg (TUHH)","Germany","https://tutech.de/en/",49.24,9.34],["enaCom – Erkenntnistransfer und Schutzrechte","Universität Bonn","Germany","https://www.uni-bonn.de/forschung/forschungsdezernat/7.2-erkenntnistransfer-und-schutzrechte",52.36,10.14],["Transfer & Startup Hub","Universität Göttingen","Germany","https://www.uni-goettingen.de/de/transfer+&+startup+hub/655032.html",52.32,11.82],["Referat Transfer, Innovation und Nachhaltigkeit (RTI)","RPTU / TU Kaiserslautern","Germany","https://rptu.de/en/ueber-die-rptu/organisation/referate/referat-transfer-innovation-und-nachhaltigkeit",49.52,10.06],["Wissens- und Technologietransfer (wtt)","FAU Erlangen-Nürnberg","Germany","https://www.fau.de/forschung/forschungsservice/technologietransfer/",51.6,10.62],["Transfer Department (Abteilung 75)","Universität zu Köln","Germany","https://verwaltung.uni-koeln.de/forschungsmanagement/content/transfer/index_ger.html",50.28,8.54],["Innovectis GmbH","Goethe-Universität Frankfurt","Germany","https://innovectis.de/",52.12,11.06],["RTI Support – Research and Transfer Support","TU Wien","Austria","https://www.tuwien.at/en/research/rti-support",48.36,14.64],["Innovation Incubation Center (i2c)","TU Wien","Austria","",46.24,15.52],["Spinoff Factory","TU Wien","Austria","",48.44,16.2],["Transfer (Forschungsservice und Transfersupport)","Universität Wien","Austria","https://transfer.univie.ac.at/",47.28,16.24],["Forschungs- & Technologie-Haus","TU Graz","Austria","https://www.tugraz.at/en/tu-graz/organisational-structure/service-departments-and-staff-units/research-technology-house",47.96,15.04],["Forschungsmanagement und -service","Universität Graz","Austria","https://forschungsmanagement.uni-graz.at/en/",48.48,15.36],["Transferstelle Wissenschaft – Wirtschaft – Gesellschaft","Universität Innsbruck","Austria","https://www.uibk.ac.at/de/transferstelle/",47.36,15.68],["tech2b Inkubator GmbH","JKU Linz","Austria","",46.2,13.76],["ETH transfer","ETH Zurich","Switzerland","",45.16,7.2],["Technology Transfer Office (TTO) EPFL","EPFL Lausanne","Switzerland","https://www.epfl.ch/research/technology-transfer/",46.0,8.12],["Unitectra (Zürich)","Universität Zürich","Switzerland","https://www.unitectra.ch/en/about-unitectra",48.24,6.56],["Unitectra (Basel)","Universität Basel","Switzerland","https://www.unitectra.ch/en/contact/office-basel",45.4,8.88],["Unitectra (Bern)","Universität Bern","Switzerland","https://www.unitectra.ch/en/contact/office-bern",47.96,6.8],["UNITEC","Université de Genève","Switzerland","https://www.unige.ch/unitec/en/presentation/services",48.12,7.08],["PACTT","Université de Lausanne (UNIL) / CHUV","Switzerland","https://www.pactt.ch/sample-page/about-pactt/",46.0,9.64],["USI Transfer","USI Lugano","Switzerland","https://www.usi.ch/en/innovation/innovate/usi-transfer",46.4,9.32],["HSG Entrepreneurship / Transfer","Universität St. Gallen (HSG)","Switzerland","https://www.unisg.ch/en/university/engagement/hsg-entrepreneurship/transfer/",45.32,7.92],["University Centre for Technology Transfer (UOTT UW)","University of Warsaw","Poland","",53.68,20.5],["Centre for Innovation and Technology Transfer Management (CZIiTT PW)","Warsaw University of Technology","Poland","https://www.cziitt.pw.edu.pl/",51.96,20.34],["Centre for Innovation and Technology Transfer","Warsaw University of Life Sciences (SGGW)","Poland","https://www.sggw.edu.pl/en/collaboration-and-services/centre-for-innovation-and-technology-transfer/",52.6,17.5],["Centre for Technology Transfer CITTRU","Jagiellonian University, Krakow","Poland","https://cittru.uj.edu.pl/",50.4,19.54],["Centre for Cooperation and Technology Transfer AGH (CWiTT)","AGH University of Krakow","Poland","https://cwitt.agh.edu.pl/",50.6,18.74],["Centre for Technology Transfer","Poznan University of Technology","Poland","",50.96,21.02],["Poznan Science and Technology Park","Adam Mickiewicz University Poznan","Poland","https://ppnt.poznan.pl/en/",51.04,20.1],["Centre for Knowledge and Technology Transfer (CPPT)","Charles University, Prague","Czech Republic","https://cppt.cuni.cz/",51.04,17.24],["Technology Transfer Office (OTT)","Czech University of Life Sciences Prague","Czech Republic","https://ott.czu.cz/en/r-17367-about-us",51.04,13.96],["Technology Transfer Office (CTT MUNI)","Masaryk University, Brno","Czech Republic","https://www.ctt.muni.cz/",47.8,16.08],["Technology Transfer Office/Department","Brno University of Technology","Czech Republic","",50.04,14.0],["Comenius University Science Park (CUSP)","Comenius University Bratislava","Slovakia","https://cusp.uniba.sk/en/",47.02,20.62],["CEPSIT","Slovak University of Technology in Bratislava (STU)","Slovakia","https://www.stuba.sk/english.html",47.54,19.42],["Center for Innovation","Eötvös Loránd University (ELTE), Budapest","Hungary","https://www.elte.hu/en/innovation",45.98,18.42],["Semmelweis Technology Transfer Center (TTC)","Semmelweis University, Budapest","Hungary","https://www.semmelweisttc.com/",47.18,17.54],["Technology Transfer and Innovation Center (CTTM)","University Politehnica of Bucharest (UPB)","Romania","",45.38,26.76],["Innovation and Technology Transfer Office (EITTO)","Technical University of Sofia","Bulgaria","https://eut.tu-sofia.bg/en/eut-offices/innovation-and-technology-transfer-office-eitto/",41.74,26.58],["High-Tech Business Center","Sofia University \"St. Kliment Ohridski\"","Bulgaria","https://www.uni-sofia.bg/index.php/eng/the_university/centres/high_tech_business_center_of_sofia_university_st_kliment_ohridski",43.62,23.74],["Centre for Research, Development and Technology Transfer (CIRTT)","University of Zagreb","Croatia","https://cirtt.unizg.hr/en/",44.16,15.12],["Centre for Technology Transfer (CTT) Ltd.","University of Zagreb – Faculty of Mechanical Engineering and Naval Architecture","Croatia","https://ctt.hr/en/home/",45.48,16.8],["Knowledge Transfer Office","University of Ljubljana","Slovenia","https://www.uni-lj.si/en/research/innovation-and-knowledge-transfer",46.98,14.32],["Centre for Entrepreneurship and Innovation","University of Tartu","Estonia","https://ut.ee/en/centre-entrepreneurship-and-innovation-3",57.58,26.18],["Mektory Innovation and Business Centre","Tallinn University of Technology (TalTech)","Estonia","",58.18,23.94],["Innovation and Acceleration Centre","University of Latvia","Latvia","https://www.lu.lv/en/cooperation/innovation-and-acceleration-centre/",55.02,23.92],["Cooperation and Technology Transfer Unit (CTTU)","Riga Technical University","Latvia","https://www.rtu.lv/en/innovations/technology-transfer-and-intellectual-property",56.78,23.2],["Technology and Knowledge Transfer Centre (TEPEK)","Latvia University of Life Sciences and Technologies (LBTU)","Latvia","https://www.lbtu.lv/en/lbtu-technology-and-knowledge-transfer-office",54.9,23.96],["AST (Aquitaine Science Transfert)","Mạng lưới vùng SATT — Nouvelle-Aquitaine","France","https://www.ast-innovations.com/",46.96,0.52],["AxLR","Mạng lưới vùng SATT — Occitanie Est (Montpellier)","France","https://axlr.com/",48.44,2.88],["Conectus","Mạng lưới vùng SATT — Alsace (Strasbourg)","France","https://www.conectus.fr/",47.28,3.4],["Erganeo","Mạng lưới vùng SATT — Île-de-France","France","https://www.erganeo.com/",46.32,1.08],["Linksium","Mạng lưới vùng SATT — Auvergne-Rhône-Alpes (Grenoble)","France","https://www.linksium.fr/",45.4,0.72],["Ouest Valorisation","Mạng lưới vùng SATT — Bretagne & Pays de la Loire","France","https://www.ouest-valorisation.fr/",46.72,0.72],["Pulsalys","Mạng lưới vùng SATT — Lyon–Saint-Étienne","France","https://www.pulsalys.fr/",48.0,2.64],["SATT Lutech","Mạng lưới vùng SATT — Sorbonne Université","France","https://www.sattlutech.com/",44.96,4.36],["SATT Paris-Saclay","Université Paris-Saclay","France","https://satt-paris-saclay.fr/",47.4,4.36],["SATT Nord","Mạng lưới vùng SATT — Hauts-de-France","France","https://sattnord.fr/",47.32,1.96],["SATT Sud","Mạng lưới vùng SATT — PACA & Corse","France","https://www.sattse.com/",46.0,1.24],["Sayens","Mạng lưới vùng SATT — Grand Est & Bourgogne-Franche-Comté","France","https://sayens.fr/",48.36,2.96],["Toulouse Tech Transfer (TTT)","Mạng lưới vùng SATT — Occitanie Ouest (Toulouse)","France","https://www.toulouse-tech-transfer.com/",44.96,2.12],["SATT Grand Centre","Clermont-Auvergne / Centre-Val de Loire / Limousin / Poitou-Charentes","France","https://www.sattgc.com/",45.08,0.68],["Innovation et valorisation","Sorbonne Université","France","https://www.sorbonne-universite.fr/recherche-et-innovation/innovation-et-valorisation",48.52,3.52],["SR2PI","École Polytechnique","France","https://www.polytechnique.edu/en/innovation/technology-transfer",46.12,1.8],["CNRS Innovation","CNRS (mạng lưới quốc gia)","France","https://www.cnrsinnovation.com/",44.8,0.96],["Inserm Transfert","INSERM (mạng lưới quốc gia)","France","https://www.inserm-transfert.fr/",47.76,0.88],["INRAE Transfert","INRAE (mạng lưới quốc gia)","France","https://www.inrae-transfert.fr/",45.92,2.44],["CEA Tech","CEA (mạng lưới quốc gia)","France","https://www.cea.fr/cea-tech/",47.68,1.76],["DARRI","Institut Pasteur","France","https://www.pasteur.fr/fr/nous-connaitre/nos-missions/les-applications-de-la-recherche/accelerer-linnovation-biomedicale-avec-linstitut-pasteur",44.8,1.56],["KTH Innovation","KTH Royal Institute of Technology","Sweden","https://www.kth.se/en/om/innovation/kth-innovation-1.956839",63.88,17.16],["Karolinska Institutet Innovation Office","Karolinska Institutet","Sweden","https://staff.ki.se/innovation-support",63.76,14.24],["UU Innovation","Uppsala University","Sweden","https://www.uu.se/en/collaboration-innovation/innovation---our-approach",61.04,17.24],["Uppsala Innovation Centre (UIC)","Uppsala University","Sweden","https://uic.se/en/",60.44,15.56],["LU Innovation","Lund University","Sweden","https://www.innovation.lu.se/en/lu-innovation",62.12,17.24],["Chalmers Innovation Office","Chalmers University of Technology","Sweden","https://www.chalmers.se/en/collaborate-with-us/entrepreneurship-and-innovation/infrastructure-for-innovation/",63.04,17.44],["Chalmers Ventures","Chalmers University of Technology","Sweden","https://chalmersventures.com/",60.36,14.0],["Stockholm University Innovation Office","Stockholm University","Sweden","https://www.su.se/english/education/careers/university-support-for-innovation-and-business-ideas",61.4,14.72],["GU Ventures","University of Gothenburg","Sweden","",63.72,14.56],["NTNU Technology Transfer AS","NTNU","Norway","https://www.ntnutto.no/",64.44,9.7],["Inven2","University of Oslo","Norway","https://www.inven2.com/",64.72,12.86],["VIS – Vestlandets Innovasjonsselskap","University of Bergen","Norway","https://www.visinnovasjon.no/",66.52,11.98],["Norinnova Technology Transfer (NTT)","UiT The Arctic University of Norway","Norway","https://norinnova.no/en/tto",63.0,13.38],["DTU Science Park","Technical University of Denmark (DTU)","Denmark","https://dtusciencepark.com/",54.58,9.66],["KU Tech Transfer","University of Copenhagen","Denmark","https://innovation.ku.dk/english/technology-transfer/tech-transfer-office/",56.14,8.38],["Aarhus University TTO","Aarhus University","Denmark","https://medarbejdere.au.dk/en/administration/research-support-and-collaboration/tto-technology-transfer",57.5,8.62],["AAU Innovation – Technology Transfer Office","Aalborg University","Denmark","https://www.en.innovation.aau.dk/about-aau-innovation/aau-innovation-s-units/technology-transfer-office",56.02,8.14],["Spin-outs Denmark","Mạng lưới 8 đại học Đan Mạch (điều phối tại SDU)","Denmark","https://spinouts.dk/",55.22,8.7],["Aalto University Innovation Services","Aalto University","Finland","https://www.aalto.fi/en/advancing-entrepreneurship-and-innovations/aalto-university-innovation-services",64.46,25.0],["Aalto Startup Center","Aalto University","Finland","https://aalto.fi/en/advancing-entrepreneurship-and-innovations/aalto-startup-community",64.42,27.04],["Helsinki Innovation Services Ltd (HIS)","University of Helsinki","Finland","https://www.helsinki.fi/en/helsinki-innovation-services",62.98,25.12],["University of Turku Technology Transfer Office (UTU TTO)","University of Turku","Finland","https://www.utu.fi/en/business-collaboration/innovations-and-entrepreneurship/utu-tto",63.58,26.44],["Tampere Universities Innovation Services","Tampere University","Finland","https://www.tuni.fi/en/innovation-services",63.94,27.88],["Auðna – TTO Iceland","Mạng lưới toàn bộ đại học Iceland","Iceland","https://www.audna.is/en",62.9,-17.72],["SNITTS (Swedish Network for Innovation and Technology Transfer Support)","Mạng lưới quốc gia Thuỵ Điển","Sweden","http://www.snitts.se/",62.44,15.6],["Reykjavik University Technology Transfer","Reykjavik University","Iceland","https://en.ru.is/collaboration/industry/research-innovation/technology-transfer/",66.5,-20.84],["FORNY2020","Chương trình quốc gia Na Uy (Research Council of Norway) tài trợ các TTO","Norway","",62.68,13.34],["TTO Politecnico di Milano","Politecnico di Milano","Italy","https://www.polimi.it/en/research/contacts/technology-transfer-office-tto",43.36,11.8],["I3P","Politecnico di Torino","Italy","https://www.i3p.it/",43.76,11.64],["Ufficio Valorizzazione e Trasferimento Tecnologico","Sapienza Università di Roma","Italy","https://www.uniroma1.it/it/pagina/ufficio-valorizzazione-e-trasferimento-tecnologico",41.48,12.96],["Sapienza TalentLab","Sapienza Università di Roma","Italy","https://saperico.web.uniroma1.it/sapienza-talentlab",41.4,11.68],["ARIN – Knowledge Transfer Office","Università di Bologna","Italy","https://www.unibo.it/it/ateneo/organizzazione-e-sedi/amministrazione-generale/3211/3715",44.32,12.76],["Almacube","Università di Bologna","Italy","https://www.almacube.com/en/",42.64,12.44],["Start Cube","Università di Padova","Italy","https://www.startcube.it/",40.96,14.32],["Start Attractor","Università di Pisa","Italy","https://startattractor.eu",41.12,14.2],["Polo Tecnologico di Navacchio","Università di Pisa","Italy","https://polotecnologico.it/",44.24,12.48],["Technology Transfer Sector","Università degli Studi di Milano","Italy","https://www.unimi.it/en/ugov/ou-structure/technology-transfer-sector",42.64,11.24],["Campania NewSteel","Università degli Studi di Napoli Federico II","Italy","https://www.campanianewsteel.it/",41.0,13.6],["U.O. Valorizzazione della Ricerca","Scuola Superiore Sant'Anna (Pisa)","Italy","https://www.santannapisa.it/it/terza-missione/trasferimento-della-conoscenza",42.92,12.92],["JOTTO","Sant'Anna, Scuola Normale Superiore, IMT Lucca","Italy","",42.24,13.92],["Divisione Supporto alla Ricerca e TT","Università di Trento","Italy","https://www.unitn.it/",42.4,11.6],["Incubatore Universitario Fiorentino (IUF)","Università degli Studi di Firenze","Italy","https://www.unifi.it/it/ricerca-e-innovazione/innovazione/spazi-e-strutture/incubatore-universitario-fare-impresa",44.04,11.52],["Unimprese","Università degli Studi di Genova","Italy","https://unige.it/unimprese",42.12,11.44],["ConLab / ILAB","Università Cattolica del Sacro Cuore","Italy","https://www.unicatt.it/ateneo/terza-missione/Trasferimento-della-conoscenza.html",42.84,11.16],["IIT Technology Transfer Directorate","Istituto Italiano di Tecnologia (IIT)","Italy","https://www.iit.it/innovation",44.6,12.96],["Netval","Mạng lưới toàn quốc TTO Ý","Italy","https://netval.it/",41.36,12.8],["OTRI","Universidad Politécnica de Madrid (UPM)","Spain","https://www.upm.es/otri",41.02,-2.18],["OTRI / OTC","Universidad Complutense de Madrid (UCM)","Spain","https://www.ucm.es/otri",40.06,-2.94],["Fundació Bosch i Gimpera (FBG)","Universitat de Barcelona (UB)","Spain","https://www.fbg.ub.edu/en/",38.86,-2.86],["Centre de Transferència de Tecnologia (CTT)","Universitat Politècnica de Catalunya (UPC)","Spain","https://www.ctt.upc.edu",41.46,-5.54],["CAITEC","Universidad Autónoma de Madrid (UAM)","Spain","https://fuam.es/caitec/",38.9,-5.66],["OTRI Universitat de València","Universitat de València (UV)","Spain","https://www.uv.es/otri",38.3,-4.1],["STCE (antes OTRI)","Universidad de Sevilla (US)","Spain","https://stce.us.es/",38.74,-3.26],["OTRI Transferencia e Innovación","Universidad del País Vasco (UPV/EHU)","Spain","https://www.ehu.eus/es/web/enpresa",39.02,-4.62],["Parc de Recerca UAB (PRUAB)","Universitat Autònoma de Barcelona (UAB)","Spain","https://www.parc.uab.cat/ca",39.66,-1.9],["I2T / UPV Innovación","Universitat Politècnica de València (UPV)","Spain","https://www.upv.es/entidades/i2t/",39.86,-2.26],["OTRI Unizar","Universidad de Zaragoza","Spain","https://otri.unizar.es/",40.02,-2.46],["OTRI","Universidad de Granada (UGR)","Spain","https://otri.ugr.es",41.58,-3.1],["AVTE","Universidade de Santiago de Compostela (USC)","Spain","https://www.usc.gal/es/investigacion-transferencia",39.3,-5.38],["OTRI / Transferencia","Universidad Carlos III de Madrid (UC3M)","Spain","https://www.uc3m.es/transferencia",41.82,-4.7],["Unitat de Valorització i Transferència","Universitat Pompeu Fabra (UPF)","Spain","https://www.upf.edu/transferencia",40.66,-1.98],["OTRI - Vicerrectorado de Transferencia","Universidad de Málaga (UMA)","Spain","https://www.uma.es/otri",41.06,-4.02],["OTRI","Universidad de Burgos (UBU)","Spain","https://www.ubu.es/otri-transferencia",40.18,-3.3],["OTRI","Universidad de Murcia (UM)","Spain","https://www.um.es/web/otri",38.38,-2.06],["Parque Científico de Madrid (PCM)","UCM + UAM (fundación conjunta)","Spain","https://fpcm.es",40.5,-5.02],["RedOTRI Universidades","Mạng lưới quốc gia OTRI (CRUE)","Spain","http://www.redotriuniversidades.net/",39.54,-4.5],["TTC@ULisboa","Universidade de Lisboa","Portugal","https://www.ulisboa.pt/en/info/ttculisboa-technology-transfer-and-knowledge-enhancement-centre-universidade-de-lisboa",38.48,-8.44],["Universidade de Lisboa Incubator","Universidade de Lisboa","Portugal","https://www.ulisboa.pt/en/info/universidade-de-lisboa-incubator",39.32,-7.72],["Técnico Venture Lab","Instituto Superior Técnico (Univ. Lisboa)","Portugal","https://tecnicoventurelab.pt/",37.96,-7.84],["UPTEC","Universidade do Porto","Portugal","https://uptec.up.pt/",40.04,-6.88],["Instituto Pedro Nunes (IPN)","Universidade de Coimbra","Portugal","https://www.ipn.pt/",39.92,-6.76],["UC Business","Universidade de Coimbra","Portugal","https://www.uc.pt/ucbusiness/",40.92,-7.16],["TecMinho","Universidade do Minho","Portugal","https://www.tecminho.uminho.pt/",40.48,-9.12],["Universidade de Aveiro Incubator (IEUA)","Universidade de Aveiro","Portugal","https://www.ua.pt/pt/incubator/sobre",38.96,-7.08],["NOVA Impact Office","Universidade Nova de Lisboa","Portugal","https://novainnovation.unl.pt/support-units/",41.56,-9.52],["TTO NTUA","National Technical University of Athens","Greece","https://tto.ntua.gr/en/",39.26,21.36],["Archimedes Center","National and Kapodistrian University of Athens","Greece","https://archimedes.uoa.gr/en/",40.58,21.4],["Technology Transfer Office AUTH","Aristotle University of Thessaloniki","Greece","https://rc.auth.gr/en/tto",37.9,23.36],["Walk AUTh","Aristotle University of Thessaloniki","Greece","https://walk.auth.gr/",40.78,21.08],["ITTO","University of Patras","Greece","https://itto.upatras.gr/",39.1,20.76],["Patras Science Park","University of Patras","Greece","https://psp.org.gr/",41.1,20.2],["ACEin","Athens University of Economics and Business","Greece","https://www.aueb.gr/el/mke",37.82,21.48],["Metis Innovation and Knowledge Transfer Unit","University of Crete","Greece","https://www.elke.uoc.gr/research/kto",39.66,21.8],["DUTH Innovation Hub TTO","Democritus University of Thrace","Greece","https://innovation.duth.gr/tto/",40.66,23.28],["Thinc — Thrace Incubator","Democritus University of Thrace","Greece","https://thinc.duth.gr/el/",37.98,22.56],["Cambridge Enterprise","University of Cambridge","United Kingdom","https://www.enterprise.cam.ac.uk/",54.4,-4.34],["Edinburgh Innovations","University of Edinburgh","United Kingdom","https://uoe-edinburgh-innovations.ed.ac.uk/",55.28,-2.82],["Research and Innovation Services (RIS)","University of Bristol","United Kingdom","https://www.bristol.ac.uk/red/",54.88,-2.38],["Warwick Innovations","University of Warwick","United Kingdom","https://warwick.ac.uk/services/ventures/",55.72,-4.02],["UCL Business","University College London","United Kingdom","",55.6,-3.54],["NovaUCD","University College Dublin","Ireland","",52.8,-7.84],["Cardiff University","Cardiff University","United Kingdom","",52.48,-1.02],["University of London","University of London","United Kingdom","",55.52,-2.42],["Falmouth University","Falmouth University","United Kingdom","",55.8,-2.34],["University of Surrey","University of Surrey","United Kingdom","",54.84,-1.5],["University of Lancashire","University of Lancashire","United Kingdom","",54.32,-0.98],["King's College London","King's College London","United Kingdom","",52.32,-3.46],["Aston University","Aston University","United Kingdom","",53.8,-1.06],["University College London","University College London","United Kingdom","",54.64,-3.74],["University of Oxford","University of Oxford","United Kingdom","",53.88,-3.42],["University of Birmingham","University of Birmingham","United Kingdom","",54.16,-3.02],["University of Leeds","University of Leeds","United Kingdom","",55.88,-3.66],["The University of Sheffield","University of Sheffield","United Kingdom","",52.52,-2.9],["The University of Manchester","University of Manchester","United Kingdom","",52.92,-2.9],["Canterbury Christ Church University","Canterbury Christ Church University","United Kingdom","",52.92,-1.86],["Manchester Metropolitan University","Manchester Metropolitan University","United Kingdom","",52.92,-1.54],["Northeastern University – London","Northeastern University – London","United Kingdom","",53.32,-4.42],["University of Chester","University of Chester","United Kingdom","",53.8,-2.1],["University of West London","University of West London","United Kingdom","",55.4,-4.82],["Cranfield University","Cranfield University","United Kingdom","",54.16,-2.14],["University of Liverpool","University of Liverpool","United Kingdom","",53.76,-2.62],["University of Glasgow","University of Glasgow","United Kingdom","",52.6,-1.22],["University of the Arts London","University of the Arts London","United Kingdom","",54.64,-3.46],["University of Hull","University of Hull","United Kingdom","",53.36,-3.58],["Liverpool John Moores University","Liverpool John Moores University","United Kingdom","",55.4,-1.86],["University of York","University of York","United Kingdom","",54.36,-3.42],["University of the Highlands & Islands","University of the Highlands & Islands","United Kingdom","",54.08,-2.78],["Oxford Brookes University","Oxford Brookes University","United Kingdom","",54.84,-2.5],["University of Westminster","University of Westminster","United Kingdom","",53.72,-3.86],["University of Wolverhampton","University of Wolverhampton","United Kingdom","",53.76,-2.98],["Goldsmiths, University of London","Goldsmiths, University of London","United Kingdom","",54.52,-1.86],["University of Bath","University of Bath","United Kingdom","",55.64,-1.9],["Kingston University – Business and Enterprise Directorate","Kingston University","United Kingdom","",53.12,-1.86],["University of the West of Scotland","University of the West of Scotland","United Kingdom","",53.68,-3.06],["York St John University","York St John University","United Kingdom","",53.72,-4.1],["Glasgow Caledonian University","Glasgow Caledonian University","United Kingdom","",52.72,-3.78],["Hartpury College and Hartpury University","Hartpury University","United Kingdom","",54.44,-1.98],["University of Suffolk","University of Suffolk","United Kingdom","",55.28,-1.1],["Bath Spa University","Bath Spa University","United Kingdom","",52.8,-4.26],["Solent University","Solent University","United Kingdom","",54.68,-4.06],["Aberystwyth University","Aberystwyth University","United Kingdom","",53.12,-1.42],["Trinity College Dublin","Trinity College Dublin","Ireland","",54.32,-6.24],["University of East London","University of East London","United Kingdom","",54.92,-4.06],["Liverpool School of Tropical Medicine","Liverpool School of Tropical Medicine","United Kingdom","",55.88,-1.3],["Norwich University of the Arts","Norwich University of the Arts","United Kingdom","",55.68,-4.26],["Lancaster University","Lancaster University","United Kingdom","",52.68,-2.86],["Royal Conservatoire of Scotland","Royal Conservatoire of Scotland","United Kingdom","",54.96,-4.26],["University of Northampton","University of Northampton","United Kingdom","",54.16,-1.7],["Guildhall School of Music & Drama","Guildhall School of Music & Drama","United Kingdom","",52.2,-3.82],["Technological University Dublin","Technological University Dublin","Ireland","",53.76,-6.64],["University of Winchester","University of Winchester","United Kingdom","",53.6,-1.42],["Robert Gordon University","Robert Gordon University","United Kingdom","",53.68,-1.1],["SOAS University of London","SOAS University of London","United Kingdom","",55.84,-1.34],["The DMZ at Ryerson University","Ryerson University","Canada","",54.46,-104.66],["İTÜ Çekirdek","Istanbul Technical University","Turkey","",38.6,33.64],["PoliHub","Politecnico di Milano","Italy","",42.64,13.24],["The SETsquared Partnership","University of Bath, University of Bristol, University of Exeter, University of Southampton, University of Surrey (partnership)","United Kingdom","",54.72,-4.38],["YES!Delft","Delft University of Technology","Netherlands","",53.2,4.06],["Chalmers Ventures","","Sweden","",60.36,17.52],["IPN Incubadora","","Portugal","",39.32,-9.32],["Red de Incubadoras UVM","","Mexico","",25.16,-101.46],["University of Toronto Entrepreneurship","University of Toronto","Canada","",55.1,-107.7],["UtrechtInc","","Netherlands","",52.76,6.74],["Auge UCR","","Costa Rica","",11.22,-85.0],["Centech","","Canada","",57.5,-106.22],["GU Ventures","","Sweden","",61.8,17.4],["Incuba UdeC","","Chile","",-33.98,-72.38],["Incubadora Campus Nova","Pontificia Universidad Javeriana Cali","Colombia","",6.08,-73.94],["INITS","","Austria","",49.4,14.56],["McGill Dobson Centre","McGill University","Canada","",57.06,-104.7],["Studio G at Arrowhead Center","","United States","",40.84,-100.2],["SUPERA/USP","USP","Brazil","",-9.58,-52.76],["TEC Edmonton","","Canada","",56.1,-105.9],["ETC Baltimore","","United States","",38.0,-99.16],["Montpellier BIC","","France","",48.08,2.12],["Uppsala Innovation Centre","","Sweden","",63.92,16.44],["Beijing Beihangtianhui Technology Incubator","","China","",34.32,103.2],["Ingria Residentship Program","","Russia","",60.62,91.48],["Los Angeles Cleantech Incubator","","United States","",40.6,-98.08],["WSL","","Belgium","",51.76,5.18],["HCDC Business Center","","United States","",40.8,-99.6],["1871","","United States","",41.12,-98.08],["Guinness Enterprise Centre","","Ireland","",52.36,-9.24],["IE Orchard National Incubator","","China","",35.68,105.56],["MIDITEC","","Brazil","",-10.58,-54.0],["Royal Scientific Society - iPARK","","Jordan","",32.04,35.5],["Aalto Startup Center's Business Generator","Aalto University","Finland","",63.34,25.4],["HSE Business Incubator","Higher School of Economics","Russia","",63.18,90.96],["imec","Ghent University, University of Antwerp, KU Leuven, VU Amsterdam, Hasselt University (partnership)","Belgium","",50.16,2.98],["Startup Aggieland","Texas A&M University","United States","",38.48,-98.84],["York Entrepreneurship Development Institute","York University","Canada","",56.06,-106.7],["EIT Digital Accelerator","","Belgium","",52.2,3.98],["GenerationS","","Russia","",60.94,89.96],["ISDI Accelerator","","Spain","",41.3,-5.7],["Kerala Startup Mission","","India","",20.48,80.32],["NDRC","","Ireland","",54.8,-6.8],["365x","","Israel","",32.4,34.9],["The Accelerator Centre","","Canada","",56.74,-106.42],["Chinaccelerator","","China","",34.64,105.36],["GVA Accelerator Program","","Russia","",59.78,90.28],["SEED SPOT","","United States","",38.84,-97.32],["Shell Iniciativa Jovem","","Brazil","",-10.86,-53.2],["CURAD Agribusiness Incubator","Makerere University","Uganda","",0.56,32.42],["Excel Hort Consult Agribusiness Incubator","","Uganda","",0.8,32.62],["LaunchLab","Stellenbosch University","South Africa","",-29.36,23.6],["01Booster","","Japan","",35.1,138.16],["CYCU Industry Accelerator Incubation Center","Chung Yuan Christian University","Taiwan","",25.06,120.88],["New Venture Institute","Flinders University","Australia","",-23.54,135.6],["Bilkent CYBERPARK Incubation Center","Bilkent University","Turkey","",40.56,35.6],["NAStartUp","","Italy","",43.92,13.88],["Technopark Winterthur","","Switzerland","",45.68,6.36],["Chrysalis Incubadora PUCV","","Chile","",-34.62,-71.1],["MacondoLab","Universidad Simon Bolivar","Colombia","",6.12,-72.7],["Programa EAN Impacta","","Colombia","",5.92,-74.82],["AUC Venture Lab","American University in Cairo","Egypt","",27.68,30.72],["Cubical Services Business Incubator","","Kuwait","",28.68,45.72],["Syrian Enterprise & Business Centre","","Syria","",33.28,39.32],["Echoing Green","","United States","",38.64,-99.2],["Entrepreneuriat Laval inc.","Université Laval","Canada","",55.58,-105.3],["Genesis","Memorial University of Newfoundland","Canada","",55.58,-104.74],["Bilgiyi Ticarileştirme Merkezi/CCI","","Turkey","",39.4,33.84],["EIT Health Accelerator","","","",null,null],["Innovation & Entrepreneurship Center","Mehran UET","Pakistan","",31.52,71.02],["COLABORATIVOx","","Mexico","",22.92,-102.94],["Office of Intellectual Property & Industry Research Alliances (IPIRA)","UC Berkeley","United States","https://ipira.berkeley.edu",40.44,-96.72],["UCLA Technology Development Group (TDG)","UCLA","United States","https://tdg.ucla.edu",40.48,-98.84],["Office of Innovation and Commercialization","UC San Diego","United States","https://innovation.ucsd.edu",39.52,-98.92],["UCSF Innovation Ventures","UC San Francisco","United States","https://innovation.ucsf.edu",38.0,-97.12],["InnovationAccess","UC Davis","United States","https://innovationaccess.ucdavis.edu",39.0,-98.2],["Beall Applied Innovation","UC Irvine","United States","https://innovation.uci.edu",40.32,-99.04],["Technology Management Office","UC Santa Barbara","United States","",39.32,-99.24],["Office of Research — Innovation Transfer","UC Santa Cruz","United States","",41.52,-99.64],["Office of Technology Partnerships","UC Riverside","United States","https://research.ucr.edu/otc",41.08,-98.96],["Office of Research and Economic Development","UC Merced","United States","",38.8,-99.16],["Technology Licensing Office (TLO)","MIT","United States","https://tlo.mit.edu",37.88,-99.84],["Office of Technology Commercialization","UT Austin","United States","https://research.utexas.edu/ovpr/otc",39.92,-99.2],["Office of Technology Commercialization","UT Dallas","United States","",40.32,-98.12],["Office of Technology Management","UT Arlington","United States","",40.44,-98.96],["Office of Technology Transfer","UT San Antonio","United States","",38.48,-98.84],["Office of Technology Transfer","UT El Paso","United States","",40.4,-100.4],["Office of Technology Development","UT Southwestern Medical Center","United States","",39.24,-96.84],["Strategic Industry Ventures / Technology Transfer","MD Anderson Cancer Center","United States","",38.04,-97.92],["Office of Technology Management","UT Health Science Center Houston","United States","",41.32,-100.12],["Purdue Innovates Office of Technology Commercialization","Purdue University","United States","https://otc.prf.org",41.36,-99.16],["Office of Technology Licensing (OTL)","Stanford University","United States","https://otl.stanford.edu",39.0,-96.88],["Skysong Innovations","Arizona State University","United States","https://skysonginnovations.com",41.44,-98.04],["Office of Technology Development (OTD)","Harvard University","United States","https://otd.harvard.edu",40.16,-99.0],["Innovation Partnerships","University of Michigan","United States","https://innovationpartnerships.umich.edu",38.12,-97.48],["Johns Hopkins Technology Ventures (JHTV)","Johns Hopkins University","United States","https://ventures.jhu.edu",38.76,-98.28],["Office of Technology Transfer (OTT)","Caltech","United States","https://ott.caltech.edu",38.12,-99.92],["Innovation and New Ventures Office (INVO)","Northwestern University","United States","https://invo.northwestern.edu",39.96,-100.08],["Wisconsin Alumni Research Foundation (WARF)","University of Wisconsin–Madison","United States","https://warf.org",40.04,-99.28],["UF Innovate | Tech Licensing","University of Florida","United States","https://innovate.ufl.edu",41.76,-99.04],["Penn Center for Innovation (PCI)","University of Pennsylvania","United States","https://pci.upenn.edu",37.8,-99.88],["UM Ventures (Maryland Momentum Fund / Office of Technology Commercialization)","University of Maryland, College Park","United States","https://umventures.org",41.48,-96.64],["Office of Technology Development","University of Maryland, Baltimore County (UMBC)","United States","",41.32,-99.4],["Office for Translation & Commercialization (OTC)","Duke University","United States","https://otc.duke.edu",41.28,-100.6],["Center for Technology Licensing (CTL)","Cornell University","United States","https://ctl.cornell.edu",38.48,-98.56],["Technology Commercialization","University of Minnesota","United States","https://research.umn.edu/units/techcomm",39.28,-98.52],["Venture Partners at CU Boulder","University of Colorado Boulder","United States","https://venturepartners.colorado.edu",41.24,-99.68],["Innovation Institute","University of Pittsburgh","United States","https://www.innovation.pitt.edu",38.12,-97.56],["Office of Technology Licensing","Georgia Institute of Technology","United States","https://research.gatech.edu/technology-licensing",40.36,-100.24],["Columbia Technology Ventures (CTV)","Columbia University","United States","https://inventions.columbia.edu",40.16,-98.24],["Tech Launch Arizona","University of Arizona","United States","https://techlaunch.arizona.edu",40.4,-99.84],["Commercial Ventures & Intellectual Property (CVIP)","UMass Amherst","United States","https://www.umass.edu/research/cvip",40.64,-100.24],["Office of Technology Management (OTM)","University of Illinois Urbana-Champaign","United States","https://otm.illinois.edu",40.36,-96.72],["Research & Innovation — Patents & Licensing","University of South Florida","United States","",38.6,-98.6],["Office of Technology Management (OTM)","Washington University in St. Louis","United States","https://otm.wustl.edu",39.48,-97.48],["Technology Commercialization Office (TCO)","The Ohio State University","United States","https://tco.osu.edu",38.08,-96.88],["Office for Innovation & Commercialization","Stony Brook University (SUNY)","United States","",38.52,-97.12],["UB Technology Transfer","University at Buffalo (SUNY)","United States","",38.88,-98.84],["Office of Entrepreneurship and Innovation Partnerships","Binghamton University (SUNY)","United States","",38.16,-98.64],["Office for Innovation Development","University at Albany (SUNY)","United States","",38.12,-99.48],["UTech (Technology Transfer Office)","Case Western Reserve University","United States","https://case.edu/utech",40.36,-97.8],["Yale Ventures","Yale University","United States","https://yaleventures.yale.edu",39.2,-96.92],["Center for Technology Transfer and Enterprise Creation (CTTEC)","Carnegie Mellon University","United States","https://www.cmu.edu/cttec",38.68,-99.96],["CoMotion","University of Washington","United States","https://comotion.uw.edu",40.48,-97.8],["Office of Technology Transfer","University of Central Florida","United States","https://tt.research.ucf.edu",40.88,-98.76],["Texas A&M Innovation (Technology Commercialization)","Texas A&M University","United States","https://innovation.tamu.edu",39.04,-99.88],["Office of Technology Commercialization","Prairie View A&M University","United States","",40.88,-97.92],["Iowa State University Research Foundation (ISURF)","Iowa State University","United States","https://www.isurf.org",40.04,-97.04],["MSU Technologies","Michigan State University","United States","https://technologies.msu.edu",41.32,-97.4],["Center for Technology Transfer and Commercialization (CTTC)","Vanderbilt University","United States","https://www.vanderbilt.edu/cttc",41.4,-99.44],["Office of Technology Commercialization (OTC)","University of North Carolina at Chapel Hill","United States","https://otc.unc.edu",38.56,-96.96],["Technology Opportunities and Ventures","New York University","United States","https://techventures.nyu.edu",38.72,-97.72],["Office of Research Commercialization (ORC)","North Carolina State University","United States","https://research.ncsu.edu/orc",41.48,-97.76],["Center for Research Innovation (CRI)","Northeastern University","United States","https://cri.northeastern.edu",41.2,-97.72],["Office for Research Commercialization","Rutgers University","United States","https://research.rutgers.edu",38.28,-99.44],["Technology Transfer Office","Florida International University","United States","https://research.fiu.edu/technology-transfer",40.52,-96.84],["Virginia Tech Intellectual Properties (VTIP)","Virginia Tech","United States","https://www.vtip.org",38.8,-97.08],["Technology Transfer Office","Dartmouth College","United States","https://technologytransfer.dartmouth.edu",39.8,-100.2],["Polsky Center for Entrepreneurship and Innovation","University of Chicago","United States","https://polsky.uchicago.edu",41.76,-97.8],["Licensing & Ventures Group (LVG)","University of Virginia","United States","https://licensing.virginia.edu",40.0,-96.8],["NUtech Ventures","University of Nebraska–Lincoln","United States","https://nutechventures.org",38.28,-97.16],["USC Stevens Center for Innovation","University of Southern California","United States","https://stevens.usc.edu",40.88,-96.92],["Office of Technology Transfer (OTT)","Emory University","United States","https://ott.emory.edu",38.32,-97.08],["Office of Innovation, Partnerships and Economic Engagement","University of South Carolina","United States","",40.08,-100.44],["Innovation and Commercialization Office (ICO)","Indiana University","United States","https://research.iu.edu/commercialization",40.68,-99.64],["STC.UNM (Science & Technology Corporation @ UNM)","University of New Mexico","United States","https://stc.unm.edu",39.36,-98.48],["Office of Commercialization (OCOM)","Florida State University","United States","https://ocom.fsu.edu",41.68,-100.28],["Office of Technology Licensing","Princeton University","United States","",39.36,-99.64],["UI Ventures","University of Iowa","United States","",41.56,-100.36],["PIVOT Center","University of Utah","United States","https://pivotcenter.utah.edu",41.24,-97.0],["Office of Technology Transfer and Commercialization","Penn State University","United States","https://techtransfer.psu.edu",39.16,-97.56],["KU Center for Technology Commercialization (KUCTC)","University of Kansas","United States","",41.72,-97.44],["UR Ventures","University of Rochester","United States","https://www.rochester.edu/ventures",41.36,-96.76],["UH Technology Bridge","University of Houston","United States","",38.92,-100.28],["Office of Technology Commercialization","Rensselaer Polytechnic Institute","United States","",41.16,-97.6],["Technology Development (OTD)","Boston University","United States","https://www.bu.edu/otd",39.84,-98.08],["Office of Technology Commercialization (OTC)","University of Kentucky","United States","https://uky.edu/otc",41.36,-100.08],["Office of Innovation & Ecosystem Development (OIED)","Louisiana State University","United States","https://www.lsu.edu/oied",41.04,-100.24],["Office of Technology Management & Industry Relations (OTMIR)","University of Missouri","United States","",39.24,-97.12],["Technology Transfer & Licensing","Tufts University","United States","",38.64,-97.2],["Rice Innovation","Rice University","United States","https://innovation.rice.edu",40.12,-98.4],["Office of Technology Commercialization","Drexel University","United States","",37.88,-97.4],["UT Research Foundation (UTRF)","University of Tennessee","United States","https://utrf.tennessee.edu",39.24,-97.08],["Technology Commercialization Services","University of Connecticut","United States","",39.08,-98.76],["Office of Research Commercialization","Texas Tech University","United States","",40.4,-100.36],["Innovation Gateway","University of Georgia","United States","https://innovationgateway.uga.edu",41.4,-97.48],["Technology Innovations Office","Brown University","United States","",40.2,-97.12],["Technology Transfer Office","University of Miami","United States","",39.88,-99.56],["Technology Commercialization Office","Wayne State University","United States","",38.24,-97.76],["Office of Technology Commercialization (OTC)","University of Oklahoma","United States","",37.84,-99.8],["Office of Research and Innovation","Worcester Polytechnic Institute","United States","",37.96,-99.32],["Office of Innovation Advancement and Commercialization (OIAC)","Auburn University","United States","",40.28,-99.28],["Office of Technology and Industry Alliances","Baylor University","United States","",38.44,-99.28],["Office of Innovation (1819 Innovation Hub)","University of Cincinnati","United States","",39.36,-96.8],["Technology Transfer Office","Temple University","United States","",38.84,-97.24],["Technology Ventures Office","University of Arkansas","United States","",37.8,-99.8],["Office of Technology Transfer","University of Akron","United States","",40.0,-99.96],["BYU Technology Transfer Office (BTTO)","Brigham Young University","United States","https://btto.byu.edu",38.36,-97.4],["Technology Commercialization Office","George Washington University","United States","",39.76,-99.6],["Office for Innovation and Commercialization","University of Alabama","United States","",39.64,-98.16],["Commercialization EPI-Center","University of Louisville","United States","",39.72,-100.24],["IDEA Center","University of Notre Dame","United States","https://ideacenter.nd.edu",38.4,-96.88],["CSU Ventures","Colorado State University","United States","https://csuventures.org",39.92,-97.44],["Technology Transfer & Business Development","Oregon Health & Science University","United States","",38.68,-97.8],["Office of Technology Transfer","Thomas Jefferson University","United States","",41.48,-99.24],["Office of Technology Commercialization","University of Alabama in Huntsville","United States","",40.64,-97.16],["Wyoming Technology Transfer & Research Products Center","University of Wyoming","United States","",38.64,-100.16],["Commercialization & Regional Development","Utah State University","United States","",40.36,-96.72],["Technology Commercialization","Georgetown University","United States","",41.36,-99.4],["OSU Advantage","Oregon State University","United States","https://advantage.oregonstate.edu",39.44,-98.96],["Wake Forest Innovations","Wake Forest University","United States","",38.24,-96.96],["Technology Commercialization Office","CUNY (City University of New York)","United States","",38.44,-97.92],["Office of Technology Transfer & Business Development","University of Toledo","United States","",38.52,-97.2],["Office of Innovation & Economic Development","University of Alabama at Birmingham (UAB)","United States","",39.96,-99.2],["Office of Commercialization","Washington State University","United States","https://commercialization.wsu.edu",39.68,-97.56],["Office of Technology Transfer","West Virginia University","United States","",41.28,-98.68],["University-Industry Liaison Office (UILO)","University of British Columbia","Canada","https://uilo.ubc.ca",57.02,-105.7],["Innovate Calgary","University of Calgary","Canada","https://innovatecalgary.com",54.1,-107.14],["Innovation, Knowledge Mobilization and Partnerships","University of Alberta","Canada","https://www.ualberta.ca/en/research/services/contact/technology-transfer-services.html",54.94,-105.78],["Industry Liaison and Innovation (ILI)","Dalhousie University","Canada","",54.1,-104.78],["Bureau de valorisation et de partenariats (qua mạng lưới Axelys)","Université Laval","Canada","",57.02,-107.58],["Industry Liaison Office / IP & Commercialization","University of Manitoba","Canada","",56.54,-106.74],["Innovation and Partnerships Office (Technology Transfer)","McGill University","Canada","https://www.mcgill.ca/research/research/tech-transfer",54.7,-107.26],["MILO — McMaster Industry Liaison Office","McMaster University","Canada","https://milo.mcmaster.ca",55.34,-104.46],["Univalor (qua mạng lưới Axelys)","Université de Montréal","Canada","",56.62,-107.42],["Invention to Innovation (i2I)","University of Ottawa","Canada","",56.18,-107.18],["Queen's Partnerships and Innovation (QPI)","Queen's University","Canada","",54.54,-105.46],["Industry Liaison Office (ILO)","University of Saskatchewan","Canada","",56.66,-108.14],["Innovations & Partnerships Office (IPO)","University of Toronto","Canada","https://research.utoronto.ca",55.9,-107.3],["Waterloo Commercialization Office (WatCo)","University of Waterloo","Canada","https://uwaterloo.ca/watco",54.86,-104.9],["WORLDiscoveries","Western University","Canada","https://worlddiscoveries.ca",56.66,-106.14],["SFU Innovation (Industry Liaison Office)","Simon Fraser University","Canada","https://innovation.sfu.ca",54.86,-105.94],["Industry Partnerships & Knowledge Mobilization","University of Victoria","Canada","",54.9,-106.62],["District 3 Innovation Center / Office of Research (chuyển giao công nghệ qua Axelys)","Concordia University","Canada","",57.22,-108.14],["Innovation and Research Services","Carleton University","Canada","",54.98,-108.1],["Innovation York","York University","Canada","https://innovationyork.ca",57.46,-105.94],["Office of the Vice-President, Research and Innovation — Zone Learning","Toronto Metropolitan University (TMU)","Canada","",55.98,-104.34],["Research Innovation Office","University of Guelph","Canada","",55.94,-107.34],["Office of Research and Innovation Services (ORIS)","University of Windsor","Canada","",57.06,-105.66],["Office of Research Services","Wilfrid Laurier University","Canada","",56.38,-108.1],["Office of Research Services","Brock University","Canada","",57.66,-106.58],["Office of Research Services","University of Regina","Canada","",55.22,-106.42],["Technology Management and Business Development Office (TMBD)","University of New Brunswick","Canada","",55.3,-104.86],["Genesis Centre / Industry Liaison Office","Memorial University of Newfoundland","Canada","",55.74,-106.18],["Office of Research Services","University of Prince Edward Island","Canada","",54.22,-104.66],["Office of Research and Innovation","Trent University","Canada","",55.82,-107.54],["Office of Research and Innovation","Lakehead University","Canada","",57.26,-105.98],["Bureau de valorisation (qua mạng lưới Axelys)","Université de Sherbrooke","Canada","",55.22,-104.98],["Service de soutien à l'innovation (qua mạng lưới Axelys)","École de technologie supérieure (ÉTS)","Canada","",55.06,-104.62],["Bureau de valorisation (qua mạng lưới Axelys)","Polytechnique Montréal","Canada","",54.54,-106.7],["Centre d'entrepreneuriat HEC Montréal","HEC Montréal","Canada","",56.86,-106.34],["Office of Research Services","University of Winnipeg","Canada","",57.66,-104.42],["Institute for Innovation and Entrepreneurship","Mount Royal University","Canada","",56.3,-105.18],["Office of Research and Innovation","Thompson Rivers University","Canada","",54.82,-106.58],["Office of Research Services","University of Lethbridge","Canada","",55.66,-108.18],["Office of Research Services","Athabasca University","Canada","",56.38,-107.14],["Office of Research Services","Ontario Tech University","Canada","",54.7,-107.1],["Office of Research and Innovation","University of Northern British Columbia","Canada","",54.42,-107.18],["Babson Institute for Entrepreneurial Innovation (Butler Launch Pad)","Babson College","United States","",41.76,-99.16],["Innovation District — Office of Technology Development","Boston College","United States","",39.52,-100.24],["Syracuse University Technology Transfer","Syracuse University","United States","",39.72,-99.0],["Office of Economic Innovation and Partnerships (OEIP)","University of Delaware","United States","",39.32,-97.84],["UVM Innovations","University of Vermont","United States","",38.8,-99.72],["Office of Technology Transfer","Villanova University","United States","",41.28,-97.8],["Office of Technology Transfer","Lehigh University","United States","",40.08,-97.76],["Agência USP de Inovação","Universidade de São Paulo (USP)","Brazil","https://www5.usp.br/pesquisa/inovacao-tecnologica/",-11.7,-53.2],["Inova Unicamp","Universidade Estadual de Campinas (UNICAMP)","Brazil","",-8.74,-52.24],["Inova UFRJ (Agência UFRJ de Inovação)","Universidade Federal do Rio de Janeiro (UFRJ)","Brazil","https://inovacao.ufrj.br/",-11.02,-51.88],["SEDETEC – Secretaria de Desenvolvimento Tecnológico","Universidade Federal do Rio Grande do Sul (UFRGS)","Brazil","",-9.86,-51.36],["CTIT – Coordenadoria de Transferência e Inovação Tecnológica","Universidade Federal de Minas Gerais (UFMG)","Brazil","",-8.5,-52.68],["Agência UFPB de Inovação Tecnológica","Universidade Federal da Paraíba (UFPB)","Brazil","https://www.ufpb.br/inova/",-8.42,-54.6],["NIT-UFPR – Núcleo de Inovação Tecnológica","Universidade Federal do Paraná (UFPR)","Brazil","https://ufpr.br/prpi/nucleo-de-inovacao-tecnologica-nit-ufpr/",-10.1,-51.48],["NIT PUCRS – Núcleo de Inovação Tecnológica","Pontifícia Universidade Católica do Rio Grande do Sul (PUCRS)","Brazil","",-9.46,-52.12],["Agência de Inovação da UFSCar","Universidade Federal de São Carlos (UFSCar)","Brazil","",-8.38,-54.84],["Agência de Inovação PUC-Rio (AGI)","Pontifícia Universidade Católica do Rio de Janeiro (PUC-Rio)","Brazil","https://www.agi.puc-rio.br/en/home/",-10.62,-54.6],["CDT/UnB – Centro de Apoio ao Desenvolvimento Tecnológico","Universidade de Brasília (UnB)","Brazil","https://cdt.unb.br/pt-br/",-9.42,-51.28],["NIT/UFBA – Núcleo de Inovação Tecnológica","Universidade Federal da Bahia (UFBA)","Brazil","https://nit.ufba.br/",-8.38,-54.28],["UFC Inova (UFCINOVA)","Universidade Federal do Ceará (UFC)","Brazil","https://ufcinova.ufc.br/en/",-10.42,-54.04],["tecnoPARQ – Parque Tecnológico de Viçosa","Universidade Federal de Viçosa (UFV)","Brazil","",-10.42,-52.52],["Agência PUC (Parcerias Estratégicas)","Pontifícia Universidade Católica do Paraná (PUCPR)","Brazil","https://www.pucpr.br/empresa/agencia-puc/",-10.94,-53.64],["Coordinación de Vinculación y Transferencia Tecnológica (CVTT) / Dirección de Transferencia Tecnológica","Universidad Nacional Autónoma de México (UNAM)","Mexico","https://vinculacion.unam.mx/",24.28,-101.66],["Technology Transfer Office (TecScience)","Tecnológico de Monterrey","Mexico","https://tecscience.tec.mx/en/business-innovation/technology-transfer-office/",25.48,-101.18],["Transferencia Uniandes – Oficina de Transferencia de Tecnología y Conocimiento","Universidad de los Andes","Colombia","https://transferencia.uniandes.edu.co/es/quienes-somos",5.36,-75.42],["Transferencia Tecnológica – Vicerrectoría de Investigación","Pontificia Universidad Javeriana (Bogotá)","Colombia","https://www.javeriana.edu.co/investigacion/transferencia-tecnologica",2.92,-76.02],["Transferencia Tecnológica – Centro de Innovación y Emprendimiento","Pontificia Universidad Javeriana Cali","Colombia","https://www.javerianacali.edu.co/centro-de-innovacion-y-emprendimiento/transferencia",3.56,-73.1],["Unidad de Transferencia de Tecnología y Conocimiento (Innovación)","Universidad de Antioquia","Colombia","",3.52,-72.7],["UC Anacleto Angelini Innovation Center","Pontificia Universidad Católica de Chile","Chile","https://www.uc.cl/en/academic-units/uc-anacleto-angelini-innovation-center/",-33.78,-69.94],["OTL UdeC – Oficina de Transferencia y Licenciamiento","Universidad de Concepción","Chile","",-34.46,-72.5],["UDT – Unidad de Desarrollo Tecnológico","Universidad de Concepción","Chile","https://en.udt.cl/",-34.62,-69.9],["Oficina de Transferencia Tecnológica","Universidad Católica de la Santísima Concepción (UCSC)","Chile","https://www.ucsc.cl/blogs-academicos/oficinas-de-transferencia-tecnologica/",-35.18,-72.1],["INNOVAPUCP (ex-CTT-PUCP, Centro de Asesoría y Servicios Integrados)","Pontificia Universidad Católica del Perú (PUCP)","Peru","https://pucp.edu.pe/soluciones-tecnologicas/solucion/transferencia-tecnologica",-7.44,-73.12],["Oficina de Innovación (OIN)","Pontificia Universidad Católica del Perú (PUCP)","Peru","",-9.56,-76.36],["OTTIP – Oficina de Transferencia Tecnológica y Propiedad Intelectual","Pontificia Universidad Católica del Perú (PUCP)","Peru","",-8.4,-76.6],["CIDE – Centro de Innovación y Desarrollo Emprendedor","Pontificia Universidad Católica del Perú (PUCP)","Peru","",-9.32,-75.24],["OVTT – Oficina de Vinculación y Transferencia Tecnológica","Universidad de Buenos Aires (Facultad de Ciencias Exactas y Naturales)","Argentina","https://exactas.uba.ar/vinculacion/actividades-realizadas/",-36.48,-65.08],["Secretaría de Innovación y Vinculación Tecnológica (SIyVIT)","Universidad Nacional de Córdoba","Argentina","https://www.unc.edu.ar/innovacion-y-vinculacion",-37.0,-67.08],["Polo Tecnológico de Pando","Universidad de la República (UdelaR)","Uruguay","",-34.02,-56.24],["PROINNOVA – Unidad de Gestión y Transferencia del Conocimiento para la Innovación","Universidad de Costa Rica (UCR)","Costa Rica","https://diprovid.ucr.ac.cr/proinnova/",9.74,-83.96],["InnoHub – Centro de Innovación y Emprendimiento para el Desarrollo","Universidad de Costa Rica (UCR)","Costa Rica","",10.02,-83.4],["T³ – Technion Technology Transfer","Technion – Israel Institute of Technology","Israel","https://t3.technion.ac.il/",29.12,35.74],["t:hub – Technion Innovation and Entrepreneurship Center","Technion – Israel Institute of Technology","Israel","",32.72,34.74],["Yissum Research Development Company","Hebrew University of Jerusalem","Israel","",31.36,33.7],["Yeda Research and Development Company","Weizmann Institute of Science","Israel","",30.8,36.62],["Ramot at Tel Aviv University","Tel Aviv University","Israel","",30.4,33.98],["KAUST Innovation (Technology Transfer / InnovationOps)","King Abdullah University of Science and Technology (KAUST)","Saudi Arabia","https://www.kaust.edu.sa/en/innovate/technology-transfer-innovationops",23.4,46.6],["TIE – Technology Innovation and Entrepreneurship","King Abdullah University of Science and Technology (KAUST)","Saudi Arabia","https://tie.kaust.edu.sa/",24.28,46.4],["National Transformation Institute (NTI)","King Abdullah University of Science and Technology (KAUST)","Saudi Arabia","",22.0,45.04],["Innovation & Technology Transfer (ITT)","King Fahd University of Petroleum & Minerals (KFUPM)","Saudi Arabia","https://itt.kfupm.edu.sa/site/",23.12,45.16],["Technology Transfer Office (Entrepreneurship Institute)","King Saud University","Saudi Arabia","https://ei.ksu.edu.sa/en/TTO_EN",24.52,46.4],["Innovation, Knowledge Transfer & Entrepreneurship Center","King Faisal University","Saudi Arabia","https://www.kfu.edu.sa/en/Centers/Innovation/Pages/Home.aspx",24.68,45.08],["Office of Innovation & Industrial Relations","Hamad Bin Khalifa University (HBKU)","Qatar","https://innovation.hbku.edu.qa/",24.36,52.68],["Khalifa University Enterprises (KUEC) / Technology Management and Innovation Office","Khalifa University","United Arab Emirates","",25.52,52.28],["Technology Transfer Office (TTO)","American University of Sharjah","United Arab Emirates","https://www.aus.edu/research",23.64,53.32],["Innovation & Technology Transfer Center","Sultan Qaboos University","Oman","",20.36,58.04],["Technology Transfer Office","American University in Cairo (AUC)","Egypt","https://www.aucegypt.edu/research/technology-transfer",28.64,32.68],["TICO – Technology and Innovation Support Center","Ain Shams University","Egypt","",27.8,30.04],["Research Contracts & Innovation (RC&I)","University of Cape Town","South Africa","https://uct.ac.za/rci",-27.24,24.48],["Technology Transfer Office (UJTTO)","University of Johannesburg","South Africa","https://www.uj.ac.za/research/research/technology-transfer-office-ujtto/",-30.52,23.48],["UWC Technology Transfer Office","University of the Western Cape","South Africa","https://www.tto.uwc.ac.za/",-28.76,24.24],["Innovus (incorporando LaunchLab)","Stellenbosch University","South Africa","https://www.launchlab.co.za/institutions/innovus/",-29.96,23.24],["Wits Commercial Enterprise / Wits Innovation Centre","University of the Witwatersrand","South Africa","https://wits-enterprise.co.za/",-28.52,22.44],["Innovation and Technology Management Office (ITMO)","University of Lagos (UNILAG)","Nigeria","https://innovation.unilag.edu.ng/",10.94,10.02],["Technology Development and Transfer Centre (TDTC)","University of Ghana","Ghana","https://www.ug.edu.gh/ttips/",7.02,-1.44],["University Industry Linkage & Technology Transfer Office","Addis Ababa University","Ethiopia","https://sida.aau.edu.et/index.php/university-industry-linkage-technology-transfer/",10.58,41.9],["Technology Transfer Office","Université Mohammed VI Polytechnique (UM6P)","Morocco","https://www.um6p.ma/index.php/en/technology-transfer-office",30.92,-7.48]]/*__ROSTER_END__*/;
+
+/* ======================================================================
+   RENDER: header / tabs / language
+====================================================================== */
+function applyI18n(){
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key = el.getAttribute('data-i18n');
+    if(STR[key]) el.textContent = STR[key][LANG] || STR[key].vi;
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
+    var key = el.getAttribute('data-i18n-ph');
+    if(STR[key]) el.setAttribute('placeholder', STR[key][LANG] || STR[key].vi);
+  });
+  document.querySelectorAll('.langtoggle button').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-lang')===LANG);
+  });
+  renderGlobalStats();
+  renderCoordMaps();
+  renderChips();
+  renderCards();
+  renderFooter();
+  renderRosterControls();
+  renderRosterTable();
+}
+document.querySelectorAll('.langtoggle button').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    LANG = btn.getAttribute('data-lang');
+    try{ localStorage.setItem('ica_lang', LANG); }catch(e){}
+    applyI18n();
+  });
+});
+document.querySelectorAll('.tabnav button').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.tabnav button').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    var tab = btn.getAttribute('data-tab');
+    document.getElementById('panel-global').classList.toggle('active', tab==='global');
+    document.getElementById('panel-cases').classList.toggle('active', tab==='cases');
+    document.getElementById('panel-roster').classList.toggle('active', tab==='roster');
+  });
+});
+function goToCasesTab(caseId){
+  document.querySelectorAll('.tabnav button').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-tab')==='cases'); });
+  document.getElementById('panel-global').classList.remove('active');
+  document.getElementById('panel-cases').classList.add('active');
+  if(caseId){
+    var chipAll = document.querySelector('.chip[data-model="all"]');
+    if(chipAll) chipAll.click();
+    setTimeout(function(){
+      var card = document.getElementById('card-'+caseId);
+      if(card){
+        card.scrollIntoView({behavior:'smooth', block:'center'});
+        var detail = card.querySelector('.cc-detail');
+        var btn = card.querySelector('.cc-expand-btn');
+        if(detail && !detail.classList.contains('open')){ detail.classList.add('open'); if(btn) btn.textContent = t('collapse'); }
+      }
+    }, 60);
+  }
+}
+
+/* ======================================================================
+   RENDER: global stats
+====================================================================== */
+function renderGlobalStats(){
+  var full = CASES.filter(function(c){return c.status==='full';}).length;
+  var partial = CASES.filter(function(c){return c.status==='partial';}).length;
+  var pending = CASES.filter(function(c){return c.status==='pending';}).length;
+  var models = {}; CASES.forEach(function(c){ if(c.model) models[c.model]=(models[c.model]||0)+1; });
+  var tiles = [
+    [full, {vi:'case điển hình có hồ sơ sâu', en:'deep-profile flagship cases'}],
+    [ROSTER.length, {vi:'mục trong danh sách đầy đủ (roster)', en:'entries in the full roster'}],
+    [Array.from(new Set(ROSTER.map(function(r){return r[2];}).filter(Boolean))).length, {vi:'quốc gia có mặt trong roster', en:'countries represented in the roster'}],
+    [VN_UNITS.length-1, {vi:'đơn vị VN đang khảo sát', en:'VN units under survey'}]
+  ];
+  document.getElementById('globalStats').innerHTML = tiles.map(function(x){
+    return '<div class="stat-tile"><div class="num mono">'+x[0]+'</div><div class="lbl">'+tf(x[1])+'</div></div>';
+  }).join('');
+  var sub = document.querySelector('#sec-globe .zoom-sub');
+  if(sub) sub.textContent = (CASES.length + ROSTER.length) + (LANG==='vi' ? ' điểm trên bản đồ (6 case sâu + roster)' : ' points mapped (6 deep cases + roster)');
+}
+
+/* ======================================================================
+   RENDER: coordinate mini-maps (Asia / SEA / Vietnam)
+====================================================================== */
+function projectPoint(lat,lng,bounds,w,h,pad){
+  var x = pad + (lng-bounds.lngMin)/(bounds.lngMax-bounds.lngMin) * (w-2*pad);
+  var y = pad + (1-(lat-bounds.latMin)/(bounds.latMax-bounds.latMin)) * (h-2*pad);
+  return [x,y];
+}
+function svgEl(tag, attrs){
+  var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for(var k in attrs) el.setAttribute(k, attrs[k]);
+  return el;
+}
+function buildCoordMap(svg, bounds, points, opts){
+  opts = opts||{};
+  var w=560,h=360,pad=28;
+  svg.setAttribute('viewBox','0 0 '+w+' '+h);
+  svg.innerHTML='';
+  var clipId = 'clip-'+svg.id;
+  var defs = svgEl('defs',{});
+  var clipRect = svgEl('rect',{x:pad,y:pad,width:w-2*pad,height:h-2*pad});
+  var clip = svgEl('clipPath',{id:clipId}); clip.appendChild(clipRect);
+  defs.appendChild(clip); svg.appendChild(defs);
+  // land masses (simplified silhouettes), clipped to the frame
+  if(opts.land && opts.land.length){
+    var landG = svgEl('g',{'clip-path':'url(#'+clipId+')'});
+    opts.land.forEach(function(l){
+      var isVN = l.role==='vn';
+      var pts = l.points.map(function(p){ var xy=projectPoint(p[0],p[1],bounds,w,h,pad); return xy[0].toFixed(1)+','+xy[1].toFixed(1); }).join(' ');
+      landG.appendChild(svgEl('polygon',{points:pts,
+        fill: isVN? 'rgba(94,234,212,0.24)':'rgba(199,208,224,0.13)',
+        stroke: isVN? '#5EEAD4':'rgba(199,208,224,0.32)',
+        'stroke-width': isVN?1.6:0.8, 'stroke-linejoin':'round'}));
+    });
+    svg.appendChild(landG);
+  }
+  // graticule
+  for(var la=Math.ceil(bounds.latMin/opts.step)*opts.step; la<=bounds.latMax; la+=opts.step){
+    var y = projectPoint(la,bounds.lngMin,bounds,w,h,pad)[1];
+    svg.appendChild(svgEl('line',{x1:pad,x2:w-pad,y1:y,y2:y,class:(la===0?'grid strong':'grid')}));
+    svg.appendChild(svgEl('text',{x:4,y:y+3},)).textContent = la+'°';
+  }
+  for(var lo=Math.ceil(bounds.lngMin/opts.step)*opts.step; lo<=bounds.lngMax; lo+=opts.step){
+    var x = projectPoint(bounds.latMin,lo,bounds,w,h,pad)[0];
+    svg.appendChild(svgEl('line',{x1:x,x2:x,y1:pad,y2:h-pad,class:'grid'}));
+    var lbl = svgEl('text',{x:x,y:h-10,'text-anchor':'middle'}); lbl.textContent = lo+'°';
+    svg.appendChild(lbl);
+  }
+  var frame = svgEl('rect',{x:pad,y:pad,width:w-2*pad,height:h-2*pad,class:'region-box'});
+  svg.appendChild(frame);
+  // optional highlight boxes (for VN clusters)
+  (opts.boxes||[]).forEach(function(b){
+    var p1 = projectPoint(b.latMax,b.lngMin,bounds,w,h,pad);
+    var p2 = projectPoint(b.latMin,b.lngMax,bounds,w,h,pad);
+    var r = svgEl('rect',{x:p1[0]-14,y:p1[1]-14,width:(p2[0]-p1[0])+28,height:(p2[1]-p1[1])+28,rx:10,class:'region-box',stroke:b.color||'var(--screen-grid-strong)'});
+    svg.appendChild(r);
+    var lbl = svgEl('text',{x:p1[0]-10,y:p1[1]-18,fill:b.color||'var(--screen-text-dim)'}); lbl.textContent = b.label; lbl.setAttribute('font-size','9');
+    svg.appendChild(lbl);
+  });
+  points.forEach(function(p){
+    var xy = projectPoint(p.lat,p.lng,bounds,w,h,pad);
+    var g = svgEl('g',{class:'beacon', tabindex:'0', role:'button', 'aria-label':p.label});
+    var glow = svgEl('circle',{cx:xy[0],cy:xy[1],r:9,fill:p.color,opacity:'0.18'});
+    var core = svgEl('circle',{class:'core',cx:xy[0],cy:xy[1],r:3.6,fill:p.color});
+    g.appendChild(glow); g.appendChild(core);
+    if(p.showLabel!==false){
+      var t2 = svgEl('text',{class:'beacon-label',x:xy[0]+8,y:xy[1]+3}); t2.textContent = p.label;
+      g.appendChild(t2);
+    }
+    if(p.onClick) g.addEventListener('click', p.onClick);
+    svg.appendChild(g);
+  });
+}
+var VN_BOUNDS = {latMin:6,latMax:23.5,lngMin:101,lngMax:118};
+function renderCoordMaps(){
+  // Asia: simplified landmasses + Tsinghua + NUS
+  var asiaCase = CASES.filter(function(c){return ['tsinghua-holdings','nus-block71'].indexOf(c.id)>-1;});
+  buildCoordMap(document.getElementById('mapAsia'), {latMin:0,latMax:55,lngMin:60,lngMax:140}, asiaCase.map(function(c){
+    return {lat:c.lat,lng:c.lng,label:tf(c.name),color:c.status==='pending'?'var(--screen-pending)':'var(--screen-accent)', onClick:function(){ showGlobePopoverFor(c); }};
+  }), {step:10, land:landFor('asia')});
+  document.getElementById('asiaSide').innerHTML = asiaSideHTML();
+
+  // SEA: simplified landmasses + NUS + Vietnam cluster centroid
+  buildCoordMap(document.getElementById('mapSEA'), {latMin:-10,latMax:25,lngMin:90,lngMax:140}, [
+    {lat:1.2966,lng:103.7764,label:'NUS / BLOCK71', color:'var(--screen-pending)'},
+    {lat:16.0,lng:106.0,label: LANG==='vi'?'Việt Nam (9 đơn vị)':'Vietnam (9 units)', color:'var(--screen-vn)'}
+  ], {step:10, land:landFor('sea')});
+  document.getElementById('seaSide').innerHTML = seaSideHTML();
+
+  // Vietnam: simplified silhouette + Hoàng Sa/Trường Sa + 10 points (host + 9 units), 2 clusters
+  var mapVNsvg = document.getElementById('mapVN');
+  buildCoordMap(mapVNsvg, VN_BOUNDS, spreadCluster(VN_UNITS).map(function(u){
+    return {lat:u._lat,lng:u._lng,label:'', showLabel:false, color: u.host?'var(--screen-accent)':(u.st==='full'?'var(--screen-vn)':'var(--screen-pending)')};
+  }), {step:4, land:landFor('vn'), boxes:[
+    {latMin:20.8,latMax:21.6,lngMin:105.0,lngMax:106.6,label:(LANG==='vi'?'Cụm Hà Nội':'Hanoi cluster'),color:'var(--screen-accent-dim)'},
+    {latMin:10.6,latMax:11.1,lngMin:106.4,lngMax:107.0,label:(LANG==='vi'?'Cụm TP.HCM':'HCMC cluster'),color:'var(--screen-vn-dim)'}
+  ]});
+  drawIslandGroup(mapVNsvg, VN_BOUNDS, 560,360,28, PARACEL);
+  drawIslandGroup(mapVNsvg, VN_BOUNDS, 560,360,28, SPRATLY);
+  document.getElementById('vnSide').innerHTML = vnSideHTML();
+}
+function drawIslandGroup(svg, bounds, w, h, pad, group){
+  var xs=[],ys=[];
+  group.points.forEach(function(p){ var xy=projectPoint(p[0],p[1],bounds,w,h,pad); xs.push(xy[0]); ys.push(xy[1]); });
+  var minX=Math.min.apply(null,xs), maxX=Math.max.apply(null,xs);
+  var minY=Math.min.apply(null,ys), maxY=Math.max.apply(null,ys);
+  var cx=(minX+maxX)/2, cy=(minY+maxY)/2;
+  var rx=Math.max((maxX-minX)/2+9,13), ry=Math.max((maxY-minY)/2+9,10);
+  svg.appendChild(svgEl('ellipse',{cx:cx,cy:cy,rx:rx,ry:ry,fill:'none',stroke:'#5EEAD4',opacity:'0.55','stroke-dasharray':'3 3'}));
+  group.points.forEach(function(p){
+    var xy = projectPoint(p[0],p[1],bounds,w,h,pad);
+    var s=3.2;
+    svg.appendChild(svgEl('path',{d:'M'+xy[0]+','+(xy[1]-s)+' L'+(xy[0]+s)+','+xy[1]+' L'+xy[0]+','+(xy[1]+s)+' L'+(xy[0]-s)+','+xy[1]+' Z', fill:'#5EEAD4'}));
+  });
+  var lbl = svgEl('text',{x:cx,y:cy-ry-5,'text-anchor':'middle',fill:'#5EEAD4'}); lbl.setAttribute('font-size','9'); lbl.textContent = tf(group.label);
+  svg.appendChild(lbl);
+}
+function spreadCluster(units){
+  // small deterministic jitter so overlapping markers in a tight cluster are readable
+  var hnI=0, hcmI=0;
+  return units.map(function(u){
+    var lat=u.lat, lng=u.lng;
+    if(!u.host){
+      if(u.cluster==='hn'){ lat += (hnI-2)*0.09; lng += (hnI%2===0?1:-1)*0.05; hnI++; }
+      else { lat += (hcmI-1.5)*0.055; lng += (hcmI%2===0?1:-1)*0.05; hcmI++; }
+    }
+    return Object.assign({}, u, {_lat:lat, _lng:lng});
+  });
+}
+function asiaSideHTML(){
+  return '<div class="note-box">'+(LANG==='vi'
+    ? 'Hai điểm duy nhất của châu Á trong CSDL hiện tại: Tsinghua Holdings (Trung Quốc, dữ liệu đầy đủ) và NUS/BLOCK71 (Singapore, dữ liệu đang chờ bổ sung do file nguồn hỏng).'
+    : 'The only two Asian points in the current database: Tsinghua Holdings (China, complete data) and NUS/BLOCK71 (Singapore, data pending due to a corrupted source file).')+'</div>';
+}
+function seaSideHTML(){
+  return '<div class="note-box vn">'+(LANG==='vi'
+    ? 'Đông Nam Á trong CSDL này gồm 1 case quốc tế (NUS/BLOCK71, Singapore) và 9 đơn vị giáo dục đại học Việt Nam đang được chính nhiệm vụ này khảo sát thực địa — hai nhóm dữ liệu khác bản chất, xem chi tiết ở mục Việt Nam bên dưới.'
+    : 'Southeast Asia here combines one international case (NUS/BLOCK71, Singapore) with 9 Vietnamese higher-ed institutions currently being field-surveyed by this very task — two different kinds of data; see the Vietnam section below.')+'</div>';
+}
+function vnSideHTML(){
+  var hn = VN_UNITS.filter(function(u){return u.cluster==='hn';});
+  var hcm = VN_UNITS.filter(function(u){return u.cluster==='hcm';});
+  function list(units, dotVar){
+    return '<ul>'+units.map(function(u){
+      return '<li><span>'+(u.host? '★ ':'')+(LANG==='vi'?u.name:u.nameEn)+'</span><span class="unit-status st-'+u.st+'">'+tf(u.status)+'</span></li>';
+    }).join('')+'</ul>';
+  }
+  return '<div class="cluster-card"><h4><span class="dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent)"></span>'+(LANG==='vi'?'Cụm Hà Nội':'Hanoi cluster')+'</h4>'+list(hn)+'</div>'+
+    '<div class="cluster-card"><h4><span class="dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--vn)"></span>'+(LANG==='vi'?'Cụm TP.HCM':'HCMC cluster')+'</h4>'+list(hcm)+'</div>';
+}
+
+/* ======================================================================
+   RENDER: Tab 2 — chips + cards
+====================================================================== */
+var activeModel = 'all';
+var MODEL_KEYS = ['tto','holdings','network','hybrid'];
+function renderChips(){
+  var wrap = document.getElementById('modelChips');
+  var chips = ['all'].concat(MODEL_KEYS);
+  wrap.innerHTML = chips.map(function(m){
+    var label = m==='all' ? t('chipAll') : t('model'+capitalize(m));
+    return '<button class="chip'+(m===activeModel?' active':'')+'" data-model="'+m+'">'+label+'</button>';
+  }).join('');
+  wrap.querySelectorAll('.chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      activeModel = btn.getAttribute('data-model');
+      renderChips(); renderCards();
+    });
+  });
+}
+function capitalize(s){ return s==='tto'?'TTO':(s.charAt(0).toUpperCase()+s.slice(1)); }
+function statusLabel(s){ return s==='full'?t('statusFull'):(s==='partial'?t('statusPartial'):t('statusPending')); }
+function statusClass(s){ return s==='full'?'st-full':(s==='partial'?'st-partial':'st-pending'); }
+
+function renderCards(){
+  var list = CASES.filter(function(c){ return c.model && (activeModel==='all' || c.model===activeModel); });
+  document.getElementById('cardGrid').innerHTML = list.map(cardHTML).join('');
+  document.querySelectorAll('.cc-expand-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var card = btn.closest('.case-card');
+      var detail = card.querySelector('.cc-detail');
+      var open = detail.classList.toggle('open');
+      btn.textContent = open ? t('collapse') : t('expand');
+    });
+  });
+}
+function cardHTML(c){
+  var modelLabel = t('model'+capitalize(c.model));
+  var kpiRows = c.kpi.map(function(k){
+    return '<tr><td>'+tf(k.label)+'</td><td class="val">'+k.value+'</td><td class="yr">'+k.year+'</td></tr>';
+  }).join('') || '<tr><td colspan="3" style="color:var(--text-muted)">—</td></tr>';
+  var tl = c.timeline.map(function(m){
+    return '<li><span class="yr mono">'+m.year+'</span><span class="tx">'+tf(m)+'</span></li>';
+  }).join('') || '<li><span class="tx">'+(LANG==='vi'?'Chưa có mốc xác nhận từ nguồn.':'No confirmed milestones from source.')+'</span></li>';
+  var fnTags = c.functions.map(function(f){ return '<span class="func-tag">'+tf(STR.fnKey[f])+'</span>'; }).join('');
+  var srcs = c.sources.map(function(s){ return '<li>'+s+'</li>'; }).join('');
+  return ''+
+  '<article class="case-card" id="card-'+c.id+'">'+
+    '<div class="cc-top">'+
+      '<div class="cc-row1"><span class="iso-badge mono">'+c.iso+'</span><span class="status-pill '+statusClass(c.status)+'">'+statusLabel(c.status)+'</span></div>'+
+      '<h3>'+tf(c.name)+'</h3>'+
+      '<p class="host">'+c.host+' · '+tf(c.country)+(c.founded!=='—'?(' · '+(LANG==='vi'?'từ ':'est. ')+c.founded):'')+'</p>'+
+      '<span class="model-tag">'+modelLabel+'</span>'+
+      '<p class="highlight">"'+tf(c.highlight)+'"</p>'+
+    '</div>'+
+    '<div class="func-tags">'+fnTags+'</div>'+
+    '<button class="cc-expand-btn">'+t('expand')+'</button>'+
+    '<div class="cc-detail">'+
+      '<h5>'+t('tlTitle')+'</h5><ul class="timeline">'+tl+'</ul>'+
+      '<h5>'+t('orgTitle')+'</h5><p style="font-size:12.5px;color:var(--text-muted);margin:0;">'+tf(c.org)+'</p>'+
+      '<h5>'+t('kpiTitle')+'</h5><table class="kpi">'+kpiRows+'</table>'+
+      '<h5>'+t('caveatTitle')+'</h5><div class="caveat">'+tf(c.caveat)+'</div>'+
+      '<h5>'+t('srcTitle')+'</h5><ul class="src-list">'+srcs+'</ul>'+
+    '</div>'+
+  '</article>';
+}
+
+/* ======================================================================
+   RENDER: Tab 3 — full roster (search / filter / table / globe toggle)
+====================================================================== */
+var rosterSearchTerm = '';
+var rosterCountryFilter = 'all';
+var showRosterOnGlobe = true;
+function renderRosterControls(){
+  var sel = document.getElementById('rosterCountry');
+  var countries = Array.from(new Set(ROSTER.map(function(r){ return r[2]; }).filter(Boolean))).sort();
+  var cur = sel.value || rosterCountryFilter;
+  sel.innerHTML = '<option value="all">'+t('rosterAllCountries')+'</option>' +
+    countries.map(function(c){ return '<option value="'+c.replace(/"/g,'')+'">'+c+'</option>'; }).join('');
+  sel.value = countries.indexOf(cur)>-1 ? cur : 'all';
+  rosterCountryFilter = sel.value;
+}
+function rosterFiltered(){
+  var q = rosterSearchTerm.trim().toLowerCase();
+  return ROSTER.filter(function(r){
+    if(rosterCountryFilter!=='all' && r[2]!==rosterCountryFilter) return false;
+    if(!q) return true;
+    return (r[0]+' '+r[1]+' '+r[2]).toLowerCase().indexOf(q)>-1;
+  });
+}
+function renderRosterTable(){
+  var rows = rosterFiltered();
+  document.getElementById('rosterBody').innerHTML = rows.map(function(r){
+    var web = r[3] ? '<a href="'+r[3]+'" target="_blank" rel="noopener noreferrer">'+r[3].replace(/^https?:\/\//,'').replace(/\/$/,'')+'</a>' : '<span>'+t('rosterNoWebsite')+'</span>';
+    return '<tr><td>'+r[0]+'</td><td class="rc-host">'+(r[1]||'—')+'</td><td class="rc-country">'+(r[2]||'—')+'</td><td class="rc-web">'+web+'</td></tr>';
+  }).join('');
+  document.getElementById('rosterCount').textContent = rows.length + t('rosterCountLabel') + ' / ' + ROSTER.length;
+}
+document.getElementById('rosterSearch').addEventListener('input', function(e){ rosterSearchTerm = e.target.value; renderRosterTable(); });
+document.getElementById('rosterCountry').addEventListener('change', function(e){ rosterCountryFilter = e.target.value; renderRosterTable(); });
+document.getElementById('rosterGlobeToggle').addEventListener('change', function(e){
+  showRosterOnGlobe = e.target.checked;
+  if(window.__rosterGlobeGroup) window.__rosterGlobeGroup.visible = showRosterOnGlobe;
+});
+
+/* ======================================================================
+   RENDER: footer
+====================================================================== */
+function renderFooter(){
+  var allSources = [];
+  CASES.forEach(function(c){ c.sources.forEach(function(s){ if(allSources.indexOf(s)===-1) allSources.push(s); }); });
+  document.getElementById('footSources').innerHTML = allSources.map(function(s){ return '<li>'+s+'</li>'; }).join('');
+  document.getElementById('versionLine').textContent =
+    (LANG==='vi' ? 'Phiên bản 0.1 · Cập nhật lần cuối 05/09/2026 · Dữ liệu 6/7 case đã đối chiếu nguồn, 1 case (NUS/BLOCK71) chờ nguồn thay thế.'
+    : 'Version 0.1 · Last updated 2026-09-05 · 6 of 7 cases verified against source, 1 case (NUS/BLOCK71) pending a replacement source.');
+}
+
+/* ======================================================================
+   3D GLOBE (three.js) — wireframe + glow beacons, drag to rotate
+====================================================================== */
+var globePopEl = document.getElementById('globePop');
+function showGlobePopoverFor(c){
+  globePopEl.innerHTML = '<h4>'+tf(c.name)+'</h4><p>'+tf(c.highlight)+'</p><button type="button">'+t('jumpBtn')+'</button>';
+  globePopEl.classList.add('show');
+  globePopEl.style.left = '14px'; globePopEl.style.top = '40px';
+  globePopEl.querySelector('button').addEventListener('click', function(){ goToCasesTab(c.id); });
+}
+function showGlobePopoverForRoster(r){
+  var web = r[3] ? '<a href="'+r[3]+'" target="_blank" rel="noopener noreferrer" style="color:var(--screen-accent)">'+r[3].replace(/^https?:\/\//,'').replace(/\/$/,'')+'</a>' : t('rosterNoWebsite');
+  globePopEl.innerHTML = '<h4>'+r[0]+'</h4><p>'+(r[1]?r[1]+' · ':'')+(r[2]||'')+'</p><p style="margin-top:-4px">'+web+'</p>';
+  globePopEl.classList.add('show');
+  globePopEl.style.left = '14px'; globePopEl.style.top = '40px';
+}
+function initGlobe(){
+  var host = document.getElementById('globeHost');
+  if(!window.THREE || !host) return;
+  var w = host.clientWidth, h = host.clientHeight || 340;
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(42, w/h, 0.1, 100);
+  camera.position.z = 6.4;
+  var renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+  renderer.setSize(w,h);
+  host.appendChild(renderer.domElement);
+
+  var group = new THREE.Group(); scene.add(group);
+  var R = 2;
+  function buildWorldTexture(){
+    var W=1024,H=512;
+    var c=document.createElement('canvas'); c.width=W;c.height=H;
+    var ctx=c.getContext('2d');
+    ctx.fillStyle='#0B0F17'; ctx.fillRect(0,0,W,H);
+    function toXY(lat,lng){ return [(lng+180)/360*W,(90-lat)/180*H]; }
+    LANDMASSES.filter(function(l){return l.tags.indexOf('world')>-1;}).forEach(function(l){
+      var isVN = l.role==='vn';
+      ctx.beginPath();
+      l.points.forEach(function(p,i){ var xy=toXY(p[0],p[1]); if(i===0) ctx.moveTo(xy[0],xy[1]); else ctx.lineTo(xy[0],xy[1]); });
+      ctx.closePath();
+      ctx.fillStyle = isVN ? 'rgba(94,234,212,0.55)' : 'rgba(180,190,210,0.30)';
+      ctx.fill();
+      ctx.strokeStyle = isVN ? '#5EEAD4' : 'rgba(200,208,224,0.4)';
+      ctx.lineWidth = isVN ? 1.6 : 0.7;
+      ctx.stroke();
+    });
+    // standard equirectangular convention (row 0 = north pole, left edge = -180deg lon),
+    // paired with three.js's default texture.flipY=true — matches the common
+    // SphereGeometry + earth-texture pattern, so we deliberately do not override flipY.
+    var tex = new THREE.CanvasTexture(c);
+    tex.needsUpdate = true;
+    return tex;
+  }
+  var solid = new THREE.Mesh(new THREE.SphereGeometry(R,64,40), new THREE.MeshBasicMaterial({map:buildWorldTexture(), transparent:true, opacity:0.97}));
+  group.add(solid);
+  var wire = new THREE.Mesh(new THREE.SphereGeometry(R*1.001,24,16), new THREE.MeshBasicMaterial({color:0x2b3a55, wireframe:true, transparent:true, opacity:0.22}));
+  group.add(wire);
+  var atmo = new THREE.Mesh(new THREE.SphereGeometry(R*1.045,48,32), new THREE.MeshBasicMaterial({color:0xffb454, transparent:true, opacity:0.05, side:THREE.BackSide}));
+  group.add(atmo);
+
+  function latLngToVec3(lat,lng,radius){
+    var phi = (90-lat)*(Math.PI/180);
+    var theta = (lng+180)*(Math.PI/180);
+    return new THREE.Vector3(
+      -radius*Math.sin(phi)*Math.cos(theta),
+      radius*Math.cos(phi),
+      radius*Math.sin(phi)*Math.sin(theta)
+    );
+  }
+  function glowTexture(color){
+    var c = document.createElement('canvas'); c.width=c.height=64;
+    var ctx = c.getContext('2d');
+    var g = ctx.createRadialGradient(32,32,0,32,32,32);
+    g.addColorStop(0, color); g.addColorStop(0.35, color); g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g; ctx.fillRect(0,0,64,64);
+    return new THREE.CanvasTexture(c);
+  }
+  var texAmber = glowTexture('rgba(255,180,84,1)');
+  var texTeal = glowTexture('rgba(94,234,212,1)');
+  var texGrey = glowTexture('rgba(140,150,170,1)');
+  var beacons = [];
+  CASES.forEach(function(c){
+    var tex = c.status==='pending' ? texGrey : texAmber;
+    var mat = new THREE.SpriteMaterial({map:tex, transparent:true, depthWrite:false});
+    var spr = new THREE.Sprite(mat);
+    var pos = latLngToVec3(c.lat, c.lng, R*1.02);
+    spr.position.copy(pos); spr.scale.set(0.32,0.32,1);
+    spr.userData = {case:c};
+    group.add(spr); beacons.push(spr);
+  });
+  // Vietnam host marker on the globe (aggregate, one point) — teal
+  var vnMat = new THREE.SpriteMaterial({map:texTeal, transparent:true, depthWrite:false});
+  var vnSpr = new THREE.Sprite(vnMat);
+  vnSpr.position.copy(latLngToVec3(21.03,105.83,R*1.02));
+  vnSpr.scale.set(0.30,0.30,1);
+  vnSpr.userData = {vietnam:true};
+  group.add(vnSpr); beacons.push(vnSpr);
+
+  // Roster layer: hundreds of dim, small points from bulk web search (country-level
+  // approximation). Grouped so the Tab-3 checkbox can show/hide them together.
+  var texDim = glowTexture('rgba(150,160,180,0.9)');
+  var rosterGroup = new THREE.Group();
+  ROSTER.forEach(function(r){
+    if(r[4]==null || r[5]==null) return;
+    var mat = new THREE.SpriteMaterial({map:texDim, transparent:true, opacity:0.75, depthWrite:false});
+    var spr = new THREE.Sprite(mat);
+    spr.position.copy(latLngToVec3(r[4], r[5], R*1.015));
+    spr.scale.set(0.11,0.11,1);
+    spr.userData = {roster:r};
+    rosterGroup.add(spr); beacons.push(spr);
+  });
+  group.add(rosterGroup);
+  window.__rosterGlobeGroup = rosterGroup;
+  rosterGroup.visible = (typeof showRosterOnGlobe==='undefined') ? true : showRosterOnGlobe;
+
+  var raycaster = new THREE.Raycaster();
+  var pointer = new THREE.Vector2();
+  var dragging=false, lastX=0, lastY=0, velX=0, velY=0, moved=0;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function onDown(e){
+    dragging=true; moved=0;
+    var p = e.touches ? e.touches[0] : e;
+    lastX=p.clientX; lastY=p.clientY; velX=0; velY=0;
+  }
+  function onMove(e){
+    if(!dragging) return;
+    var p = e.touches ? e.touches[0] : e;
+    var dx = p.clientX-lastX, dy = p.clientY-lastY;
+    moved += Math.abs(dx)+Math.abs(dy);
+    velX = dx*0.005; velY = dy*0.005;
+    group.rotation.y += velX;
+    group.rotation.x = Math.max(-1.1, Math.min(1.1, group.rotation.x + velY));
+    lastX=p.clientX; lastY=p.clientY;
+  }
+  function onUp(e){
+    dragging=false;
+    if(moved < 6){
+      var rect = renderer.domElement.getBoundingClientRect();
+      var p = (e.changedTouches ? e.changedTouches[0] : e);
+      pointer.x = ((p.clientX-rect.left)/rect.width)*2-1;
+      pointer.y = -((p.clientY-rect.top)/rect.height)*2+1;
+      raycaster.setFromCamera(pointer, camera);
+      var hits = raycaster.intersectObjects(beacons);
+      if(hits.length){
+        var ud = hits[0].object.userData;
+        if(ud.case) showGlobePopoverFor(ud.case);
+        else if(ud.roster) showGlobePopoverForRoster(ud.roster);
+        else globePopEl.classList.remove('show');
+      } else {
+        globePopEl.classList.remove('show');
+      }
+    }
+  }
+  var el = renderer.domElement;
+  el.addEventListener('mousedown', onDown); el.addEventListener('mousemove', onMove); window.addEventListener('mouseup', onUp);
+  el.addEventListener('touchstart', onDown, {passive:true}); el.addEventListener('touchmove', onMove, {passive:true}); el.addEventListener('touchend', onUp);
+
+  function onResize(){
+    var w2 = host.clientWidth, h2 = host.clientHeight || 340;
+    camera.aspect = w2/h2; camera.updateProjectionMatrix();
+    renderer.setSize(w2,h2);
+  }
+  window.addEventListener('resize', onResize);
+  if(window.ResizeObserver){ new ResizeObserver(onResize).observe(host); }
+
+  var clock = new THREE.Clock();
+  function animate(){
+    requestAnimationFrame(animate);
+    if(!dragging && !reduceMotion) group.rotation.y += 0.0016;
+    var t2 = clock.getElapsedTime();
+    if(!reduceMotion){
+      beacons.forEach(function(b,i){ var s = 0.30 + Math.sin(t2*2 + i)*0.03; b.scale.set(s,s,1); });
+    }
+    renderer.render(scene, camera);
+  }
+  animate();
+}
+
+/* ======================================================================
+   INIT
+====================================================================== */
+applyI18n();
+if(document.documentElement.getAttribute('data-theme')!=='light'){ /* no-op, theme handled by CSS */ }
+window.addEventListener('load', function(){ initGlobe(); });
+if(document.readyState==='complete') initGlobe();
+
+})();
+</script>
+
+</body>
+</html>
