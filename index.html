@@ -1595,7 +1595,7 @@ function initGlobe(){
     other: 'rgba(154,163,184,0.9)'
   };
   var texByType = {};
-  Object.keys(TYPE_HEX).forEach(function(k){ texByType[k] = glowTexture(TYPE_HEX[k]); });
+  Object.keys(TYPE_HEX).forEach(function(k){ texByType[k] = glowTexture(TYPE_HEX[k], true); });
   var rosterGroup = new THREE.Group();
   ROSTER.forEach(function(r){
     if(r[4]==null || r[5]==null) return;
@@ -1789,17 +1789,13 @@ function initGlobe(){
       if(!reduceMotion){
         beacons.forEach(function(b,i){
           var base = b.userData.baseScale || 0.10;
-          if(b.userData.important){
-            // Flagship beacons pulse in both size AND brightness — a glow/blink,
-            // not just a resize — so they read as active points, not flat dots.
-            var wave = Math.sin(t2*2.2 + i*0.9);
-            var s = base * (1 + wave*0.24);
-            b.scale.set(s,s,1);
-            b.material.opacity = 0.68 + wave*0.32;
-          } else {
-            var s2 = base * (1 + Math.sin(t2*2 + i)*0.12);
-            b.scale.set(s2,s2,1);
-          }
+          // Every beacon — flagship cases and the roster's hundreds of dots alike —
+          // pulses in both size AND brightness, a glow/blink rather than a flat
+          // resize, so the globe reads as an instrument full of active points.
+          var wave = Math.sin(t2*2.2 + i*0.9);
+          var s = base * (1 + wave*0.24);
+          b.scale.set(s,s,1);
+          b.material.opacity = 0.68 + wave*0.32;
         });
       }
       renderer.render(scene, camera);
