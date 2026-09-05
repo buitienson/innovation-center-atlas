@@ -46,8 +46,22 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-05 — dựng nhà cho dự án (trước đó làm hoàn toàn trong scratchpad của
-phiên chat, sẽ mất khi đóng phiên). Clone lại repo GitHub Pages vào đây, đưa `src/atlas.html`
-là bản có sẵn rotation-fix + khung Rankings/News (chưa build/push), viết `build.py`. Đang chờ
-agent nghiên cứu WURI ranking trả kết quả để điền nốt mục Xếp hạng rồi build+publish+push
+**Lần cuối:** 2026-09-05 — điền cột Quốc gia cho bảng Xếp hạng WURI Top 100 (đã để trống ở
+lần trước vì PDF gốc của WURI không in cột này). Tra cứu độc lập từng trường (không phải từ
+WURI) — agent con xác minh qua web search, đặc biệt các tên trùng với nhiều trường thật:
+"Franklin University" → Thuỵ Sĩ (Lugano, không phải Ohio), "Saint Louis University" → Philippines
+(SLU Baguio, không phải Missouri, khác với "University of Baguio" cũng có trong danh sách),
+"National University of Management" → Campuchia. Thêm 2 quốc gia còn thiếu trong bảng ISO2 của
+trang (Bangladesh, Campuchia) để hiện đúng cờ. Một dòng ("Trinity College", hạng 73) để trống
+vì không xác minh được trong 4 trường thật cùng tên — ghi rõ lý do trong `RANKINGS_SOURCE_NOTE`
+thay vì đoán liều. Đã build, kiểm `node --check` + cân bằng thẻ, test live bằng http.server +
+browser (xem đúng cờ/tên nước từng dòng), publish Artifact, `git push`.
+
+Trước đó (cùng ngày): dựng nhà cho dự án (trước đó làm hoàn toàn trong scratchpad của phiên
+chat, sẽ mất khi đóng phiên): clone lại repo GitHub Pages vào đây, tách `src/atlas.html`
+(nguồn để sửa) khỏi `index.html` (bản build qua `build.py`). Điền nốt mục Xếp hạng bằng WURI
+Ranking 2026 Top 100 (đồng hạng giữ đúng bản gốc) — **live, commit `e23fce9`.**
+
+Việc mở còn lại: mục 24-category của WURI (cần tải lại PDF, bản trích cũ đã mất theo scratchpad
+phiên trước), cập nhật Tin tức, thêm case flagship mới. Xem thêm mục "Chờ điền" nếu có.
 (Claude)
