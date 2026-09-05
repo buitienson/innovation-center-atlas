@@ -94,9 +94,9 @@
   }
 
   .subhead{padding:16px 0 22px; border-bottom:1px solid var(--border);}
-  .subhead p{margin:0 0 10px; color:var(--text-muted); font-size:16px; max-width:72ch;}
+  .subhead p{margin:0 0 10px; color:var(--text-muted); font-size:16px; max-width:none;}
   .subhead p:last-of-type{margin-bottom:16px;}
-  .task-info{border:1px solid var(--border); border-radius:12px; background:var(--surface); box-shadow:var(--shadow); max-width:640px;}
+  .task-info{border:1px solid var(--border); border-radius:12px; background:var(--surface); box-shadow:var(--shadow);}
   .task-info summary{cursor:pointer; padding:10px 16px; font-size:13px; font-weight:600; color:var(--text-muted); list-style:none;}
   .task-info summary::-webkit-details-marker{display:none;}
   .task-info summary::before{content:'▸ '; color:var(--accent-ink);}
@@ -441,7 +441,7 @@
   <div class="version-line" id="versionLine"></div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
 "use strict";
@@ -464,8 +464,8 @@ var STR = {
   aboutIndieVal: {vi:"Đây là sản phẩm cá nhân, tự thực hiện ngoài giờ, không đại diện cho bất kỳ trường, viện hay cơ quan nào.",
     en:"This is a personal project, built independently outside of work, and does not represent any university, institute, or agency."},
   aboutDataLbl: {vi:"Nguồn dữ liệu.", en:"Data sources."},
-  aboutDataVal: {vi:"Tổng hợp từ tài liệu công khai — báo cáo thường niên, case học thuật, website chính thức của các trung tâm. 6 case điển hình đã đối chiếu nguồn gốc; danh mục mở rộng là kết quả tìm kiếm diện rộng, chưa thẩm định từng mục.",
-    en:"Compiled from public sources — annual reports, academic case studies, centers' official websites. The 6 flagship cases are source-checked; the extended catalogue is the result of broad search and has not been vetted entry by entry."},
+  aboutDataVal: {vi:"Tổng hợp từ tài liệu công khai — báo cáo thường niên, case học thuật, website chính thức của các trung tâm.",
+    en:"Compiled from public sources — annual reports, academic case studies, centers' official websites."},
   aboutDisclaimerLbl: {vi:"Miễn trừ trách nhiệm.", en:"Disclaimer."},
   aboutDisclaimerVal: {vi:"Đây là bản demo, số liệu mang tính tham khảo — nên tự kiểm chứng tại nguồn trước khi trích dẫn.",
     en:"This is a demo; figures are for reference only — verify against the original source before citing."},
@@ -718,6 +718,9 @@ var VN_UNITS = [
   {name:'ĐH Kinh tế Kỹ thuật Công nghiệp', nameEn:'Univ. of Economics – Technology for Industries', cluster:'hn', lat:20.9930, lng:105.8730},
   {name:'ĐH Công nghiệp Việt Trì', nameEn:'Viet Tri University of Industry', cluster:'hn', lat:21.4000, lng:105.2200},
   {name:'Đại học Sao Đỏ', nameEn:'Sao Do University', cluster:'hn', lat:21.1600, lng:106.4200},
+  {name:'Khu Công nghệ cao Hoà Lạc — ĐHQGHN', nameEn:'Hoa Lac Hi-Tech Park — Vietnam National University, Hanoi', cluster:'hn', lat:21.0130, lng:105.5180},
+  {name:'Học viện Ngân hàng', nameEn:'Banking Academy of Vietnam', cluster:'hn', lat:21.0080, lng:105.8210},
+  {name:'Đại học Thuỷ lợi', nameEn:'Thuy Loi University', cluster:'hn', lat:21.0037, lng:105.8420},
   {name:'HUIT — ĐH Công Thương TP.HCM', nameEn:'HUIT — Ho Chi Minh City Univ. of Industry & Trade', cluster:'hcm', lat:10.8030, lng:106.6260},
   {name:'TBI — ĐHBK, ĐHQG TP.HCM', nameEn:'TBI — HCMC Univ. of Technology, VNU-HCM', cluster:'hcm', lat:10.8802, lng:106.8030},
   {name:'IUH — ĐH Công nghiệp TP.HCM', nameEn:'IUH — Industrial Univ. of HCMC', cluster:'hcm', lat:10.8231, lng:106.6660},
@@ -757,18 +760,99 @@ var HANISA_MEMBERS = [
 // count: 21
 
 var VNEI_MEMBERS = [
-  ['Trường Đại học Ngoại thương','Foreign Trade University','university','Hà Nội','https://ftu.edu.vn'],
-  ['Trường Đại học Tây Nguyên','Tay Nguyen University','university','Buôn Ma Thuột','https://ttu.edu.vn'],
-  ['Trường Đại học Ngoại ngữ - Đại học Quốc gia Hà Nội','University of Languages and International Studies, Vietnam National University, Hanoi','university','Hà Nội','https://ulis.vnu.edu.vn'],
-  ['Đại học Bách khoa Hà Nội (qua BK Holdings)','Hanoi University of Science and Technology (via BK Holdings)','university','Hà Nội','https://hust.edu.vn'],
-  ['Đại học Quốc gia Hà Nội','Vietnam National University, Hanoi','university','Hà Nội','https://vnu.edu.vn'],
-  ['Trường Đại học Kinh tế Quốc dân','National Economics University','university','Hà Nội','https://neu.edu.vn'],
-  ['Trường Đại học Vinh','Vinh University','university','Vinh, Nghệ An','https://vinhuni.edu.vn'],
-  ['Đại học Huế','Hue University','university','Huế','https://hueuni.edu.vn'],
-  ['Đại học Quốc gia Thành phố Hồ Chí Minh','Vietnam National University, Ho Chi Minh City','university','Thành phố Hồ Chí Minh','https://vnuhcm.edu.vn'],
-  ['Trường Đại học Trà Vinh','Tra Vinh University','university','Trà Vinh','https://tvu.edu.vn'],
-  ['Học viện Phụ nữ Việt Nam','Vietnam Women\'s Academy','university','Hà Nội','https://hvpnvn.edu.vn'],
-  ['Học viện Công nghệ Bưu chính Viễn thông - Cơ sở Thành phố Hồ Chí Minh','Posts and Telecommunications Institute of Technology - Ho Chi Minh City Campus','university','Thành phố Hồ Chí Minh','https://ptithcm.edu.vn']
+  ['Trung tâm Đổi mới sáng tạo và Khởi nghiệp','Trường ĐH Công Thương TP. Hồ Chí Minh','Hồ Chí Minh'],
+  ['Trung tâm Thúc đẩy khởi sự, khởi nghiệp kinh doanh và thu hút đầu tư vùng dân tộc thiểu số','Trường Đại học Tây Bắc','Sơn La'],
+  ['Trung tâm Sáng tạo và Ươm tạo','Trường Đại học Ngoại Thương','Hà Nội'],
+  ['Công ty Cổ phần Đầu tư và Phát triển Công nghệ Bách Khoa Hà Nội (BK Holdings)','Đại học Bách khoa Hà Nội','Hà Nội'],
+  ['Trung tâm Khởi nghiệp Đổi mới sáng tạo ĐHQG-HCM','Đại học Quốc gia Thành phố Hồ Chí Minh','Hồ Chí Minh'],
+  ['Trung tâm Khởi nghiệp và Đổi mới sáng tạo','Đại học Huế','Huế'],
+  ['Trung tâm Ươm tạo - Khởi nghiệp và Cung ứng nhân lực','Đại học Thái Nguyên','Thái Nguyên'],
+  ['Trung tâm Đổi mới sáng tạo','Trường Đại học Ngoại ngữ - ĐHQGHN','Hà Nội'],
+  ['Trung tâm Đổi mới sáng tạo Nông nghiệp','Học viện Nông nghiệp Việt Nam','Hà Nội'],
+  ['Trung tâm Khởi nghiệp và Sáng tạo xã hội','Trường Đại học Kinh tế Quốc dân','Hà Nội'],
+  ['Entrepreneurship Lab','Trường Đại học VinUni','Hà Nội'],
+  ['Trung tâm Khởi nghiệp Đổi mới sáng tạo và Nghiên cứu khoa học','Greenwich Việt Nam','Hà Nội'],
+  ['Trung tâm Chuyển giao tri thức và Hỗ trợ khởi nghiệp','Đại học Quốc gia Hà Nội','Hà Nội'],
+  ['Trung tâm Đổi mới sáng tạo và Phát triển thương mại du lịch Hà Nội','Trường Cao đẳng Thương mại và Du lịch Hà Nội','Hà Nội'],
+  ['Trung tâm Ươm tạo và Hỗ trợ phát triển thị trường công nghệ','Trường Cao đẳng nghề Công nghệ cao Hà Nội','Hà Nội'],
+  ['Trung tâm Dịch vụ, Hỗ trợ sinh viên và Quan hệ doanh nghiệp','Trường Đại học Vinh','Vinh, Nghệ An'],
+  ['Trung tâm Sáng tạo và Ươm tạo khởi nghiệp','Trường Đại học Nguyễn Tất Thành','Hồ Chí Minh'],
+  ['Trung tâm Đổi mới sáng tạo và Khởi nghiệp','Trường Đại học Trà Vinh','Trà Vinh'],
+  ['Trung tâm Đổi mới sáng tạo tỉnh Đắk Lắk','Trường Đại học Tây Nguyên','Buôn Ma Thuột'],
+  ['Trung tâm Hỗ trợ sinh viên - Quan hệ doanh nghiệp và Khởi nghiệp','Trường Đại học Phạm Văn Đồng','Quảng Ngãi'],
+  ['TISC - Trung tâm Ươm tạo công nghệ và Hỗ trợ khởi nghiệp','Trường Đại học Nông lâm Thái Nguyên','Thái Nguyên'],
+  ['Trung tâm Ươm tạo doanh nghiệp và Đổi mới sáng tạo','Trường Cao đẳng Công thương miền Trung','Phú Yên'],
+  ['Trung tâm Hỗ trợ khởi nghiệp đổi mới sáng tạo','Trường Đại học Hồng Đức','Thanh Hóa'],
+  ['Trung tâm Nghiên cứu và Tư vấn việc làm, Du học tự túc','Đại học Đà Nẵng','Đà Nẵng'],
+  ['Trung tâm Đổi mới sáng tạo, Khởi nghiệp và Chuyển giao công nghệ','Trường Đại học Công nghiệp TP.HCM','Hồ Chí Minh'],
+  ['Viện Đổi mới sáng tạo và Kinh tế số','Trường Đại học Công nghệ Giao thông vận tải','Hà Nội'],
+  ['Trung tâm Ươm tạo Khởi nghiệp Văn Lang','Đại học Văn Lang','Hồ Chí Minh'],
+  ['Trung tâm Ươm tạo doanh nghiệp công nghệ','Trường Đại học Bách Khoa - ĐHQG HCM','Hồ Chí Minh'],
+  ['Câu lạc bộ Khởi nghiệp','Trường Đại học Thủy lợi','Hà Nội'],
+  ['Trung tâm Đổi mới sáng tạo và Khởi nghiệp','Học viện Công nghệ Bưu chính Viễn thông','Hà Nội'],
+  ['Trung tâm Khởi nghiệp','Trường Đại học Tân Tạo','Long An'],
+  ['Trung tâm Đổi mới sáng tạo và Khởi nghiệp','Trường Đại học Khoa học và Công nghệ Hà Nội','Hà Nội'],
+  ['Trường Đại học Lạc Hồng','Trường Đại học Lạc Hồng','Đồng Nai'],
+  ['Trung tâm Sáng tạo và Khởi nghiệp sinh viên - ĐHBKHN','Đại học Bách khoa Hà Nội','Hà Nội'],
+  ['Trung tâm Thông tin Thư viện','Trường Đại học Quản lý & Công nghệ Hải Phòng','Hải Phòng'],
+  ['Viện Nghiên cứu Kinh tế và Phát triển nguồn nhân lực','Trường Đại học Kinh tế & Quản trị Kinh doanh, Đại học Thái Nguyên','Thái Nguyên'],
+  ['Trung tâm Hỗ trợ ươm tạo công nghệ - Khởi nghiệp','Phân hiệu Đại học Thái Nguyên tại tỉnh Lào Cai','Lào Cai'],
+  ['Trường Đại học Y Hà Nội','Trường Đại học Y Hà Nội','Hà Nội'],
+  ['Trung tâm Hợp tác doanh nghiệp và Khởi nghiệp','Trường Đại học Thủ Dầu Một','Bình Dương'],
+  ['Trung tâm Đổi mới sáng tạo và Chuyển giao công nghệ','Trường Đại học Quốc tế - Đại học Quốc gia Thành phố Hồ Chí Minh','Hồ Chí Minh'],
+  ['Trung tâm Chuyển giao công nghệ và Dịch vụ','Đại học Cần Thơ','Cần Thơ'],
+  ['Trường Cao đẳng nghề Bách khoa Hà Nội','Đại học Bách khoa Hà Nội','Hà Nội'],
+  ['Trường Đại học Dược Hà Nội','Trường Đại học Dược Hà Nội','Hà Nội'],
+  ['Phòng Khoa học - Hợp tác quốc tế','Trường Đại học Sư phạm Kỹ thuật Vinh','Vinh, Nghệ An'],
+  ['Trung tâm Ứng dụng công nghệ và Khởi nghiệp','Trường Đại học Kiên Giang','Kiên Giang'],
+  ['Trung tâm Khởi nghiệp và Sáng tạo','Trường Đại học Fulbright Việt Nam','Hồ Chí Minh'],
+  ['Trường Cao đẳng Lý Thái Tổ','Trường Cao đẳng Lý Thái Tổ','Bắc Ninh'],
+  ['Phòng Quản lý Khoa học và Đối ngoại','Trường Đại học Thương mại','Hà Nội'],
+  ['Trường Đại học Kinh tế - Kỹ thuật Công nghiệp (UNETI)','Trường Đại học Kinh tế - Kỹ thuật Công nghiệp (UNETI)','Hà Nội'],
+  ['Trung tâm Tư vấn, Hỗ trợ và Đổi mới sáng tạo sinh viên','Trường Đại học Phenikaa','Hà Nội'],
+  ['Trung tâm Hỗ trợ khởi nghiệp, Đổi mới sáng tạo','Học viện Ngân hàng','Hà Nội'],
+  ['Viện Nghiên cứu Sáng tạo và Khởi nghiệp','Trường Đại học Sư phạm Kỹ thuật','Hồ Chí Minh'],
+  ['Câu lạc bộ Đổi mới khởi nghiệp','Trường Đại học Công nghệ Đông Á','Bắc Ninh'],
+  ['Trung tâm Khởi nghiệp và Đổi mới sáng tạo','Trường Đại học Hùng Vương','Phú Thọ'],
+  ['Trường Đại học Mở Hà Nội','Trường Đại học Mở Hà Nội','Hà Nội'],
+  ['Phòng Nghiên cứu khoa học và Hợp tác quốc tế','Trường Đại học Trưng Vương','Hà Nội'],
+  ['Trung tâm Khởi nghiệp và Đổi mới sáng tạo TLS','Phân hiệu trường Đại học Thủy lợi tại tỉnh Bình Dương','Bình Dương'],
+  ['Trung tâm FPT Polytechnic Đà Nẵng','Trường Cao đẳng FPT Polytechnic','Đà Nẵng'],
+  ['Trường Đại học Đông Á','Trường Đại học Đông Á','Đà Nẵng'],
+  ['Trường Cao đẳng nghề Đà Nẵng','Trường Cao đẳng nghề Đà Nẵng','Đà Nẵng'],
+  ['Trường Cao đẳng Thương mại','Trường Cao đẳng Thương mại','Đà Nẵng'],
+  ['Ngành Thương mại điện tử','Đại học Phương Đông','Hà Nội'],
+  ['Phòng Công tác sinh viên và Hợp tác doanh nghiệp','Trường Đại học Quy Nhơn','Quy Nhơn'],
+  ['Trường Cao đẳng Quảng Nam','Trường Cao đẳng Quảng Nam','Quảng Nam'],
+  ['CLB Nghiên cứu khoa học – Khởi nghiệp','Trường Đại học Kỹ thuật Y - Dược Đà Nẵng','Đà Nẵng'],
+  ['Trường Đại học Duy Tân','Trường Đại học Duy Tân','Đà Nẵng'],
+  ['Trung tâm Việc làm và Khởi nghiệp sinh viên','Đại học Đại Nam','Hà Nội'],
+  ['Đại học Kinh tế Thành phố Hồ Chí Minh','Đại học Kinh tế Thành phố Hồ Chí Minh','Hồ Chí Minh'],
+  ['Trường Đại học Giao thông vận tải','Trường Đại học Giao thông vận tải','Hà Nội'],
+  ['Trung tâm Đổi mới sáng tạo và Khởi nghiệp','Trường Đại học Kinh tế - Luật, Đại học Quốc gia TPHCM','Hồ Chí Minh'],
+  ['Trường Kinh tế','Trường Đại học Công nghiệp Hà Nội','Hà Nội'],
+  ['Trường Đại học Kinh tế - Tài chính Thành phố Hồ Chí Minh','Trường Đại học Kinh tế Tài chính Tp.HCM','Hồ Chí Minh'],
+  ['Phòng Khoa học','Trường Đại học Công nghệ và Quản lý Hữu Nghị','Hà Nội'],
+  ['Vườn ươm Khởi nghiệp DHV','Trường ĐH Hùng Vương Thành phố Hồ Chí Minh','Hồ Chí Minh'],
+  ['Trung tâm Đổi mới sáng tạo và Hỗ trợ khởi nghiệp','Trường Đại học Hà Nội','Hà Nội'],
+  ['Viện Nghiên cứu Đổi mới và Phát triển','Viện Nghiên cứu Đổi mới và Phát triển','Hồ Chí Minh'],
+  ['Học viện Phụ nữ Việt Nam','Học viện Phụ nữ Việt Nam','Hà Nội'],
+  ['Trung tâm Nghiên cứu, Ứng dụng và Chuyển giao công nghệ nông, lâm nghiệp','Trường Đại học Nông - Lâm Bắc Giang','Bắc Giang'],
+  ['Trung tâm Nghiên cứu và Khởi nghiệp sáng tạo','Trường Đại học Hải Phòng','Hải Phòng'],
+  ['Trung tâm Sáng tạo & Khởi nghiệp','Trường Đại học Sư phạm Kỹ thuật Thành phố Hồ Chí Minh','Hồ Chí Minh'],
+  ['Trường Đại học Kinh tế và Quản trị Kinh doanh','Đại học Thái Nguyên','Thái Nguyên'],
+  ['Trung tâm Đổi mới sáng tạo và Khởi nghiệp','Trường Đại học Tài chính - Marketing','Hồ Chí Minh'],
+  ['Trường Cao đẳng Công nghệ và Quản trị Sonadezi','Trường Cao đẳng Công nghệ và Quản trị Sonadezi','Đồng Nai'],
+  ['Trường Đại học Luật Thành phố Hồ Chí Minh','Trường Đại học Luật Thành phố Hồ Chí Minh','Hồ Chí Minh'],
+  ['Trường Đại học FPT','Trường Đại học FPT','Hà Nội'],
+  ['Trung tâm Đổi mới sáng tạo và Hỗ trợ khởi nghiệp','Học viện Tài chính','Hà Nội'],
+  ['Trường Cao đẳng Quốc tế Hà Nội','Trường Cao đẳng Quốc tế Hà Nội','Hà Nội'],
+  ['Học viện Công nghệ Bưu chính Viễn thông cơ sở tại TP.HCM','Học viện Công nghệ Bưu chính Viễn thông','Hồ Chí Minh'],
+  ['Trung tâm Khởi nghiệp Đổi mới sáng tạo','Trường Đại học Sư phạm kỹ thuật Vĩnh Long','Vĩnh Long'],
+  ['Trường Đại học Công nghiệp Hà Nội','Trường Đại học Công nghiệp Hà Nội','Hà Nội'],
+  ['Trường Đại học Thăng Long','Trường Đại học Thăng Long','Hà Nội'],
+  ['Trung tâm Hỗ trợ đổi mới sáng tạo và Khởi nghiệp','Trường Đại học Thủy lợi','Hà Nội'],
+  ['Trường Đại học Ngân hàng TPHCM','Trường Đại học Ngân hàng TPHCM','Hồ Chí Minh']
 ];
 // count: 12
 
@@ -1007,6 +1091,8 @@ function renderGlobalStats(){
   }).join('');
   var sub = document.querySelector('#sec-globe .zoom-sub');
   if(sub) sub.textContent = totalMapped + (LANG==='vi' ? ' đơn vị trên bản đồ · v0.2' : ' units on the map · v0.2');
+  var vnSub = document.querySelector('#sec-vn .zoom-sub');
+  if(vnSub) vnSub.textContent = VN_UNITS.length + (LANG==='vi' ? ' đơn vị' : ' institutions');
 }
 
 /* ======================================================================
@@ -1248,16 +1334,17 @@ function renderCoordMaps(){
   var asiaCase = CASES.filter(function(c){return ['tsinghua-holdings','nus-block71'].indexOf(c.id)>-1;});
   var asiaPoints = asiaCase.map(function(c){
     return {lat:c.lat,lng:c.lng,label:tf(c.name),color:c.status==='pending'?'var(--screen-pending)':(MODEL_HEX[c.model]||'var(--screen-accent)'), onClick:function(){ showGlobePopoverFor(c); }};
-  }).concat(rosterPointsInBounds(boundsAsia));
+  }).concat(rosterPointsInBounds(boundsAsia)).concat(vnUnitsAsSmallPoints()).concat(vnNetworkAsSmallPoints());
   buildCoordMap(document.getElementById('mapAsia'), boundsAsia, asiaPoints, {step:10, land:COUNTRIES});
   document.getElementById('asiaSide').innerHTML = asiaSideHTML();
 
-  // SEA: technical-sketch coastlines + NUS + Vietnam cluster centroid + roster points in-region
+  // SEA: technical-sketch coastlines + NUS + the 9 Vietnam units as individual
+  // points (not one aggregate dot — Vietnam otherwise looked "empty" next to
+  // every other country's cluster of glowing points) + roster points in-region
   var mapSEAsvg = document.getElementById('mapSEA');
   var seaPoints = [
-    {lat:1.2966,lng:103.7764,label:'NUS / BLOCK71', color:'var(--screen-pending)'},
-    {lat:16.0,lng:106.0,label: LANG==='vi'?'Việt Nam (9 đơn vị)':'Vietnam (9 units)', color:'var(--screen-vn)'}
-  ].concat(rosterPointsInBounds(boundsSEA));
+    {lat:1.2966,lng:103.7764,label:'NUS / BLOCK71', color:'var(--screen-pending)'}
+  ].concat(rosterPointsInBounds(boundsSEA)).concat(vnUnitsAsSmallPoints()).concat(vnNetworkAsSmallPoints());
   var seaMap = buildCoordMap(mapSEAsvg, boundsSEA, seaPoints, {step:10, land:COUNTRIES});
   drawIslandGroup(seaMap.content, boundsSEA, 560,360,28, PARACEL);
   drawIslandGroup(seaMap.content, boundsSEA, 560,360,28, SPRATLY);
@@ -1268,7 +1355,7 @@ function renderCoordMaps(){
   var VN_W=430, VN_H=442;
   var vnPoints = spreadCluster(VN_UNITS).map(function(u){
     return {lat:u._lat,lng:u._lng,label:'', showLabel:false, color: u.host?'var(--screen-accent)':(u.st==='full'?'var(--screen-vn)':'var(--screen-pending)')};
-  }).concat(rosterPointsInBounds(VN_BOUNDS));
+  }).concat(rosterPointsInBounds(VN_BOUNDS)).concat(vnNetworkAsSmallPoints());
   var vnMap = buildCoordMap(mapVNsvg, VN_BOUNDS, vnPoints, {step:4, w:VN_W, h:VN_H, land:COUNTRIES, boxes:[
     {latMin:20.8,latMax:21.6,lngMin:105.0,lngMax:106.6,label:(LANG==='vi'?'Cụm Hà Nội':'Hanoi cluster'),color:'var(--screen-accent-dim)'},
     {latMin:10.6,latMax:11.1,lngMin:106.4,lngMax:107.0,label:(LANG==='vi'?'Cụm TP.HCM':'HCMC cluster'),color:'var(--screen-vn-dim)'}
@@ -1305,27 +1392,84 @@ function spreadCluster(units){
     return Object.assign({}, u, {_lat:lat, _lng:lng});
   });
 }
+/* The 9 Vietnam units as individually-plottable small points (same shape as
+   a roster point), for the Asia/SEA maps — Vietnam isn't in the global
+   roster (out of its bulk-search scope), so without this it shows as a red
+   outline with nothing inside it, unlike every other highlighted country. */
+function vnUnitsAsSmallPoints(){
+  return spreadCluster(VN_UNITS).map(function(u){
+    return {lat:u._lat, lng:u._lng, label:(LANG==='vi'?u.name:u.nameEn), showLabel:false, small:true, color:'var(--screen-vn)'};
+  });
+}
+/* City-level coordinates for the HANISA/VNEI/VN_FUNDS entries — those datasets
+   only carry a city string, not exact coordinates, so entries are placed at
+   their city with a small deterministic jitter (fanning same-city entries
+   apart instead of stacking them exactly). Entries whose city doesn't match
+   a known Vietnamese city (e.g. a diaspora program headquartered abroad)
+   are left off the map — they still appear in the Vietnam-tab card grid. */
+var VN_CITY_COORDS = [
+  [/hà nội|hanoi|hoa lac/i, 21.0285, 105.8542],
+  [/hồ chí minh|ho chi minh/i, 10.7769, 106.7009],
+  [/đà nẵng|da nang/i, 16.0544, 108.2022],
+  [/huế|hue/i, 16.4637, 107.5909],
+  [/buôn ma thuột|buon ma thuot/i, 12.6667, 108.0500],
+  [/trà vinh|tra vinh/i, 9.9347, 106.3453],
+  [/vinh,\s*nghệ an/i, 18.6733, 105.6922]
+];
+function cityToLatLng(cityStr){
+  if(!cityStr) return null;
+  for(var i=0;i<VN_CITY_COORDS.length;i++){
+    if(VN_CITY_COORDS[i][0].test(cityStr)) return [VN_CITY_COORDS[i][1], VN_CITY_COORDS[i][2]];
+  }
+  return null;
+}
+function vnTotalPlottedCount(){
+  return VN_UNITS.length + vnNetworkAsSmallPoints().length;
+}
+function vnNetworkAsSmallPoints(){
+  var out = [], seedIdx = 0;
+  // HANISA/VN_FUNDS rows are [name,nameEn,type,city,website]; VNEI_MEMBERS
+  // rows are [name,host,city] (no English name/website in that source) — so
+  // the city field sits at a different index per dataset.
+  function addRows(rows, catKey, cityIdx){
+    var color = VN_NET_CATS[catKey].color;
+    rows.forEach(function(r){
+      var latlng = cityToLatLng(r[cityIdx]);
+      if(!latlng) return;
+      seedIdx++;
+      var jlat = (((seedIdx*53)%100)/100 - 0.5) * 0.10;
+      var jlng = (((seedIdx*97)%100)/100 - 0.5) * 0.10;
+      out.push({lat:latlng[0]+jlat, lng:latlng[1]+jlng, label:r[0], showLabel:false, small:true, color:color});
+    });
+  }
+  addRows(HANISA_MEMBERS, 'hanisa', 3);
+  addRows(VNEI_MEMBERS, 'vnei', 2);
+  addRows(VN_FUNDS, 'funds', 3);
+  return out;
+}
 function casesInBounds(bounds){
   return CASES.filter(function(c){ return c.lat>=bounds.latMin && c.lat<=bounds.latMax && c.lng>=bounds.lngMin && c.lng<=bounds.lngMax; });
 }
 function asiaSideHTML(){
   var bounds = {latMin:0,latMax:55,lngMin:60,lngMax:140};
-  var stats = regionStats(bounds, casesInBounds(bounds));
+  var stats = regionStats(bounds, casesInBounds(bounds), {count:vnTotalPlottedCount(), type:'university', countryName:'Vietnam'});
   var asiaRosterCount = ROSTER.filter(function(r){ return ['Japan','China','South Korea','Taiwan','India'].indexOf(r[2])>-1; }).length;
+  var vnCount = vnTotalPlottedCount();
   return regionStatsHTML(stats) + '<div class="note-box">'+(LANG==='vi'
-    ? 'Châu Á: Tsinghua Holdings (Trung Quốc), NUS/BLOCK71 (Singapore), cộng '+asiaRosterCount+' đơn vị khác ở Nhật/Trung/Hàn/Đài/Ấn trong danh mục mở rộng.'
-    : 'Asia: Tsinghua Holdings (China), NUS/BLOCK71 (Singapore), plus '+asiaRosterCount+' more units across Japan/China/Korea/Taiwan/India in the extended catalogue.')+'</div>';
+    ? 'Châu Á: Tsinghua Holdings (Trung Quốc), NUS/BLOCK71 (Singapore), '+vnCount+' đơn vị tại Việt Nam, cùng '+asiaRosterCount+' đơn vị khác ở Nhật/Trung/Hàn/Đài/Ấn trong danh mục mở rộng.'
+    : 'Asia: Tsinghua Holdings (China), NUS/BLOCK71 (Singapore), '+vnCount+' units in Vietnam, plus '+asiaRosterCount+' more across Japan/China/Korea/Taiwan/India in the extended catalogue.')+'</div>';
 }
 function seaSideHTML(){
   var bounds = {latMin:-10,latMax:25,lngMin:90,lngMax:140};
-  var stats = regionStats(bounds, casesInBounds(bounds), {count:VN_UNITS.length, type:'university', countryName:'Vietnam'});
+  var stats = regionStats(bounds, casesInBounds(bounds), {count:vnTotalPlottedCount(), type:'university', countryName:'Vietnam'});
+  var vnCount = vnTotalPlottedCount();
   return regionStatsHTML(stats) + '<div class="note-box vn">'+(LANG==='vi'
-    ? 'Đông Nam Á: NUS/BLOCK71 (Singapore) và 9 đơn vị giáo dục đại học tại Việt Nam.'
-    : 'Southeast Asia: NUS/BLOCK71 (Singapore) and 9 higher-education institutions in Vietnam.')+'</div>';
+    ? 'Đông Nam Á: NUS/BLOCK71 (Singapore) và '+vnCount+' đơn vị tại Việt Nam — đại học, hiệp hội (HANISA, VNEI), quỹ đầu tư.'
+    : 'Southeast Asia: NUS/BLOCK71 (Singapore) and '+vnCount+' units in Vietnam — universities, associations (HANISA, VNEI), and VC funds.')+'</div>';
 }
 function vnSideHTML(){
   var bounds = {latMin:6,latMax:23.5,lngMin:101,lngMax:118};
-  var stats = regionStats(bounds, casesInBounds(bounds), {count:VN_UNITS.length, type:'university', countryName:'Vietnam'});
+  var stats = regionStats(bounds, casesInBounds(bounds), {count:vnTotalPlottedCount(), type:'university', countryName:'Vietnam'});
   var hn = VN_UNITS.filter(function(u){return u.cluster==='hn';});
   var hcm = VN_UNITS.filter(function(u){return u.cluster==='hcm';});
   function list(units){
@@ -1333,7 +1477,10 @@ function vnSideHTML(){
       return '<li><span>'+(LANG==='vi'?u.name:u.nameEn)+'</span></li>';
     }).join('')+'</ul>';
   }
-  return regionStatsHTML(stats) +
+  var intro = '<div class="note-box vn">'+(LANG==='vi'
+    ? VN_UNITS.length+' đơn vị hỗ trợ ĐMST tại các trường đại học, cùng mạng lưới HANISA, VNEI và các quỹ đầu tư — xem đầy đủ trong danh mục bên dưới.'
+    : VN_UNITS.length+' university innovation-support units, plus the HANISA and VNEI networks and VC funds — see the full list below.')+'</div>';
+  return regionStatsHTML(stats) + intro +
     '<div class="cluster-card"><h4><span class="dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent)"></span>'+(LANG==='vi'?'Miền Bắc':'Northern Vietnam')+'</h4>'+list(hn)+'</div>'+
     '<div class="cluster-card"><h4><span class="dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--vn)"></span>'+(LANG==='vi'?'Miền Nam':'Southern Vietnam')+'</h4>'+list(hcm)+'</div>';
 }
@@ -1349,7 +1496,9 @@ var VN_NET_CATS = {
     return HANISA_MEMBERS.map(function(r){ return {name:r[0], nameEn:r[1], type:{vi:r[2],en:r[2]}, city:r[3], website:r[4]}; });
   }},
   vnei: {label:{vi:'VNEI', en:'VNEI'}, color:'#B79CE8', data:function(){
-    return VNEI_MEMBERS.map(function(r){ return {name:r[0], nameEn:r[1], type:{vi:r[2],en:r[2]}, city:r[3], website:r[4]}; });
+    // VNEI_MEMBERS rows are [unit name, host institution, city] — sourced
+    // directly from vnei.edu.vn's own member directory, no English names.
+    return VNEI_MEMBERS.map(function(r){ return {name:r[0], host:r[1], type:{vi:'Thành viên mạng lưới VNEI',en:'VNEI network member'}, city:r[2], website:''}; });
   }},
   funds: {label:{vi:'Quỹ & hỗ trợ', en:'Funds & support'}, color:'#FFCC4E', data:function(){
     return VN_FUNDS.map(function(r){ return {name:r[0], nameEn:r[1], type:{vi:r[2],en:r[2]}, city:r[3], website:r[4]}; });
@@ -1387,6 +1536,7 @@ function renderVNNetGrid(){
       '<span class="vnc-badge" style="background:color-mix(in srgb, '+color+' 22%, transparent); color:'+color+'; border:1px solid '+color+';">'+tf(VN_NET_CATS[x._cat].label)+'</span>'+
       '<div class="vnc-name">'+name+'</div>'+
       (showEn ? '<div class="vnc-name-en">'+x.nameEn+'</div>' : '')+
+      (x.host ? '<div class="vnc-name-en">'+x.host+'</div>' : '')+
       '<div class="vnc-meta">'+(x.city?'<span>'+x.city+'</span>':'')+(x.website?'<a href="'+x.website+'" target="_blank" rel="noopener">'+t('vnNetVisit')+'</a>':'')+'</div>'+
     '</div>';
   }).join('');
@@ -1845,7 +1995,7 @@ function initGlobe(){
   function animate(){
     requestAnimationFrame(animate);
     try{
-      if(!dragging && !pinching && !popoverActive && !reduceMotion) group.rotation.y += 0.0016;
+      if(!dragging && !pinching && !popoverActive && !reduceMotion) group.rotation.y += 0.0008;
       var t2 = clock.getElapsedTime();
       if(!reduceMotion){
         beacons.forEach(function(b,i){
