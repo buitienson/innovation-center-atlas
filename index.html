@@ -6,30 +6,37 @@
 <style>
   /* ============ TOKENS ============ */
   :root{
-    /* Navy #153c88, gold #e3bb25 / #ffcc4e, red #de2737 — navy anchors the
-       ground, gold is the primary accent, red marks Vietnam-specific data
-       (doubling as the national-flag color). Status colors stay a separate
-       semantic scale (green/orange/grey), not reused from the brand hues. */
-    --bg:#F3F5FA;
-    --surface:#FFFFFF;
-    --surface-2:#E7ECF6;
-    --border:#D3DCEC;
-    --text:#101A32;
-    --text-muted:#57647E;
-    --accent:#E3BB25;
-    --accent-ink:#7A5E0E;
-    --accent-soft:#FBEFC7;
-    --navy:#153C88;
-    --vn:#C81E2E;
-    --vn-soft:#F8DADD;
-    --status-full:#1F8A5B;
-    --status-partial:#C2410C;
-    --status-pending:#6B7280;
-    --shadow: 0 1px 2px rgba(16,26,50,.06), 0 8px 24px -12px rgba(16,26,50,.16);
+    color-scheme: dark;
+    /* One committed dark-navy theme, not a light/dark toggle — the page's own
+       chrome (header, cards, footer) uses the same dark ground as the globe
+       and 2D map "screens" so nothing reads as a light page with dark panels
+       glued on. Navy anchors the ground, gold is the primary accent, red
+       marks Vietnam-specific data (doubling as the national-flag color). */
+    --bg:#0A0F1F;
+    --surface:#111B36;
+    --surface-2:#17223F;
+    --border:#293A63;
+    --text:#E8ECF7;
+    --text-muted:#93A0C0;
+    --accent:#FFCC4E;
+    --accent-ink:#FFCC4E;
+    --accent-soft:rgba(255,204,78,0.14);
+    --navy:#7FA0E0;
+    --vn:#FF5A63;
+    --vn-soft:rgba(255,90,99,0.14);
+    --status-full:#34D399;
+    --status-partial:#FB923C;
+    --status-pending:#8D98B8;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.7);
 
-    /* always-dark "instrument screen" tokens — deliberate, independent of page theme */
+    /* "instrument screen" tokens for the globe + 2D maps — same dark ground
+       as the rest of the page now, kept as separate tokens only because the
+       screens use a few extra shades (grid lines, dimmer text) the page
+       chrome doesn't need. */
     --screen-bg:#0A0F1F;
     --screen-panel:#111B36;
+    --screen-border: rgba(255,255,255,0.06);
+    --screen-inset-shadow: rgba(0,0,0,.5);
     --screen-grid: rgba(232,236,247,0.09);
     --screen-grid-strong: rgba(232,236,247,0.22);
     --screen-text:#C7D0E8;
@@ -43,24 +50,6 @@
     --font-display:'Be Vietnam Pro', system-ui, sans-serif;
     --font-body:'Literata', Georgia, serif;
     --font-mono:'JetBrains Mono', ui-monospace, monospace;
-  }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --bg:#0A0F1F; --surface:#111B36; --surface-2:#17223F; --border:#293A63;
-      --text:#E8ECF7; --text-muted:#93A0C0;
-      --accent:#FFCC4E; --accent-ink:#FFCC4E; --accent-soft:rgba(255,204,78,0.14);
-      --navy:#7FA0E0; --vn:#FF5A63; --vn-soft:rgba(255,90,99,0.14);
-      --status-full:#34D399; --status-partial:#FB923C; --status-pending:#8D98B8;
-      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.7);
-    }
-  }
-  :root[data-theme="dark"]{
-    --bg:#0A0F1F; --surface:#111B36; --surface-2:#17223F; --border:#293A63;
-    --text:#E8ECF7; --text-muted:#93A0C0;
-    --accent:#FFCC4E; --accent-ink:#FFCC4E; --accent-soft:rgba(255,204,78,0.14);
-    --navy:#7FA0E0; --vn:#FF5A63; --vn-soft:rgba(255,90,99,0.14);
-    --status-full:#34D399; --status-partial:#FB923C; --status-pending:#8D98B8;
-    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.7);
   }
 
   *{box-sizing:border-box;}
@@ -134,8 +123,8 @@
 
   /* the "instrument screen" — always dark regardless of page theme */
   .screen{
-    background:var(--screen-bg); border-radius:14px; border:1px solid rgba(255,255,255,0.06);
-    position:relative; overflow:hidden; box-shadow: inset 0 0 60px rgba(0,0,0,.5), var(--shadow);
+    background:var(--screen-bg); border-radius:14px; border:1px solid var(--screen-border);
+    position:relative; overflow:hidden; box-shadow: inset 0 0 60px var(--screen-inset-shadow), var(--shadow);
     min-height:340px;
   }
   .screen .screen-hint{
@@ -162,6 +151,13 @@
   .beacon .core{transition:r .15s ease;}
   .beacon:hover .core, .beacon:focus .core{r:5.5;}
   .beacon-label{font-family:var(--font-mono); font-size:9px; fill:var(--screen-text); pointer-events:none;}
+  /* Every map point glows and blinks, like the globe's beacons, so they read
+     as active markers rather than flat static dots easy to overlook. */
+  .core-glow, .core-blink{transform-box:fill-box; transform-origin:center;}
+  .core-glow{animation:dotGlowPulse 2.4s ease-in-out infinite;}
+  .core-blink{animation:dotCorePulse 2.4s ease-in-out infinite;}
+  @keyframes dotGlowPulse{0%,100%{opacity:.12; transform:scale(.75);} 50%{opacity:.5; transform:scale(1.7);}}
+  @keyframes dotCorePulse{0%,100%{opacity:.55; transform:scale(.82);} 50%{opacity:1; transform:scale(1.3);}}
 
   .side-panel{display:flex; flex-direction:column; gap:14px;}
   .stat-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
@@ -883,6 +879,54 @@ function rosterPointsInBounds(bounds){
     return {lat:r[4], lng:r[5], label:r[0], showLabel:false, small:true, color:color};
   });
 }
+/* Small stat summary for a region's roster subset — count, country spread,
+   dominant institution type — computed straight from ROSTER, not maintained
+   by hand, so it stays correct as the catalogue grows. extraCases lets the
+   flagship CASES inside that region's bounds count toward the total too. */
+function regionStats(bounds, extraCases, extra){
+  // extra (optional): {count, type:'university'|'company'|'network', countryName}
+  // — folds in a dataset the global roster doesn't cover (e.g. VN_UNITS,
+  // since Vietnam wasn't part of the roster's bulk-search scope) so the
+  // stat block matches what the map itself actually shows.
+  var inBounds = ROSTER.filter(function(r){
+    return r[4]!=null && r[5]!=null && r[4]>=bounds.latMin && r[4]<=bounds.latMax && r[5]>=bounds.lngMin && r[5]<=bounds.lngMax;
+  });
+  var countries = {};
+  var typeCounts = {university:0, company:0, network:0, other:0};
+  inBounds.forEach(function(r){
+    if(r[2]) countries[r[2]] = true;
+    var rtype = classifyRosterType(r[0], r[1]);
+    typeCounts[rtype] = (typeCounts[rtype]||0) + 1;
+  });
+  (extraCases||[]).forEach(function(c){ if(c.country) countries[tf(c.country)] = true; });
+  var total = inBounds.length + (extraCases||[]).length;
+  if(extra){
+    typeCounts[extra.type] += extra.count;
+    total += extra.count;
+    if(extra.countryName) countries[extra.countryName] = true;
+  }
+  // Rank only the identifiable categories — "unclear" being the plurality is
+  // not a useful headline stat, even though it's an honest one.
+  var topType = ['university','company','network'].sort(function(a,b){ return typeCounts[b]-typeCounts[a]; })[0];
+  return {
+    total: total,
+    countryCount: Object.keys(countries).length,
+    topType: topType, topTypeCount: typeCounts[topType]
+  };
+}
+function regionStatsHTML(stats){
+  var typeLabel = {
+    university:{vi:'đại học/cao đẳng', en:'universities/colleges'},
+    company:{vi:'doanh nghiệp/công ty', en:'companies'},
+    network:{vi:'mạng lưới/hiệp hội', en:'networks/associations'},
+    other:{vi:'chưa rõ loại hình', en:'type unclear'}
+  }[stats.topType];
+  return '<div class="stat-grid" style="grid-template-columns:1fr 1fr 1fr; margin-bottom:12px;">'+
+    '<div class="stat-tile"><div class="num mono">'+stats.total+'</div><div class="lbl">'+(LANG==='vi'?'đơn vị':'units')+'</div></div>'+
+    '<div class="stat-tile"><div class="num mono">'+stats.countryCount+'</div><div class="lbl">'+(LANG==='vi'?'quốc gia':'countries')+'</div></div>'+
+    '<div class="stat-tile"><div class="num mono">'+Math.round(stats.topTypeCount/stats.total*100)+'%</div><div class="lbl">'+tf(typeLabel)+'</div></div>'+
+  '</div>';
+}
 
 
 /* ======================================================================
@@ -1053,20 +1097,26 @@ function buildCoordMap(svg, bounds, points, opts){
     var lbl = svgEl('text',{x:p1[0]-10,y:p1[1]-18,fill:b.color||'var(--screen-text-dim)',class:'coord-label'}); lbl.textContent = b.label; lbl.setAttribute('font-size','9');
     content.appendChild(lbl);
   });
-  points.forEach(function(p){
+  points.forEach(function(p, pidx){
     var xy = projectPoint(p.lat,p.lng,bounds,w,h,pad);
     var g = svgEl('g',{class:'beacon', tabindex:'0', role:'button', 'aria-label':p.label});
+    // Deterministic pseudo-random phase per point so the glow/blink reads as
+    // scattered "twinkling" rather than every dot pulsing in lockstep.
+    var delay = ((pidx*37) % 240) / 100;
     if(p.small){
-      var core = svgEl('circle',{class:'core',cx:xy[0],cy:xy[1],r:1.7,fill:p.color,opacity:'0.9','vector-effect':'non-scaling-stroke'});
-      g.appendChild(core);
+      var glow = svgEl('circle',{class:'core-glow',cx:xy[0],cy:xy[1],r:5,fill:p.color,opacity:'0.25'});
+      var core = svgEl('circle',{class:'core core-blink',cx:xy[0],cy:xy[1],r:2.1,fill:p.color,opacity:'0.95'});
+      glow.style.animationDelay = core.style.animationDelay = delay+'s';
+      g.appendChild(glow); g.appendChild(core);
       var titleEl = svgEl('title',{}); titleEl.textContent = p.label; g.appendChild(titleEl);
       var plbl = svgEl('text',{class:'point-label small',x:xy[0]+3,y:xy[1]-3,fill:p.color}); plbl.textContent = p.label;
       pointLabelsG.appendChild(plbl);
       pointLabelItems.push({el:plbl, x:xy[0]+3, y:xy[1]-3});
     } else {
-      var glow = svgEl('circle',{cx:xy[0],cy:xy[1],r:9,fill:p.color,opacity:'0.18'});
-      var core2 = svgEl('circle',{class:'core',cx:xy[0],cy:xy[1],r:3.6,fill:p.color,'vector-effect':'non-scaling-stroke'});
-      g.appendChild(glow); g.appendChild(core2);
+      var glow2 = svgEl('circle',{class:'core-glow',cx:xy[0],cy:xy[1],r:10,fill:p.color,opacity:'0.22'});
+      var core2 = svgEl('circle',{class:'core core-blink',cx:xy[0],cy:xy[1],r:3.6,fill:p.color});
+      glow2.style.animationDelay = core2.style.animationDelay = delay+'s';
+      g.appendChild(glow2); g.appendChild(core2);
       if(p.showLabel!==false){
         var t2 = svgEl('text',{class:'beacon-label',x:xy[0]+8,y:xy[1]+3}); t2.textContent = p.label;
         g.appendChild(t2);
@@ -1255,18 +1305,27 @@ function spreadCluster(units){
     return Object.assign({}, u, {_lat:lat, _lng:lng});
   });
 }
+function casesInBounds(bounds){
+  return CASES.filter(function(c){ return c.lat>=bounds.latMin && c.lat<=bounds.latMax && c.lng>=bounds.lngMin && c.lng<=bounds.lngMax; });
+}
 function asiaSideHTML(){
+  var bounds = {latMin:0,latMax:55,lngMin:60,lngMax:140};
+  var stats = regionStats(bounds, casesInBounds(bounds));
   var asiaRosterCount = ROSTER.filter(function(r){ return ['Japan','China','South Korea','Taiwan','India'].indexOf(r[2])>-1; }).length;
-  return '<div class="note-box">'+(LANG==='vi'
+  return regionStatsHTML(stats) + '<div class="note-box">'+(LANG==='vi'
     ? 'Châu Á: Tsinghua Holdings (Trung Quốc), NUS/BLOCK71 (Singapore), cộng '+asiaRosterCount+' đơn vị khác ở Nhật/Trung/Hàn/Đài/Ấn trong danh mục mở rộng.'
     : 'Asia: Tsinghua Holdings (China), NUS/BLOCK71 (Singapore), plus '+asiaRosterCount+' more units across Japan/China/Korea/Taiwan/India in the extended catalogue.')+'</div>';
 }
 function seaSideHTML(){
-  return '<div class="note-box vn">'+(LANG==='vi'
+  var bounds = {latMin:-10,latMax:25,lngMin:90,lngMax:140};
+  var stats = regionStats(bounds, casesInBounds(bounds), {count:VN_UNITS.length, type:'university', countryName:'Vietnam'});
+  return regionStatsHTML(stats) + '<div class="note-box vn">'+(LANG==='vi'
     ? 'Đông Nam Á: NUS/BLOCK71 (Singapore) và 9 đơn vị giáo dục đại học tại Việt Nam.'
     : 'Southeast Asia: NUS/BLOCK71 (Singapore) and 9 higher-education institutions in Vietnam.')+'</div>';
 }
 function vnSideHTML(){
+  var bounds = {latMin:6,latMax:23.5,lngMin:101,lngMax:118};
+  var stats = regionStats(bounds, casesInBounds(bounds), {count:VN_UNITS.length, type:'university', countryName:'Vietnam'});
   var hn = VN_UNITS.filter(function(u){return u.cluster==='hn';});
   var hcm = VN_UNITS.filter(function(u){return u.cluster==='hcm';});
   function list(units){
@@ -1274,7 +1333,8 @@ function vnSideHTML(){
       return '<li><span>'+(LANG==='vi'?u.name:u.nameEn)+'</span></li>';
     }).join('')+'</ul>';
   }
-  return '<div class="cluster-card"><h4><span class="dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent)"></span>'+(LANG==='vi'?'Miền Bắc':'Northern Vietnam')+'</h4>'+list(hn)+'</div>'+
+  return regionStatsHTML(stats) +
+    '<div class="cluster-card"><h4><span class="dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent)"></span>'+(LANG==='vi'?'Miền Bắc':'Northern Vietnam')+'</h4>'+list(hn)+'</div>'+
     '<div class="cluster-card"><h4><span class="dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--vn)"></span>'+(LANG==='vi'?'Miền Nam':'Southern Vietnam')+'</h4>'+list(hcm)+'</div>';
 }
 
@@ -1558,7 +1618,7 @@ function initGlobe(){
     var g = ctx.createRadialGradient(32,32,0,32,32,32);
     // A bright near-white core (when hot) reads as a light source rather than a
     // flat tinted disc, so the beacon pulse looks like it's glowing, not just resizing.
-    if(hot){ g.addColorStop(0, 'rgba(255,255,255,0.95)'); g.addColorStop(0.14, color); }
+    if(hot){ g.addColorStop(0, 'rgba(255,255,255,0.95)'); g.addColorStop(0.22, color); }
     else { g.addColorStop(0, color); }
     g.addColorStop(0.38, color); g.addColorStop(1,'rgba(0,0,0,0)');
     ctx.fillStyle=g; ctx.fillRect(0,0,64,64);
@@ -1793,10 +1853,10 @@ function initGlobe(){
           // Every beacon — flagship cases and the roster's hundreds of dots alike —
           // pulses in both size AND brightness, a glow/blink rather than a flat
           // resize, so the globe reads as an instrument full of active points.
-          var wave = Math.sin(t2*2.2 + i*0.9);
-          var s = base * (1 + wave*0.24);
+          var wave = Math.sin(t2*2.6 + i*0.9);
+          var s = base * (1 + wave*0.38);
           b.scale.set(s,s,1);
-          b.material.opacity = 0.68 + wave*0.32;
+          b.material.opacity = 0.6 + wave*0.4;
         });
       }
       renderer.render(scene, camera);
@@ -1819,7 +1879,6 @@ function initGlobe(){
    running (globe init, resize listener) — an isolated rendering bug should stay
    isolated, not silently take out unrelated features. */
 try{ applyI18n(); } catch(e){ console.error('applyI18n error:', e); window.__applyI18nError = e.message + ' | ' + e.stack; }
-if(document.documentElement.getAttribute('data-theme')!=='light'){ /* no-op, theme handled by CSS */ }
 function __safeInitGlobe(){
   try{ initGlobe(); } catch(e){
     window.__globeError = e.message + ' | ' + e.stack; console.error('Globe init error:', e);
