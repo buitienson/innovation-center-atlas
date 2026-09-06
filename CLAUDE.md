@@ -5,8 +5,11 @@ Trang web tham khảo cá nhân (không phải văn bản HaUI/Bộ) — 6 tab: 
 lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại học, Tin tức ĐMST hằng ngày,
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
-Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); các
-mục còn lại Sơn tự sửa tay khi cần.
+Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
+mục mở rộng (`ROSTER`, ~786 mục ở tab Toàn cầu) có sẵn hạ tầng cho một routine hằng ngày
+**riêng** chạy trên Gemini (không tốn token Claude) để mở rộng dần (xem
+`_claude/routine-roster-grow.md` — **routine chưa được tạo trên cloud, chờ sếp nhập
+`GEMINI_API_KEY` khi tạo**); các mục còn lại Sơn tự sửa tay khi cần.
 
 **Live:** https://buitienson.github.io/innovation-center-atlas/
 **Artifact (bản xem/sửa nhanh):** https://claude.ai/code/artifact/175ea757-eca9-4a87-acc8-47981ab5b129
@@ -49,7 +52,45 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-06 — thêm tab thứ 6 **"Thuật ngữ"** (Glossary), theo gợi ý của sếp
+**Lần cuối:** 2026-09-06 — hai việc, bắt nguồn từ hai lần sếp chỉ ra lỗi thật trong phiên:
+
+1. **Sửa thêm lỗi tải quả cầu 3D** — bản sửa trước (thêm CDN dự phòng, tách thông báo lỗi)
+   vẫn còn một lỗ hổng: toàn bộ logic thử-lại chỉ chạy khi sự kiện `load` của trang bắn ra,
+   nhưng nếu yêu cầu tải three.js từ CDN đầu tiên **treo** (mạng chập chờn/bị lọc, không hẳn
+   là báo lỗi ngay) thì chính `load` cũng có thể không bao giờ bắn — khiến logic thử-lại
+   không bao giờ chạy. Đã sửa: bắt đầu tải three.js ngay lập tức (không đợi `load` nữa, chỉ
+   lệnh `initGlobe()` mới đợi vì cần layout đã ổn định), và mỗi lần thử tải đua với hạn 8
+   giây riêng — treo im lặng cũng bị tính là thất bại thay vì chờ vô thời hạn. Đã tự dựng
+   một server cục bộ giữ kết nối mở không phản hồi để xác nhận: bản cũ sẽ treo mãi, bản mới
+   time-out đúng ở mốc 8 giây rồi chuyển sang thử CDN dự phòng.
+2. **Dựng hạ tầng cho routine mở rộng `ROSTER` bằng Gemini** — sếp muốn "cày" cho hết mọi
+   đơn vị ĐMST trên thế giới; đã giải thích không có nguồn nào liệt kê "tất cả" và đề xuất
+   thay bằng routine mở rộng theo lô nhỏ, có kiểm soát, chạy trên Gemini để không tốn token
+   Claude, dừng khi hết hạn mức. Dùng `EnterPlanMode` để chốt thiết kế trước khi code (sếp
+   chọn: **tách routine riêng**, không gộp vào `routine-tin-tuc.md`, vì cần secret
+   `GEMINI_API_KEY` riêng). Phát hiện quan trọng khi rà `gemini_worker.py` (skill dùng chung
+   `gemini-delegate` ở Brain): script đó **không có khả năng duyệt web**, dùng nguyên trạng
+   cho việc tìm tổ chức có thật sẽ khiến Gemini bịa — nên viết script riêng
+   `_claude/tools/roster_grow_worker.py`, bật **Google Search grounding** của Gemini API
+   (`tools:[{"google_search":{}}]`, đã xác minh qua tài liệu Gemini hiện hành) cộng thêm một
+   lớp tự kiểm tra URL còn sống bằng HTTP trước khi tin — đây mới là chốt chặn thật, vì
+   grounding giảm chứ không loại bỏ hết khả năng bịa. Đã tạo thêm hàng đợi nguồn
+   `_claude/roster-grow-queue.md` (34 mục khởi điểm, ưu tiên Đông Nam Á/Châu Phi/Trung
+   Đông/Trung Á — các khu vực mỏng nhất theo đếm thật từ `ROSTER` hiện có, không phải đoán)
+   và file hướng dẫn canonical `_claude/routine-roster-grow.md` (cùng khuôn
+   `routine-tin-tuc.md`). **Chưa tạo cloud routine thật** — cần sếp tự nhập
+   `GEMINI_API_KEY` khi tạo trigger qua skill `schedule`, và nên tự chạy tay
+   `roster_grow_worker.py` một lần để kiểm kết quả trước khi để chạy tự động hằng ngày (xem
+   mục "Kiểm chứng" trong `_claude/routine-roster-grow.md`).
+
+Đã build, kiểm `node --check` + cân bằng thẻ, publish Artifact, `git push` (commit
+`29f2a9d` cho mục 1; mục 2 là file hạ tầng mới, chưa chạm `src/atlas.html`).
+
+Việc mở: sếp cần tự thử lại quả cầu 3D trên Edge/MacBook để xác nhận lỗi 1 đã hết; sếp cần
+chạy tay routine mở rộng roster lần đầu + tạo cloud routine hằng ngày cho nó.
+
+---
+**Lần trước:** 2026-09-06 — thêm tab thứ 6 **"Thuật ngữ"** (Glossary), theo gợi ý của sếp
 khi bàn "cần thêm gì để thành wikipedia ĐMST Việt Nam" — chọn thuật ngữ vì đây là loại nội
 dung ổn định (khác tin tức/hạn nộp phải cập nhật liên tục). 30 thuật ngữ, chia 5 nhóm (mô
 hình tổ chức, tài chính & đầu tư, công nghệ & ĐMST, chính sách & pháp lý VN, khởi nghiệp
@@ -85,45 +126,4 @@ browser, publish Artifact, `git push` (commit `4d3519f`).
 Việc mở: các tab khác (Toàn cầu/Việt Nam/Xếp hạng) đang có sẵn đề xuất nâng thành hồ sơ chi
 tiết như CASES cho vài đơn vị VN đầu tàu — chưa làm, đây mới là bước "wikipedia hoá" tiếp
 theo nếu sếp muốn đi tiếp; xem thêm gợi ý lúc bàn hướng trong lịch sử chat.
-
----
-**Lần trước:** 2026-09-06 — ba việc:
-
-1. **Thêm tab thứ 5 "Fund/Hackathon"** — danh mục nguồn tài trợ/cuộc thi/hackathon/thông
-   báo đề xuất nhiệm vụ KHCN&ĐMST, ưu tiên nguồn Việt Nam (Bộ KH&CN, NAFOSTED, NATIF, Sở
-   KHCN Hà Nội/TP.HCM/Đà Nẵng) trước quốc tế. Tham khảo cách trình bày mục "Tìm kiếm Hội
-   nghị, hội thảo" của `tra-cuu-tap-chi.pages.dev` (thẻ card, badge hạn nộp đổi màu theo
-   mức khẩn — đỏ ≤7 ngày/cam ≤30/xanh còn xa, "còn N ngày"). Có chip lọc theo loại
-   (hackathon/cuộc thi/quỹ tài trợ/đề xuất nhiệm vụ), ô tìm kiếm, toggle "chỉ hiện còn
-   hạn" (mặc định bật). 19 mục ban đầu, mỗi mục đã tra web trực tiếp và có link nguồn thật
-   — mục nào không xác minh được ngày cụ thể thì để `deadline:null` (hiện "Xem hạn tại
-   trang chính thức"), không bịa ngày. Loại khỏi danh sách: "VICEE Israel Hackathon" (không
-   tìm được nguồn công khai — chỉ có trong hồ sơ nội bộ, không đạt chuẩn "phải có link
-   nguồn thật" của trang) và "Samsung Solve for Tomorrow 2026" (đã dừng nhận hồ sơ mới
-   nhưng không có ngày đóng cụ thể để gắn vào mô hình dữ liệu deadline-based).
-2. **Nối mục Fund/Hackathon vào routine `atlas-tin-tuc` hằng ngày** — routine (cả bản
-   local lẫn cloud, canonical tại `_claude/routine-tin-tuc.md`) nay làm hai việc độc lập
-   mỗi lượt chạy: Phần A tìm tin cho `NEWS[]` (như cũ), Phần B tìm cơ hội tài trợ/cuộc
-   thi/hackathon/đề xuất nhiệm vụ KHCN&ĐMST **đang mở**, ưu tiên Việt Nam, cho `FUNDING[]`
-   — tối đa ~2-3 mục/lượt, bỏ qua phần nào không có gì đủ tin cậy (không có nghĩa là lỗi),
-   không bịa hạn nộp (`deadline:null` nếu không xác minh được), chỉ thêm mục còn actionable
-   (mục đã đóng hạn thì không thêm, khác với `NEWS[]` vốn là log lịch sử). Cả hai mảng
-   commit chung một lượt. Đã cập nhật mô tả skill `atlas-tin-tuc` (global,
-   `~/.claude/skills/`) để phản ánh phạm vi mới.
-3. **Sửa thông báo fallback quả cầu 3D** — trước đây hễ `initGlobe()` lỗi vì bất kỳ lý do
-   gì (kể cả three.js tải từ cdnjs.cloudflare.com bị chặn bởi Tracking Prevention/ad-blocker
-   của trình duyệt, hoặc mạng chập chờn) đều hiện chung một câu "thiết bị không hỗ trợ
-   WebGL" — sai và gây hiểu lầm khi WebGL thực ra vẫn chạy tốt. Nay tách hai trường hợp
-   (`webglAvailable()` false → thật sự không hỗ trợ; `window.THREE` chưa có dù WebGL vẫn
-   chạy → thư viện bị chặn/lỗi tải) với hai thông báo khác nhau, và thêm một lần thử tải
-   lại từ cdn.jsdelivr.net trước khi bỏ cuộc. Bắt nguồn từ việc sếp báo Edge trên MacBook
-   không mở được quả cầu dù hôm trước vẫn chạy bình thường.
-
-Đã build, kiểm `node --check` + cân bằng thẻ, test bằng http.server + browser (cả tab mới
-+ đổi ngôn ngữ EN + giả lập chặn CDN để xác nhận thông báo mới đúng), publish Artifact,
-`git push` (commit `e17b367` → `b77a59d`, gồm cả bản cập nhật routine ở mục 2).
-
-Việc mở còn lại: pill Góp ý chờ link Google Form từ sếp; mục 24-category của WURI (cần tải
-lại PDF, bản trích cũ đã mất theo scratchpad phiên trước); thêm case flagship mới; theo dõi
-lượt chạy routine đầu tiên có Phần B để xem chất lượng mục `FUNDING[]` tự thêm.
 (Claude)
