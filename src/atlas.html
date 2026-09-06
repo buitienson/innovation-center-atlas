@@ -272,6 +272,26 @@
   .fund-source a:hover{text-decoration:underline;}
   .fund-note{font-size:11.5px; color:var(--text-muted); font-style:italic;}
   .fund-empty{color:var(--text-muted); font-size:14px; padding:20px 0;}
+
+  /* ============ TAB : GLOSSARY ============ */
+  .gloss-toolbar{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:14px 0 10px;}
+  #glossSearch{flex:1 1 220px; min-width:160px;}
+  .gloss-list{display:flex; flex-direction:column; gap:12px; padding:6px 0 50px;}
+  .gloss-card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow); transition:box-shadow .3s ease;}
+  .gloss-row1{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+  .gloss-term{font-size:16px; font-weight:700;}
+  .gloss-cat-tag{font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; border-radius:6px; padding:3px 9px; white-space:nowrap;}
+  .cat-to-chuc{background:var(--accent-soft); color:var(--accent-ink);}
+  .cat-tai-chinh{background:color-mix(in srgb, var(--status-full) 20%, transparent); color:var(--status-full);}
+  .cat-cong-nghe{background:color-mix(in srgb, var(--navy) 20%, transparent); color:var(--navy);}
+  .cat-chinh-sach{background:var(--vn-soft); color:var(--vn);}
+  .cat-khoi-nghiep{background:color-mix(in srgb, var(--status-partial) 20%, transparent); color:var(--status-partial);}
+  .gloss-def{font-size:13.5px; color:var(--text); line-height:1.6; margin:8px 0 0; max-width:none;}
+  .gloss-related{display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:10px;}
+  .gloss-related-lbl{font-size:11px; color:var(--text-muted); margin-right:2px;}
+  .gloss-rel-btn{font-size:11px; font-family:inherit; border:1px solid var(--border); background:var(--surface-2); color:var(--accent-ink); border-radius:999px; padding:3px 10px; cursor:pointer;}
+  .gloss-rel-btn:hover{border-color:var(--accent-ink);}
+  .gloss-empty{color:var(--text-muted); font-size:14px; padding:20px 0;}
   .timeline{list-style:none; margin:0; padding:0; border-left:2px solid var(--border); }
   .timeline li{position:relative; padding:0 0 10px 16px;}
   .timeline li::before{content:''; position:absolute; left:-5px; top:4px; width:8px; height:8px; border-radius:50%; background:var(--accent);}
@@ -329,6 +349,7 @@
         <button data-tab="rankings" data-i18n="tabRankings">Xếp hạng</button>
         <button data-tab="news" data-i18n="tabNews">Tin tức</button>
         <button data-tab="funding" data-i18n="tabFunding">Fund/Hackathon</button>
+        <button data-tab="glossary" data-i18n="tabGlossary">Thuật ngữ</button>
       </div>
       <div class="langtoggle">
         <button data-lang="vi" class="active">VI</button>
@@ -358,6 +379,7 @@
         <p><strong data-i18n="guideRankLbl">Tab Xếp hạng.</strong> <span data-i18n="guideRankVal">Bấm vào một hạng mục (chip) phía trên bảng để lọc theo hạng mục đó, hoặc chọn "Tất cả".</span></p>
         <p><strong data-i18n="guideNewsLbl">Tab Tin tức.</strong> <span data-i18n="guideNewsVal">Mỗi tin có tóm tắt và link nguồn — bấm vào tên nguồn để đọc bài gốc đầy đủ.</span></p>
         <p><strong data-i18n="guideFundLbl">Tab Fund/Hackathon.</strong> <span data-i18n="guideFundVal">Lọc theo loại (hackathon, cuộc thi, quỹ tài trợ, đề xuất nhiệm vụ KHCN&amp;ĐMST) bằng chip phía trên, hoặc gõ từ khoá; bấm "Trang chính thức" để nộp hồ sơ. Nhãn hạn nộp đổi màu theo mức khẩn: đỏ (≤7 ngày), cam (≤30 ngày), xanh (còn xa).</span></p>
+        <p><strong data-i18n="guideGlossLbl">Tab Thuật ngữ.</strong> <span data-i18n="guideGlossVal">Lọc theo nhóm (mô hình tổ chức, tài chính, công nghệ, chính sách VN, khởi nghiệp chung) hoặc gõ tìm; bấm vào một thuật ngữ trong mục "Liên quan" để nhảy tới định nghĩa của nó.</span></p>
         <p><strong data-i18n="guideLangLbl">Ngôn ngữ.</strong> <span data-i18n="guideLangVal">Nút VI/EN ở góc trên bên phải đổi ngôn ngữ hiển thị cho toàn trang.</span></p>
       </div>
     </details>
@@ -516,6 +538,19 @@
     <div class="note-box" data-i18n="fundingNote">Tổng hợp từ nguồn công khai (website chính thức, cổng thông tin điện tử của Bộ/Sở, báo chí) — hạn nộp và giá trị giải thưởng có thể thay đổi, luôn đối chiếu trang chính thức trước khi nộp hồ sơ.</div>
   </section>
 
+  <!-- ================= TAB 6 : GLOSSARY ================= -->
+  <section id="panel-glossary" class="tabpanel">
+    <div class="catalogue-head">
+      <h2 data-i18n="glossaryTitle">Thuật ngữ đổi mới sáng tạo</h2>
+      <p data-i18n="glossarySub" style="color:var(--text-muted); font-size:14px; margin:6px 0 0;">Định nghĩa ngắn các thuật ngữ thường gặp trong đổi mới sáng tạo, khởi nghiệp và chính sách khoa học công nghệ — ưu tiên bối cảnh Việt Nam.</p>
+      <div class="chips" id="glossCatChips"></div>
+    </div>
+    <div class="gloss-toolbar">
+      <input type="text" id="glossSearch" class="roster-input" data-i18n-ph="glossarySearchPh">
+    </div>
+    <div class="gloss-list" id="glossList"></div>
+  </section>
+
 </main>
 
 <footer class="wrap">
@@ -581,6 +616,20 @@ var STR = {
   fundType_competition: {vi:"Cuộc thi khởi nghiệp", en:"Startup competition"},
   fundType_fund: {vi:"Quỹ tài trợ", en:"Funding"},
   fundType_rfp: {vi:"Đề xuất nhiệm vụ KHCN&ĐMST", en:"S&T/innovation task call"},
+  tabGlossary: {vi:"Thuật ngữ", en:"Glossary"},
+  glossaryTitle: {vi:"Thuật ngữ đổi mới sáng tạo", en:"Innovation Glossary"},
+  glossarySub: {vi:"Định nghĩa ngắn các thuật ngữ thường gặp trong đổi mới sáng tạo, khởi nghiệp và chính sách khoa học công nghệ — ưu tiên bối cảnh Việt Nam.",
+    en:"Short definitions of terms commonly used in innovation, startups, and S&T policy — with a Vietnam-context emphasis."},
+  glossarySearchPh: {vi:"Tìm theo tên thuật ngữ...", en:"Search by term name..."},
+  glossaryEmpty: {vi:"Không tìm thấy thuật ngữ nào khớp bộ lọc.", en:"No terms match this filter."},
+  glossaryRelatedLbl: {vi:"Liên quan:", en:"Related:"},
+  glossCatLabel:{
+    'to-chuc':{vi:'Mô hình tổ chức', en:'Organizational models'},
+    'tai-chinh':{vi:'Tài chính & đầu tư', en:'Finance & investment'},
+    'cong-nghe':{vi:'Công nghệ & ĐMST', en:'Technology & innovation'},
+    'chinh-sach':{vi:'Chính sách & pháp lý VN', en:'Vietnam policy & law'},
+    'khoi-nghiep':{vi:'Khởi nghiệp chung', en:'General startup terms'}
+  },
   subheadP1: {vi:"Lược đồ các mô hình trung tâm nghiên cứu, đổi mới sáng tạo (TTO / holdings / mạng lưới) tại các đại học trên thế giới.",
     en:"A schematic of research & innovation center models (TTO / holdings / network) at universities worldwide."},
   aboutToggle: {vi:"Về dự án", en:"About this project"},
@@ -610,6 +659,9 @@ var STR = {
   guideFundLbl: {vi:"Tab Fund/Hackathon.", en:"Fund/Hackathon tab."},
   guideFundVal: {vi:"Lọc theo loại (hackathon, cuộc thi, quỹ tài trợ, đề xuất nhiệm vụ KHCN&ĐMST) bằng chip phía trên, hoặc gõ từ khoá; bấm \"Trang chính thức\" để nộp hồ sơ. Nhãn hạn nộp đổi màu theo mức khẩn: đỏ (≤7 ngày), cam (≤30 ngày), xanh (còn xa).",
     en:"Filter by type (hackathon, competition, funding, S&T/innovation task call) using the chips above, or type a keyword; click \"Official page\" to apply. The deadline label changes color by urgency: red (≤7 days), orange (≤30 days), green (further out)."},
+  guideGlossLbl: {vi:"Tab Thuật ngữ.", en:"Glossary tab."},
+  guideGlossVal: {vi:"Lọc theo nhóm (mô hình tổ chức, tài chính, công nghệ, chính sách VN, khởi nghiệp chung) hoặc gõ tìm; bấm vào một thuật ngữ trong mục \"Liên quan\" để nhảy tới định nghĩa của nó.",
+    en:"Filter by category (organizational models, finance, technology, Vietnam policy, general startup terms) or search; click a term under \"Related\" to jump to its definition."},
   guideLangLbl: {vi:"Ngôn ngữ.", en:"Language."},
   guideLangVal: {vi:"Nút VI/EN ở góc trên bên phải đổi ngôn ngữ hiển thị cho toàn trang.",
     en:"The VI/EN button in the top-right corner switches the display language for the whole page."},
@@ -1262,6 +1314,8 @@ function applyI18n(){
   renderNews();
   renderFundChips();
   renderFunding();
+  renderGlossChips();
+  renderGlossary();
   renderFooter();
   renderRosterControls();
   renderRosterTable();
@@ -1291,6 +1345,7 @@ document.querySelectorAll('.tabnav button').forEach(function(btn){
     document.getElementById('panel-rankings').classList.toggle('active', tab==='rankings');
     document.getElementById('panel-news').classList.toggle('active', tab==='news');
     document.getElementById('panel-funding').classList.toggle('active', tab==='funding');
+    document.getElementById('panel-glossary').classList.toggle('active', tab==='glossary');
   });
 });
 function goToCasesTab(caseId){
@@ -2243,6 +2298,237 @@ var __fundSearchEl = document.getElementById('fundSearch');
 if(__fundSearchEl) __fundSearchEl.addEventListener('input', function(e){ fundSearchTerm = e.target.value; renderFunding(); });
 var __fundOpenOnlyEl = document.getElementById('fundOpenOnly');
 if(__fundOpenOnlyEl) __fundOpenOnlyEl.addEventListener('change', renderFunding);
+
+/* ======================================================================
+   DATA — innovation/startup/policy glossary
+====================================================================== */
+// Each item: {id, category, term:{vi,en}, def:{vi,en}, related:[ids]}.
+// category is one of the keys in STR.glossCatLabel. `related` ids must exist
+// elsewhere in this array — they render as clickable cross-links, the one
+// piece of actual "encyclopedia" cross-referencing on this otherwise
+// per-tab-siloed site.
+var TERMS = [
+  {id:'tto', category:'to-chuc',
+    term:{vi:'TTO — Văn phòng chuyển giao công nghệ', en:'TTO — Technology Transfer Office'},
+    def:{vi:'Đơn vị trong trường đại học/viện nghiên cứu, phụ trách đánh giá, cấp phép và thương mại hoá các kết quả nghiên cứu (sáng chế, bản quyền) ra doanh nghiệp. Thường không tách pháp nhân riêng — là một phòng/ban trực thuộc trường.',
+      en:'A university/research-institute unit that evaluates, licenses, and commercializes research outputs (patents, copyrights) to industry. Usually not a separate legal entity — just an office within the institution.'},
+    related:['holdings','cgcn','shtt']},
+  {id:'holdings', category:'to-chuc',
+    term:{vi:'Holdings (công ty CGCN/ĐMST tách pháp nhân)', en:'Holdings company (a separate tech-transfer/innovation entity)'},
+    def:{vi:'Mô hình trong đó trường đại học lập một công ty riêng (pháp nhân độc lập, thường trường sở hữu toàn bộ hoặc phần lớn cổ phần) để quản lý CGCN, đầu tư startup, hoặc vận hành dịch vụ thương mại — linh hoạt hơn TTO nội bộ nhưng đòi hỏi quản trị doanh nghiệp riêng.',
+      en:'A model where the university spins up a separate legal company (usually wholly or majority owned by the university) to manage technology transfer, invest in startups, or run commercial services — more flexible than an internal TTO but requiring its own corporate governance.'},
+    related:['tto','spin-off']},
+  {id:'incubator', category:'to-chuc',
+    term:{vi:'Vườn ươm khởi nghiệp (Incubator)', en:'Startup incubator'},
+    def:{vi:'Chương trình/không gian hỗ trợ startup ở giai đoạn rất sớm (ý tưởng → sản phẩm đầu tiên) — thường cung cấp không gian làm việc, cố vấn, đào tạo cơ bản, chưa nhất thiết kèm đầu tư vốn.',
+      en:'A program/space supporting startups at a very early stage (idea → first product) — typically offering workspace, mentoring, and basic training, not necessarily with capital investment.'},
+    related:['accelerator']},
+  {id:'accelerator', category:'to-chuc',
+    term:{vi:'Chương trình tăng tốc khởi nghiệp (Accelerator)', en:'Startup accelerator'},
+    def:{vi:'Chương trình ngắn hạn (vài tuần–vài tháng) cho startup đã có sản phẩm/khách hàng ban đầu, tập trung tăng tốc phát triển qua cố vấn chuyên sâu và kết nối nhà đầu tư, thường đổi lấy một tỷ lệ cổ phần nhỏ.',
+      en:'A short program (weeks to months) for startups that already have a product/early customers, focused on accelerating growth through intensive mentoring and investor connections, usually in exchange for a small equity stake.'},
+    related:['incubator','vc']},
+  {id:'innovation-center', category:'to-chuc',
+    term:{vi:'Trung tâm đổi mới sáng tạo', en:'Innovation center'},
+    def:{vi:'Thuật ngữ chung cho một đơn vị (của trường, doanh nghiệp, hoặc nhà nước) tập hợp nhiều chức năng ĐMST — không gian làm việc chung, vườn ươm, kết nối doanh nghiệp, đôi khi cả CGCN — dưới một mái nhà; quy mô và mô hình quản trị khác nhau rất nhiều tuỳ đơn vị.',
+      en:'An umbrella term for a unit (university, corporate, or state-run) that bundles several innovation functions — coworking space, incubation, industry liaison, sometimes tech transfer — under one roof; scale and governance vary widely by organization.'},
+    related:['tto','nic']},
+  {id:'spin-off', category:'to-chuc',
+    term:{vi:'Spin-off / Spin-out', en:'Spin-off / spin-out'},
+    def:{vi:'Doanh nghiệp mới thành lập để thương mại hoá trực tiếp một kết quả nghiên cứu cụ thể, thường có nhà nghiên cứu/giảng viên tham gia sáng lập hoặc quản lý. Tại Việt Nam, Nghị quyết 193/2025/QH15 của Quốc hội (19/2/2025) lần đầu cho phép viên chức tại tổ chức KH&CN công lập, cơ sở giáo dục đại học công lập tham gia quản lý doanh nghiệp spin-off khi được cấp có thẩm quyền đồng ý.',
+      en:'A new company founded to directly commercialize a specific research result, usually with the researcher/faculty member as a founder or manager. In Vietnam, National Assembly Resolution 193/2025/QH15 (19 Feb 2025) was the first to allow staff at public S&T organizations and public universities to take management roles in spin-off companies, with their institution\'s approval.'},
+    related:['holdings','nq193']},
+  {id:'open-innovation', category:'to-chuc',
+    term:{vi:'Đổi mới sáng tạo mở (Open Innovation)', en:'Open innovation'},
+    def:{vi:'Cách tiếp cận trong đó doanh nghiệp/tổ chức chủ động tìm kiếm ý tưởng, công nghệ, giải pháp từ bên ngoài (startup, trường đại học, cá nhân) thay vì chỉ dựa vào R&D nội bộ — thường qua các cuộc thi, chương trình hợp tác, hoặc quỹ đầu tư doanh nghiệp (CVC).',
+      en:'An approach where a company/organization actively sources ideas, technology, and solutions from outside (startups, universities, individuals) rather than relying solely on internal R&D — often through competitions, partnership programs, or corporate venture capital (CVC).'},
+    related:['vc']},
+
+  {id:'vc', category:'tai-chinh',
+    term:{vi:'Vốn mạo hiểm (Venture Capital — VC)', en:'Venture Capital (VC)'},
+    def:{vi:'Vốn đầu tư cổ phần vào startup có tiềm năng tăng trưởng nhanh nhưng rủi ro cao, đổi lấy cổ phần. Quỹ VC thường đầu tư theo danh mục nhiều startup, kỳ vọng một số ít thành công bù lại phần lớn thất bại.',
+      en:'Equity capital invested in high-growth-potential but high-risk startups, in exchange for shares. VC funds typically invest across a portfolio of many startups, expecting a few big winners to offset most failures.'},
+    related:['angel','unicorn']},
+  {id:'angel', category:'tai-chinh',
+    term:{vi:'Nhà đầu tư thiên thần (Angel Investor)', en:'Angel investor'},
+    def:{vi:'Cá nhân dùng tiền túi đầu tư vào startup ở giai đoạn rất sớm (thường trước khi có quỹ VC tham gia), đổi lấy cổ phần — thường cũng là người có kinh nghiệm ngành, đóng vai trò cố vấn.',
+      en:'An individual who invests personal funds into a startup at a very early stage (usually before VC funds get involved) in exchange for equity — often also an experienced industry figure who mentors the founders.'},
+    related:['vc']},
+  {id:'funding-rounds', category:'tai-chinh',
+    term:{vi:'Vòng gọi vốn: Pre-seed, Seed, Series A/B/C', en:'Funding rounds: Pre-seed, Seed, Series A/B/C'},
+    def:{vi:'Các mốc gọi vốn theo thứ tự trưởng thành của startup: Pre-seed/Seed (ý tưởng → sản phẩm đầu tiên, vốn nhỏ), Series A (đã có mô hình kinh doanh chứng minh được, mở rộng đội ngũ), Series B/C trở lên (mở rộng quy mô/thị trường, vốn ngày càng lớn).',
+      en:'Startup funding milestones in order of maturity: Pre-seed/Seed (idea → first product, small amounts), Series A (a proven business model, scaling the team), Series B/C and beyond (scaling operations/markets, progressively larger rounds).'},
+    related:['vc']},
+  {id:'valuation', category:'tai-chinh',
+    term:{vi:'Định giá (Valuation)', en:'Valuation'},
+    def:{vi:'Giá trị ước tính của một startup tại một thời điểm, dùng để tính tỷ lệ cổ phần nhà đầu tư nhận được khi rót một khoản vốn nhất định. "Định giá trước rót vốn" (pre-money) là giá trị trước khi thêm vốn mới; "định giá sau rót vốn" (post-money) = pre-money + số vốn mới.',
+      en:'The estimated worth of a startup at a point in time, used to calculate how much equity an investor gets for a given amount of capital. "Pre-money valuation" is the value before new capital is added; "post-money valuation" = pre-money + the new investment.'},
+    related:['vc']},
+  {id:'esop', category:'tai-chinh',
+    term:{vi:'ESOP (Cổ phần thưởng cho nhân viên)', en:'ESOP (Employee Stock Ownership Plan)'},
+    def:{vi:'Cơ chế dành một phần cổ phần công ty (thường 5–15% ở startup) để thưởng/thu hút nhân sự chủ chốt, thường có điều kiện "vesting" (nhận dần theo thời gian gắn bó) thay vì cấp toàn bộ ngay.',
+      en:'A scheme setting aside a slice of company equity (commonly 5–15% at a startup) to reward/attract key hires, usually with a "vesting" condition (earned gradually over tenure) rather than granted all at once.'},
+    related:[]},
+  {id:'unicorn', category:'tai-chinh',
+    term:{vi:'Kỳ lân (Unicorn)', en:'Unicorn'},
+    def:{vi:'Startup tư nhân (chưa niêm yết) được định giá từ 1 tỷ USD trở lên. Việt Nam có một số ít doanh nghiệp từng đạt mốc này (ví dụ VNG, VNLIFE/VNPAY, Sky Mavis, MoMo).',
+      en:'A privately held (not-yet-listed) startup valued at US$1 billion or more. Vietnam has had a small number of companies reach this mark (e.g. VNG, VNLIFE/VNPAY, Sky Mavis, MoMo).'},
+    related:['vc']},
+  {id:'exit', category:'tai-chinh',
+    term:{vi:'Thoái vốn (Exit): IPO & M&A', en:'Exit: IPO & M&A'},
+    def:{vi:'Cách nhà sáng lập/nhà đầu tư hiện thực hoá lợi nhuận từ một startup: IPO (Initial Public Offering — niêm yết cổ phiếu ra công chúng) hoặc M&A (Merger & Acquisition — được một công ty khác mua lại/sáp nhập).',
+      en:'How founders/investors realize returns from a startup: an IPO (Initial Public Offering — listing shares publicly) or M&A (Merger & Acquisition — being bought out or merged into another company).'},
+    related:['unicorn']},
+
+  {id:'cgcn', category:'cong-nghe',
+    term:{vi:'Chuyển giao công nghệ (CGCN)', en:'Technology transfer'},
+    def:{vi:'Quá trình chuyển kết quả nghiên cứu/công nghệ từ nơi tạo ra nó (trường, viện) sang bên sử dụng (doanh nghiệp) để thương mại hoá — qua cấp phép (licensing), chuyển nhượng quyền sở hữu trí tuệ, hoặc lập spin-off.',
+      en:'The process of moving research results/technology from where they were created (a university, an institute) to a user (an enterprise) for commercialization — via licensing, IP assignment, or founding a spin-off.'},
+    related:['tto','shtt','spin-off']},
+  {id:'shtt', category:'cong-nghe',
+    term:{vi:'Sở hữu trí tuệ (SHTT)', en:'Intellectual Property (IP)'},
+    def:{vi:'Quyền pháp lý đối với các sáng tạo trí tuệ — sáng chế (patent), bản quyền (copyright), nhãn hiệu (trademark), kiểu dáng công nghiệp. Đây là tài sản cốt lõi mà TTO/holdings quản lý và cấp phép ra bên ngoài.',
+      en:'Legal rights over intellectual creations — patents, copyrights, trademarks, industrial designs. This is the core asset that a TTO/holdings company manages and licenses out.'},
+    related:['tto','cgcn']},
+  {id:'trl', category:'cong-nghe',
+    term:{vi:'Mức độ sẵn sàng công nghệ (TRL)', en:'Technology Readiness Level (TRL)'},
+    def:{vi:'Thang đo 9 mức (TRL 1–9) đánh giá độ chín của một công nghệ, từ nghiên cứu nguyên lý cơ bản (TRL 1) đến đã vận hành thực tế, được kiểm chứng qua sử dụng thành công (TRL 9) — dùng phổ biến khi xét chọn/tài trợ nhiệm vụ KH&CN.',
+      en:'A 9-level scale (TRL 1–9) assessing how mature a technology is, from basic-principle research (TRL 1) to fully proven through successful real-world operation (TRL 9) — commonly used when selecting/funding S&T tasks.'},
+    related:['rfp-term','deep-tech']},
+  {id:'deep-tech', category:'cong-nghe',
+    term:{vi:'Deep tech', en:'Deep tech'},
+    def:{vi:'Startup/công nghệ dựa trên đột phá khoa học hoặc kỹ thuật thực sự (AI lõi, bán dẫn, vật liệu mới, công nghệ sinh học...) — thường cần vốn và thời gian R&D lớn hơn, rủi ro kỹ thuật cao hơn so với startup mô hình kinh doanh/ứng dụng thuần tuý.',
+      en:'A startup/technology built on genuine scientific or engineering breakthroughs (core AI, semiconductors, new materials, biotech...) — usually needing more capital and R&D time, with higher technical risk than a purely business-model/app-layer startup.'},
+    related:['trl','poc']},
+  {id:'strategic-tech', category:'cong-nghe',
+    term:{vi:'Công nghệ chiến lược', en:'Strategic technology'},
+    def:{vi:'Nhóm công nghệ được nhà nước xác định có vai trò quyết định đến năng lực cạnh tranh/an ninh quốc gia (ví dụ bán dẫn, trí tuệ nhân tạo), được ưu tiên đặt hàng nhiệm vụ nghiên cứu và nguồn lực trong các chương trình KH,CN&ĐMST quốc gia.',
+      en:'A category of technologies the state identifies as decisive for national competitiveness/security (e.g. semiconductors, AI), prioritized for commissioned research tasks and resources under national S&T/innovation programs.'},
+    related:['nq57','rfp-term']},
+  {id:'chuyen-doi-so', category:'cong-nghe',
+    term:{vi:'Chuyển đổi số', en:'Digital transformation'},
+    def:{vi:'Quá trình ứng dụng công nghệ số (dữ liệu, tự động hoá, AI, điện toán đám mây...) để thay đổi cách một tổ chức vận hành, tạo giá trị và phục vụ người dùng — ở Việt Nam thường được nhắc song song với ĐMST trong các văn bản chính sách gần đây (ví dụ Nghị quyết 57-NQ/TW).',
+      en:'The process of applying digital technology (data, automation, AI, cloud computing...) to change how an organization operates, creates value, and serves users — in Vietnam usually mentioned alongside innovation in recent policy documents (e.g. Resolution 57-NQ/TW).'},
+    related:['nq57']},
+
+  {id:'nq57', category:'chinh-sach',
+    term:{vi:'Nghị quyết 57-NQ/TW', en:'Resolution 57-NQ/TW'},
+    def:{vi:'Nghị quyết của Bộ Chính trị ban hành ngày 22/12/2024 về "đột phá phát triển khoa học, công nghệ, đổi mới sáng tạo và chuyển đổi số quốc gia" — xác định đây là đột phá quan trọng hàng đầu, động lực chính đưa Việt Nam phát triển trong giai đoạn mới. Là văn bản định hướng cấp cao nhất mà các chính sách/chương trình KH,CN&ĐMST cụ thể sau đó (bao gồm Nghị quyết 193/2025/QH15) được xây dựng để thực hiện.',
+      en:'A Politburo resolution issued 22 Dec 2024 on "breakthrough development of science, technology, innovation, and national digital transformation" — framing this as the foremost breakthrough and main driver for Vietnam\'s development in the new period. It is the top-level policy direction that later concrete policies/programs (including Resolution 193/2025/QH15) were built to implement.'},
+    related:['nq193','strategic-tech']},
+  {id:'nq193', category:'chinh-sach',
+    term:{vi:'Nghị quyết 193/2025/QH15', en:'Resolution 193/2025/QH15'},
+    def:{vi:'Nghị quyết của Quốc hội thông qua ngày 19/2/2025, thí điểm một số cơ chế, chính sách đặc biệt để cụ thể hoá Nghị quyết 57-NQ/TW — trong đó có điểm đáng chú ý: cho phép viên chức tại tổ chức KH&CN công lập, trường đại học công lập tham gia quản lý doanh nghiệp spin-off (khi được đồng ý), và cho phép các tổ chức này lập/góp vốn doanh nghiệp để thương mại hoá kết quả nghiên cứu.',
+      en:'A National Assembly resolution passed 19 Feb 2025, piloting special mechanisms and policies to put Resolution 57-NQ/TW into practice — notably allowing staff at public S&T organizations and public universities to take management roles in spin-off companies (with approval), and allowing such institutions to found/invest in companies to commercialize research results.'},
+    related:['nq57','spin-off']},
+  {id:'sandbox', category:'chinh-sach',
+    term:{vi:'Cơ chế thử nghiệm có kiểm soát (Sandbox pháp lý)', en:'Regulatory sandbox'},
+    def:{vi:'Khung pháp lý cho phép thử nghiệm một sản phẩm/mô hình kinh doanh mới (thường ứng dụng công nghệ) trong phạm vi, thời gian giới hạn, dưới sự giám sát của cơ quan quản lý — trước khi có khung pháp lý chính thức đầy đủ. Dùng để gỡ vướng cho các mô hình đi trước quy định hiện hành (fintech, mobility, AI...).',
+      en:'A legal framework allowing a new product/business model (usually tech-driven) to be trialed within a limited scope and timeframe, under regulator supervision — before a full formal legal framework exists. Used to unblock models that move faster than current regulation (fintech, mobility, AI...).'},
+    related:['nq193']},
+  {id:'rfp-term', category:'chinh-sach',
+    term:{vi:'Đặt hàng / tuyển chọn nhiệm vụ KH&CN', en:'Commissioning / selecting an S&T task'},
+    def:{vi:'Hai cơ chế nhà nước giao kinh phí nghiên cứu: "đặt hàng" là cơ quan quản lý xác định trước đề bài cụ thể cần giải; "tuyển chọn" là mở cho nhiều tổ chức/cá nhân nộp đề xuất rồi chọn hồ sơ tốt nhất. Thông báo các đợt này thường đăng trên cổng thông tin điện tử của Bộ/Sở KH&CN — xem mục Fund/Hackathon của trang này để có danh sách đang mở.',
+      en:'Two mechanisms for the state to fund research: "commissioning" (đặt hàng) is when the managing agency defines the specific problem upfront; "selection" (tuyển chọn) opens it to multiple organizations/individuals who submit proposals, with the best one chosen. Announcements are usually posted on the relevant Ministry/Department of S&T\'s portal — see this site\'s Fund/Hackathon tab for currently open calls.'},
+    related:['nic','trl']},
+  {id:'nic', category:'chinh-sach',
+    term:{vi:'Trung tâm Đổi mới sáng tạo Quốc gia (NIC)', en:'National Innovation Center (NIC)'},
+    def:{vi:'Đơn vị sự nghiệp công lập thành lập năm 2019, có cơ sở hoạt động chính tại Khu Công nghệ cao Hoà Lạc (Hà Nội), đóng vai trò đầu mối quốc gia kết nối startup, doanh nghiệp, nhà đầu tư và mạng lưới chuyên gia người Việt ở nước ngoài. Cơ quan chủ quản đã có thay đổi qua các đợt sắp xếp bộ máy nhà nước gần đây — nên tra cổng thông tin chính thức của NIC để biết cơ quan quản lý hiện hành.',
+      en:'A public service unit established in 2019, based mainly at Hoa Lac Hi-Tech Park (Hanoi), acting as a national hub connecting startups, enterprises, investors, and the network of overseas Vietnamese experts. Its supervising agency has changed across recent state-apparatus restructurings — check NIC\'s official site for the current one.'},
+    related:['innovation-center','hi-tech-park']},
+  {id:'hi-tech-park', category:'chinh-sach',
+    term:{vi:'Khu công nghệ cao', en:'Hi-tech park'},
+    def:{vi:'Khu vực được quy hoạch riêng, có chính sách ưu đãi (thuế, đất đai...) để thu hút doanh nghiệp công nghệ cao, viện nghiên cứu, cơ sở đào tạo và ươm tạo công nghệ — ví dụ Khu CNC Hoà Lạc (Hà Nội), Khu CNC TP.HCM, Khu CNC Đà Nẵng.',
+      en:'A specially zoned area with incentive policies (tax, land...) to attract high-tech enterprises, research institutes, training facilities, and technology incubation — e.g. Hoa Lac Hi-Tech Park (Hanoi), Saigon Hi-Tech Park, Da Nang Hi-Tech Park.'},
+    related:['nic']},
+
+  {id:'startup', category:'khoi-nghiep',
+    term:{vi:'Startup (Công ty khởi nghiệp)', en:'Startup'},
+    def:{vi:'Tổ chức mới thành lập, tìm kiếm một mô hình kinh doanh có thể lặp lại và mở rộng quy mô nhanh — khác với một doanh nghiệp nhỏ thông thường ở kỳ vọng tăng trưởng và mức độ chấp nhận rủi ro/vốn đầu tư mạo hiểm.',
+      en:'A newly founded organization searching for a repeatable, rapidly scalable business model — distinct from an ordinary small business in its growth expectations and its openness to risk/venture capital.'},
+    related:['vc','scale-up']},
+  {id:'scale-up', category:'khoi-nghiep',
+    term:{vi:'Scale-up', en:'Scale-up'},
+    def:{vi:'Giai đoạn startup đã tìm được mô hình kinh doanh hiệu quả (product-market fit) và đang tập trung mở rộng quy mô nhanh — thị trường, đội ngũ, doanh thu — thay vì còn thử nghiệm mô hình.',
+      en:'The stage where a startup has found an effective business model (product-market fit) and is focused on rapidly scaling — market, team, revenue — rather than still experimenting with the model.'},
+    related:['startup','pmf']},
+  {id:'poc', category:'khoi-nghiep',
+    term:{vi:'Proof of Concept (PoC)', en:'Proof of Concept (PoC)'},
+    def:{vi:'Bản thử nghiệm quy mô nhỏ để chứng minh một ý tưởng/công nghệ khả thi về mặt kỹ thuật, trước khi đầu tư nguồn lực lớn để phát triển đầy đủ.',
+      en:'A small-scale trial demonstrating that an idea/technology is technically feasible, before committing significant resources to build it out fully.'},
+    related:['deep-tech']},
+  {id:'pmf', category:'khoi-nghiep',
+    term:{vi:'Product-Market Fit (PMF)', en:'Product-Market Fit (PMF)'},
+    def:{vi:'Trạng thái khi sản phẩm của một startup đáp ứng đúng nhu cầu thực sự của một nhóm khách hàng đủ lớn, thể hiện qua tốc độ tăng trưởng người dùng/doanh thu tự nhiên mà không cần chi phí thu hút khách hàng quá lớn.',
+      en:'The state where a startup\'s product genuinely satisfies the needs of a large-enough customer segment, shown by organic growth in users/revenue without needing excessive customer-acquisition spending.'},
+    related:['scale-up','startup']}
+];
+var GLOSS_CATS = ['to-chuc','tai-chinh','cong-nghe','chinh-sach','khoi-nghiep'];
+var activeGlossCat = 'all';
+var glossSearchTerm = '';
+function renderGlossChips(){
+  var wrap = document.getElementById('glossCatChips');
+  if(!wrap) return;
+  var cats = ['all'].concat(GLOSS_CATS);
+  wrap.innerHTML = cats.map(function(c){
+    var label = c==='all' ? t('fundTypeAll') : tf(STR.glossCatLabel[c]);
+    return '<button class="chip'+(c===activeGlossCat?' active':'')+'" data-gcat="'+c+'">'+label+'</button>';
+  }).join('');
+  wrap.querySelectorAll('.chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      activeGlossCat = btn.getAttribute('data-gcat');
+      renderGlossChips(); renderGlossary();
+    });
+  });
+}
+function termById(id){ return TERMS.filter(function(x){ return x.id===id; })[0]; }
+function glossCardHTML(term){
+  var catLbl = tf(STR.glossCatLabel[term.category]);
+  var related = (term.related||[]).map(function(rid){
+    var rt = termById(rid);
+    return rt ? '<button type="button" class="gloss-rel-btn" data-jump="'+rid+'">'+tf(rt.term)+'</button>' : '';
+  }).join('');
+  return '<article class="gloss-card" id="gloss-'+term.id+'">'+
+    '<div class="gloss-row1"><span class="gloss-term">'+tf(term.term)+'</span><span class="gloss-cat-tag cat-'+term.category+'">'+catLbl+'</span></div>'+
+    '<p class="gloss-def">'+tf(term.def)+'</p>'+
+    (related ? '<div class="gloss-related"><span class="gloss-related-lbl">'+t('glossaryRelatedLbl')+'</span>'+related+'</div>' : '')+
+  '</article>';
+}
+function renderGlossary(){
+  var listEl = document.getElementById('glossList');
+  if(!listEl) return;
+  var q = glossSearchTerm.trim().toLowerCase();
+  var list = TERMS.filter(function(x){
+    if(activeGlossCat!=='all' && x.category!==activeGlossCat) return false;
+    if(!q) return true;
+    return (tf(x.term)+' '+tf(x.def)).toLowerCase().indexOf(q)>-1;
+  });
+  list.sort(function(a,b){ return tf(a.term).localeCompare(tf(b.term)); });
+  listEl.innerHTML = list.length ? list.map(glossCardHTML).join('') : '<div class="gloss-empty">'+t('glossaryEmpty')+'</div>';
+}
+var __glossSearchEl = document.getElementById('glossSearch');
+if(__glossSearchEl) __glossSearchEl.addEventListener('input', function(e){ glossSearchTerm = e.target.value; renderGlossary(); });
+document.addEventListener('click', function(e){
+  var btn = e.target.closest && e.target.closest('.gloss-rel-btn');
+  if(!btn) return;
+  var id = btn.getAttribute('data-jump');
+  var term = termById(id);
+  if(!term) return;
+  // Clear filters rather than searching for the target term's own name —
+  // a substring search could hide it behind unrelated matches, defeating
+  // the point of a reliable "jump to definition" link.
+  glossSearchTerm = ''; if(__glossSearchEl) __glossSearchEl.value = '';
+  activeGlossCat = 'all';
+  renderGlossChips(); renderGlossary();
+  // innerHTML assignment above is synchronous, so the new card already exists
+  // in the DOM here — no need to defer via rAF (which a backgrounded/hidden
+  // tab can pause indefinitely, silently breaking the jump).
+  var card = document.getElementById('gloss-'+id);
+  if(!card) return;
+  card.scrollIntoView({behavior:'smooth', block:'center'});
+  card.style.boxShadow = '0 0 0 2px var(--accent), var(--shadow)';
+  setTimeout(function(){ card.style.boxShadow = ''; }, 1400);
+});
 
 /* ======================================================================
    RENDER: flagship case chips + cards
