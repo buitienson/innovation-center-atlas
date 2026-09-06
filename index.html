@@ -1746,13 +1746,24 @@ function asiaSideHTML(){
     ? 'Châu Á: Tsinghua Holdings (Trung Quốc), NUS/BLOCK71 (Singapore), '+vnCount+' đơn vị tại Việt Nam, cùng '+asiaRosterCount+' đơn vị khác ở Nhật/Trung/Hàn/Đài/Ấn trong danh mục mở rộng.'
     : 'Asia: Tsinghua Holdings (China), NUS/BLOCK71 (Singapore), '+vnCount+' units in Vietnam, plus '+asiaRosterCount+' more across Japan/China/Korea/Taiwan/India in the extended catalogue.')+'</div>';
 }
+var SEA_COUNTRY_VI = {Malaysia:'Malaysia', Thailand:'Thái Lan', Singapore:'Singapore', Taiwan:'Đài Loan', Indonesia:'Indonesia', Philippines:'Philippines', India:'Ấn Độ'};
 function seaSideHTML(){
   var bounds = {latMin:-10,latMax:25,lngMin:90,lngMax:140};
-  var stats = regionStats(bounds, casesInBounds(bounds), {count:vnTotalPlottedCount(), type:'university', countryName:'Vietnam'});
   var vnCount = vnTotalPlottedCount();
+  var stats = regionStats(bounds, casesInBounds(bounds), {count:vnCount, type:'university', countryName:'Vietnam'});
+  // Break the "other countries" total down by name+count instead of folding it
+  // into one Singapore mention — the box actually spans 7 non-Vietnam
+  // countries (Malaysia, Thailand, Singapore, Taiwan, Indonesia, Philippines,
+  // India), not just the one flagship case.
+  var inBounds = ROSTER.filter(function(r){ return r[4]!=null && r[5]!=null && r[4]>=bounds.latMin && r[4]<=bounds.latMax && r[5]>=bounds.lngMin && r[5]<=bounds.lngMax; });
+  var byCountry = {};
+  inBounds.forEach(function(r){ byCountry[r[2]] = (byCountry[r[2]]||0)+1; });
+  var otherCountries = Object.keys(byCountry).sort(function(a,b){ return byCountry[b]-byCountry[a]; });
+  var countryListVi = otherCountries.map(function(c){ return (SEA_COUNTRY_VI[c]||c)+' ('+byCountry[c]+')'; }).join(', ');
+  var countryListEn = otherCountries.map(function(c){ return c+' ('+byCountry[c]+')'; }).join(', ');
   return regionStatsHTML(stats) + '<div class="note-box vn">'+(LANG==='vi'
-    ? 'Đông Nam Á: NUS/BLOCK71 (Singapore) và '+vnCount+' đơn vị tại Việt Nam — đại học, hiệp hội (HANISA, VNEI), quỹ đầu tư.'
-    : 'Southeast Asia: NUS/BLOCK71 (Singapore) and '+vnCount+' units in Vietnam — universities, associations (HANISA, VNEI), and VC funds.')+'</div>';
+    ? 'Đông Nam Á: '+stats.total+' đơn vị tại '+stats.countryCount+' quốc gia trong khung toạ độ này. Việt Nam chiếm phần lớn ('+vnCount+' — đại học, hiệp hội HANISA/VNEI, quỹ đầu tư); còn lại là các trung tâm CGCN/ĐMST đại học ở '+countryListVi+', trong đó Singapore có case điển hình NUS/BLOCK71.'
+    : 'Southeast Asia: '+stats.total+' units across '+stats.countryCount+' countries within this coordinate box. Vietnam accounts for most of them ('+vnCount+' — universities, the HANISA/VNEI associations, and VC funds); the rest are university tech-transfer/innovation centers in '+countryListEn+', including the flagship NUS/BLOCK71 case in Singapore.')+'</div>';
 }
 function vnSideHTML(){
   var bounds = {latMin:6,latMax:23.5,lngMin:101,lngMax:118};
