@@ -1,9 +1,12 @@
 # Innovation Center Atlas
 
-Trang web tham khảo cá nhân (không phải văn bản HaUI/Bộ) — bản đồ toàn cầu (quả cầu 3D
-+ lược đồ khu vực) các trung tâm nghiên cứu/CGCN/ĐMST của đại học trên thế giới, mạng lưới
-ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại học, và một mục Tin tức ĐMST
-hằng ngày do Sơn tự cập nhật.
+Trang web tham khảo cá nhân (không phải văn bản HaUI/Bộ) — 6 tab: bản đồ toàn cầu (quả cầu
+3D + lược đồ khu vực) các trung tâm nghiên cứu/CGCN/ĐMST của đại học trên thế giới, mạng
+lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại học, Tin tức ĐMST hằng ngày,
+Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
+(glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
+Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); các
+mục còn lại Sơn tự sửa tay khi cần.
 
 **Live:** https://buitienson.github.io/innovation-center-atlas/
 **Artifact (bản xem/sửa nhanh):** https://claude.ai/code/artifact/175ea757-eca9-4a87-acc8-47981ab5b129
@@ -46,7 +49,45 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-06 — ba việc:
+**Lần cuối:** 2026-09-06 — thêm tab thứ 6 **"Thuật ngữ"** (Glossary), theo gợi ý của sếp
+khi bàn "cần thêm gì để thành wikipedia ĐMST Việt Nam" — chọn thuật ngữ vì đây là loại nội
+dung ổn định (khác tin tức/hạn nộp phải cập nhật liên tục). 30 thuật ngữ, chia 5 nhóm (mô
+hình tổ chức, tài chính & đầu tư, công nghệ & ĐMST, chính sách & pháp lý VN, khởi nghiệp
+chung), mỗi thuật ngữ có mục "Liên quan" render thành chip bấm được để nhảy tới định nghĩa
+liên kết — **đây là điểm liên kết chéo (cross-reference) thật sự đầu tiên của trang**, khác
+với 5 tab kia vốn độc lập nhau. Có chip lọc theo nhóm + ô tìm kiếm, giống mẫu UI của tab
+Fund/Hackathon.
+
+Hai việc thẩm định trước khi viết nội dung chính sách VN (tránh lặp lỗi cũ về tên bộ đã đổi):
+tra web xác nhận ngày/nội dung Nghị quyết 57-NQ/TW (Bộ Chính trị, 22/12/2024) và Nghị quyết
+193/2025/QH15 (Quốc hội, 19/2/2025, cho phép viên chức KH&CN công lập tham gia quản lý
+doanh nghiệp spin-off) — cả hai đưa thẳng vào mục "Chính sách & pháp lý VN". Riêng mục NIC,
+tra thấy Bộ Kế hoạch & Đầu tư (cơ quan chủ quản cũ) đã sáp nhập vào Bộ Tài chính (Nghị định
+29/2025/NĐ-CP, 24/2/2025) nhưng **không tìm được nguồn xác nhận NIC đã chuyển về đâu** — nên
+định nghĩa NIC cố ý không nêu tên bộ chủ quản cụ thể, chỉ ghi "cơ quan chủ quản đã có thay
+đổi qua các đợt sắp xếp bộ máy... tra cổng chính thức của NIC", đúng tinh thần "không bịa dữ
+liệu" đã có sẵn ở mục Quy tắc nội dung.
+
+Một lỗi tìm ra khi tự test tính năng "bấm liên quan để nhảy tới định nghĩa": code dùng
+`requestAnimationFrame` để trì hoãn việc cuộn trang — nhưng trình duyệt tạm dừng
+`requestAnimationFrame` vô thời hạn với tab/pane đang ẩn (bị phát hiện khi tự test bằng
+Claude Browser vì pane preview mặc định ở trạng thái ẩn), khiến toàn bộ hành vi cuộn+highlight
+lặng lẽ không chạy. Đã bỏ `requestAnimationFrame` vì bước render trước đó (`innerHTML =`)
+vốn đã đồng bộ, không cần trì hoãn gì cả — sau khi sửa, xác nhận lại bằng cách kiểm state
+DOM trực tiếp (giá trị ô tìm kiếm, chip đang chọn, `boxShadow`, và test tách riêng
+`scrollIntoView({behavior:'auto'})` để chứng minh lỗi nằm ở việc trì hoãn chứ không phải ở
+logic tìm phần tử).
+
+Đã build, kiểm `node --check` + cân bằng thẻ (không trùng `id` thuật ngữ, không có
+`related` trỏ tới id không tồn tại — kiểm bằng script), test cả 6 tab + đổi ngôn ngữ EN bằng
+browser, publish Artifact, `git push` (commit `4d3519f`).
+
+Việc mở: các tab khác (Toàn cầu/Việt Nam/Xếp hạng) đang có sẵn đề xuất nâng thành hồ sơ chi
+tiết như CASES cho vài đơn vị VN đầu tàu — chưa làm, đây mới là bước "wikipedia hoá" tiếp
+theo nếu sếp muốn đi tiếp; xem thêm gợi ý lúc bàn hướng trong lịch sử chat.
+
+---
+**Lần trước:** 2026-09-06 — ba việc:
 
 1. **Thêm tab thứ 5 "Fund/Hackathon"** — danh mục nguồn tài trợ/cuộc thi/hackathon/thông
    báo đề xuất nhiệm vụ KHCN&ĐMST, ưu tiên nguồn Việt Nam (Bộ KH&CN, NAFOSTED, NATIF, Sở
