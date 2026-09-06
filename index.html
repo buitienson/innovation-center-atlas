@@ -3113,31 +3113,57 @@ function __safeInitGlobe(){
   }
 }
 // three.js loads from a CDN rather than shipping inline (it's ~600KB); a single
-// CDN can be blocked by tracking-prevention/ad-blockers or just have a bad day,
-// which used to show the misleading "this browser doesn't support WebGL"
-// message. Try a second CDN before giving up so a blocked/flaky first host
-// doesn't take out the whole 3D globe.
-function __loadScript(src, cb){
+// CDN can be blocked by tracking-prevention/ad-blockers, or just be slow, which
+// used to show the misleading "this browser doesn't support WebGL" message.
+// Two things had to be fixed, not just one:
+// 1. Try a second CDN before giving up, so a blocked/flaky first host doesn't
+//    take out the whole 3D globe (this alone shipped earlier).
+// 2. A slow/filtered request doesn't always fail fast with an error — it can
+//    just hang. Each attempt below races its own timeout so a silent hang
+//    counts as a failure and moves on, instead of stalling indefinitely.
+//    Loading also now starts immediately (this script runs after the DOM is
+//    already parsed) instead of waiting for the page's full `load` event —
+//    a hung first attempt used to delay `load` itself, which meant the retry
+//    logic (gated behind `load`) never even started.
+function __loadScript(src, cb, timeoutMs){
+  var done = false;
+  var timer = setTimeout(function(){ finish(false); }, timeoutMs || 8000);
+  function finish(ok){
+    if(done) return;
+    done = true;
+    clearTimeout(timer);
+    cb(ok);
+  }
   var s = document.createElement('script');
   s.src = src;
-  s.onload = function(){ cb(true); };
-  s.onerror = function(){ cb(false); };
+  s.onload = function(){ finish(true); };
+  s.onerror = function(){ finish(false); };
   document.head.appendChild(s);
 }
-function __loadThreeThenInitGlobe(){
-  if(window.THREE){ __safeInitGlobe(); return; }
+function __loadThree(cb){
+  if(window.THREE){ cb(); return; }
   __loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js', function(ok){
-    if(ok || window.THREE){ __safeInitGlobe(); return; }
-    __loadScript('https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js', function(){ __safeInitGlobe(); });
+    if(ok || window.THREE){ cb(); return; }
+    __loadScript('https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js', function(){ cb(); });
   });
 }
-window.addEventListener('load', __loadThreeThenInitGlobe);
+// initGlobe() reads the container's layout size (clientWidth/clientHeight),
+// so it still has to wait for the page's `load` event — only the network
+// fetch itself was moved earlier. __maybeInitGlobe runs once both are true,
+// regardless of which one finishes first.
+var __pageLoaded = document.readyState==='complete';
+var __threeSettled = false;
+function __maybeInitGlobe(){
+  if(__pageLoaded && __threeSettled) __safeInitGlobe();
+}
+__loadThree(function(){ __threeSettled = true; __maybeInitGlobe(); });
+window.addEventListener('load', function(){ __pageLoaded = true; __maybeInitGlobe(); });
 var __resizeMapsTimer = null;
 window.addEventListener('resize', function(){
   clearTimeout(__resizeMapsTimer);
   __resizeMapsTimer = setTimeout(renderCoordMaps, 200);
 });
-if(document.readyState==='complete') __loadThreeThenInitGlobe();
+if(__pageLoaded) __maybeInitGlobe();
 
 })();
 </script>
