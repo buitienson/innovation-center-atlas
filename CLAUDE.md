@@ -46,7 +46,7 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-06 — hai việc:
+**Lần cuối:** 2026-09-06 — ba việc:
 
 1. **Thêm tab thứ 5 "Fund/Hackathon"** — danh mục nguồn tài trợ/cuộc thi/hackathon/thông
    báo đề xuất nhiệm vụ KHCN&ĐMST, ưu tiên nguồn Việt Nam (Bộ KH&CN, NAFOSTED, NATIF, Sở
@@ -60,10 +60,16 @@ sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả đị
    tìm được nguồn công khai — chỉ có trong hồ sơ nội bộ, không đạt chuẩn "phải có link
    nguồn thật" của trang) và "Samsung Solve for Tomorrow 2026" (đã dừng nhận hồ sơ mới
    nhưng không có ngày đóng cụ thể để gắn vào mô hình dữ liệu deadline-based).
-   **Việc mở:** đây là danh mục tĩnh do Sơn tự thêm tay, **chưa nối vào routine
-   `atlas-tin-tuc` hằng ngày** — cần quyết định có nên để routine đó tự phát hiện thông
-   báo tuyển chọn/cuộc thi mới rồi ghi thêm vào `FUNDING[]` hay không trước khi làm tiếp.
-2. **Sửa thông báo fallback quả cầu 3D** — trước đây hễ `initGlobe()` lỗi vì bất kỳ lý do
+2. **Nối mục Fund/Hackathon vào routine `atlas-tin-tuc` hằng ngày** — routine (cả bản
+   local lẫn cloud, canonical tại `_claude/routine-tin-tuc.md`) nay làm hai việc độc lập
+   mỗi lượt chạy: Phần A tìm tin cho `NEWS[]` (như cũ), Phần B tìm cơ hội tài trợ/cuộc
+   thi/hackathon/đề xuất nhiệm vụ KHCN&ĐMST **đang mở**, ưu tiên Việt Nam, cho `FUNDING[]`
+   — tối đa ~2-3 mục/lượt, bỏ qua phần nào không có gì đủ tin cậy (không có nghĩa là lỗi),
+   không bịa hạn nộp (`deadline:null` nếu không xác minh được), chỉ thêm mục còn actionable
+   (mục đã đóng hạn thì không thêm, khác với `NEWS[]` vốn là log lịch sử). Cả hai mảng
+   commit chung một lượt. Đã cập nhật mô tả skill `atlas-tin-tuc` (global,
+   `~/.claude/skills/`) để phản ánh phạm vi mới.
+3. **Sửa thông báo fallback quả cầu 3D** — trước đây hễ `initGlobe()` lỗi vì bất kỳ lý do
    gì (kể cả three.js tải từ cdnjs.cloudflare.com bị chặn bởi Tracking Prevention/ad-blocker
    của trình duyệt, hoặc mạng chập chờn) đều hiện chung một câu "thiết bị không hỗ trợ
    WebGL" — sai và gây hiểu lầm khi WebGL thực ra vẫn chạy tốt. Nay tách hai trường hợp
@@ -74,9 +80,9 @@ sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả đị
 
 Đã build, kiểm `node --check` + cân bằng thẻ, test bằng http.server + browser (cả tab mới
 + đổi ngôn ngữ EN + giả lập chặn CDN để xác nhận thông báo mới đúng), publish Artifact,
-`git push` (commit `e17b367`).
+`git push` (commit `e17b367` → `b77a59d`, gồm cả bản cập nhật routine ở mục 2).
 
-Việc mở còn lại: quyết định có nối routine `atlas-tin-tuc` với `FUNDING[]` hay không (mục 1
-ở trên); pill Góp ý chờ link Google Form từ sếp; mục 24-category của WURI (cần tải lại PDF,
-bản trích cũ đã mất theo scratchpad phiên trước); thêm case flagship mới.
+Việc mở còn lại: pill Góp ý chờ link Google Form từ sếp; mục 24-category của WURI (cần tải
+lại PDF, bản trích cũ đã mất theo scratchpad phiên trước); thêm case flagship mới; theo dõi
+lượt chạy routine đầu tiên có Phần B để xem chất lượng mục `FUNDING[]` tự thêm.
 (Claude)
