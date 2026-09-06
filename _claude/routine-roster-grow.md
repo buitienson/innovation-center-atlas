@@ -8,6 +8,63 @@
 > cho routine này; routine này có uỷ quyền riêng, xác nhận ngày 2026-09-06
 > (xem `CLAUDE.md` mục "Lần cuối").
 
+> ⚠️ **CHƯA TẠO CLOUD ROUTINE — đang chặn ở bước kiểm chứng tay (xem "Tình
+> trạng hiện tại" ngay dưới đây).** Đọc mục đó TRƯỚC khi tạo trigger hay chạy
+> tự động hằng ngày.
+
+## Tình trạng hiện tại (2026-09-06, tối) — hạn mức grounding của key hiện có = 0
+
+Kiểm tra tay bằng key Gemini hiện có (đọc từ `~/.zshrc` của Sơn) cho kết quả rõ
+ràng, lặp lại nhiều lần trong ~20 phút, qua cả `roster_grow_worker.py` lẫn
+`curl` trực tiếp:
+
+- Gọi Gemini **bình thường** (không kèm `tools:[{"google_search":{}}]`) →
+  **thành công** (HTTP 200), nhiều lần, trên cả `gemini-flash-latest` và
+  `gemini-flash-lite-latest`.
+- Gọi **y hệt** nhưng **có kèm `google_search` grounding** → **429
+  RESOURCE_EXHAUSTED ngay lập tức**, mọi lần, cả 3 model trong chuỗi fallback.
+- `gemini-2.5-flash`/`gemini-2.0-flash` (tên model cố định, không phải alias
+  `-latest`) trả `404 NOT_FOUND` — các bản này đã bị Google gỡ khỏi API, xác
+  nhận chiến lược dùng alias `-latest` trong `gemini_worker.py`/
+  `roster_grow_worker.py` là đúng, không phải nguyên nhân lỗi.
+
+**Kết luận:** không phải key hết hạn mức nói chung — mà riêng tính năng
+**Google Search grounding đang có hạn mức = 0** trên key/project này. Tra thêm
+thì Google đã cắt hạn mức miễn phí 50-80% từ 12/2025, và có điểm quan trọng:
+**nếu project của key đã bật billing (dù chỉ để dùng việc khác), hạn mức miễn
+phí biến mất hoàn toàn** — mọi lệnh gọi tính phí ngay từ token đầu; ở tier trả
+phí, grounding có 1.500 lượt/ngày miễn phí đầu, sau đó tính phí riêng. Không
+xác định được chắc chắn project này đang ở trạng thái nào (cần đăng nhập
+`ai.dev/rate-limit` bằng đúng tài khoản Google để xem — không làm hộ được vì
+cần đăng nhập, đã thử xem qua computer-use trên Edge của Sơn nhưng đó là
+trang khác, chưa vào đúng `ai.dev/rate-limit`).
+
+Đã cải thiện `roster_grow_worker.py` để tự chẩn đoán đúng việc này mỗi lần
+chạy thất bại: khi cả 3 model grounding đều 429, script tự thử thêm 1 lệnh gọi
+**không grounding** trên cùng model — phân biệt rõ "chỉ grounding bị chặn"
+(in ra gợi ý xem `ai.dev/rate-limit` + cân nhắc bật billing) với "cả key hết
+hạn mức" (trường hợp hiếm hơn, có thể do dùng dồn dập trong lúc tự test).
+
+### Việc cần Sơn quyết định trước khi routine này chạy được
+
+1. Vào `https://ai.dev/rate-limit` (đăng nhập đúng tài khoản Google gắn với
+   key) xem rõ: hạn mức grounding hiện tại là bao nhiêu, có phải 0 vĩnh viễn
+   hay theo tháng/sẽ reset.
+2. Nếu cần bật billing để có 1.500 lượt grounding/ngày miễn phí (Tier 1): cân
+   nhắc kỹ vì bật billing **xoá luôn mọi hạn mức miễn phí khác** của cùng
+   project cho các việc dùng Gemini khác (kể cả `gemini-delegate`) — có thể
+   nên tạo **project/key Gemini riêng** cho routine này thay vì dùng chung key
+   cũ, để việc bật billing (nếu cần) không ảnh hưởng các việc khác.
+3. Nếu quyết định không bật billing / không dùng grounding: cần đổi hướng
+   thiết kế — hai lựa chọn đã cân nhắc, chưa chọn:
+   - (a) Chuyển thành routine chạy trên Claude + WebSearch, cùng khuôn với
+     `routine-tin-tuc.md` — tốn token Claude hằng ngày (đi ngược mục tiêu ban
+     đầu "không tốn token Claude" nhưng đảm bảo có kết quả thật).
+   - (b) Không tự động hoá — làm thủ công/theo yêu cầu khi Sơn rảnh, dùng
+     chính Claude (agent WebSearch) chạy từng mục hàng đợi khi cần, không cần
+     cloud routine riêng.
+   Sơn chọn hướng nào thì cập nhật lại mục này + `CLAUDE.md`.
+
 ## Bối cảnh
 
 `ROSTER` (~786 mục tính đến 2026-09-06) là danh mục các trung tâm CGCN/ĐMST

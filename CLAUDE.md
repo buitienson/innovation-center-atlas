@@ -8,8 +8,9 @@ Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐM
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
 mục mở rộng (`ROSTER`, ~786 mục ở tab Toàn cầu) có sẵn hạ tầng cho một routine hằng ngày
 **riêng** chạy trên Gemini (không tốn token Claude) để mở rộng dần (xem
-`_claude/routine-roster-grow.md` — **routine chưa được tạo trên cloud, chờ sếp nhập
-`GEMINI_API_KEY` khi tạo**); các mục còn lại Sơn tự sửa tay khi cần.
+`_claude/routine-roster-grow.md` — **hiện đang CHẶN**: key Gemini hiện có bị 0 hạn mức
+Google Search grounding, cần sếp quyết định hướng đi tiếp — đọc mục "Tình trạng hiện tại"
+trong file đó); các mục còn lại Sơn tự sửa tay khi cần.
 
 **Live:** https://buitienson.github.io/innovation-center-atlas/
 **Artifact (bản xem/sửa nhanh):** https://claude.ai/code/artifact/175ea757-eca9-4a87-acc8-47981ab5b129
@@ -52,7 +53,45 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-06 — hai việc, bắt nguồn từ hai lần sếp chỉ ra lỗi thật trong phiên:
+**Lần cuối:** 2026-09-06 tối — hai việc chẩn đoán, chưa xong, sếp cần quyết định tiếp:
+
+1. **Quả cầu 3D trên Edge — xác nhận KHÔNG PHẢI lỗi code.** Xin quyền
+   computer-use xem trực tiếp Edge của sếp (chỉ xem, không click/gõ được —
+   giới hạn cứng của công cụ với trình duyệt): trang tải xong đầy đủ, nhưng
+   hiện đúng thông báo "không hỗ trợ WebGL" (`nowebgl`), không phải bản "thư
+   viện bị chặn" (`libfail`) vừa sửa tối nay. Nghĩa là `canvas.getContext
+   ('webgl')` trên máy/Edge của sếp thật sự trả về null — nguyên nhân nằm ở
+   cấu hình máy/trình duyệt (hardware acceleration bị tắt, GPU bị Edge đưa
+   vào danh sách chặn...), không phải thứ sửa được từ phía code trang web.
+   Cần sếp tự gõ `edge://gpu` khi rảnh (tôi không gõ hộ được) để xác nhận
+   nguyên nhân cụ thể — chưa gõ được vì sếp đang dùng điện thoại.
+2. **Routine mở rộng ROSTER bằng Gemini — chạy thử thất bại, đã truy đến tận
+   gốc.** Test tay bằng key Gemini hiện có (đọc từ `~/.zshrc`, không ghi ra
+   file/log) qua cả `roster_grow_worker.py` lẫn `curl` trực tiếp, lặp lại
+   nhiều lần trong ~20 phút: gọi Gemini **bình thường** luôn thành công, gọi
+   **kèm Google Search grounding** (đúng cái routine cần) luôn **429
+   RESOURCE_EXHAUSTED ngay lập tức**. Kết luận: **hạn mức grounding của
+   key/project này = 0** (không phải key hết hạn mức chung) — khả năng do
+   Google cắt hạn mức miễn phí 50-80% từ 12/2025, và bật billing (nếu chưa
+   bật) sẽ xoá toàn bộ hạn mức miễn phí khác chứ không chỉ mở khoá grounding.
+   Đã nâng cấp `roster_grow_worker.py` để tự chẩn đoán đúng lỗi này ở mọi lần
+   chạy sau (phân biệt "chỉ grounding bị chặn" với "cả key hết hạn mức").
+   **Chưa tạo cloud routine** — đã ghi chi tiết đầy đủ + 3 hướng lựa chọn vào
+   mục "Tình trạng hiện tại" của `_claude/routine-roster-grow.md`, chờ sếp
+   đọc `ai.dev/rate-limit` (cần đăng nhập, tôi không xem hộ được) rồi chọn
+   hướng.
+
+Không git push gì cho mục 1 (đã push tối nay trước đó, xem "Lần trước"). Mục
+2 chỉ có thay đổi tài liệu + code chẩn đoán (`roster_grow_worker.py`,
+`routine-roster-grow.md`) — sẽ commit cùng lúc viết mục này.
+
+Việc mở, cần sếp làm khi rảnh: (1) gõ `edge://gpu`, báo lại dòng WebGL nói gì;
+(2) đọc `ai.dev/rate-limit`, quyết bật billing / dùng key khác / đổi routine
+sang chạy trên Claude+WebSearch / bỏ tự động hoá — xem 3 lựa chọn trong
+`_claude/routine-roster-grow.md`.
+
+---
+**Lần trước:** 2026-09-06 — hai việc, bắt nguồn từ hai lần sếp chỉ ra lỗi thật trong phiên:
 
 1. **Sửa thêm lỗi tải quả cầu 3D** — bản sửa trước (thêm CDN dự phòng, tách thông báo lỗi)
    vẫn còn một lỗ hổng: toàn bộ logic thử-lại chỉ chạy khi sự kiện `load` của trang bắn ra,
@@ -88,42 +127,4 @@ sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả đị
 
 Việc mở: sếp cần tự thử lại quả cầu 3D trên Edge/MacBook để xác nhận lỗi 1 đã hết; sếp cần
 chạy tay routine mở rộng roster lần đầu + tạo cloud routine hằng ngày cho nó.
-
----
-**Lần trước:** 2026-09-06 — thêm tab thứ 6 **"Thuật ngữ"** (Glossary), theo gợi ý của sếp
-khi bàn "cần thêm gì để thành wikipedia ĐMST Việt Nam" — chọn thuật ngữ vì đây là loại nội
-dung ổn định (khác tin tức/hạn nộp phải cập nhật liên tục). 30 thuật ngữ, chia 5 nhóm (mô
-hình tổ chức, tài chính & đầu tư, công nghệ & ĐMST, chính sách & pháp lý VN, khởi nghiệp
-chung), mỗi thuật ngữ có mục "Liên quan" render thành chip bấm được để nhảy tới định nghĩa
-liên kết — **đây là điểm liên kết chéo (cross-reference) thật sự đầu tiên của trang**, khác
-với 5 tab kia vốn độc lập nhau. Có chip lọc theo nhóm + ô tìm kiếm, giống mẫu UI của tab
-Fund/Hackathon.
-
-Hai việc thẩm định trước khi viết nội dung chính sách VN (tránh lặp lỗi cũ về tên bộ đã đổi):
-tra web xác nhận ngày/nội dung Nghị quyết 57-NQ/TW (Bộ Chính trị, 22/12/2024) và Nghị quyết
-193/2025/QH15 (Quốc hội, 19/2/2025, cho phép viên chức KH&CN công lập tham gia quản lý
-doanh nghiệp spin-off) — cả hai đưa thẳng vào mục "Chính sách & pháp lý VN". Riêng mục NIC,
-tra thấy Bộ Kế hoạch & Đầu tư (cơ quan chủ quản cũ) đã sáp nhập vào Bộ Tài chính (Nghị định
-29/2025/NĐ-CP, 24/2/2025) nhưng **không tìm được nguồn xác nhận NIC đã chuyển về đâu** — nên
-định nghĩa NIC cố ý không nêu tên bộ chủ quản cụ thể, chỉ ghi "cơ quan chủ quản đã có thay
-đổi qua các đợt sắp xếp bộ máy... tra cổng chính thức của NIC", đúng tinh thần "không bịa dữ
-liệu" đã có sẵn ở mục Quy tắc nội dung.
-
-Một lỗi tìm ra khi tự test tính năng "bấm liên quan để nhảy tới định nghĩa": code dùng
-`requestAnimationFrame` để trì hoãn việc cuộn trang — nhưng trình duyệt tạm dừng
-`requestAnimationFrame` vô thời hạn với tab/pane đang ẩn (bị phát hiện khi tự test bằng
-Claude Browser vì pane preview mặc định ở trạng thái ẩn), khiến toàn bộ hành vi cuộn+highlight
-lặng lẽ không chạy. Đã bỏ `requestAnimationFrame` vì bước render trước đó (`innerHTML =`)
-vốn đã đồng bộ, không cần trì hoãn gì cả — sau khi sửa, xác nhận lại bằng cách kiểm state
-DOM trực tiếp (giá trị ô tìm kiếm, chip đang chọn, `boxShadow`, và test tách riêng
-`scrollIntoView({behavior:'auto'})` để chứng minh lỗi nằm ở việc trì hoãn chứ không phải ở
-logic tìm phần tử).
-
-Đã build, kiểm `node --check` + cân bằng thẻ (không trùng `id` thuật ngữ, không có
-`related` trỏ tới id không tồn tại — kiểm bằng script), test cả 6 tab + đổi ngôn ngữ EN bằng
-browser, publish Artifact, `git push` (commit `4d3519f`).
-
-Việc mở: các tab khác (Toàn cầu/Việt Nam/Xếp hạng) đang có sẵn đề xuất nâng thành hồ sơ chi
-tiết như CASES cho vài đơn vị VN đầu tàu — chưa làm, đây mới là bước "wikipedia hoá" tiếp
-theo nếu sếp muốn đi tiếp; xem thêm gợi ý lúc bàn hướng trong lịch sử chat.
 (Claude)

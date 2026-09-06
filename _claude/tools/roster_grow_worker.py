@@ -106,6 +106,28 @@ def call_gemini_once(api_key, model, user_text):
     return text, grounded_urls, usage
 
 
+def plain_call_works(api_key, model):
+    """A quick non-grounded probe on the same model/key, used only for
+    diagnostics when every grounded attempt is exhausted - it tells us
+    whether the KEY is dead (plain call also fails) or just the grounding
+    quota specifically (plain call succeeds). Confirmed empirically on
+    2026-09-06: a key can have a perfectly healthy plain-call quota while
+    every grounded (tools:[{"google_search":{}}]) call gets an immediate
+    429 RESOURCE_EXHAUSTED - Google's 2026 free-tier cuts appear to zero
+    out grounding specifically unless billing is enabled on the project."""
+    url = f"{API_BASE}/{model}:generateContent?key={api_key}"
+    payload = {"contents": [{"role": "user", "parts": [{"text": "ping"}]}]}
+    try:
+        req = urllib.request.Request(
+            url, data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"}, method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            return resp.status == 200
+    except Exception:
+        return False
+
+
 def call_gemini(api_key, models, user_text):
     last_err = None
     for i, model in enumerate(models):
@@ -121,7 +143,21 @@ def call_gemini(api_key, models, user_text):
                 continue
             break
     if last_err.status in RETRYABLE_STATUS:
-        print(f"Ca {len(models)} model deu het han muc/qua tai (loi cuoi: {last_err.status}).", file=sys.stderr)
+        if plain_call_works(api_key, models[-1]):
+            print(
+                f"Ca {len(models)} model deu tra 429 KHI BAT GOOGLE SEARCH GROUNDING, "
+                f"nhung goi thuong (khong grounding) tren cung key/model van chay duoc. "
+                f"Day la han muc grounding rieng bi chan/het, khong phai key het hop le. "
+                f"Xem https://ai.dev/rate-limit (can dang nhap dung tai khoan) hoac can nhac "
+                f"bat billing tren Google Cloud project cua key nay (Tier 1 co 1.500 luot "
+                f"grounding mien phi/ngay, nhung bat billing se xoa toan bo han muc mien phi "
+                f"khac cua project).",
+                file=sys.stderr,
+            )
+        else:
+            print(f"Ca {len(models)} model deu het han muc/qua tai (loi cuoi: {last_err.status}) - "
+                  f"ke ca goi khong grounding cung loi, co the ca key da het han muc chung.",
+                  file=sys.stderr)
         sys.exit(2)
     print(f"Loi HTTP {last_err.status} tu Gemini: {last_err.body}", file=sys.stderr)
     sys.exit(1)
