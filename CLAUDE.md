@@ -46,33 +46,37 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-05 — bốn việc trong cùng một phiên:
+**Lần cuối:** 2026-09-06 — hai việc:
 
-1. **Cột Quốc gia bảng Xếp hạng** — điền đủ 100/101 dòng (tra độc lập qua web search, không
-   phải từ WURI — chú ý các tên trùng nhiều trường thật: "Franklin University" → Thuỵ Sĩ không
-   phải Ohio, "Saint Louis University" → Philippines không phải Missouri). Dòng "Trinity College"
-   (hạng 73) để trống vì không xác minh được — ghi rõ trong `RANKINGS_SOURCE_NOTE`. Thêm
-   Bangladesh + Campuchia vào bảng ISO2→cờ.
-2. **Routine tự động thêm tin ĐMST hằng ngày** — skill `atlas-tin-tuc` (global, tại
-   `~/.claude/skills/`) trỏ tới file canonical **trong chính repo**:
-   `_claude/routine-tin-tuc.md` (để cloud routine clone repo là đọc được ngay, không cần máy
-   Sơn). Routine cloud `"Atlas - tin ĐMST hàng ngày"` (`trig_01D8yWiiAKk8kzQbBoPsVrwD`) chạy
-   06:00 giờ VN mỗi ngày, tự tìm tin + build + `git push` thẳng lên `main` nếu tìm được tin đủ
-   tin cậy (đã xác nhận trước, routine không hỏi lại). Không có tin phù hợp thì tự bỏ qua lượt.
-   Quản lý/xem log tại claude.ai/code/routines.
-3. **Sửa lỗi hiển thị mục Tin tức** — `.news-summary` là thẻ `<p>` nên bị dính luật chung
-   `p{max-width:65ch}`, chữ bị bó hẹp dù card rộng — đã gỡ. Thêm ảnh thumbnail cho mỗi tin, lấy
-   từ `og:image` thật của chính bài gốc (6/7 tin có, 1 tin — Oxford — nguồn không có og:image
-   nên để trống, không chèn ảnh giả). Routine tự động ở mục 2 cũng đã cập nhật để lấy `image`
-   cho tin mới thêm sau này.
-4. **Thêm pill "Hướng dẫn sử dụng"** cạnh "Về dự án" — hướng dẫn ngắn song ngữ (tương tác quả
-   cầu/bản đồ, lọc bảng Xếp hạng, đọc tin). **Pill "Góp ý" (Google Form) CHƯA làm** — Drive API
-   ở đây không tạo được Google Form (chỉ Docs/Sheets/Slides), sếp tự tạo form ở forms.new rồi
-   gửi link để gắn vào pill.
+1. **Thêm tab thứ 5 "Fund/Hackathon"** — danh mục nguồn tài trợ/cuộc thi/hackathon/thông
+   báo đề xuất nhiệm vụ KHCN&ĐMST, ưu tiên nguồn Việt Nam (Bộ KH&CN, NAFOSTED, NATIF, Sở
+   KHCN Hà Nội/TP.HCM/Đà Nẵng) trước quốc tế. Tham khảo cách trình bày mục "Tìm kiếm Hội
+   nghị, hội thảo" của `tra-cuu-tap-chi.pages.dev` (thẻ card, badge hạn nộp đổi màu theo
+   mức khẩn — đỏ ≤7 ngày/cam ≤30/xanh còn xa, "còn N ngày"). Có chip lọc theo loại
+   (hackathon/cuộc thi/quỹ tài trợ/đề xuất nhiệm vụ), ô tìm kiếm, toggle "chỉ hiện còn
+   hạn" (mặc định bật). 19 mục ban đầu, mỗi mục đã tra web trực tiếp và có link nguồn thật
+   — mục nào không xác minh được ngày cụ thể thì để `deadline:null` (hiện "Xem hạn tại
+   trang chính thức"), không bịa ngày. Loại khỏi danh sách: "VICEE Israel Hackathon" (không
+   tìm được nguồn công khai — chỉ có trong hồ sơ nội bộ, không đạt chuẩn "phải có link
+   nguồn thật" của trang) và "Samsung Solve for Tomorrow 2026" (đã dừng nhận hồ sơ mới
+   nhưng không có ngày đóng cụ thể để gắn vào mô hình dữ liệu deadline-based).
+   **Việc mở:** đây là danh mục tĩnh do Sơn tự thêm tay, **chưa nối vào routine
+   `atlas-tin-tuc` hằng ngày** — cần quyết định có nên để routine đó tự phát hiện thông
+   báo tuyển chọn/cuộc thi mới rồi ghi thêm vào `FUNDING[]` hay không trước khi làm tiếp.
+2. **Sửa thông báo fallback quả cầu 3D** — trước đây hễ `initGlobe()` lỗi vì bất kỳ lý do
+   gì (kể cả three.js tải từ cdnjs.cloudflare.com bị chặn bởi Tracking Prevention/ad-blocker
+   của trình duyệt, hoặc mạng chập chờn) đều hiện chung một câu "thiết bị không hỗ trợ
+   WebGL" — sai và gây hiểu lầm khi WebGL thực ra vẫn chạy tốt. Nay tách hai trường hợp
+   (`webglAvailable()` false → thật sự không hỗ trợ; `window.THREE` chưa có dù WebGL vẫn
+   chạy → thư viện bị chặn/lỗi tải) với hai thông báo khác nhau, và thêm một lần thử tải
+   lại từ cdn.jsdelivr.net trước khi bỏ cuộc. Bắt nguồn từ việc sếp báo Edge trên MacBook
+   không mở được quả cầu dù hôm trước vẫn chạy bình thường.
 
-Đã build, kiểm `node --check` + cân bằng thẻ mỗi lần, test bằng http.server + browser (cả
-desktop/mobile), publish Artifact, `git push` cho cả 4 việc (commit `97c3353` → `98e7818`).
+Đã build, kiểm `node --check` + cân bằng thẻ, test bằng http.server + browser (cả tab mới
++ đổi ngôn ngữ EN + giả lập chặn CDN để xác nhận thông báo mới đúng), publish Artifact,
+`git push` (commit `e17b367`).
 
-Việc mở còn lại: **pill Góp ý chờ link Google Form từ sếp**; mục 24-category của WURI (cần tải
-lại PDF, bản trích cũ đã mất theo scratchpad phiên trước); thêm case flagship mới.
+Việc mở còn lại: quyết định có nối routine `atlas-tin-tuc` với `FUNDING[]` hay không (mục 1
+ở trên); pill Góp ý chờ link Google Form từ sếp; mục 24-category của WURI (cần tải lại PDF,
+bản trích cũ đã mất theo scratchpad phiên trước); thêm case flagship mới.
 (Claude)
