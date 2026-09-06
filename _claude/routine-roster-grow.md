@@ -65,6 +65,46 @@ hạn mức" (trường hợp hiếm hơn, có thể do dùng dồn dập trong 
      cloud routine riêng.
    Sơn chọn hướng nào thì cập nhật lại mục này + `CLAUDE.md`.
 
+### Bản thảo sẵn sàng cho lựa chọn (a) — nếu chọn, chỉ cần dán vào là chạy
+
+Soạn sẵn để nếu Sơn chọn (a), việc còn lại chỉ là thêm đúng phần này vào
+`_claude/routine-tin-tuc.md` (làm "Phần C", cùng file với Tin tức/Fund-Hackathon
+— vì lý do tách-riêng-do-cần-secret-Gemini không còn áp dụng nữa một khi đổi
+sang Claude+WebSearch, không cần secret riêng nào cả) rồi bỏ cảnh báo "CHƯA TẠO
+CLOUD ROUTINE" ở đầu file này. Không tự ý làm bước này — chờ Sơn xác nhận chọn
+hướng (a) trước.
+
+```
+### Phần C — Mở rộng danh mục ROSTER (mảng `ROSTER`)
+
+10. **Đọc `_claude/roster-grow-queue.md`** — tìm mục `[pending]` đầu tiên theo
+    thứ tự từ trên xuống. Hết mục `[pending]` → bỏ qua Phần C, không phải lỗi.
+11. **Dùng WebSearch/WebFetch tra đúng nguồn của mục đó** (ví dụ một hiệp hội
+    TTO khu vực, hoặc "TTO các đại học lớn ở nước X") — liệt kê các tổ chức
+    CGCN/ĐMST đại học tìm được, MỖI tổ chức phải xác minh được URL trang chính
+    thức còn sống (WebFetch để chắc chắn, không chỉ tin link xuất hiện trong
+    kết quả tìm kiếm).
+12. **Đối chiếu trùng lặp** với `ROSTER` hiện có trong `src/atlas.html` (so
+    tên đã chuẩn hoá — bỏ dấu câu/viết hoa — và domain của `url`) — bỏ qua
+    tổ chức đã có.
+13. **Giới hạn tối đa 15 mục mới/lượt** dù tìm được nhiều hơn.
+14. **Ước lượng toạ độ** (`lat`/`lng`) gần đúng của thành phố đặt trụ sở mỗi
+    tổ chức — chỉ để định vị trên bản đồ, không cần chính xác tuyệt đối (đúng
+    tinh thần `rosterCaveat` đã có trên trang).
+15. **Chèn vào cuối mảng `ROSTER`** trong `src/atlas.html`, đúng khuôn 6 trường:
+    `["<name>","<host>","<country>","<url>",<lat>,<lng>]` (`host` để `""` nếu
+    tổ chức độc lập). Giữ nguyên toàn bộ mục cũ.
+16. **Cập nhật `_claude/roster-grow-queue.md`**: đổi `[pending]` → `[done]` cho
+    mục vừa xử lý, điền ngày (lệnh `date`) + số mục thêm được (kể cả 0).
+17. Build + kiểm + commit + push CHUNG một lượt với Phần A/B (không tách commit
+    riêng) — message thêm dòng `+ mở rộng roster: <mô tả mục> (+N mục)`.
+```
+
+Ràng buộc riêng cho Phần C (thêm vào mục "Ràng buộc nội dung" của
+`routine-tin-tuc.md` nếu áp dụng lựa chọn (a)): **không bao giờ thêm một mục
+`ROSTER` mà chưa tự WebFetch xác nhận URL còn sống** — không tin link chỉ vì
+nó xuất hiện trong kết quả WebSearch.
+
 ## Bối cảnh
 
 `ROSTER` (~786 mục tính đến 2026-09-06) là danh mục các trung tâm CGCN/ĐMST
