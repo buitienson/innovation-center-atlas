@@ -243,6 +243,35 @@
   .news-card .news-source a{color:var(--accent-ink); font-weight:600;}
   @media (max-width:640px){ .news-card{flex-direction:column;} .news-card .news-thumb{width:100%; height:160px; flex:none;} }
   .news-empty{color:var(--text-muted); font-size:14px; padding:20px 0;}
+
+  /* ============ TAB : FUND / HACKATHON ============ */
+  .fund-toolbar{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:14px 0 10px;}
+  #fundSearch{flex:1 1 220px; min-width:160px;}
+  .fund-toggle{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text-muted); white-space:nowrap;}
+  .fund-count{font-family:var(--font-mono); font-size:11.5px; color:var(--text-muted); margin-left:auto;}
+  .fund-list{display:flex; flex-direction:column; gap:14px; padding:6px 0 50px;}
+  .fund-card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:8px;}
+  .fund-card.is-closed{opacity:.6;}
+  .fund-row1{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+  .fund-type-tag{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; border-radius:6px; padding:3px 9px; white-space:nowrap;}
+  .type-hackathon{background:color-mix(in srgb, var(--accent) 20%, transparent); color:var(--accent-ink);}
+  .type-competition{background:color-mix(in srgb, var(--navy) 20%, transparent); color:var(--navy);}
+  .type-fund{background:color-mix(in srgb, var(--status-full) 20%, transparent); color:var(--status-full);}
+  .type-rfp{background:color-mix(in srgb, var(--vn) 20%, transparent); color:var(--vn);}
+  .fund-deadline{font-family:var(--font-mono); font-size:11.5px; font-weight:600; padding:3px 9px; border-radius:999px; white-space:nowrap;}
+  .fd-urgent{background:color-mix(in srgb, var(--vn) 22%, transparent); color:var(--vn);}
+  .fd-soon{background:color-mix(in srgb, var(--status-partial) 22%, transparent); color:var(--status-partial);}
+  .fd-open{background:color-mix(in srgb, var(--status-full) 18%, transparent); color:var(--status-full);}
+  .fd-closed{background:var(--surface-2); color:var(--text-muted);}
+  .fd-unknown{background:var(--surface-2); color:var(--text-muted);}
+  .fund-title{font-size:16.5px; font-weight:700; line-height:1.4;}
+  .fund-theme{font-size:13.5px; color:var(--text); line-height:1.55; margin:0; max-width:none;}
+  .fund-meta{font-size:12.5px; color:var(--text-muted); line-height:1.6;}
+  .fund-meta b{color:var(--text); font-weight:600;}
+  .fund-source a{color:var(--accent-ink); font-weight:600; font-size:12.5px; text-decoration:none;}
+  .fund-source a:hover{text-decoration:underline;}
+  .fund-note{font-size:11.5px; color:var(--text-muted); font-style:italic;}
+  .fund-empty{color:var(--text-muted); font-size:14px; padding:20px 0;}
   .timeline{list-style:none; margin:0; padding:0; border-left:2px solid var(--border); }
   .timeline li{position:relative; padding:0 0 10px 16px;}
   .timeline li::before{content:''; position:absolute; left:-5px; top:4px; width:8px; height:8px; border-radius:50%; background:var(--accent);}
@@ -299,6 +328,7 @@
         <button data-tab="vietnam" data-i18n="tabVietnam">Việt Nam</button>
         <button data-tab="rankings" data-i18n="tabRankings">Xếp hạng</button>
         <button data-tab="news" data-i18n="tabNews">Tin tức</button>
+        <button data-tab="funding" data-i18n="tabFunding">Fund/Hackathon</button>
       </div>
       <div class="langtoggle">
         <button data-lang="vi" class="active">VI</button>
@@ -327,6 +357,7 @@
         <p><strong data-i18n="guideGlobalLbl">Tab Toàn cầu / Việt Nam.</strong> <span data-i18n="guideGlobalVal">Kéo chuột (hoặc vuốt) để xoay quả cầu 3D; chạm một điểm sáng để xem case; nút ⟲ ở góc đặt lại góc nhìn. Trình duyệt không hỗ trợ WebGL sẽ tự chuyển sang bản đồ 2D theo khu vực bên dưới. Danh sách case có ô tìm kiếm và lọc theo quốc gia.</span></p>
         <p><strong data-i18n="guideRankLbl">Tab Xếp hạng.</strong> <span data-i18n="guideRankVal">Bấm vào một hạng mục (chip) phía trên bảng để lọc theo hạng mục đó, hoặc chọn "Tất cả".</span></p>
         <p><strong data-i18n="guideNewsLbl">Tab Tin tức.</strong> <span data-i18n="guideNewsVal">Mỗi tin có tóm tắt và link nguồn — bấm vào tên nguồn để đọc bài gốc đầy đủ.</span></p>
+        <p><strong data-i18n="guideFundLbl">Tab Fund/Hackathon.</strong> <span data-i18n="guideFundVal">Lọc theo loại (hackathon, cuộc thi, quỹ tài trợ, đề xuất nhiệm vụ KHCN&amp;ĐMST) bằng chip phía trên, hoặc gõ từ khoá; bấm "Trang chính thức" để nộp hồ sơ. Nhãn hạn nộp đổi màu theo mức khẩn: đỏ (≤7 ngày), cam (≤30 ngày), xanh (còn xa).</span></p>
         <p><strong data-i18n="guideLangLbl">Ngôn ngữ.</strong> <span data-i18n="guideLangVal">Nút VI/EN ở góc trên bên phải đổi ngôn ngữ hiển thị cho toàn trang.</span></p>
       </div>
     </details>
@@ -469,6 +500,22 @@
     <div class="news-list" id="newsList"></div>
   </section>
 
+  <!-- ================= TAB 5 : FUND / HACKATHON ================= -->
+  <section id="panel-funding" class="tabpanel">
+    <div class="catalogue-head">
+      <h2 data-i18n="fundingTitle">Nguồn tài trợ &amp; cuộc thi đổi mới sáng tạo</h2>
+      <p data-i18n="fundingSub" style="color:var(--text-muted); font-size:14px; margin:6px 0 0;">Hackathon, cuộc thi khởi nghiệp, quỹ tài trợ và thông báo đề xuất nhiệm vụ khoa học công nghệ &amp; đổi mới sáng tạo — ưu tiên nguồn tại Việt Nam.</p>
+      <div class="chips" id="fundTypeChips"></div>
+    </div>
+    <div class="fund-toolbar">
+      <input type="text" id="fundSearch" class="roster-input" data-i18n-ph="fundSearchPh">
+      <label class="fund-toggle"><input type="checkbox" id="fundOpenOnly" checked> <span data-i18n="fundOpenOnlyLbl">Chỉ hiện còn hạn</span></label>
+      <span class="fund-count" id="fundCount"></span>
+    </div>
+    <div class="fund-list" id="fundList"></div>
+    <div class="note-box" data-i18n="fundingNote">Tổng hợp từ nguồn công khai (website chính thức, cổng thông tin điện tử của Bộ/Sở, báo chí) — hạn nộp và giá trị giải thưởng có thể thay đổi, luôn đối chiếu trang chính thức trước khi nộp hồ sơ.</div>
+  </section>
+
 </main>
 
 <footer class="wrap">
@@ -486,7 +533,6 @@
   <div class="version-line" id="versionLine"></div>
 </footer>
 
-<script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
 "use strict";
@@ -513,6 +559,28 @@ var STR = {
   newsSub: {vi:"Tin tức về đổi mới sáng tạo, khởi nghiệp và CGCN đại học — trong nước và quốc tế.",
     en:"News on university innovation, startups, and technology transfer — Vietnam and worldwide."},
   newsEmpty: {vi:"Chưa có tin tức nào.", en:"No news items yet."},
+  tabFunding: {vi:"Fund/Hackathon", en:"Fund/Hackathon"},
+  fundingTitle: {vi:"Nguồn tài trợ & cuộc thi đổi mới sáng tạo", en:"Funding sources & innovation competitions"},
+  fundingSub: {vi:"Hackathon, cuộc thi khởi nghiệp, quỹ tài trợ và thông báo đề xuất nhiệm vụ khoa học công nghệ & đổi mới sáng tạo — ưu tiên nguồn tại Việt Nam.",
+    en:"Hackathons, startup competitions, funding sources, and calls for science & innovation task proposals — Vietnam sources prioritized."},
+  fundSearchPh: {vi:"Tìm theo tên, đơn vị, chủ đề...", en:"Search by name, organizer, theme..."},
+  fundOpenOnlyLbl: {vi:"Chỉ hiện còn hạn", en:"Open only"},
+  fundCountLabel: {vi:" mục", en:" items"},
+  fundingEmpty: {vi:"Không tìm thấy mục nào khớp bộ lọc.", en:"No items match this filter."},
+  fundingNote: {vi:"Tổng hợp từ nguồn công khai (website chính thức, cổng thông tin điện tử của Bộ/Sở, báo chí) — hạn nộp và giá trị giải thưởng có thể thay đổi, luôn đối chiếu trang chính thức trước khi nộp hồ sơ.",
+    en:"Compiled from public sources (official websites, ministry/department portals, press coverage) — deadlines and prize values may change; always check the official page before applying."},
+  fundOrgLbl: {vi:"Đơn vị", en:"Organizer"},
+  fundLocationLbl: {vi:"Địa điểm", en:"Location"},
+  fundPrizeLbl: {vi:"Giá trị", en:"Value"},
+  fundSourceLbl: {vi:"Trang chính thức", en:"Official page"},
+  fundDeadlineLbl: {vi:"Hạn", en:"Deadline"},
+  fundDeadlineUnknown: {vi:"Xem hạn tại trang chính thức", en:"See deadline on official page"},
+  fundClosedLbl: {vi:"Đã đóng hạn", en:"Closed"},
+  fundTypeAll: {vi:"Tất cả", en:"All"},
+  fundType_hackathon: {vi:"Hackathon", en:"Hackathon"},
+  fundType_competition: {vi:"Cuộc thi khởi nghiệp", en:"Startup competition"},
+  fundType_fund: {vi:"Quỹ tài trợ", en:"Funding"},
+  fundType_rfp: {vi:"Đề xuất nhiệm vụ KHCN&ĐMST", en:"S&T/innovation task call"},
   subheadP1: {vi:"Lược đồ các mô hình trung tâm nghiên cứu, đổi mới sáng tạo (TTO / holdings / mạng lưới) tại các đại học trên thế giới.",
     en:"A schematic of research & innovation center models (TTO / holdings / network) at universities worldwide."},
   aboutToggle: {vi:"Về dự án", en:"About this project"},
@@ -539,6 +607,9 @@ var STR = {
   guideNewsLbl: {vi:"Tab Tin tức.", en:"News tab."},
   guideNewsVal: {vi:"Mỗi tin có tóm tắt và link nguồn — bấm vào tên nguồn để đọc bài gốc đầy đủ.",
     en:"Each item has a summary and a source link — click the source name to read the full original article."},
+  guideFundLbl: {vi:"Tab Fund/Hackathon.", en:"Fund/Hackathon tab."},
+  guideFundVal: {vi:"Lọc theo loại (hackathon, cuộc thi, quỹ tài trợ, đề xuất nhiệm vụ KHCN&ĐMST) bằng chip phía trên, hoặc gõ từ khoá; bấm \"Trang chính thức\" để nộp hồ sơ. Nhãn hạn nộp đổi màu theo mức khẩn: đỏ (≤7 ngày), cam (≤30 ngày), xanh (còn xa).",
+    en:"Filter by type (hackathon, competition, funding, S&T/innovation task call) using the chips above, or type a keyword; click \"Official page\" to apply. The deadline label changes color by urgency: red (≤7 days), orange (≤30 days), green (further out)."},
   guideLangLbl: {vi:"Ngôn ngữ.", en:"Language."},
   guideLangVal: {vi:"Nút VI/EN ở góc trên bên phải đổi ngôn ngữ hiển thị cho toàn trang.",
     en:"The VI/EN button in the top-right corner switches the display language for the whole page."},
@@ -598,6 +669,8 @@ var STR = {
   jumpBtn:{vi:"Xem case →", en:"View case →"},
   websiteLbl:{vi:"Website", en:"Website"},
   globeFallbackMsg:{vi:"Thiết bị/trình duyệt này không hỗ trợ bản đồ 3D (WebGL). Dùng bản đồ 2D theo khu vực bên dưới thay thế.", en:"This device/browser doesn't support the 3D map (WebGL). Use the 2D regional maps below instead."},
+  globeFallbackLibMsg:{vi:"Không tải được thư viện bản đồ 3D (có thể do trình duyệt chặn theo dõi hoặc tiện ích chặn quảng cáo chặn cdnjs.cloudflare.com, hoặc mạng chập chờn) — thiết bị vẫn hỗ trợ WebGL. Thử tắt chế độ chặn cho trang này và tải lại, hoặc dùng bản đồ 2D theo khu vực bên dưới.",
+    en:"The 3D map library failed to load (often caused by tracking-prevention or an ad blocker blocking cdnjs.cloudflare.com, or a flaky connection) — your device does support WebGL. Try disabling blocking for this site and reloading, or use the 2D regional maps below."},
   globeFallbackBtn:{vi:"Xem bản đồ 2D ↓", en:"View 2D map ↓"},
   fnKey:{
     rnd_ttc:{vi:"NCKH→CGCN", en:"R&D → tech transfer"},
@@ -1187,6 +1260,8 @@ function applyI18n(){
   renderVNNetGrid();
   renderRankings();
   renderNews();
+  renderFundChips();
+  renderFunding();
   renderFooter();
   renderRosterControls();
   renderRosterTable();
@@ -1215,6 +1290,7 @@ document.querySelectorAll('.tabnav button').forEach(function(btn){
     document.getElementById('panel-vietnam').classList.toggle('active', tab==='vietnam');
     document.getElementById('panel-rankings').classList.toggle('active', tab==='rankings');
     document.getElementById('panel-news').classList.toggle('active', tab==='news');
+    document.getElementById('panel-funding').classList.toggle('active', tab==='funding');
   });
 });
 function goToCasesTab(caseId){
@@ -1946,6 +2022,218 @@ function renderNews(){
 }
 
 /* ======================================================================
+   DATA — funding / hackathon / competition / RFP opportunities
+====================================================================== */
+// Each item: {id, type: 'hackathon'|'competition'|'fund'|'rfp', title:{vi,en},
+// org:{vi,en}, theme:{vi,en}, location:{vi,en}, prize:{vi,en}, deadline:'YYYY-MM-DD'|null,
+// url, note:{vi,en}?}. `deadline:null` means no confirmed date — the card shows
+// "see official page" instead of guessing one. The site owner adds/updates items
+// over time; this is not an automated feed.
+var FUNDING = [
+  {id:'natif-lai-suat-2026-1', type:'fund', deadline:'2026-09-20',
+    title:{vi:'Hỗ trợ lãi suất vay đổi mới công nghệ — đợt 1/2026', en:'Technology-innovation loan interest support — round 1/2026'},
+    org:{vi:'Quỹ Đổi mới công nghệ quốc gia (NATIF) — Bộ Khoa học và Công nghệ', en:'National Technology Innovation Fund (NATIF) — Ministry of Science and Technology'},
+    theme:{vi:'Hỗ trợ doanh nghiệp vay vốn để chuyển giao, ứng dụng, đổi mới công nghệ.', en:'Supports enterprises borrowing capital for technology transfer, adoption, and innovation.'},
+    location:{vi:'Toàn quốc', en:'Nationwide (Vietnam)'},
+    prize:{vi:'Hỗ trợ 50% lãi suất vay (tối đa 6%/năm, ≤5 năm) — ngân sách đợt ước 50 tỷ đồng', en:'50% interest-rate support (up to 6%/yr, ≤5 yrs) — round budget ≈ VND 50 billion'},
+    url:'https://mst.gov.vn/thong-bao-ve-viec-tiep-nhan-ho-so-de-nghi-ho-tro-lai-suat-vay-tu-quy-doi-moi-cong-nghe-quoc-gia-197260827112244345.htm'},
+  {id:'most-cong-nghe-chien-luoc-2026', type:'rfp', deadline:'2026-09-14',
+    title:{vi:'Đặt hàng nhiệm vụ nghiên cứu & phát triển công nghệ chiến lược', en:'Call for R&D task proposals on strategic technologies'},
+    org:{vi:'Bộ Khoa học và Công nghệ — Chương trình KH,CN&ĐMST quốc gia đặc biệt về công nghệ chiến lược', en:'Ministry of Science and Technology — special national program on strategic technologies'},
+    theme:{vi:'Công nghệ chiến lược (bán dẫn, trí tuệ nhân tạo và các công nghệ ưu tiên khác).', en:'Strategic technologies (semiconductors, AI, and other priority technologies).'},
+    location:{vi:'Toàn quốc', en:'Nationwide (Vietnam)'},
+    url:'https://mst.gov.vn/ke-hoach-dat-hang-nhiem-vu-nghien-cuu-va-phat-trien-cong-nghe-chien-luoc-thuoc-chuong-trinh-khoa-hoc-cong-nghe-va-doi-moi-sang-tao-quoc-gia-dac-biet-ve-cong-nghe-chien-luoc-de-tuyen-chon-to-chuc-chu-tri-thuc-hien-197260830194626578.htm'},
+  {id:'nafosted-datHang-bcsctw-2026', type:'rfp', deadline:null,
+    title:{vi:'Tuyển chọn nhiệm vụ KH,CN&ĐMST đặt hàng của Ban Chính sách, Chiến lược Trung ương', en:'Call for S&T/innovation tasks commissioned by the Central Party Policy & Strategy Commission'},
+    org:{vi:'Quỹ Phát triển KH&CN Quốc gia (NAFOSTED)', en:'National Foundation for Science and Technology Development (NAFOSTED)'},
+    theme:{vi:'Kinh tế vĩ mô, thị trường bất động sản – tài chính (theo CV 802-CV/BCSCLTW).', en:'Macroeconomics, real-estate and financial markets (per official request 802-CV/BCSCLTW).'},
+    location:{vi:'Toàn quốc', en:'Nationwide (Vietnam)'},
+    url:'https://nafosted.gov.vn/thong-bao-tuyen-chon-to-chuc-ca-nhan-thuc-hien-nhiem-vu-khoa-hoc-cong-nghe-va-doi-moi-sang-tao-dat-hang-nam-2026/'},
+  {id:'nafosted-giai-phap-xh-2026', type:'fund', deadline:null,
+    title:{vi:'Kế hoạch tài trợ nhiệm vụ giải pháp phát triển xã hội năm 2026', en:'2026 funding plan for social-development solution projects'},
+    org:{vi:'Quỹ Phát triển KH&CN Quốc gia (NAFOSTED)', en:'National Foundation for Science and Technology Development (NAFOSTED)'},
+    location:{vi:'Toàn quốc', en:'Nationwide (Vietnam)'},
+    url:'https://nafosted.gov.vn/thong-bao-ke-hoach-tai-tro-nhiem-vu-giai-phap-phat-trien-xa-hoi-nam-2026/'},
+  {id:'esic-2026', type:'competition', deadline:'2026-09-15',
+    title:{vi:'ESIC 2026 — Cuộc thi khởi nghiệp sáng tạo lĩnh vực năng lượng tiết kiệm & hiệu quả', en:'ESIC 2026 — Energy-Saving Innovation startup competition'},
+    org:{vi:'SIHUB — Sở Khoa học và Công nghệ TP. Hồ Chí Minh', en:'SIHUB — Ho Chi Minh City Department of Science and Technology'},
+    theme:{vi:'Giải pháp khởi nghiệp cho sử dụng năng lượng tiết kiệm và hiệu quả.', en:'Startup solutions for energy saving and efficiency.'},
+    location:{vi:'TP. Hồ Chí Minh / toàn quốc', en:'Ho Chi Minh City / nationwide'},
+    prize:{vi:'Tổng giải thưởng 165 triệu đồng', en:'Total prize VND 165 million'},
+    url:'https://esic2026.sihub.gov.vn/'},
+  {id:'techfest-2026', type:'competition', deadline:null,
+    title:{vi:'TECHFEST 2026 — Cuộc thi Tìm kiếm tài năng khởi nghiệp sáng tạo Quốc gia', en:'TECHFEST 2026 — National Innovative Startup Talent Search'},
+    org:{vi:'Cục Khởi nghiệp & Doanh nghiệp công nghệ (NATEC/NSSC) — Bộ Khoa học và Công nghệ', en:'National Agency for Technology Entrepreneurship and Commercialization Development (NATEC/NSSC) — Ministry of Science and Technology'},
+    theme:{vi:'Chủ đề "Từ công nghệ đến đời sống".', en:'Theme: "From technology to life".'},
+    location:{vi:'Toàn quốc', en:'Nationwide (Vietnam)'},
+    prize:{vi:'Cơ hội đại diện Việt Nam dự Startup World Cup (San Francisco)', en:'Chance to represent Vietnam at the Startup World Cup (San Francisco)'},
+    note:{vi:'Chung kết dự kiến tháng 11/2026.', en:'Final round expected November 2026.'},
+    url:'https://techfest.vn/'},
+  {id:'mit-solve-next-round', type:'fund', deadline:null,
+    title:{vi:'MIT Solve — vòng Global Challenges kế tiếp', en:'MIT Solve — next Global Challenges round'},
+    org:{vi:'MIT Solve (Hoa Kỳ)', en:'MIT Solve (USA)'},
+    theme:{vi:'Giải pháp công nghệ cho các thách thức toàn cầu, mở cho đội dự thi từ Việt Nam.', en:'Tech-based solutions to global challenges, open to teams from Vietnam.'},
+    location:{vi:'Toàn cầu', en:'Global'},
+    prize:{vi:'Vòng 10th Anniversary (đã đóng) trao tới 150.000 USD/dự án', en:'The 10th-Anniversary round (now closed) awarded up to US$150,000 per project'},
+    note:{vi:'Vòng mới dự kiến mở tháng 9/2026, hạn nộp cụ thể chưa công bố.', en:'A new round is expected to open in September 2026; the exact deadline is not yet announced.'},
+    url:'https://solve.mit.edu/'},
+  {id:'vinfuture-2027', type:'fund', deadline:null,
+    title:{vi:'VinFuture Prize — mùa giải 2027 (đề cử khoa học đột phá)', en:'VinFuture Prize — 2027 season (breakthrough science nominations)'},
+    org:{vi:'Quỹ VinFuture', en:'VinFuture Foundation'},
+    theme:{vi:'Đề cử công trình khoa học công nghệ có tác động đột phá toàn cầu.', en:'Nominations for scientific/technological work with global breakthrough impact.'},
+    location:{vi:'Toàn cầu (trụ sở tại Việt Nam)', en:'Global (headquartered in Vietnam)'},
+    note:{vi:'Hình thức đề cử (người đề cử giới thiệu ứng viên), không nộp hồ sơ trực tiếp như một cuộc thi khởi nghiệp. Hạn đề cử cho mùa 2027 chưa được công bố.', en:'Nomination-based (a nominator puts forward a candidate), not a direct startup-style application. The 2027 nomination deadline has not been announced yet.'},
+    url:'https://vinfutureprize.org/vinfuture-prize-nomination/'},
+  {id:'react-undp-samsung-2026', type:'fund', deadline:'2026-09-01',
+    title:{vi:'RE:ACT — Youth Innovation Challenge for Resilient Communities (Việt Nam)', en:'RE:ACT — Youth Innovation Challenge for Resilient Communities (Vietnam)'},
+    org:{vi:'UNDP Việt Nam & Samsung', en:'UNDP Vietnam & Samsung'},
+    theme:{vi:'Giải pháp đổi mới sáng tạo của thanh niên cho cộng đồng chống chịu thiên tai/biến đổi khí hậu.', en:'Youth-led innovation solutions for climate-resilient communities.'},
+    location:{vi:'Việt Nam', en:'Vietnam'},
+    url:'https://www2.fundsforngos.org/innovation/react-youth-innovation-challenge-for-resilient-communities-vietnam/amp/'},
+  {id:'ai-ready-asean-2026', type:'hackathon', deadline:'2026-02-27',
+    title:{vi:'AI Ready ASEAN Youth Challenge 2026', en:'AI Ready ASEAN Youth Challenge 2026'},
+    org:{vi:'AngelHack & ASEAN', en:'AngelHack & ASEAN'},
+    theme:{vi:'Ứng dụng AI, mở cho thanh niên ASEAN 18–35 tuổi.', en:'AI applications, open to ASEAN youth aged 18–35.'},
+    location:{vi:'Khu vực ASEAN — chung kết tại Singapore', en:'ASEAN region — final in Singapore'},
+    prize:{vi:'Tổng giải thưởng 20.000 USD', en:'Total prize US$20,000'},
+    url:'https://airayouthchallenge.ai/'},
+  {id:'google-solution-challenge-2026', type:'hackathon', deadline:'2026-04-15',
+    title:{vi:'Google Solution Challenge 2026', en:'Google Solution Challenge 2026'},
+    org:{vi:'Google Developer Groups (GDG) on Campus', en:'Google Developer Groups (GDG) on Campus'},
+    theme:{vi:'Giải pháp công nghệ cho các Mục tiêu Phát triển Bền vững (SDG), mở cho sinh viên GDG on Campus tại Việt Nam.', en:'Tech solutions for the UN SDGs, open to GDG on Campus students in Vietnam.'},
+    location:{vi:'Toàn cầu', en:'Global'},
+    url:'https://developers.google.com/community/gdsc-solution-challenge/timeline'},
+  {id:'bki-2026', type:'competition', deadline:'2026-05-17',
+    title:{vi:'Bách Khoa Innovation 2026 (BKI 2026)', en:'Bach Khoa Innovation 2026 (BKI 2026)'},
+    org:{vi:'Trường ĐH Bách Khoa TP.HCM (HCMUT) & Đại sứ quán Pháp', en:'Ho Chi Minh City University of Technology (HCMUT) & French Embassy'},
+    theme:{vi:'Khởi nghiệp đổi mới sáng tạo, có hạng mục quốc tế (U-I Challenge).', en:'Innovation startups, with an international track (U-I Challenge).'},
+    location:{vi:'TP. Hồ Chí Minh', en:'Ho Chi Minh City'},
+    prize:{vi:'Hạng mục Standard E&I: 600 triệu đồng + hỗ trợ vé máy bay/mentoring', en:'Standard E&I track: VND 600 million + travel support/mentoring'},
+    url:'https://research.vnuhcm.edu.vn/index.php/vi/2026/04/07/mot-tan-so-moi-da-kich-hoat-bach-khoa-innovation-2026-chinh-thuc-quay-tro-lai-thang-4-nay/'},
+  {id:'vsar-bang-c-2026', type:'competition', deadline:'2026-03-15',
+    title:{vi:'VSAR — Giải Vô địch Quốc gia STEM, AI và Robotics 2025–2026 (Bảng C, THPT)', en:'VSAR — National STEM, AI & Robotics Championship 2025–2026 (Category C, high school)'},
+    org:{vi:'Báo Tiền Phong & đối tác', en:'Tien Phong Newspaper & partners'},
+    theme:{vi:'STEM, trí tuệ nhân tạo và robotics cho học sinh THPT.', en:'STEM, AI, and robotics for high-school students.'},
+    location:{vi:'Toàn quốc', en:'Nationwide (Vietnam)'},
+    url:'https://vsar.tienphong.vn'},
+  {id:'nafosted-nc-ung-dung-2026', type:'fund', deadline:'2026-08-10',
+    title:{vi:'Tài trợ Nghiên cứu ứng dụng năm 2026', en:'2026 Applied Research funding'},
+    org:{vi:'Quỹ Phát triển KH&CN Quốc gia (NAFOSTED)', en:'National Foundation for Science and Technology Development (NAFOSTED)'},
+    location:{vi:'Toàn quốc', en:'Nationwide (Vietnam)'},
+    note:{vi:'Chu kỳ hàng năm — đợt kế tiếp dự kiến mở khoảng giữa năm 2027.', en:'Annual cycle — the next round is expected to open around mid-2027.'},
+    url:'https://nafosted.gov.vn/thong-bao-ke-hoach-tai-tro-nghien-cuu-ung-dung-nam-2026/'},
+  {id:'nafosted-nc-co-ban-2026', type:'fund', deadline:'2026-07-15',
+    title:{vi:'Tài trợ Nghiên cứu cơ bản năm 2026', en:'2026 Basic Research funding'},
+    org:{vi:'Quỹ Phát triển KH&CN Quốc gia (NAFOSTED)', en:'National Foundation for Science and Technology Development (NAFOSTED)'},
+    location:{vi:'Toàn quốc', en:'Nationwide (Vietnam)'},
+    note:{vi:'Chu kỳ hàng năm.', en:'Annual cycle.'},
+    url:'https://nafosted.gov.vn/thong-bao-tai-tro-nghien-cuu-co-ban-nam-2026/'},
+  {id:'most-cap-bo-dot2-2026', type:'rfp', deadline:'2026-05-04',
+    title:{vi:'Tuyển chọn nhiệm vụ KH&CN cấp Bộ của Bộ KH&CN năm 2026 (đợt 2)', en:'Selection of ministry-level S&T tasks, Ministry of S&T, 2026 (round 2)'},
+    org:{vi:'Bộ Khoa học và Công nghệ', en:'Ministry of Science and Technology'},
+    location:{vi:'Toàn quốc', en:'Nationwide (Vietnam)'},
+    note:{vi:'Có nhiều đợt trong năm — theo dõi đợt kế tiếp.', en:'Runs in multiple rounds per year — watch for the next one.'},
+    url:'https://mst.gov.vn/ve-viec-tuyen-chon-to-chuc-ca-nhan-chu-tri-thuc-hien-nhiem-vu-khoa-hoc-va-cong-nghe-cap-bo-cua-bo-khoa-hoc-va-cong-nghe-nam-2026-dot-2-197260402092317278.htm'},
+  {id:'so-khcn-hanoi-2026', type:'rfp', deadline:'2026-08-01',
+    title:{vi:'Đặt hàng nhiệm vụ khoa học và công nghệ Thành phố năm 2026', en:'Call for city-level S&T task proposals, 2026'},
+    org:{vi:'Sở Khoa học và Công nghệ Hà Nội', en:'Hanoi Department of Science and Technology'},
+    location:{vi:'Hà Nội', en:'Hanoi'},
+    url:'https://daihochoabinh.edu.vn/so-khoa-hoc-va-cong-nghe-thanh-pho-ha-noi-dat-hang-to-chuc-ca-nhan-thuc-hien-nhiem-vu-khoa-hoc-va-cong-nghe-thanh-pho-nam-2026-theo-phuong-thuc-tuyen-chon'},
+  {id:'so-khcn-hcm-2026', type:'rfp', deadline:'2026-04-03',
+    title:{vi:'Mời đăng ký thực hiện nhiệm vụ nghiên cứu khoa học & phát triển công nghệ năm 2026', en:'Call for research & technology-development task proposals, 2026'},
+    org:{vi:'Sở Khoa học và Công nghệ TP. Hồ Chí Minh', en:'Ho Chi Minh City Department of Science and Technology'},
+    location:{vi:'TP. Hồ Chí Minh', en:'Ho Chi Minh City'},
+    url:'https://dost.hochiminhcity.gov.vn/thong-bao/moi-dang-ky-thuc-hien-nhiem-vu-nghien-cuu-khoa-hoc-phat-trien-cong-nghe-nam-2026-thong-bao-so-2646tb-skhcn/'},
+  {id:'so-khcn-danang-2026', type:'rfp', deadline:'2026-05-28',
+    title:{vi:'Tuyển chọn nhiệm vụ khoa học và công nghệ cấp Thành phố năm 2026', en:'Selection of city-level S&T tasks, 2026'},
+    org:{vi:'Sở Khoa học và Công nghệ Đà Nẵng', en:'Da Nang Department of Science and Technology'},
+    location:{vi:'Đà Nẵng', en:'Da Nang'},
+    url:'https://danang.gov.vn/vi/web/dng/w/thong-bao-ve-viec-tuyen-chon-to-chuc-ca-nhan-chu-tri-nhiem-vu-khoa-hoc-va-cong-nghe-cap-thanh-pho'}
+];
+function fundDeadlineInfo(f){
+  if(!f.deadline){
+    return {cls:'fd-unknown', text:t('fundDeadlineUnknown'), closed:false, days:Infinity};
+  }
+  var today = new Date(); today.setHours(0,0,0,0);
+  var d = new Date(f.deadline+'T00:00:00');
+  var diffDays = Math.round((d-today)/86400000);
+  var dateStr = f.deadline.split('-').reverse().join('/');
+  if(diffDays<0){
+    return {cls:'fd-closed', text:t('fundDeadlineLbl')+': '+dateStr+' — '+t('fundClosedLbl'), closed:true, days:diffDays};
+  }
+  var daysLbl = LANG==='vi'
+    ? (diffDays===0 ? 'hạn hôm nay' : 'còn '+diffDays+' ngày')
+    : (diffDays===0 ? 'due today' : diffDays+' day'+(diffDays===1?'':'s')+' left');
+  var cls = diffDays<=7 ? 'fd-urgent' : (diffDays<=30 ? 'fd-soon' : 'fd-open');
+  return {cls:cls, text:t('fundDeadlineLbl')+': '+dateStr+' — '+daysLbl, closed:false, days:diffDays};
+}
+var activeFundType = 'all';
+var FUND_TYPE_KEYS = ['hackathon','competition','fund','rfp'];
+function renderFundChips(){
+  var wrap = document.getElementById('fundTypeChips');
+  if(!wrap) return;
+  var types = ['all'].concat(FUND_TYPE_KEYS);
+  wrap.innerHTML = types.map(function(ty){
+    var label = ty==='all' ? t('fundTypeAll') : t('fundType_'+ty);
+    return '<button class="chip'+(ty===activeFundType?' active':'')+'" data-ftype="'+ty+'">'+label+'</button>';
+  }).join('');
+  wrap.querySelectorAll('.chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      activeFundType = btn.getAttribute('data-ftype');
+      renderFundChips(); renderFunding();
+    });
+  });
+}
+function fundCardHTML(f){
+  var info = fundDeadlineInfo(f);
+  var meta = [];
+  if(tf(f.org)) meta.push('<b>'+t('fundOrgLbl')+':</b> '+tf(f.org));
+  if(tf(f.location)) meta.push('<b>'+t('fundLocationLbl')+':</b> '+tf(f.location));
+  if(tf(f.prize)) meta.push('<b>'+t('fundPrizeLbl')+':</b> '+tf(f.prize));
+  return '<article class="fund-card'+(info.closed?' is-closed':'')+'">'+
+    '<div class="fund-row1"><span class="fund-type-tag type-'+f.type+'">'+t('fundType_'+f.type)+'</span>'+
+      '<span class="fund-deadline '+info.cls+'">'+info.text+'</span></div>'+
+    '<div class="fund-title">'+tf(f.title)+'</div>'+
+    (tf(f.theme) ? '<p class="fund-theme">'+tf(f.theme)+'</p>' : '')+
+    (meta.length ? '<div class="fund-meta">'+meta.join(' · ')+'</div>' : '')+
+    (f.url ? '<div class="fund-source"><a href="'+f.url+'" target="_blank" rel="noopener noreferrer">'+t('fundSourceLbl')+' ↗</a></div>' : '')+
+    (tf(f.note) ? '<div class="fund-note">'+tf(f.note)+'</div>' : '')+
+  '</article>';
+}
+var fundSearchTerm = '';
+function renderFunding(){
+  var listEl = document.getElementById('fundList');
+  if(!listEl) return;
+  var openOnlyEl = document.getElementById('fundOpenOnly');
+  var openOnly = openOnlyEl ? openOnlyEl.checked : true;
+  var q = fundSearchTerm.trim().toLowerCase();
+  var list = FUNDING.filter(function(f){
+    if(activeFundType!=='all' && f.type!==activeFundType) return false;
+    var info = fundDeadlineInfo(f);
+    if(openOnly && info.closed) return false;
+    if(!q) return true;
+    var hay = (tf(f.title)+' '+tf(f.org)+' '+tf(f.theme)+' '+tf(f.location)).toLowerCase();
+    return hay.indexOf(q)>-1;
+  });
+  list.sort(function(a,b){
+    var da = fundDeadlineInfo(a), db = fundDeadlineInfo(b);
+    function rank(info){ return info.closed ? 2 : (info.days===Infinity ? 1 : 0); }
+    var ra = rank(da), rb = rank(db);
+    if(ra!==rb) return ra-rb;
+    if(ra===0) return da.days-db.days;
+    if(ra===2) return db.days-da.days;
+    return 0;
+  });
+  listEl.innerHTML = list.length ? list.map(fundCardHTML).join('') : '<div class="fund-empty">'+t('fundingEmpty')+'</div>';
+  var countEl = document.getElementById('fundCount');
+  if(countEl) countEl.textContent = list.length + t('fundCountLabel') + ' / ' + FUNDING.length;
+}
+var __fundSearchEl = document.getElementById('fundSearch');
+if(__fundSearchEl) __fundSearchEl.addEventListener('input', function(e){ fundSearchTerm = e.target.value; renderFunding(); });
+var __fundOpenOnlyEl = document.getElementById('fundOpenOnly');
+if(__fundOpenOnlyEl) __fundOpenOnlyEl.addEventListener('change', renderFunding);
+
+/* ======================================================================
    RENDER: flagship case chips + cards
 ====================================================================== */
 var activeModel = 'all';
@@ -2059,8 +2347,8 @@ function renderFooter(){
   CASES.forEach(function(c){ c.sources.forEach(function(s){ if(allSources.indexOf(s)===-1) allSources.push(s); }); });
   document.getElementById('footSources').innerHTML = allSources.map(function(s){ return '<li>'+s+'</li>'; }).join('');
   document.getElementById('versionLine').textContent =
-    (LANG==='vi' ? 'Phiên bản 0.2 · Cập nhật 05/09/2026'
-    : 'Version 0.2 · Updated 2026-09-05');
+    (LANG==='vi' ? 'Phiên bản 0.3 · Cập nhật 06/09/2026'
+    : 'Version 0.3 · Updated 2026-09-06');
 }
 
 /* ======================================================================
@@ -2085,9 +2373,10 @@ function webglAvailable(){
     return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl') || c.getContext('experimental-webgl')));
   } catch(e){ return false; }
 }
-function showGlobeFallback(host){
+function showGlobeFallback(host, reason){
+  var msgKey = reason==='libfail' ? 'globeFallbackLibMsg' : 'globeFallbackMsg';
   host.innerHTML = '<div class="globe-fallback">'+
-    '<p>'+t('globeFallbackMsg')+'</p>'+
+    '<p>'+t(msgKey)+'</p>'+
     '<button type="button" id="globeFallbackBtn">'+t('globeFallbackBtn')+'</button>'+
   '</div>';
   var btn = document.getElementById('globeFallbackBtn');
@@ -2099,7 +2388,12 @@ function showGlobeFallback(host){
 function initGlobe(){
   var host = document.getElementById('globeHost');
   if(!host) return;
-  if(!window.THREE || !webglAvailable()){ showGlobeFallback(host); return; }
+  // These two failure modes look identical to a visitor (no 3D globe) but have
+  // different causes and fixes, so they get different messages: real WebGL
+  // absence (old device/browser) vs. the three.js CDN request being blocked
+  // (tracking-prevention / ad-blocker / flaky network) while WebGL itself works fine.
+  if(!webglAvailable()){ showGlobeFallback(host, 'nowebgl'); return; }
+  if(!window.THREE){ showGlobeFallback(host, 'libfail'); return; }
   var w = host.clientWidth, h = host.clientHeight || 340;
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(42, w/h, 0.1, 100);
@@ -2455,16 +2749,35 @@ function __safeInitGlobe(){
   try{ initGlobe(); } catch(e){
     window.__globeError = e.message + ' | ' + e.stack; console.error('Globe init error:', e);
     var host = document.getElementById('globeHost');
-    if(host) showGlobeFallback(host);
+    if(host) showGlobeFallback(host, window.THREE ? 'nowebgl' : 'libfail');
   }
 }
-window.addEventListener('load', __safeInitGlobe);
+// three.js loads from a CDN rather than shipping inline (it's ~600KB); a single
+// CDN can be blocked by tracking-prevention/ad-blockers or just have a bad day,
+// which used to show the misleading "this browser doesn't support WebGL"
+// message. Try a second CDN before giving up so a blocked/flaky first host
+// doesn't take out the whole 3D globe.
+function __loadScript(src, cb){
+  var s = document.createElement('script');
+  s.src = src;
+  s.onload = function(){ cb(true); };
+  s.onerror = function(){ cb(false); };
+  document.head.appendChild(s);
+}
+function __loadThreeThenInitGlobe(){
+  if(window.THREE){ __safeInitGlobe(); return; }
+  __loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js', function(ok){
+    if(ok || window.THREE){ __safeInitGlobe(); return; }
+    __loadScript('https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js', function(){ __safeInitGlobe(); });
+  });
+}
+window.addEventListener('load', __loadThreeThenInitGlobe);
 var __resizeMapsTimer = null;
 window.addEventListener('resize', function(){
   clearTimeout(__resizeMapsTimer);
   __resizeMapsTimer = setTimeout(renderCoordMaps, 200);
 });
-if(document.readyState==='complete') __safeInitGlobe();
+if(document.readyState==='complete') __loadThreeThenInitGlobe();
 
 })();
 </script>
