@@ -195,6 +195,11 @@
 
   /* ============ TAB 2 : CASE CATALOGUE ============ */
   .catalogue-head{padding:30px 0 6px;}
+  /* The generic p{max-width:65ch} rule is meant for long-form body text, but
+     these are single-line-ish subtitles inside a full-width header — without
+     this override every "*Sub" paragraph (rankings/news/funding/glossary/
+     vnNet/catalogue) wraps narrow and leaves most of the row empty. */
+  .catalogue-head p{max-width:none;}
   .roster-head{border-top:1px solid var(--border); padding-top:34px; margin-top:6px;}
   .chips{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px;}
   .chip{border:1px solid var(--border); background:var(--surface); border-radius:999px; padding:7px 14px; font-size:12.5px; font-weight:600; color:var(--text-muted); cursor:pointer;}
@@ -312,6 +317,9 @@
   table.roster-table thead th{position:sticky; top:0; background:var(--surface-2); text-align:left; padding:9px 12px; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); border-bottom:1px solid var(--border);}
   table.roster-table td{padding:8px 12px; border-bottom:1px solid var(--border); vertical-align:top;}
   table.roster-table tbody tr:hover{background:var(--surface-2);}
+  table.roster-table tbody tr{transition:background-color .3s ease;}
+  .rk-vn-pill{font-size:11px; font-family:inherit; border:1px solid var(--border); background:var(--surface-2); color:var(--accent-ink); border-radius:999px; padding:3px 10px; cursor:pointer;}
+  .rk-vn-pill:hover{border-color:var(--accent-ink);}
   table.roster-table td.rc-host, table.roster-table td.rc-country{color:var(--text-muted); font-size:12.5px;}
   table.roster-table td.rc-web a{color:var(--accent-ink); text-decoration:none; font-size:12px;}
   table.roster-table td.rc-web a:hover{text-decoration:underline;}
@@ -499,6 +507,7 @@
       <p data-i18n="rankingsSub" style="color:var(--text-muted); font-size:14px; margin:6px 0 0;">Tổng hợp từ các bảng xếp hạng công khai chuyên về đổi mới sáng tạo/tác động thực tiễn của đại học.</p>
       <div class="chips" id="rankingsChips"></div>
     </div>
+    <div class="note-box vn" id="rankingsVNHighlight"></div>
     <div class="roster-table-wrap">
       <table class="roster-table" id="rankingsTable">
         <thead><tr>
@@ -590,6 +599,9 @@ var STR = {
   rankingsColCountry: {vi:"Quốc gia", en:"Country"},
   rankingsColCat: {vi:"Hạng mục", en:"Category"},
   rankingsEmpty: {vi:"Chưa có dữ liệu xếp hạng.", en:"No ranking data yet."},
+  rankingsVNCount: {vi:" cơ sở giáo dục đại học Việt Nam trong bảng này — bấm để xem dòng tương ứng: ", en:" Vietnamese higher-education institutions in this table — click to jump to the row: "},
+  rankingsVNEmpty: {vi:"Không có cơ sở giáo dục đại học Việt Nam nào trong bảng xếp hạng này.", en:"No Vietnamese higher-education institutions in this table."},
+  rankingsVNRankLbl: {vi:"hạng", en:"rank"},
   newsTitle: {vi:"Tin tức đổi mới sáng tạo", en:"Innovation News"},
   newsSub: {vi:"Tin tức về đổi mới sáng tạo, khởi nghiệp và CGCN đại học — trong nước và quốc tế.",
     en:"News on university innovation, startups, and technology transfer — Vietnam and worldwide."},
@@ -651,8 +663,8 @@ var STR = {
   guideGlobalVal: {vi:"Kéo chuột (hoặc vuốt) để xoay quả cầu 3D; chạm một điểm sáng để xem case; nút ⟲ ở góc đặt lại góc nhìn. Trình duyệt không hỗ trợ WebGL sẽ tự chuyển sang bản đồ 2D theo khu vực bên dưới. Danh sách case có ô tìm kiếm và lọc theo quốc gia.",
     en:"Drag (or swipe) to rotate the 3D globe; tap a glowing point to view its case; the ⟲ button in the corner resets the view. A browser without WebGL support automatically falls back to the 2D regional maps below. The case list has a search box and a country filter."},
   guideRankLbl: {vi:"Tab Xếp hạng.", en:"Rankings tab."},
-  guideRankVal: {vi:"Bấm vào một hạng mục (chip) phía trên bảng để lọc theo hạng mục đó, hoặc chọn \"Tất cả\".",
-    en:"Click a category chip above the table to filter by that category, or pick \"All\"."},
+  guideRankVal: {vi:"Bấm vào một hạng mục (chip) phía trên bảng để lọc theo hạng mục đó, hoặc chọn \"Tất cả\". Khung đỏ ngay trên bảng liệt kê riêng các cơ sở giáo dục đại học Việt Nam có mặt — bấm vào tên trường để nhảy tới đúng dòng.",
+    en:"Click a category chip above the table to filter by that category, or pick \"All\". The red-accented box right above the table lists just the Vietnamese institutions in it — click a name to jump to its row."},
   guideNewsLbl: {vi:"Tab Tin tức.", en:"News tab."},
   guideNewsVal: {vi:"Mỗi tin có tóm tắt và link nguồn — bấm vào tên nguồn để đọc bài gốc đầy đủ.",
     en:"Each item has a summary and a source link — click the source name to read the full original article."},
@@ -694,6 +706,8 @@ var STR = {
   vnNetCaveat:{vi:"Tổng hợp từ nguồn công khai (website hiệp hội/mạng lưới, báo chí) — chưa phải danh sách đầy đủ; một số hiệp hội/mạng lưới công bố tổng số thành viên lớn hơn nhiều so với số tên đã xác minh được ở đây.",
     en:"Compiled from public sources (association/network websites, press coverage) — not an exhaustive list; some associations/networks report a total membership much larger than the number of names verified here."},
   vnNetVisit:{vi:"Website", en:"Website"},
+  regionRosterCaveat:{vi:"Đây là số liệu theo danh mục mở rộng (roster) mà trang này tự thu thập được từ nguồn công khai — không phải thống kê đầy đủ. Rất nhiều trường đại học có trung tâm CGCN/ĐMST hoặc hoạt động tương đương chưa được đưa vào đây, nên số thực tế ở mỗi nước chắc chắn cao hơn nhiều.",
+    en:"These figures reflect the site's own extended-catalogue roster, compiled from public sources — not an exhaustive count. Many universities with a tech-transfer/innovation center or equivalent aren't in this catalogue yet, so the real number per country is certainly much higher."},
   vnBox:{vi:"Vĩ độ 6–23,5°B · Kinh độ 101–118°Đ — gồm Hoàng Sa, Trường Sa", en:"Lat 6–23.5°N · Lon 101–118°E — includes the Paracels & Spratlys"},
   vnCaption:{vi:"Hoàng Sa và Trường Sa là lãnh thổ Việt Nam.", en:"The Paracel and Spratly Islands are Vietnamese territory."},
   catalogueTitle:{vi:"Case điển hình theo mô hình quản trị", en:"Typical cases by governance model"},
@@ -1798,10 +1812,10 @@ function asiaSideHTML(){
   var asiaRosterCount = ROSTER.filter(function(r){ return ['Japan','China','South Korea','Taiwan','India'].indexOf(r[2])>-1; }).length;
   var vnCount = vnTotalPlottedCount();
   return regionStatsHTML(stats) + '<div class="note-box">'+(LANG==='vi'
-    ? 'Châu Á: Tsinghua Holdings (Trung Quốc), NUS/BLOCK71 (Singapore), '+vnCount+' đơn vị tại Việt Nam, cùng '+asiaRosterCount+' đơn vị khác ở Nhật/Trung/Hàn/Đài/Ấn trong danh mục mở rộng.'
-    : 'Asia: Tsinghua Holdings (China), NUS/BLOCK71 (Singapore), '+vnCount+' units in Vietnam, plus '+asiaRosterCount+' more across Japan/China/Korea/Taiwan/India in the extended catalogue.')+'</div>';
+    ? 'Châu Á: Tsinghua Holdings (Trung Quốc), NUS/BLOCK71 (Singapore), '+vnCount+' đơn vị tại Việt Nam, cùng '+asiaRosterCount+' đơn vị khác ở Nhật/Trung/Hàn/Đài/Ấn trong danh mục mở rộng. '+tf(STR.regionRosterCaveat)
+    : 'Asia: Tsinghua Holdings (China), NUS/BLOCK71 (Singapore), '+vnCount+' units in Vietnam, plus '+asiaRosterCount+' more across Japan/China/Korea/Taiwan/India in the extended catalogue. '+tf(STR.regionRosterCaveat))+'</div>';
 }
-var SEA_COUNTRY_VI = {Malaysia:'Malaysia', Thailand:'Thái Lan', Singapore:'Singapore', Taiwan:'Đài Loan', Indonesia:'Indonesia', Philippines:'Philippines', India:'Ấn Độ'};
+var COUNTRY_VI_NAMES = {Malaysia:'Malaysia', Thailand:'Thái Lan', Singapore:'Singapore', Taiwan:'Đài Loan', Indonesia:'Indonesia', Philippines:'Philippines', India:'Ấn Độ'};
 function seaSideHTML(){
   var bounds = {latMin:-10,latMax:25,lngMin:90,lngMax:140};
   var vnCount = vnTotalPlottedCount();
@@ -1814,18 +1828,42 @@ function seaSideHTML(){
   var byCountry = {};
   inBounds.forEach(function(r){ byCountry[r[2]] = (byCountry[r[2]]||0)+1; });
   var otherCountries = Object.keys(byCountry).sort(function(a,b){ return byCountry[b]-byCountry[a]; });
-  var countryListVi = otherCountries.map(function(c){ return (SEA_COUNTRY_VI[c]||c)+' ('+byCountry[c]+')'; }).join(', ');
+  var countryListVi = otherCountries.map(function(c){ return (COUNTRY_VI_NAMES[c]||c)+' ('+byCountry[c]+')'; }).join(', ');
   var countryListEn = otherCountries.map(function(c){ return c+' ('+byCountry[c]+')'; }).join(', ');
   return regionStatsHTML(stats) + '<div class="note-box vn">'+(LANG==='vi'
-    ? 'Đông Nam Á: '+stats.total+' đơn vị tại '+stats.countryCount+' quốc gia trong khung toạ độ này. Việt Nam chiếm phần lớn ('+vnCount+' — đại học, hiệp hội HANISA/VNEI, quỹ đầu tư); còn lại là các trung tâm CGCN/ĐMST đại học ở '+countryListVi+', trong đó Singapore có case điển hình NUS/BLOCK71.'
-    : 'Southeast Asia: '+stats.total+' units across '+stats.countryCount+' countries within this coordinate box. Vietnam accounts for most of them ('+vnCount+' — universities, the HANISA/VNEI associations, and VC funds); the rest are university tech-transfer/innovation centers in '+countryListEn+', including the flagship NUS/BLOCK71 case in Singapore.')+'</div>';
+    ? 'Đông Nam Á: '+stats.total+' đơn vị tại '+stats.countryCount+' quốc gia trong khung toạ độ này. Việt Nam chiếm phần lớn ('+vnCount+' — đại học, hiệp hội HANISA/VNEI, quỹ đầu tư); còn lại là các trung tâm CGCN/ĐMST đại học ở '+countryListVi+', trong đó Singapore có case điển hình NUS/BLOCK71. '+tf(STR.regionRosterCaveat)
+    : 'Southeast Asia: '+stats.total+' units across '+stats.countryCount+' countries within this coordinate box. Vietnam accounts for most of them ('+vnCount+' — universities, the HANISA/VNEI associations, and VC funds); the rest are university tech-transfer/innovation centers in '+countryListEn+', including the flagship NUS/BLOCK71 case in Singapore. '+tf(STR.regionRosterCaveat))+'</div>';
 }
 function vnSideHTML(){
   var bounds = {latMin:6,latMax:23.5,lngMin:101,lngMax:118};
-  var stats = regionStats(bounds, casesInBounds(bounds), {count:vnTotalPlottedCount(), type:'university', countryName:'Vietnam'});
+  var vnNetCount = vnNetworkAsSmallPoints().length;
+  var vnCount = VN_UNITS.length + vnNetCount; // = vnTotalPlottedCount()
+  var stats = regionStats(bounds, casesInBounds(bounds), {count:vnCount, type:'university', countryName:'Vietnam'});
+  // The stat tiles above (via regionStats) also count any ROSTER entry whose
+  // lat/lng happens to fall inside this box, regardless of country — a loose
+  // lat/lng box can catch a stray neighbor. Naming that stray explicitly
+  // keeps the "N đơn vị / M quốc gia" tiles and this note in agreement,
+  // instead of the note quietly citing a smaller, different number (as it
+  // used to — VN_UNITS.length alone, ignoring the HANISA/VNEI/fund points
+  // the tiles already include).
+  var strayCountries = {};
+  ROSTER.forEach(function(r){
+    if(r[4]==null || r[5]==null) return;
+    if(r[4]<bounds.latMin || r[4]>bounds.latMax || r[5]<bounds.lngMin || r[5]>bounds.lngMax) return;
+    if(r[2]==='Vietnam') return;
+    strayCountries[r[2]] = (strayCountries[r[2]]||0)+1;
+  });
+  var strayNames = Object.keys(strayCountries);
+  var strayTotal = strayNames.reduce(function(sum,c){ return sum+strayCountries[c]; }, 0);
+  // Only break the total down per-country when there's more than one — with
+  // a single stray country the per-country count would just repeat strayTotal.
+  var strayListVi = strayNames.length>1 ? strayNames.map(function(c){ return (COUNTRY_VI_NAMES[c]||c)+' ('+strayCountries[c]+')'; }).join(', ') : (COUNTRY_VI_NAMES[strayNames[0]]||strayNames[0]);
+  var strayListEn = strayNames.length>1 ? strayNames.map(function(c){ return c+' ('+strayCountries[c]+')'; }).join(', ') : strayNames[0];
+  var strayNoteVi = strayTotal ? (' Ngoài ra có '+strayTotal+' đơn vị thuộc '+strayListVi+' rơi vào khung toạ độ này do giáp ranh, không tính vào mạng lưới Việt Nam.') : '';
+  var strayNoteEn = strayTotal ? (' Also, '+strayTotal+' unit(s) from '+strayListEn+' fall inside this coordinate box because of the border overlap, and aren\'t counted as part of the Vietnam network.') : '';
   var intro = '<div class="note-box vn">'+(LANG==='vi'
-    ? VN_UNITS.length+' đơn vị hỗ trợ ĐMST tại các trường đại học, cùng mạng lưới HANISA, VNEI và các quỹ đầu tư — xem đầy đủ trong danh mục bên dưới.'
-    : VN_UNITS.length+' university innovation-support units, plus the HANISA and VNEI networks and VC funds — see the full list below.')+'</div>';
+    ? vnCount+' đơn vị mạng lưới ĐMST tại Việt Nam: '+VN_UNITS.length+' đơn vị hỗ trợ ĐMST tại các trường đại học, cùng '+vnNetCount+' đơn vị trong mạng lưới HANISA, VNEI và các quỹ đầu tư — xem đầy đủ trong danh mục bên dưới.'+strayNoteVi+' '+tf(STR.regionRosterCaveat)
+    : vnCount+' Vietnam innovation-network units: '+VN_UNITS.length+' university innovation-support units, plus '+vnNetCount+' units from the HANISA/VNEI networks and VC funds — see the full list below.'+strayNoteEn+' '+tf(STR.regionRosterCaveat))+'</div>';
   return regionStatsHTML(stats) + intro;
 }
 
@@ -2018,13 +2056,38 @@ function renderRankings(){
   var rows = activeRankingCat==='all' ? RANKINGS : RANKINGS.filter(function(r){return r.category===activeRankingCat;});
   var tbody = document.getElementById('rankingsBody');
   if(tbody){
-    tbody.innerHTML = rows.length ? rows.map(function(r){
-      return '<tr><td class="mono">'+r.rank+'</td><td>'+r.name+'</td><td>'+(countryFlag(r.country)?countryFlag(r.country)+' ':'')+r.country+'</td><td>'+(r.category||'')+'</td></tr>';
+    tbody.innerHTML = rows.length ? rows.map(function(r,idx){
+      return '<tr id="rk-row-'+idx+'"><td class="mono">'+r.rank+'</td><td>'+r.name+'</td><td>'+(countryFlag(r.country)?countryFlag(r.country)+' ':'')+r.country+'</td><td>'+(r.category||'')+'</td></tr>';
     }).join('') : '<tr><td colspan="4" class="news-empty">'+t('rankingsEmpty')+'</td></tr>';
+  }
+  // Highlight Vietnamese institutions against the SAME `rows` the table just
+  // rendered (not the full RANKINGS array) — that keeps this box and the
+  // table always in agreement, even once real categories start filtering it.
+  var vnHighlightEl = document.getElementById('rankingsVNHighlight');
+  if(vnHighlightEl){
+    var vnRows = [];
+    rows.forEach(function(r, idx){ if(r.country==='Vietnam') vnRows.push({r:r, idx:idx}); });
+    if(vnRows.length){
+      var pills = vnRows.map(function(x){
+        return '<button type="button" class="rk-vn-pill" data-rowidx="'+x.idx+'">'+x.r.name+' ('+t('rankingsVNRankLbl')+' '+x.r.rank+')</button>';
+      }).join(' ');
+      vnHighlightEl.innerHTML = vnRows.length + t('rankingsVNCount') + pills;
+    } else {
+      vnHighlightEl.textContent = t('rankingsVNEmpty');
+    }
   }
   var noteEl = document.getElementById('rankingsNote');
   if(noteEl) noteEl.textContent = tf(RANKINGS_SOURCE_NOTE);
 }
+document.addEventListener('click', function(e){
+  var btn = e.target.closest && e.target.closest('.rk-vn-pill');
+  if(!btn) return;
+  var row = document.getElementById('rk-row-'+btn.getAttribute('data-rowidx'));
+  if(!row) return;
+  row.scrollIntoView({behavior:'smooth', block:'center'});
+  row.style.backgroundColor = 'var(--accent-soft)';
+  setTimeout(function(){ row.style.backgroundColor = ''; }, 1400);
+});
 
 /* ======================================================================
    RENDER: News tab
