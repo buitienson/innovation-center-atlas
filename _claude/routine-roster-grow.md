@@ -1,4 +1,4 @@
-# Routine tự động: mở rộng ROSTER bằng Gemini (Google Search grounding)
+# Routine tự động: mở rộng ROSTER bằng Gemini (`url_context`)
 
 > File này là **nguồn canonical** cho routine mở rộng danh mục mở rộng
 > (`ROSTER` trong `src/atlas.html`) — chạy như một **cloud routine theo lịch**
@@ -8,102 +8,61 @@
 > cho routine này; routine này có uỷ quyền riêng, xác nhận ngày 2026-09-06
 > (xem `CLAUDE.md` mục "Lần cuối").
 
-> ⚠️ **CHƯA TẠO CLOUD ROUTINE — đang chặn ở bước kiểm chứng tay (xem "Tình
-> trạng hiện tại" ngay dưới đây).** Đọc mục đó TRƯỚC khi tạo trigger hay chạy
-> tự động hằng ngày.
+> ⚠️ **CHƯA TẠO CLOUD ROUTINE.** Cơ chế đã kiểm chứng hoạt động đúng (xem
+> "Tình trạng hiện tại"), nhưng hàng đợi (`roster-grow-queue.md`) mới có mô tả
+> nguồn dạng văn bản, chưa có URL cụ thể cho từng mục — cần bổ sung URL nguồn
+> trước khi chạy tự động hằng ngày (xem việc cần làm tiếp ở cuối mục này).
 
-## Tình trạng hiện tại (2026-09-06, tối) — hạn mức grounding của key hiện có = 0
+## Tình trạng hiện tại (2026-09-07) — đã tìm ra cách dùng Gemini KHÔNG cần billing
 
-Kiểm tra tay bằng key Gemini hiện có (đọc từ `~/.zshrc` của Sơn) cho kết quả rõ
-ràng, lặp lại nhiều lần trong ~20 phút, qua cả `roster_grow_worker.py` lẫn
-`curl` trực tiếp:
+**Lịch sử ngắn gọn (chi tiết đầy đủ ở lịch sử git của file này):** bản đầu
+dùng công cụ Google Search grounding (`tools:[{"google_search":{}}]`) —
+kiểm tra tay phát hiện key/project hiện có bị **429 RESOURCE_EXHAUSTED ngay
+lập tức** trên tính năng này (trong khi gọi Gemini bình thường vẫn chạy tốt),
+khả năng do Google cắt hạn mức miễn phí 50-80% từ 12/2025 và/hoặc cần bật
+billing mới có hạn mức grounding. Bật billing sẽ xoá hạn mức miễn phí khác
+của project nên không muốn làm ngay.
 
-- Gọi Gemini **bình thường** (không kèm `tools:[{"google_search":{}}]`) →
-  **thành công** (HTTP 200), nhiều lần, trên cả `gemini-flash-latest` và
-  `gemini-flash-lite-latest`.
-- Gọi **y hệt** nhưng **có kèm `google_search` grounding** → **429
-  RESOURCE_EXHAUSTED ngay lập tức**, mọi lần, cả 3 model trong chuỗi fallback.
-- `gemini-2.5-flash`/`gemini-2.0-flash` (tên model cố định, không phải alias
-  `-latest`) trả `404 NOT_FOUND` — các bản này đã bị Google gỡ khỏi API, xác
-  nhận chiến lược dùng alias `-latest` trong `gemini_worker.py`/
-  `roster_grow_worker.py` là đúng, không phải nguyên nhân lỗi.
+**Tìm ra hướng khác, đã kiểm chứng hoạt động đúng:** Gemini có công cụ riêng
+**`url_context`** (`tools:[{"url_context":{}}]`) — cho Gemini đọc trực tiếp
+MỘT (hoặc vài) URL cụ thể được giao sẵn, khác với `google_search` (tự tìm
+kiếm mở). Test tay nhiều lần: `url_context` **không hề bị 429** trên cùng
+key — quota hoàn toàn riêng, còn dùng được ngay, không cần billing.
 
-**Kết luận:** không phải key hết hạn mức nói chung — mà riêng tính năng
-**Google Search grounding đang có hạn mức = 0** trên key/project này. Tra thêm
-thì Google đã cắt hạn mức miễn phí 50-80% từ 12/2025, và có điểm quan trọng:
-**nếu project của key đã bật billing (dù chỉ để dùng việc khác), hạn mức miễn
-phí biến mất hoàn toàn** — mọi lệnh gọi tính phí ngay từ token đầu; ở tier trả
-phí, grounding có 1.500 lượt/ngày miễn phí đầu, sau đó tính phí riêng. Không
-xác định được chắc chắn project này đang ở trạng thái nào (cần đăng nhập
-`ai.dev/rate-limit` bằng đúng tài khoản Google để xem — không làm hộ được vì
-cần đăng nhập, đã thử xem qua computer-use trên Edge của Sơn nhưng đó là
-trang khác, chưa vào đúng `ai.dev/rate-limit`).
+Đánh đổi: `url_context` cần được GIAO SẴN URL nguồn cụ thể (không tự tìm kiếm
+mở như `google_search`) — nên hàng đợi (`roster-grow-queue.md`) cần có URL
+nguồn thật cho mỗi mục, không chỉ mô tả bằng lời như bản đầu.
 
-Đã cải thiện `roster_grow_worker.py` để tự chẩn đoán đúng việc này mỗi lần
-chạy thất bại: khi cả 3 model grounding đều 429, script tự thử thêm 1 lệnh gọi
-**không grounding** trên cùng model — phân biệt rõ "chỉ grounding bị chặn"
-(in ra gợi ý xem `ai.dev/rate-limit` + cân nhắc bật billing) với "cả key hết
-hạn mức" (trường hợp hiếm hơn, có thể do dùng dồn dập trong lúc tự test).
+**Đã test end-to-end thật với nguồn Malaysia** (`itma.my/tech-transfer-in-
+malaysia/`, một trang liệt kê TTO các đại học Malaysia không kèm link riêng
+từng đơn vị): Gemini đọc trang, tự nhận diện ~22-23 tổ chức, và vì trang gốc
+không có link riêng nên phải **ước lượng URL** dựa trên tên viện/trường —
+khoảng 40-50% ước lượng đúng (vd `icc.utm.my`, `umcie.um.edu.my` — đúng),
+40-50% sai (vd `psp.upm.edu.my`, `cic.usm.my` — tên miền không tồn tại, DNS
+lỗi). **Bước kiểm tra sống bằng HTTP thật của `roster_grow_worker.py` bắt
+đúng và loại sạch mọi URL sai** — không có mục nào lọt qua với URL không tồn
+tại. Đây chính là lưới an toàn hoạt động đúng như thiết kế, không phải lỗi:
+tỷ lệ giữ lại mỗi lượt chạy sẽ thấp hơn số Gemini đề xuất, nhưng mọi mục giữ
+lại đều đã xác minh sống thật.
 
-### Việc cần Sơn quyết định trước khi routine này chạy được
+Đã cập nhật `roster_grow_worker.py`: dùng `url_context` thay `google_search`,
+cho phép Gemini ước lượng URL khi trang nguồn không có link riêng (không còn
+bắt buộc để trống), vẫn giữ nguyên lưới an toàn liveness-check + dedup +
+giới hạn 15 mục/lượt. Script tự chẩn đoán khi gặp lỗi hạn mức (429/503): thử
+thêm 1 lệnh gọi không kèm tool để phân biệt "chỉ `url_context` bị chặn" với
+"cả key hết hạn mức".
 
-1. Vào `https://ai.dev/rate-limit` (đăng nhập đúng tài khoản Google gắn với
-   key) xem rõ: hạn mức grounding hiện tại là bao nhiêu, có phải 0 vĩnh viễn
-   hay theo tháng/sẽ reset.
-2. Nếu cần bật billing để có 1.500 lượt grounding/ngày miễn phí (Tier 1): cân
-   nhắc kỹ vì bật billing **xoá luôn mọi hạn mức miễn phí khác** của cùng
-   project cho các việc dùng Gemini khác (kể cả `gemini-delegate`) — có thể
-   nên tạo **project/key Gemini riêng** cho routine này thay vì dùng chung key
-   cũ, để việc bật billing (nếu cần) không ảnh hưởng các việc khác.
-3. Nếu quyết định không bật billing / không dùng grounding: cần đổi hướng
-   thiết kế — hai lựa chọn đã cân nhắc, chưa chọn:
-   - (a) Chuyển thành routine chạy trên Claude + WebSearch, cùng khuôn với
-     `routine-tin-tuc.md` — tốn token Claude hằng ngày (đi ngược mục tiêu ban
-     đầu "không tốn token Claude" nhưng đảm bảo có kết quả thật).
-   - (b) Không tự động hoá — làm thủ công/theo yêu cầu khi Sơn rảnh, dùng
-     chính Claude (agent WebSearch) chạy từng mục hàng đợi khi cần, không cần
-     cloud routine riêng.
-   Sơn chọn hướng nào thì cập nhật lại mục này + `CLAUDE.md`.
+### Việc cần làm tiếp trước khi tạo cloud routine
 
-### Bản thảo sẵn sàng cho lựa chọn (a) — nếu chọn, chỉ cần dán vào là chạy
-
-Soạn sẵn để nếu Sơn chọn (a), việc còn lại chỉ là thêm đúng phần này vào
-`_claude/routine-tin-tuc.md` (làm "Phần C", cùng file với Tin tức/Fund-Hackathon
-— vì lý do tách-riêng-do-cần-secret-Gemini không còn áp dụng nữa một khi đổi
-sang Claude+WebSearch, không cần secret riêng nào cả) rồi bỏ cảnh báo "CHƯA TẠO
-CLOUD ROUTINE" ở đầu file này. Không tự ý làm bước này — chờ Sơn xác nhận chọn
-hướng (a) trước.
-
-```
-### Phần C — Mở rộng danh mục ROSTER (mảng `ROSTER`)
-
-10. **Đọc `_claude/roster-grow-queue.md`** — tìm mục `[pending]` đầu tiên theo
-    thứ tự từ trên xuống. Hết mục `[pending]` → bỏ qua Phần C, không phải lỗi.
-11. **Dùng WebSearch/WebFetch tra đúng nguồn của mục đó** (ví dụ một hiệp hội
-    TTO khu vực, hoặc "TTO các đại học lớn ở nước X") — liệt kê các tổ chức
-    CGCN/ĐMST đại học tìm được, MỖI tổ chức phải xác minh được URL trang chính
-    thức còn sống (WebFetch để chắc chắn, không chỉ tin link xuất hiện trong
-    kết quả tìm kiếm).
-12. **Đối chiếu trùng lặp** với `ROSTER` hiện có trong `src/atlas.html` (so
-    tên đã chuẩn hoá — bỏ dấu câu/viết hoa — và domain của `url`) — bỏ qua
-    tổ chức đã có.
-13. **Giới hạn tối đa 15 mục mới/lượt** dù tìm được nhiều hơn.
-14. **Ước lượng toạ độ** (`lat`/`lng`) gần đúng của thành phố đặt trụ sở mỗi
-    tổ chức — chỉ để định vị trên bản đồ, không cần chính xác tuyệt đối (đúng
-    tinh thần `rosterCaveat` đã có trên trang).
-15. **Chèn vào cuối mảng `ROSTER`** trong `src/atlas.html`, đúng khuôn 6 trường:
-    `["<name>","<host>","<country>","<url>",<lat>,<lng>]` (`host` để `""` nếu
-    tổ chức độc lập). Giữ nguyên toàn bộ mục cũ.
-16. **Cập nhật `_claude/roster-grow-queue.md`**: đổi `[pending]` → `[done]` cho
-    mục vừa xử lý, điền ngày (lệnh `date`) + số mục thêm được (kể cả 0).
-17. Build + kiểm + commit + push CHUNG một lượt với Phần A/B (không tách commit
-    riêng) — message thêm dòng `+ mở rộng roster: <mô tả mục> (+N mục)`.
-```
-
-Ràng buộc riêng cho Phần C (thêm vào mục "Ràng buộc nội dung" của
-`routine-tin-tuc.md` nếu áp dụng lựa chọn (a)): **không bao giờ thêm một mục
-`ROSTER` mà chưa tự WebFetch xác nhận URL còn sống** — không tin link chỉ vì
-nó xuất hiện trong kết quả WebSearch.
+1. Bổ sung URL nguồn thật cho các mục trong `roster-grow-queue.md` (hiện chỉ
+   có mô tả bằng lời) — mỗi mục cần 1-3 URL cụ thể (trang danh bạ hiệp hội,
+   trang Wikipedia liệt kê, trang chính phủ...). Có thể làm dần, không cần
+   xong hết mới bắt đầu chạy — routine chỉ cần URL cho mục `[pending]` kế
+   tiếp tại thời điểm chạy.
+2. Chạy tay thêm vài lượt để có cảm giác về tỷ lệ giữ lại thực tế trước khi
+   để chạy tự động không giám sát hằng ngày.
+3. Tạo cloud routine (skill `schedule`) khi đã sẵn sàng — nhập `GEMINI_API_KEY`
+   vào ô secret lúc tạo.
 
 ## Bối cảnh
 
@@ -119,20 +78,23 @@ Claude cho việc tìm kiếm hàng loạt), **dừng khi hết hạn mức ngà
 skill đó (`gemini_worker.py`) gọi Gemini kiểu text-in/text-out thuần tuý,
 không có khả năng duyệt web — dùng cho việc "tìm tổ chức có thật" sẽ khiến
 Gemini bịa tên/URL nghe hợp lý từ dữ liệu huấn luyện. Routine này dùng script
-riêng `_claude/tools/roster_grow_worker.py`, có bật **Google Search grounding**
-của Gemini API để Gemini thực sự tìm trên web, cộng thêm một lớp kiểm tra sống
-từng URL bằng HTTP trước khi tin.
+riêng `_claude/tools/roster_grow_worker.py`, dùng công cụ **`url_context`**
+của Gemini API để Gemini đọc thật các trang nguồn được giao sẵn, cộng thêm
+một lớp kiểm tra sống từng URL bằng HTTP trước khi tin (bắt buộc, vì Gemini
+có thể ước lượng sai URL của tổ chức khi trang nguồn không có link riêng).
 
 ## Việc cần làm mỗi lượt chạy
 
 1. **Đọc `_claude/roster-grow-queue.md`** — tìm mục `[pending]` **đầu tiên**
-   theo thứ tự từ trên xuống. Không còn mục `[pending]` nào → dừng ở đây,
-   không sửa gì, không commit gì cả (kết quả bình thường, không phải lỗi).
+   theo thứ tự từ trên xuống, lấy cả mô tả lẫn URL nguồn đã gán cho mục đó.
+   Không còn mục `[pending]` nào, hoặc mục kế tiếp chưa có URL nguồn → dừng ở
+   đây, không sửa gì, không commit gì cả (kết quả bình thường, không phải lỗi).
 2. **Chạy worker** cho đúng mục đó:
    ```bash
    export GEMINI_API_KEY="<lấy từ biến môi trường routine, không bao giờ ghi ra file>"
    python3 _claude/tools/roster_grow_worker.py \
-     --queue-item "<nguyên văn mô tả mục pending>" \
+     --queue-item "<mô tả ngắn mục pending, để ghi log>" \
+     --source-urls "<URL nguồn 1>" "<URL nguồn 2 nếu có>" \
      --roster-html src/atlas.html \
      --output /tmp/roster-candidates.json \
      --max-new 15

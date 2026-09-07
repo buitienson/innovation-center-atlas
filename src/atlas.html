@@ -93,13 +93,13 @@
     .tabnav{order:3; width:100%; justify-content:center;}
   }
 
-  .subhead{padding:16px 0 22px; border-bottom:1px solid var(--border);}
-  .subhead p{margin:0 0 10px; color:var(--text-muted); font-size:16px; max-width:none;}
+  .subhead{padding:10px 0 12px; border-bottom:1px solid var(--border);}
+  .subhead p{margin:0 0 8px; color:var(--text-muted); font-size:14px; max-width:none;}
   .subhead p:last-of-type{margin-bottom:16px;}
   .info-row{display:flex; gap:10px; flex-wrap:wrap;}
   .info-row .task-info{flex:1 1 260px;}
   .task-info{border:1px solid var(--border); border-radius:12px; background:var(--surface); box-shadow:var(--shadow);}
-  .task-info summary{cursor:pointer; padding:10px 16px; font-size:13px; font-weight:600; color:var(--text-muted); list-style:none;}
+  .task-info summary{cursor:pointer; padding:7px 16px; font-size:13px; font-weight:600; color:var(--text-muted); list-style:none;}
   .task-info summary::-webkit-details-marker{display:none;}
   .task-info summary::before{content:'▸ '; color:var(--accent-ink);}
   .task-info[open] summary::before{content:'▾ ';}
@@ -122,6 +122,14 @@
 
   .split{display:grid; grid-template-columns:1.3fr 1fr; gap:24px; align-items:stretch;}
   @media (max-width:880px){ .split{grid-template-columns:1fr;} }
+  /* The globe is the page's headline visual — give it the whole row instead
+     of sharing space with the stat tiles, and a height driven mostly by
+     viewport so it reads as "the screen" rather than a card among cards. */
+  #sec-globe{padding-top:12px;}
+  #sec-globe .split{grid-template-columns:1fr; gap:16px;}
+  #sec-globe .screen, #sec-globe #globeHost{min-height:clamp(420px, 80vh, 800px);}
+  #sec-globe .stat-grid{grid-template-columns:repeat(4,1fr);}
+  @media (max-width:700px){ #sec-globe .stat-grid{grid-template-columns:1fr 1fr;} }
 
   /* the "instrument screen" — always dark regardless of page theme */
   .screen{
@@ -586,7 +594,7 @@
 ====================================================================== */
 var STR = {
   eyebrow: {vi:"ĐMST ĐẠI HỌC · DỮ LIỆU TOÀN CẦU", en:"UNIVERSITY INNOVATION · GLOBAL DATA"},
-  siteTitle: {vi:"Atlas Trung tâm Nghiên cứu, Đổi mới sáng tạo", en:"Atlas of University Innovation Centers"},
+  siteTitle: {vi:"Atlas Trung tâm Nghiên cứu, Đổi mới sáng tạo", en:"Atlas of Innovation Centers"},
   tabGlobal: {vi:"Toàn cầu", en:"Global"},
   tabVietnam: {vi:"Việt Nam", en:"Vietnam"},
   tabRankings: {vi:"Xếp hạng", en:"Rankings"},

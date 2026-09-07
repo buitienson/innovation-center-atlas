@@ -1,25 +1,40 @@
 #!/usr/bin/env python3
-"""Grow ROSTER (src/atlas.html) with real, web-search-grounded organizations
-found by Gemini, for exactly one queue item per run.
+"""Grow ROSTER (src/atlas.html) with real organizations Gemini extracts from
+specific, known web pages, for exactly one queue item per run.
+
+Design history (see _claude/routine-roster-grow.md "Tinh trang hien tai" for
+the full story): the first version of this script used Gemini's Google
+Search grounding tool (tools:[{"google_search":{}}]) so Gemini could search
+the open web itself. Confirmed empirically on 2026-09-06 that this key's
+project has a grounding quota of zero (429 RESOURCE_EXHAUSTED on every
+grounded call, while plain calls succeed) - likely Google's 2026 free-tier
+cuts, possibly requiring billing to unlock. Also confirmed that Gemini's
+SEPARATE `url_context` tool (fetch specific URLs, no open search) works fine
+on the same key with no quota error. This version uses that instead: each
+queue item now supplies its own candidate source URLs (a directory page, a
+Wikipedia list, an association member page...) instead of a free-text search
+query, and Gemini extracts only what it actually finds on those pages -
+`urlContextMetadata` in the response confirms which URLs were really
+fetched, so a failed fetch can't be quietly passed off as a real finding.
 
 Unlike the generic `gemini_worker.py` (Brain skill `gemini-delegate`, pure
-text-in/text-out with no web access), this script enables Gemini's Google
-Search grounding tool so it can actually look things up instead of recalling
-plausible-sounding names/URLs from training data. Every candidate is then
-independently liveness-checked over HTTP before being trusted — grounding
-reduces hallucination, it does not eliminate it, so the liveness check is the
-real gate, not the grounding metadata.
+text-in/text-out with no web access at all), this script can actually read
+live pages. Every candidate is still independently liveness-checked over
+HTTP before being trusted - even a successfully-fetched source page doesn't
+guarantee Gemini transcribed an organization's own URL correctly.
 
 Usage:
   export GEMINI_API_KEY="your-key"   # shell only, never written to a file
   python3 roster_grow_worker.py \
-    --queue-item "AUTM member directory (autm.net) - North America TTOs" \
+    --queue-item "Malaysia - TTOs at major public universities" \
+    --source-urls "https://en.wikipedia.org/wiki/List_of_universities_in_Malaysia" "https://example.com/another-source" \
     --roster-html ../../src/atlas.html \
     --output candidates.json \
     --max-new 15
 
 Exit codes (the calling routine relies on these):
-  0 = ran fine (candidates.json written, possibly an empty list)
+  0 = ran fine (candidates.json written, possibly an empty list - including
+      the case where every source URL failed to fetch)
   1 = a real error (bad args, all models failed with a non-quota error,
       output couldn't be parsed as JSON after retries) - worth investigating
   2 = every model hit a quota/overload error (429/503) - normal "stop for
@@ -40,24 +55,30 @@ RETRYABLE_STATUS = (429, 503)
 API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
 LOG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "usage.log")
 
-SYSTEM_INSTRUCTION = """Ban la mot nha nghien cuu dang tra cuu danh sach cac to chuc/don vi
-chuyen giao cong nghe (Technology Transfer Office - TTO), trung tam doi moi sang tao,
-vuon uom/tang toc khoi nghiep gan voi truong dai hoc hoac vien nghien cuu, tu MOT nguon
-cu the duoc giao. Dung cong cu tim kiem de tra cuu nguon do that su - KHONG duoc liet ke
-mot to chuc neu ban khong tim thay URL chinh thuc that qua ket qua tim kiem. Khong tu suy
-doan hay nho lai tu kien thuc san co neu khong tra ra duoc URL that.
+SYSTEM_INSTRUCTION = """Ban la mot nha nghien cuu dang doc mot so trang web cu the duoc giao
+(qua cong cu url_context) de tim cac to chuc/don vi chuyen giao cong nghe (Technology Transfer
+Office - TTO), trung tam doi moi sang tao, vuon uom/tang toc khoi nghiep gan voi truong dai hoc
+hoac vien nghien cuu.
+
+QUAN TRONG: chi liet ke to chuc THUC SU xuat hien tren cac trang duoc giao - khong duoc tu suy
+doan hay lay tu kien thuc san co neu trang khong the tai duoc hoac khong nhac den to chuc do.
+Neu mot trang khong tai duoc, bo qua noi dung tu trang do, dung doan.
 
 Tra ve DUNG MOT JSON array thuan tuy (khong markdown fence, khong loi giai thich truoc/sau),
 moi phan tu la mot object voi cac truong:
   name (string, ten to chuc/don vi, ten goc - khong dich),
   host (string, truong dai hoc/vien nghien cuu chu quan - de trong "" neu to chuc do doc lap),
   country (string, ten quoc gia bang tieng Anh, vi du "Malaysia"),
-  url (string, trang web chinh thuc cua chinh to chuc do - bat buoc, khong duoc de trong),
-  lat (number, vi do gan dung cua thanh pho dat tru so - uoc luong tu kien thuc dia ly, khong can tim kiem rieng cho buoc nay),
+  url (string, trang web chinh thuc cua chinh to chuc do - dung lien ket tren trang nguon neu co;
+    neu trang nguon khong cho lien ket rieng, uoc luong URL hop ly nhat dua tren ten
+    vien/truong/to chuc chu quan - se duoc kiem tra song rieng sau nen uoc luong hop ly van
+    chap nhan duoc, KHONG duoc de trong),
+  lat (number, vi do gan dung cua thanh pho dat tru so - uoc luong tu kien thuc dia ly, khong can
+    tim kiem rieng cho buoc nay),
   lng (number, kinh do gan dung, cung logic nhu lat)
 
-Neu nguon duoc giao khong co to chuc nao dat tieu chuan tren (khong tim ra URL that), tra ve
-mang rong []. Khong bao gio bia URL."""
+Neu khong trang nao trong so duoc giao tai duoc, hoac khong trang nao nhac den to chuc phu hop,
+tra ve mang rong []."""
 
 
 def read_text(path):
@@ -77,7 +98,7 @@ def call_gemini_once(api_key, model, user_text):
     payload = {
         "systemInstruction": {"parts": [{"text": SYSTEM_INSTRUCTION}]},
         "contents": [{"role": "user", "parts": [{"text": user_text}]}],
-        "tools": [{"google_search": {}}],
+        "tools": [{"url_context": {}}],
     }
     data = json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(
@@ -96,25 +117,20 @@ def call_gemini_once(api_key, model, user_text):
 
     parts = candidates[0].get("content", {}).get("parts", [])
     text = "\n".join(p.get("text", "") for p in parts if "text" in p)
-    grounding = candidates[0].get("groundingMetadata", {}) or {}
-    grounded_urls = []
-    for chunk in grounding.get("groundingChunks", []) or []:
-        web = chunk.get("web") or {}
-        if web.get("uri"):
-            grounded_urls.append(web["uri"])
+    url_ctx = candidates[0].get("urlContextMetadata", {}) or {}
+    url_statuses = [
+        (m.get("retrievedUrl", ""), m.get("urlRetrievalStatus", ""))
+        for m in url_ctx.get("urlMetadata", []) or []
+    ]
     usage = body.get("usageMetadata", {})
-    return text, grounded_urls, usage
+    return text, url_statuses, usage
 
 
 def plain_call_works(api_key, model):
-    """A quick non-grounded probe on the same model/key, used only for
-    diagnostics when every grounded attempt is exhausted - it tells us
-    whether the KEY is dead (plain call also fails) or just the grounding
-    quota specifically (plain call succeeds). Confirmed empirically on
-    2026-09-06: a key can have a perfectly healthy plain-call quota while
-    every grounded (tools:[{"google_search":{}}]) call gets an immediate
-    429 RESOURCE_EXHAUSTED - Google's 2026 free-tier cuts appear to zero
-    out grounding specifically unless billing is enabled on the project."""
+    """A quick tool-free probe on the same model/key, used only for
+    diagnostics when every url_context attempt is exhausted - it tells us
+    whether the KEY is dead (plain call also fails) or just this tool's
+    quota specifically (plain call succeeds)."""
     url = f"{API_BASE}/{model}:generateContent?key={api_key}"
     payload = {"contents": [{"role": "user", "parts": [{"text": "ping"}]}]}
     try:
@@ -132,10 +148,10 @@ def call_gemini(api_key, models, user_text):
     last_err = None
     for i, model in enumerate(models):
         try:
-            text, grounded_urls, usage = call_gemini_once(api_key, model, user_text)
+            text, url_statuses, usage = call_gemini_once(api_key, model, user_text)
             if i > 0:
                 print(f"(Da chuyen sang model {model})", file=sys.stderr)
-            return model, text, grounded_urls, usage
+            return model, text, url_statuses, usage
         except GeminiHTTPError as e:
             last_err = e
             if e.status in RETRYABLE_STATUS and i < len(models) - 1:
@@ -145,18 +161,15 @@ def call_gemini(api_key, models, user_text):
     if last_err.status in RETRYABLE_STATUS:
         if plain_call_works(api_key, models[-1]):
             print(
-                f"Ca {len(models)} model deu tra 429 KHI BAT GOOGLE SEARCH GROUNDING, "
-                f"nhung goi thuong (khong grounding) tren cung key/model van chay duoc. "
-                f"Day la han muc grounding rieng bi chan/het, khong phai key het hop le. "
-                f"Xem https://ai.dev/rate-limit (can dang nhap dung tai khoan) hoac can nhac "
-                f"bat billing tren Google Cloud project cua key nay (Tier 1 co 1.500 luot "
-                f"grounding mien phi/ngay, nhung bat billing se xoa toan bo han muc mien phi "
-                f"khac cua project).",
+                f"Ca {len(models)} model deu tra 429 KHI BAT url_context, nhung goi thuong "
+                f"(khong tool) tren cung key/model van chay duoc. Day la han muc rieng cua "
+                f"tool nay bi chan/het, khong phai key het hop le. Xem "
+                f"https://ai.dev/rate-limit (can dang nhap dung tai khoan).",
                 file=sys.stderr,
             )
         else:
             print(f"Ca {len(models)} model deu het han muc/qua tai (loi cuoi: {last_err.status}) - "
-                  f"ke ca goi khong grounding cung loi, co the ca key da het han muc chung.",
+                  f"ke ca goi khong tool cung loi, co the ca key da het han muc chung.",
                   file=sys.stderr)
         sys.exit(2)
     print(f"Loi HTTP {last_err.status} tu Gemini: {last_err.body}", file=sys.stderr)
@@ -236,8 +249,9 @@ def url_is_alive(url, timeout=10):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Grow ROSTER via Gemini + Google Search grounding")
-    ap.add_argument("--queue-item", required=True, help="Description of the ONE source to search this run")
+    ap = argparse.ArgumentParser(description="Grow ROSTER via Gemini's url_context tool")
+    ap.add_argument("--queue-item", required=True, help="Label for this run (for logs/records)")
+    ap.add_argument("--source-urls", required=True, nargs="+", help="One or more specific pages for Gemini to read via url_context")
     ap.add_argument("--roster-html", required=True, help="Path to src/atlas.html, to read existing ROSTER for dedup")
     ap.add_argument("--output", required=True, help="Where to write the validated candidates JSON")
     ap.add_argument("--max-new", type=int, default=15)
@@ -253,14 +267,25 @@ def main():
     existing_names = {normalize_name(r[0]) for r in existing}
     existing_domains = {domain_of(r[3]) for r in existing if len(r) > 3 and r[3]}
 
+    urls_block = "\n".join(args.source_urls)
     user_text = (
-        f"Nguon can tra: {args.queue_item}\n\n"
-        "Liet ke cac to chuc CGCN/DMST dai hoc tim duoc tu nguon nay, theo dung dinh dang JSON "
-        "da mo ta trong system instruction."
+        f"Muc tieu: {args.queue_item}\n\n"
+        f"Doc cac trang sau qua url_context roi liet ke cac to chuc CGCN/DMST dai hoc tim duoc, "
+        f"theo dung dinh dang JSON da mo ta trong system instruction:\n{urls_block}"
     )
     models = [args.model] if args.model else MODEL_FALLBACK_CHAIN
-    model, text, grounded_urls, usage = call_gemini(api_key, models, user_text)
+    model, text, url_statuses, usage = call_gemini(api_key, models, user_text)
     log_usage(model, usage, args.queue_item)
+
+    succeeded = [u for u, s in url_statuses if s == "URL_RETRIEVAL_STATUS_SUCCESS"]
+    print(f"Trang tai duoc: {len(succeeded)}/{len(url_statuses)} ({url_statuses})", file=sys.stderr)
+    if not succeeded:
+        # Nothing was actually fetched - whatever Gemini said can't be trusted
+        # as coming from the source, so don't merge anything this run.
+        with open(args.output, "w", encoding="utf-8") as f:
+            json.dump([], f)
+        print("Khong trang nao tai duoc - ghi ket qua rong, khong tin noi dung Gemini tra ve.", file=sys.stderr)
+        sys.exit(0)
 
     parsed = extract_json_array(text)
     if parsed is None:
@@ -268,7 +293,6 @@ def main():
         print(text, file=sys.stderr)
         sys.exit(1)
 
-    grounded_domains = {domain_of(u) for u in grounded_urls}
     results = []
     for item in parsed:
         if len(results) >= args.max_new:
@@ -292,7 +316,6 @@ def main():
             "url": url,
             "lat": item.get("lat"),
             "lng": item.get("lng"),
-            "grounded": dom in grounded_domains,  # informational only, not a filter
             "source_queue_item": args.queue_item,
         })
         existing_names.add(norm)  # avoid duplicate candidates within this same run
