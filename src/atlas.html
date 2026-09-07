@@ -2098,6 +2098,16 @@ document.addEventListener('click', function(e){
 // never a placeholder. The site owner adds items here over time — this is
 // not an automated feed.
 var NEWS = [
+  {date:'2026-09-05', source:'Báo Nhân Dân', url:'https://en.nhandan.vn/vk-connect-2026-promotes-knowledge-links-between-viet-nam-rok-post166300.html',
+    image:'https://en-cdn.nhandan.vn/images/PGsdfWzXfw3FSVNqQeLLm0WnHh29tUBsJfHYyabQ5hz-uX-lTsuxS7Yiggdqsn2xshCXmgI3hJXGVRYJMfGPzA/diendan3.jpg.webp',
+    title:{vi:'Diễn đàn Kết nối tri thức Việt Nam - Hàn Quốc VK Connect 2026 tại Daegu', en:'VK Connect 2026 forum promotes knowledge links between Vietnam and the Republic of Korea'},
+    summary:{vi:'Tổng Lãnh sự quán Việt Nam tại Busan phối hợp Đại học Yeungnam tổ chức diễn đàn tại Daegu ngày 5/9/2026, thu hút hơn 300 đại biểu và giới thiệu hơn 60 đề tài nghiên cứu về CNTT, AI, vật liệu mới, năng lượng, bán dẫn.',
+      en:'Held in Daegu on September 5, 2026 by the Vietnamese Consulate General in Busan and Yeungnam University, the forum drew more than 300 delegates and featured over 60 research topics spanning IT, AI, new materials, energy, and semiconductors.'}},
+  {date:'2026-09-04', source:'Báo Nhân Dân', url:'https://nhandan.vn/phat-dong-cuoc-thi-rnd-to-startup-2026-post986429.html',
+    image:'https://cdn.nhandan.vn/images/IvCZyovHroGqKo00FqhL-L3dUtxJx7aUVX6aEtqgGrzQJA11aBE0RvGT_BrBiUORoc799lUvmyuMIvaEsWDHj172y_s1ZONhFgycEVVgNoI-Gkmbv5Qj-HH0hGFE5KBk3HNv5klUBNFIavGQJ_ZqT3qTwBsqGqXO0IlwAuP-aEXmZ9N2v4aZcLg70qnqEuDq/1788520905418-2224224564266808889-665299495323059420-b4e0d33ddcf3d25ff49982875ec5dfae.jpg.webp',
+    title:{vi:'Đại học Quốc gia Hà Nội phát động cuộc thi khởi nghiệp "RND to Startup 2026"', en:'Vietnam National University, Hanoi launches the "RND to Startup 2026" entrepreneurship contest'},
+    summary:{vi:'Cuộc thi dành cho học sinh, sinh viên, nghiên cứu sinh từ 16 tuổi có ý tưởng/dự án KHCN, gồm 2 bảng và 8 lĩnh vực, nhận hồ sơ đến 30/9/2026, chung kết Demo Day dự kiến tuần 2 tháng 12/2026.',
+      en:'Open to Vietnamese students and researchers aged 16 and up with science/technology ideas or projects, the contest runs two tracks across 8 fields, accepts applications through September 30, 2026, with a Demo Day final expected in mid-December 2026.'}},
   {date:'2026-08-21', source:'Báo Nhân Dân', url:'https://nhandan.vn/ket-noi-he-sinh-thai-khoi-nghiep-viet-nam-voi-mang-luoi-doi-moi-sang-tao-toan-cau-post983425.html',
     image:'https://cdn.nhandan.vn/images/IvCZyovHroGqKo00FqhL-A0xHKHbL6LGWB_PjVe5eMQmw-Jlv_fSs62kzeOmUjE-Y6iZ3A1ZiogopEJkM3RA6A/g1-9060.jpg.webp',
     title:{vi:'Ngày hội Cộng đồng Khởi nghiệp Việt Nam 2026 kết nối hệ sinh thái trong nước với mạng lưới ĐMST toàn cầu', en:'Vietnam Startup Community Day 2026 links the domestic ecosystem to global innovation networks'},
@@ -2159,6 +2169,20 @@ function renderNews(){
 // "see official page" instead of guessing one. The site owner adds/updates items
 // over time; this is not an automated feed.
 var FUNDING = [
+  {id:'rnd-to-startup-2026', type:'competition', deadline:'2026-09-30',
+    title:{vi:'RND to Startup 2026 — Cuộc thi khởi nghiệp sáng tạo ĐHQGHN', en:'RND to Startup 2026 — VNU Hanoi innovation startup contest'},
+    org:{vi:'Đại học Quốc gia Hà Nội', en:'Vietnam National University, Hanoi'},
+    theme:{vi:'Ý tưởng/dự án KHCN của học sinh, sinh viên, nghiên cứu sinh từ 16 tuổi, 8 lĩnh vực (AI, giáo dục, y tế, nông nghiệp, môi trường, công nghiệp, văn hoá...).', en:'S&T ideas/projects by Vietnamese students and researchers aged 16+, across 8 fields (AI, education, healthcare, agriculture, environment, industry, culture...).'},
+    location:{vi:'Toàn quốc', en:'Nationwide (Vietnam)'},
+    prize:{vi:'10 giải gồm tiền thưởng, gói ươm tạo và cố vấn chuyên môn', en:'10 awards including cash prizes, incubation packages, and expert mentoring'},
+    url:'https://nhandan.vn/phat-dong-cuoc-thi-rnd-to-startup-2026-post986429.html'},
+  {id:'most-bach-bo-xuan-son-2026', type:'rfp', deadline:'2026-09-21',
+    title:{vi:'Đặt hàng nhiệm vụ phát triển sản phẩm từ cây Bách bộ tại vùng đệm VQG Xuân Sơn', en:'Call for R&D task proposals: sustainable Stemona ("Bách bộ") product development at Xuan Son National Park buffer zone'},
+    org:{vi:'Bộ Khoa học và Công nghệ', en:'Ministry of Science and Technology'},
+    theme:{vi:'Phát triển sản phẩm từ cây Bách bộ theo hướng bền vững, gắn với cải thiện sinh kế cộng đồng vùng đệm.', en:'Sustainable product development from Stemona ("Bách bộ") plants, linked to improving livelihoods in the buffer-zone community.'},
+    location:{vi:'Phú Thọ', en:'Phu Tho province'},
+    prize:{vi:'Hỗ trợ 6 tỷ đồng từ ngân sách nhà nước, thực hiện trong 48 tháng', en:'VND 6 billion in state funding, over a 48-month implementation period'},
+    url:'https://mst.gov.vn/thong-bao-ke-hoach-dat-hang-nhiem-vu-khoa-hoc-va-cong-nghe-197260903173217551.htm'},
   {id:'natif-lai-suat-2026-1', type:'fund', deadline:'2026-09-20',
     title:{vi:'Hỗ trợ lãi suất vay đổi mới công nghệ — đợt 1/2026', en:'Technology-innovation loan interest support — round 1/2026'},
     org:{vi:'Quỹ Đổi mới công nghệ quốc gia (NATIF) — Bộ Khoa học và Công nghệ', en:'National Technology Innovation Fund (NATIF) — Ministry of Science and Technology'},

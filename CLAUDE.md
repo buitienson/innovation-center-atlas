@@ -53,7 +53,16 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-06 tối — hai việc chẩn đoán, chưa xong, sếp cần quyết định tiếp:
+**Lần cuối:** 2026-09-07 — routine tự động thêm 2 tin + 2 cơ hội tài trợ/cuộc thi vào
+`src/atlas.html`. Tin tức: "Đại học Quốc gia Hà Nội phát động cuộc thi khởi nghiệp RND to
+Startup 2026" (Nhân Dân, 4/9) và "VK Connect 2026 — Diễn đàn Kết nối tri thức Việt Nam - Hàn
+Quốc tại Daegu" (Nhân Dân, 5/9). Fund/Hackathon: RND to Startup 2026 (hạn 30/9/2026, cùng
+sự kiện với tin tức ở trên nhưng thêm riêng vào `FUNDING` vì còn đang mở hồ sơ) và đặt hàng
+nhiệm vụ KH&CN "phát triển sản phẩm từ cây Bách bộ tại vùng đệm VQG Xuân Sơn" của Bộ KH&CN
+(hạn 21/9/2026). Đã build + kiểm `node --check` + cân bằng thẻ, commit + push. Chưa publish
+lại Artifact (routine tự động không tự làm bước này).
+
+**Lần trước:** 2026-09-06 tối — hai việc chẩn đoán, chưa xong, sếp cần quyết định tiếp:
 
 1. **Quả cầu 3D trên Edge — xác nhận KHÔNG PHẢI lỗi code.** Xin quyền
    computer-use xem trực tiếp Edge của sếp (chỉ xem, không click/gõ được —
@@ -89,42 +98,4 @@ Việc mở, cần sếp làm khi rảnh: (1) gõ `edge://gpu`, báo lại dòng
 (2) đọc `ai.dev/rate-limit`, quyết bật billing / dùng key khác / đổi routine
 sang chạy trên Claude+WebSearch / bỏ tự động hoá — xem 3 lựa chọn trong
 `_claude/routine-roster-grow.md`.
-
----
-**Lần trước:** 2026-09-06 — hai việc, bắt nguồn từ hai lần sếp chỉ ra lỗi thật trong phiên:
-
-1. **Sửa thêm lỗi tải quả cầu 3D** — bản sửa trước (thêm CDN dự phòng, tách thông báo lỗi)
-   vẫn còn một lỗ hổng: toàn bộ logic thử-lại chỉ chạy khi sự kiện `load` của trang bắn ra,
-   nhưng nếu yêu cầu tải three.js từ CDN đầu tiên **treo** (mạng chập chờn/bị lọc, không hẳn
-   là báo lỗi ngay) thì chính `load` cũng có thể không bao giờ bắn — khiến logic thử-lại
-   không bao giờ chạy. Đã sửa: bắt đầu tải three.js ngay lập tức (không đợi `load` nữa, chỉ
-   lệnh `initGlobe()` mới đợi vì cần layout đã ổn định), và mỗi lần thử tải đua với hạn 8
-   giây riêng — treo im lặng cũng bị tính là thất bại thay vì chờ vô thời hạn. Đã tự dựng
-   một server cục bộ giữ kết nối mở không phản hồi để xác nhận: bản cũ sẽ treo mãi, bản mới
-   time-out đúng ở mốc 8 giây rồi chuyển sang thử CDN dự phòng.
-2. **Dựng hạ tầng cho routine mở rộng `ROSTER` bằng Gemini** — sếp muốn "cày" cho hết mọi
-   đơn vị ĐMST trên thế giới; đã giải thích không có nguồn nào liệt kê "tất cả" và đề xuất
-   thay bằng routine mở rộng theo lô nhỏ, có kiểm soát, chạy trên Gemini để không tốn token
-   Claude, dừng khi hết hạn mức. Dùng `EnterPlanMode` để chốt thiết kế trước khi code (sếp
-   chọn: **tách routine riêng**, không gộp vào `routine-tin-tuc.md`, vì cần secret
-   `GEMINI_API_KEY` riêng). Phát hiện quan trọng khi rà `gemini_worker.py` (skill dùng chung
-   `gemini-delegate` ở Brain): script đó **không có khả năng duyệt web**, dùng nguyên trạng
-   cho việc tìm tổ chức có thật sẽ khiến Gemini bịa — nên viết script riêng
-   `_claude/tools/roster_grow_worker.py`, bật **Google Search grounding** của Gemini API
-   (`tools:[{"google_search":{}}]`, đã xác minh qua tài liệu Gemini hiện hành) cộng thêm một
-   lớp tự kiểm tra URL còn sống bằng HTTP trước khi tin — đây mới là chốt chặn thật, vì
-   grounding giảm chứ không loại bỏ hết khả năng bịa. Đã tạo thêm hàng đợi nguồn
-   `_claude/roster-grow-queue.md` (34 mục khởi điểm, ưu tiên Đông Nam Á/Châu Phi/Trung
-   Đông/Trung Á — các khu vực mỏng nhất theo đếm thật từ `ROSTER` hiện có, không phải đoán)
-   và file hướng dẫn canonical `_claude/routine-roster-grow.md` (cùng khuôn
-   `routine-tin-tuc.md`). **Chưa tạo cloud routine thật** — cần sếp tự nhập
-   `GEMINI_API_KEY` khi tạo trigger qua skill `schedule`, và nên tự chạy tay
-   `roster_grow_worker.py` một lần để kiểm kết quả trước khi để chạy tự động hằng ngày (xem
-   mục "Kiểm chứng" trong `_claude/routine-roster-grow.md`).
-
-Đã build, kiểm `node --check` + cân bằng thẻ, publish Artifact, `git push` (commit
-`29f2a9d` cho mục 1; mục 2 là file hạ tầng mới, chưa chạm `src/atlas.html`).
-
-Việc mở: sếp cần tự thử lại quả cầu 3D trên Edge/MacBook để xác nhận lỗi 1 đã hết; sếp cần
-chạy tay routine mở rộng roster lần đầu + tạo cloud routine hằng ngày cho nó.
 (Claude)
