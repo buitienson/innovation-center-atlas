@@ -594,7 +594,7 @@
 ====================================================================== */
 var STR = {
   eyebrow: {vi:"ĐMST ĐẠI HỌC · DỮ LIỆU TOÀN CẦU", en:"UNIVERSITY INNOVATION · GLOBAL DATA"},
-  siteTitle: {vi:"Atlas Trung tâm Nghiên cứu, Đổi mới sáng tạo", en:"Atlas of Innovation Centers"},
+  siteTitle: {vi:"Atlas Trung tâm Đổi mới sáng tạo", en:"Atlas of Innovation Centers"},
   tabGlobal: {vi:"Toàn cầu", en:"Global"},
   tabVietnam: {vi:"Việt Nam", en:"Vietnam"},
   tabRankings: {vi:"Xếp hạng", en:"Rankings"},
@@ -2847,8 +2847,6 @@ function initGlobe(){
   }
   var solid = new THREE.Mesh(new THREE.SphereGeometry(R,64,40), new THREE.MeshBasicMaterial({map:buildWorldTexture(), transparent:true, opacity:0.97}));
   group.add(solid);
-  var wire = new THREE.Mesh(new THREE.SphereGeometry(R*1.001,24,16), new THREE.MeshBasicMaterial({color:0x2b3a55, wireframe:true, transparent:true, opacity:0.22}));
-  group.add(wire);
   var atmo = new THREE.Mesh(new THREE.SphereGeometry(R*1.045,48,32), new THREE.MeshBasicMaterial({color:0xffcc4e, transparent:true, opacity:0.05, side:THREE.BackSide}));
   group.add(atmo);
 
