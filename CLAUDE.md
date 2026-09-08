@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 839 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 842 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,28 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (tiếp nữa) — tìm nguồn danh bạ thay thế cho Thái Lan và Indonesia
+**Lần cuối:** 2026-09-08 (tiếp nữa nữa) — mở 3 nước Đông Nam Á CHƯA TỪNG có mục nào
+(Brunei/Campuchia/Myanmar), mỗi nước 1 mục thật đầu tiên (không tìm được danh bạ nhiều-tổ-
+chức, tìm tay từng tổ chức đơn lẻ theo đúng ngoại lệ đã dùng cho Singapore/Thái Lan — WebSearch
++ kiểm sống bằng `check_url()`, không qua worker vì không có trang nguồn nhiều mục):
+
+- **Brunei (0→1):** UBD Innovation and Enterprise (`ubd.edu.bn/innovation/`), Universiti
+  Brunei Darussalam. (Thử thêm Universiti Teknologi Brunei "Enterprise Office" nhưng không
+  tìm được URL riêng, chỉ có URL trường chung chung — bỏ, không thêm cho chắc.)
+- **Campuchia (0→1):** University-Industry Linkage (UIL) Office (`uil.itc.edu.kh`), Institute
+  of Technology of Cambodia (ITC) — đúng đơn vị đã nhắc tên (Peany Houng) ở lần bàn giao
+  2026-09-06, giờ có URL thật.
+- **Myanmar (0→1):** Department of Research and Innovation — DRI (`dri.gov.mm`), cơ quan nhà
+  nước độc lập (không thuộc một trường cụ thể, host để trống — cùng quy ước với "Thailand
+  Science Park" đã có trong ROSTER).
+- **Indonesia:** cố tìm thêm nhưng KHÔNG ra mục mới nào đạt chuẩn lượt này — 4 KST của BRIN
+  (Soekarno, Habibie, Samaun Samadikun, Siwabessy) xác nhận KHÔNG có website riêng, chỉ có
+  trang chung `brin.go.id`/`elsa.brin.go.id` — không đạt "trang chính thức của chính tổ chức
+  đó" nên không thêm. Vẫn đứng ở 7, mỏng nhất trong nhóm đã động tới.
+
+`ROSTER`: 839 → **842** (Brunei 0→1, Campuchia 0→1, Myanmar 0→1).
+
+**Lần trước:** 2026-09-08 (tiếp nữa) — tìm nguồn danh bạ thay thế cho Thái Lan và Indonesia
 (việc mở từ lượt trước). Kết quả: `ROSTER` 831 → **839**.
 
 - **Thái Lan (+7)** — tìm ra nguồn RẤT TỐT: `sciencepark.wu.ac.th/rsp` (trang của Đại học
