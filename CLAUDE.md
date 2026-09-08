@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 907 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 920 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,8 +52,21 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (mở rộng Châu Phi, theo yêu cầu "rà tiếp các châu lục/quốc gia
-khác") — Châu Phi gần như trống trước lượt này (chỉ Ai Cập/Nam Phi/Nigeria/Ghana/
+**Lần cuối:** 2026-09-08 (tiếp — Mỹ Latinh/Trung Á/Balkan, checkpoint 2 theo yêu cầu "tầm 50
+mục thì dừng push") — tìm tay từng tổ chức qua WebSearch (không có danh bạ đa-tổ-chức tốt cho
+khu vực này), kiểm sống `check_url()`, một số dùng homepage trường theo quy tắc mới (UNC
+Córdoba homepage bị BỎ vì trùng domain với mục "Secretaría de Innovación y Vinculación
+Tecnológica" đã có sẵn — nhắc lại: LUÔN kiểm domain trùng trước khi thêm, kể cả khi tên mục
+khác hẳn; tương tự Tec de Monterrey TTO bị bỏ vì trùng hệt mục "Technology Transfer Office
+(TecScience)" đã có). +13 mục thật, mở MỚI HOÀN TOÀN 9 nước: Paraguay, Trinidad and Tobago,
+Serbia, Armenia, Azerbaijan, Georgia, Mongolia, Belarus, Uzbekistan. Đào sâu: Argentina
+(+1, UBA), Chile (+1, Universidad de Valparaíso), Peru (+1, UNI DITT).
+
+`ROSTER`: 907 → **920**. (Ecuador, Colombia thêm, Kazakhstan, Ukraine thử nhưng mọi URL tìm
+được đều không sống kể cả homepage trường — để lại việc mở, chưa mở được.)
+
+**Lần trước:** 2026-09-08 (mở rộng Châu Phi, checkpoint 1, theo yêu cầu "rà tiếp các châu
+lục/quốc gia khác") — Châu Phi gần như trống trước lượt này (chỉ Ai Cập/Nam Phi/Nigeria/Ghana/
 Ethiopia/Morocco/Uganda có 1-6 mục). Tìm ra nguồn danh bạ đa-tổ-chức tốt:
 `africatechschools.com` (catalog tư nhân, KHÔNG chính phủ, nhưng mỗi trang `/school/<slug>/`
 có link thật ra site riêng của từng tổ chức — đã xác nhận qua nhiều mẫu). Quy trình: đọc
