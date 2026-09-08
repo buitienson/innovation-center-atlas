@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 1936 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 2253 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,46 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (checkpoint 16 — **KHAI THÁC XONG africatechschools.com, SÁT MỐC
+**Lần cuối:** 2026-09-09 (checkpoint 17 — **VƯỢT MỐC 2000, đợt 2 africatechschools.com**) —
+sếp nâng mục tiêu tổng lên **5000 đơn vị**. Checkpoint 16 mới chỉ duyệt trang khu vực MỘT LẦN
+mỗi trang (đủ để lấy 861 mục) nhưng một lần fetch tĩnh không lấy hết được toàn bộ danh sách —
+xác nhận bằng cách fetch lại nhiều lần cùng 1 trang `?page=N`, kết quả hội tụ dần: West Africa
+472 (site ghi 474), North Africa 364 (365), East Africa 340 (341), Southern Africa 294 (297),
+Central Africa 104 (107) — tổng **1574** slug duy nhất, so với 861 đã xử lý ở checkpoint 16 →
+lộ ra **713 slug hoàn toàn mới** (`/tmp/atx-new-slugs.json`, đã mất khi phiên kết thúc). Tải
+chi tiết (`website` + `Location:`) cho cả 713 → `check_url()` toàn bộ → **387/713 sống**. Lọc
+trùng tên/domain với ROSTER (70 trùng, cơ chế lọc hoạt động đúng) → merge **317 mục mới thật**.
+
+Toạ độ vẫn dùng centroid CẤP QUỐC GIA (23 nước Châu Phi xuất hiện trong đợt này: Algeria,
+Benin, Burkina Faso, Cape Verde, Djibouti, Egypt, Ethiopia, Ghana, Guinea, Guinea Bissau,
+Ivory Coast, Kenya, Liberia, Mali, Morocco, Nigeria, Senegal, Sierra Leone, Somalia, Sudan,
+The Gambia, Togo, Tunisia — dict `COUNTRY_CENTROID` viết tay trong script merge tạm, KHÔNG có
+sẵn trong `roster_common.py`, phải viết lại mỗi lần cần một dict mới nếu muốn tái dùng, nên
+cân nhắc thêm cố định vào `roster_common.py` nếu còn merge theo centroid-quốc-gia nhiều lần
+nữa).
+
+`ROSTER`: 1936 → **2253**. Đơn vị trên bản đồ: **2262** — đã VƯỢT mốc 2000, còn xa mốc **5000**
+mới (chặng kế: 3000).
+
+**`africatechschools.com` COI NHƯ ĐÃ KHAI THÁC HẾT** sau 2 đợt (861 + 713 = 1574 slug, đúng
+khớp tổng site công bố). **WIPO TISC cũng đã hết** (xem checkpoint 15). Hai nguồn lớn nhất đã
+tìm ra trong phiên đều cạn — **VIỆC MỞ QUAN TRỌNG NHẤT cho lượt sau: tìm nguồn lớn (danh bạ đa-
+tổ-chức, có API hoặc HTML tĩnh scrape được) TIẾP THEO**, vì để đạt 5000 cần thêm ít nhất
+~2700 mục nữa — quy mô này gần như chắc chắn không khả thi bằng WebSearch từng tổ chức lẻ, bắt
+buộc phải tìm ra một nguồn lớn mới kiểu TISC/africatechschools. Đã thử và LOẠI: các domain
+`asiatechschools.com`/`latintechschools.com`/`latamtechschools.com`/`europetechschools.com`/
+`middleeasttechschools.com`/`pacifictechschools.com` (đoán site chị em của africatechschools.com
+theo tên miền) — TẤT CẢ không resolve DNS (curl trả `000`), không tồn tại. IASP (`iasp.ws`,
+hiệp hội khu khoa học quốc tế) đã thử ở checkpoint 15, vẫn TẠM BỎ QUA vì ASP.NET postback không
+có API JSON — có thể đáng đầu tư công sức reverse-engineer nếu không tìm ra nguồn nào khác, vì
+đây là danh bạ khu khoa học CHÍNH THỐNG quy mô lớn. Các hướng CHƯA THỬ, đáng thử lượt sau: WIPO
+GREEN (nếu có danh bạ tổ chức tương tự TISC), UBI Global/UBI Index (bảng xếp hạng vườn ươm đại
+học thế giới — có thể có danh sách đơn vị kèm link), StartupBlink ecosystem rankings theo từng
+nước (có thể liệt kê tên tổ chức + link), F6S (nền tảng accelerator toàn cầu, có thể scrape
+được danh mục theo nước/lĩnh vực), hoặc quay lại đào sâu từng nước lớn còn mỏng (Trung Quốc chỉ
+~28, Ấn Độ, Brazil, Nga còn nhiều mục TISC chưa lấy hết theo ghi chú checkpoint 12-14).
+
+**Lần trước:** 2026-09-08 (checkpoint 16 — **KHAI THÁC XONG africatechschools.com, SÁT MỐC
 2000**) — hoá ra site này có **861 tổ chức** (không phải ~55 như tưởng lượt trước), trải trên
 5 trang khu vực Châu Phi. Quy trình 3 bước: (1) lấy tên+slug từ 5 trang `/region/<vùng>/`
 (HTML tĩnh, không cần JS), (2) tải từng trang chi tiết `/school/<slug>/`, trích `Website:` +
