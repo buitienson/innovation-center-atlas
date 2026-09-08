@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 870 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 907 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,27 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (sếp chốt quy tắc mới) — sếp yêu cầu rõ: **khi không tìm ra trang
+**Lần cuối:** 2026-09-08 (mở rộng Châu Phi, theo yêu cầu "rà tiếp các châu lục/quốc gia
+khác") — Châu Phi gần như trống trước lượt này (chỉ Ai Cập/Nam Phi/Nigeria/Ghana/
+Ethiopia/Morocco/Uganda có 1-6 mục). Tìm ra nguồn danh bạ đa-tổ-chức tốt:
+`africatechschools.com` (catalog tư nhân, KHÔNG chính phủ, nhưng mỗi trang `/school/<slug>/`
+có link thật ra site riêng của từng tổ chức — đã xác nhận qua nhiều mẫu). Quy trình: đọc
+trang category `/category/incubator/` lấy danh sách tên+quốc gia+slug, rồi `WebFetch` từng
+trang `/school/<slug>/` để lấy URL thật, tự kiểm sống bằng `check_url()` (không chạy qua
+`roster_grow_worker.py` vì cần 2 bước domain khác nhau — trang danh mục vs trang chi tiết —
+`url_context` chỉ đọc được 1 URL/lượt gọi). ~40 trang đã đọc, 32 qua được kiểm sống; 7 mục
+thất bại (UP Business Incubator, Propella, BBIN Burundi, Sabi Hub, Ouskei Academy, UniMak
+Workflow Hub, NIISP Uganda — đều lỗi kết nối, KHÔNG lỗi HTTP hợp lệ, có thể do chặn bot) đã bỏ.
+Bổ sung tay 5 mục ngoài catalog (tìm trực tiếp qua WebSearch): iLabAfrica (Strathmore
+University, Kenya), Carnegie Mellon University Africa (Rwanda), National Technology Business
+Centre (Zambia), University of Dar es Salaam TDTC (Tanzania — trang riêng `tdtc.udsm.ac.tz`
+không sống, áp dụng quy tắc mới dùng `udsm.ac.tz` làm url).
+
+`ROSTER`: 870 → **907** (+37). Mở mới hoàn toàn: Kenya, Cameroon, Tunisia, Algeria, Zambia,
+Namibia, Ivory Coast, Angola, Rwanda, Tanzania, Sudan, Mauritania. Đào sâu thêm: Nigeria
+(1→6), South Africa (6→9), Egypt (3→5), Ghana (1→4), Ethiopia (1→2), Uganda (2→3).
+
+**Lần trước:** 2026-09-08 (sếp chốt quy tắc mới) — sếp yêu cầu rõ: **khi không tìm ra trang
 riêng của đơn vị CGCN cụ thể, cứ dùng TRANG CHỦ TRƯỜNG làm `url` thay vì bỏ qua/để trống** —
 ngược với lựa chọn thận trọng ở lượt trước (đã bỏ 15/18 kết quả Gemini đoán vì chỉ ra trang
 chủ trường). Đã quay lại 15 mục đó, kiểm sống lại từng URL bằng `check_url()` (một số domain
