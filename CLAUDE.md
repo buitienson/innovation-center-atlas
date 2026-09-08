@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 2380 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 2404 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,39 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 18 — **NGUỒN MỚI: ANPROTEC Brazil, kỹ thuật mới "đọc
+**Lần cuối:** 2026-09-09 (checkpoint 19 — **NGUỒN MỚI: Minciencias Colombia, danh sách chính
+phủ CÓ SẴN cột website**) — nguồn tốt nhất kiểu mới: Bộ KH&CN Colombia (Minciencias) công khai
+file Excel CHÍNH THỨC "Listado de Actores del SNCTeI reconocidos" tại
+`minciencias.gov.co/sites/default/files/listado_oficial_actores_reconocidos_vigentes.xlsx`
+(link nằm trong trang `reconocimiento-actores/parques-cientificos-tecnologicos-y-innovacion-pcti`)
+— **112 tổ chức, CỘT "PÁGINA WEB" CÓ SẴN CHO 100% DÒNG** (không cần đoán/kiểm tồn tại link).
+Đã lọc theo loại hình khớp phạm vi ROSTER (bỏ "INSTITUTO PÚBLICO"/viện nghiên cứu chung chung,
+"CENTRO DE CIENCIA"/bảo tàng khoa học-vườn thực vật, "EMPRESA ALTAMENTE INNOVADORA"/công ty
+được chứng nhận, "UNIDAD DE I+D+i DE EMPRESA"/phòng R&D nội bộ công ty — 4 loại này KHÔNG phải
+đơn vị trung gian hỗ trợ ĐMST, chỉ là viện/công ty thường): giữ lại CIP (Centro de Innovación y
+Productividad), CDT (Centro de Desarrollo Tecnológico), OTRI (Oficina de Transferencia —
+đúng nghĩa TTO), Incubadora — **38/112 dòng khớp phạm vi**. `check_url()` giữ **24/38** (14 chết
+gồm nhiều đại học lớn như EAFIT/Universidad de Antioquia/Universidad del Cauca — đã thử lại
+tất cả 1 lần theo đúng quy tắc, KHÔNG phải nghẽn mạng thoáng qua vì Google vẫn sống bình thường
+lúc kiểm — nghi WAF/Cloudflare chặn `urllib` không có cookie/JS, không phải trang thật sự chết;
+để lại việc mở, có thể domain này đã dùng dạng URL khác trong ROSTER rồi). Lọc trùng: 1 trùng
+(Universidad Tecnológica de Pereira, đã có từ batch Thái Lan... không, từ batch trước). Merge
+**23 mục mới**. Toạ độ dùng centroid QUỐC GIA Colombia (chỉ 1 nước, không cần dict riêng).
+
+`ROSTER`: 2380 → **2404**. Đơn vị trên bản đồ: **2413**.
+
+**Bài học kỹ thuật mới, áp dụng được cho MỌI nước Mỹ Latinh còn lại:** nhiều bộ/cơ quan
+KH&CN quốc gia công khai "listado de actores reconocidos" hoặc danh sách chứng nhận tương tự
+dưới dạng Excel/CSV tải trực tiếp — đây là nguồn CHẤT LƯỢNG CAO NHẤT có thể tìm (chính phủ xác
+nhận + có sẵn URL, không cần đoán) khi tìm thấy. Việc mở: đã xác định các đầu mối tương tự
+CHƯA khai thác — **Peru**: chương trình CITE (Centros de Innovación Productiva y Transferencia
+Tecnológica) của ITP (Instituto Tecnológico de la Producción), có trang
+`gob.pe/43414-centros-de-innovacion-productiva-y-transferencia-tecnologica-cite-contacta-a-un-cite-publico`
+liệt kê các CITE công lập — CHƯA mở để lấy danh sách+URL. **Mexico**: PDF
+`ime.edomex.gob.mx/sites/ime.edomex.gob.mx/files/files/Directorio_Incubadoras2024.pdf` (danh
+bạ incubadoras cấp bang Estado de México, không phải toàn quốc) — CHƯA thử tải/trích.
+
+**Lần trước:** 2026-09-09 (checkpoint 18 — **NGUỒN MỚI: ANPROTEC Brazil, kỹ thuật mới "đọc
 JS nhúng sẵn thay vì scrape HTML"**) — sau khi xác nhận africatechschools.com/TISC hết, cho
 agent nghiên cứu tìm nguồn lớn tiếp theo. Kết quả quan trọng nhất: **Startup India** (danh bạ
 1518 vườn ươm thật, API `POST api.startupindia.gov.in/sih/api/noauth/search/profiles` với body
