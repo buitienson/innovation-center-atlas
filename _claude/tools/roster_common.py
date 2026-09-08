@@ -147,13 +147,25 @@ def find_roster_span(html):
     arr_start = html.index("[", start)
     depth = 0
     i = arr_start
+    in_string = False
+    escaped = False
     while True:
         c = html[i]
-        if c == "[":
-            depth += 1
-        elif c == "]":
-            depth -= 1
-        if depth == 0:
+        if in_string:
+            if escaped:
+                escaped = False
+            elif c == "\\":
+                escaped = True
+            elif c == '"':
+                in_string = False
+        else:
+            if c == '"':
+                in_string = True
+            elif c == "[":
+                depth += 1
+            elif c == "]":
+                depth -= 1
+        if depth == 0 and not in_string:
             break
         i += 1
     return arr_start, i + 1

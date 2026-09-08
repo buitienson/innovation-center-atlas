@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 1149 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 1313 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,8 +52,36 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (checkpoint 12 — TÌM RA NGUỒN LỚN NHẤT PHIÊN NÀY, sếp nâng mốc
-1100→1200→**2000**) — phát hiện danh bạ TISC (Technology and Innovation Support Center) của
+**Lần cuối:** 2026-09-08 (checkpoint 13 — **VÁ LỖI GỐC RỄ TRONG `roster_common.py`**, sếp
+nâng mốc tiếp: 2000 → **3000**) — trong lúc merge batch Argentina/Colombia/Cuba/Ecuador/
+Georgia/Jamaica/Jordan/Kenya/Mongolia/Nigeria/Palestine/Peru/Nga/Sao Tome/Nam Phi/Sri Lanka/
+Trinidad/Zambia từ TISC, `load_roster()` báo lỗi JSON — hoá ra một tên tổ chức THẬT lấy từ
+TISC có lỗi ngoặc ngay trong dữ liệu gốc của WIPO: `"...d'Oran (ESGEE]"` (mở ngoặc tròn, đóng
+ngoặc vuông — lỗi đánh máy của WIPO, không phải của mình). `find_roster_span()` trong
+`roster_common.py` đếm ngoặc `[`/`]` KIỂU THÔ (không biết phân biệt ký tự trong chuỗi
+JSON với ký tự cấu trúc mảng) nên bị ký tự `]` lạc trong tên tổ chức làm ngắt mảng ROSTER
+giữa chừng. **ĐÃ VÁ**: viết lại `find_roster_span()` để bỏ qua nội dung bên trong chuỗi
+(theo dõi trạng thái `in_string`/escape kiểu tokenizer JSON tối giản) — đây là sửa đúng gốc
+rễ, không phải sửa data (giữ nguyên tên gốc kể cả lỗi đánh máy của WIPO, không tự ý "sửa hộ"
+tên tổ chức người khác). Đã xác nhận: trang web THỰC TẾ (`index.html`) vẫn luôn đúng suốt —
+đây là lỗi trong CÔNG CỤ PYTHON dùng để sửa, không phải lỗi hiển thị trên site.
+
+**CẢNH BÁO CHO LƯỢT SAU:** với danh bạ TISC gồm ~1900 tên tổ chức thật, tình trạng ngoặc/dấu
+lạc trong tên có thể còn gặp lại — nay đã an toàn nhờ bản vá trên, nhưng nếu thấy `load_roster`
+báo lỗi JSON lần nữa, đây là nghi phạm đầu tiên cần kiểm tra tiếp theo.
+
+Merge được: +164 mục thật (sau khi loại 8 trùng, gồm cả trùng miền/domain giữa các "CATI"
+Argentina cùng dùng `inti.gob.ar`/`utn.edu.ar`). `ROSTER`: 1149 → **1313**. Nga đóng góp lớn
+nhất lượt này (~40 mục mới, còn nhiều nữa trong TISC vì Nga có 172 mục, mới xử lý hết batch
+này).
+
+Batch4 (Philippines/Trung Quốc/Ai Cập/Uganda/Tunisia/Ấn Độ/Honduras/Chile...) và batch5
+(Malaysia/Saudi Arabia/Thái Lan) đã tải xong, ĐANG kiểm sống — chưa merge, làm tiếp ngay khi
+mở phiên mới (file tạm ở `/tmp`, mất khi phiên kết thúc — nếu cần tải lại, dùng đúng API đã
+ghi ở mục checkpoint 12 bên dưới).
+
+**Lần trước:** 2026-09-08 (checkpoint 12 — TÌM RA NGUỒN LỚN NHẤT PHIÊN NÀY, sếp nâng mốc
+1100→1200→2000) — phát hiện danh bạ TISC (Technology and Innovation Support Center) của
 WIPO: `wipo.int/tisc` — **1908 tổ chức thật trên toàn cầu**, mỗi mục có sẵn trường "Web site"
 (không cần đoán domain!). Quan trọng: trang tìm kiếm là SPA gọi API JSON công khai, không cần
 đăng nhập:
