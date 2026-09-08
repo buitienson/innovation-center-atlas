@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 1506 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 1936 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,25 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (checkpoint 15 — **HOÀN TẤT DANH BẠ WIPO TISC**, sếp đặt mốc 3000) —
+**Lần cuối:** 2026-09-08 (checkpoint 16 — **KHAI THÁC XONG africatechschools.com, SÁT MỐC
+2000**) — hoá ra site này có **861 tổ chức** (không phải ~55 như tưởng lượt trước), trải trên
+5 trang khu vực Châu Phi. Quy trình 3 bước: (1) lấy tên+slug từ 5 trang `/region/<vùng>/`
+(HTML tĩnh, không cần JS), (2) tải từng trang chi tiết `/school/<slug>/`, trích `Website:` +
+`Location:` bằng regex (dò 2 lần — lần đầu quên đúng mẫu HTML của "Location", phải tải lại
+545 trang đã qua vòng lọc sống để lấy đúng — bài học: kiểm mẫu regex trên 1 trang thật TRƯỚC
+khi chạy hàng loạt, đỡ phải tải lại), (3) `check_url()` toàn bộ 861 — giữ **545/861**. Sau khi
+lọc trùng tên/domain với ROSTER (115 trùng — phần lớn là các mục incubator Châu Phi đã thêm ở
+checkpoint trước từ cùng site này, cơ chế lọc trùng hoạt động đúng), merge **430 mục mới**.
+
+`ROSTER`: 1506 → **1936**. Đơn vị trên bản đồ: **1945** — chỉ còn ~55 nữa tới mốc **2000**
+sếp đặt (mốc kế tiếp: 3000).
+
+**Toạ độ dùng mức QUỐC GIA (centroid), không phải thành phố** — do khối lượng quá lớn (861
+mục, hàng trăm thành phố khác nhau khắp Châu Phi) nên chấp nhận độ chính xác thô hơn các
+nguồn trước, đổi lấy tốc độ xử lý. Quốc gia lấy từ chuỗi `Location:` (dạng "Thành phố, Quốc
+gia, Khu vực" — lấy đúng phần Quốc gia, không phải Thành phố).
+
+**Lần trước:** 2026-09-08 (checkpoint 15 — HOÀN TẤT DANH BẠ WIPO TISC, sếp đặt mốc 3000) —
 merge batch cuối: Malaysia/Saudi Arabia/Thái Lan (+39) + Benin/Burundi (+2, +1 điền url mục
 cũ "UAC Startup Valley"). `ROSTER`: 1465 → **1506**.
 
