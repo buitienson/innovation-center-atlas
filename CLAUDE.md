@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 1465 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 1506 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,33 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (checkpoint 14) — merge batch TISC thứ 4: Philippines/Trung Quốc/
+**Lần cuối:** 2026-09-08 (checkpoint 15 — **HOÀN TẤT DANH BẠ WIPO TISC**, sếp đặt mốc 3000) —
+merge batch cuối: Malaysia/Saudi Arabia/Thái Lan (+39) + Benin/Burundi (+2, +1 điền url mục
+cũ "UAC Startup Valley"). `ROSTER`: 1465 → **1506**.
+
+**WIPO TISC coi như xong** — đã xử lý HẾT các nước có mục trong danh bạ 1908 tổ chức, CHỈ TRỪ
+Viet Nam (63 mục, cố tình bỏ qua vì quy ước ROSTER không phủ Việt Nam — xem mục Việt Nam nằm ở
+tab riêng "Mạng lưới ĐMST Việt Nam"). Tổng cả nguồn TISC qua 5 batch: 1035 → 1506 (~470 mục
+thật, sau khi lọc trùng + kiểm sống).
+
+**Nguồn lớn TIẾP THEO đã tìm ra, CHƯA khai thác — làm ngay khi mở phiên mới:**
+`africatechschools.com` — trang danh mục các trường/hub công nghệ Châu Phi, tưởng chỉ có
+~55 mục (đã dùng ở checkpoint Châu Phi trước) nhưng thực ra có **861 tổ chức riêng biệt** khi
+duyệt qua 5 trang khu vực (`/region/west-africa/`, `/region/north-africa/`,
+`/region/east-africa/`, `/region/southern-africa/`, `/region/central-africa/` — không cần
+đăng nhập, HTML tĩnh). Danh sách tên+slug đã lưu ở `/tmp/atx-all-slugs.json` (861 mục, MẤT khi
+phiên kết thúc — nếu cần tải lại thì lặp lại đúng 5 URL trên, trích bằng regex
+`<a href="/school/([a-z0-9-]+)/">([^<]+)</a>`).
+
+Mỗi mục cần mở trang chi tiết `https://www.africatechschools.com/school/<slug>/` (HTML tĩnh,
+`curl` được, KHÔNG cần trình duyệt) để lấy URL thật thực sự — nằm ngay sau chữ "Website:" theo
+mẫu: `Website:</span>\s*<span><a href="URL"`. Quy trình giống hệt TISC: tải hết → trích
+website → `check_url()` → lọc trùng tên/domain với ROSTER → merge → build → kiểm → push mỗi
+~50-150 mục. Đã thử tìm IASP (`iasp.ws`, hiệp hội khu khoa học quốc tế, cũng là nguồn lớn tiềm
+năng) nhưng form tìm kiếm dùng ASP.NET postback (`page27.aspx?action=search`), không có API
+JSON đơn giản như TISC — TẠM BỎ QUA, có thể thử lại sau nếu cần thêm nguồn.
+
+**Lần trước:** 2026-09-08 (checkpoint 14) — merge batch TISC thứ 4: Philippines/Trung Quốc/
 Ai Cập/Uganda/Tunisia/Kyrgyzstan/Tajikistan/Oman/Ấn Độ/Honduras/Chile/El Salvador/Costa Rica/
 Guatemala/Cộng hòa Dominica/Panama/Qatar/Uruguay/Venezuela/Bangladesh/Nicaragua/Cambodia.
 +152 mục thật (loại 30 trùng — phần lớn là các trường Philippines đã thêm từ danh bạ ITSO
