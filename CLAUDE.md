@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 993 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 1025 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,25 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (tiếp — checkpoint 9, chuyển sang ĐÀO SÂU vì hầu hết nước mới "dễ"
+**Lần cuối:** 2026-09-08 (tiếp — checkpoint 10, sếp đặt mốc tiếp **1100**) — vượt mốc **1034**
+đơn vị trên bản đồ (`ROSTER` **1025**). Bài học lớn nhất lượt này: khi đào sâu các nước đã có
+độ phủ vừa (Hàn Quốc/Ireland/Đan Mạch/Phần Lan/New Zealand/Áo/Na Uy...) gần như MỌI tổ chức
+nổi tiếng tìm được đều ĐÃ CÓ SẴN trong ROSTER — dấu hiệu các nước này đã được rà khá kỹ từ
+trước, không phải "quả treo thấp" nữa. Chuyển hướng đúng: quay lại nguồn danh bạ ĐÃ CHỨNG MINH
+hiệu quả nhưng CHƯA khai thác hết — danh bạ ITSO Philippines (`info.ipophil.gov.ph`) lượt
+trước chỉ mới xử lý trang 1/4 (20/77 mục). Lượt này lấy nốt trang 2-4 (60 tên trường), nhờ
+Gemini đoán domain (kiểu `<vietat>.edu.ph`, không dùng `url_context` vì trang phân trang bằng
+JS không đổi URL — same vấn đề gặp ở Indonesia/Trung Quốc trước đây, giải quyết bằng cách gọi
+Gemini kiểu "đoán URL cho danh sách tên" như đã làm với Trung Quốc), tự kiểm sống toàn bộ 53
+kết quả bằng `check_url()` — giữ được 32/53 (đã lọc trùng tên/domain với ROSTER trước khi
+kiểm, không phát sinh trùng lặp). Philippines: 17 → **49**.
+
+**Bài học chung rút ra:** khi một nguồn danh bạ đa-tổ-chức đã dùng hiệu quả (PH ITSO, Thái Lan
+RSP, MOST Trung Quốc) mà chỉ mới xử lý một phần (1 trang/1 batch), QUAY LẠI lấy hết các
+trang/batch còn lại trước khi tìm nguồn hoàn toàn mới — hiệu suất cao hơn nhiều so với vừa tìm
+từng trường lẻ vừa tự dò trùng lặp ở các nước đã bão hoà.
+
+**Lần trước:** 2026-09-08 (tiếp — checkpoint 9, chuyển sang ĐÀO SÂU vì hầu hết nước mới "dễ"
 đã hết) — vượt mốc **1000** đơn vị trên bản đồ (`đơn vị được lập bản đồ` khác `ROSTER`, xem
 "Bối cảnh"). +4 mục thật: Ahmadu Bello University DRI (Nigeria, +1), Mansoura University
 Innovation Support Office (Egypt, +1), IPN Technology Transfer Office (Mexico, +1), Bogazici
