@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 989 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 993 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,27 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (tiếp — checkpoint 8) — **PHÁT HIỆN QUAN TRỌNG VỀ QUY TRÌNH:** giữa
+**Lần cuối:** 2026-09-08 (tiếp — checkpoint 9, chuyển sang ĐÀO SÂU vì hầu hết nước mới "dễ"
+đã hết) — vượt mốc **1000** đơn vị trên bản đồ (`đơn vị được lập bản đồ` khác `ROSTER`, xem
+"Bối cảnh"). +4 mục thật: Ahmadu Bello University DRI (Nigeria, +1), Mansoura University
+Innovation Support Office (Egypt, +1), IPN Technology Transfer Office (Mexico, +1), Bogazici
+University TTO (Turkey, +1). Đáng chú ý: thử thêm Inova Unicamp (Brazil), CZIiTT PW Warsaw và
+CITTRU Jagiellonian (Poland), Universidad de los Andes Transferencia (Colombia) — CẢ 4 ĐÃ CÓ
+SẴN trong ROSTER từ trước (một số dưới tên khác) — dấu hiệu các "quả treo thấp" (low-hanging
+fruit) cho nhóm nước đã có độ sâu vừa phải (Brazil/Poland/Colombia) gần như cạn, khác hẳn
+nhóm nước Châu Phi/Trung Á vừa mở ở các checkpoint trước.
+
+`ROSTER`: 989 → **993**.
+
+**9 nước vẫn = 0, đã thử nhiều nguồn khác nhau cho mỗi nước, xác nhận KHÔNG PHẢI do nghẽn
+mạng tạm thời (đã kiểm tra network sống, thử lại nhiều lần cách nhau vài phút, vẫn nhất
+quán lỗi kết nối):** Guinea, Guinea-Bissau, Togo, Niger, Equatorial Guinea, Chad — nhiều khả
+năng domain các nước này (`.gn`/`.tg`/`.ne`/`.gw`) bị chặn/lỗi định tuyến từ mạng hiện tại,
+đáng thử lại từ mạng khác. North Korea/Vanuatu/Solomon Is. — khó có nguồn thật độc lập (Vanuatu/
+Solomon chỉ có campus vệ tinh của USP, đã tính vào Fiji; Triều Tiên gần như không có hiện diện
+web công khai kiểu này).
+
+**Lần trước:** 2026-09-08 (tiếp — checkpoint 8) — **PHÁT HIỆN QUAN TRỌNG VỀ QUY TRÌNH:** giữa
 lượt rà, `check_url()` báo "chết" hàng loạt cho CẢ `google.com` lẫn `en.sharif.ir` (một trang
 vừa xác nhận sống phút trước) — hoá ra là NGHẼN MẠNG TẠM THỜI phía máy đang chạy (không phải
 site chết), tự hồi phục sau ~10 giây. Thử lại ngay các mục vừa bị báo "chết" oan trong batch
