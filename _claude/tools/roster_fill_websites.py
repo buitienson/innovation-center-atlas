@@ -183,6 +183,41 @@ PARKING_PAGE_SIGNS = [
 ]
 
 
+# Confirmed the hard way (twice): a parking service can hand a domain over
+# via a CLIENT-SIDE JS redirect (`window.location.href=...`) instead of an
+# HTTP redirect - urllib never executes that JS, so it only ever sees a tiny
+# stub page with none of the tell-tale "for sale" wording (ramot.com's whole
+# response was `<script>window.onload=function(){window.location.href=
+# "/lander"}</script>`, ~130 bytes). A real organization's homepage almost
+# never renders down to near-nothing, so treat a suspiciously thin page as
+# untrustworthy even when no parking phrase matched.
+MIN_VISIBLE_TEXT_CHARS = 200
+
+
+def visible_text_len(html):
+    no_script = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", html, flags=re.S)
+    no_tags = re.sub(r"<[^>]+>", " ", no_script)
+    return len(re.sub(r"\s+", " ", no_tags).strip())
+
+
+# A real page's actual body text can easily be pushed past a small read
+# size by a long <head> (meta tags, structured data, inline critical CSS) -
+# confirmed the hard way too: Oxford/Birmingham/Trinity College Dublin all
+# got misflagged as "thin" at an 8KB read because that budget was entirely
+# consumed by <head> before any visible body text appeared. Read enough that
+# a normal page's real content shows up.
+READ_BYTES = 65536
+# Being thin is only damning together with an explicit client-side redirect
+# OUT of the page (this is what ramot.com/fistiitp.com actually did) - a
+# thin page with no redirect could just be a heavy anti-bot challenge page
+# on an otherwise real, legitimate site, which must not be rejected on that
+# basis alone.
+REDIRECT_OUT_PATTERNS = [
+    r"window\.location", r"document\.location", r"top\.location",
+    r'<meta[^>]+http-equiv=["\']?refresh',
+]
+
+
 def check_url(url, timeout=10):
     """Returns (ok, reason). ok=False means: don't trust this URL."""
     try:
@@ -190,9 +225,14 @@ def check_url(url, timeout=10):
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             if not (200 <= resp.status < 400):
                 return False, f"HTTP {resp.status}"
-            body = resp.read(8192).decode("utf-8", errors="ignore").lower()
+            raw = resp.read(READ_BYTES).decode("utf-8", errors="ignore")
+            body = raw.lower()
     except Exception as e:
         return False, f"{type(e).__name__}"
+    thin = visible_text_len(raw) < MIN_VISIBLE_TEXT_CHARS
+    redirects_out = any(re.search(p, body) for p in REDIRECT_OUT_PATTERNS)
+    if thin and redirects_out:
+        return False, "thin page with a client-side redirect out (parking-stub pattern)"
     for sign in PARKING_PAGE_SIGNS:
         if sign in body:
             return False, f"parking-page phrase '{sign}'"
