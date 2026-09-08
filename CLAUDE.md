@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 929 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 949 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,26 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (tiếp — Trung Mỹ/Caribbean/Trung Á/Balkan còn lại, checkpoint 3) —
+**Lần cuối:** 2026-09-08 (tiếp — sếp yêu cầu "rà đi, rà tới khi không thêm được mới hoặc hết
+token", checkpoint 4, quét rộng khắp thế giới) — +20 mục thật, mở MỚI HOÀN TOÀN 15 nước:
+Ukraine (KPI Innovations Office), Kyrgyzstan (AUCA SILK), Bosnia and Herz. (Univ. Sarajevo
+GrowUp Hub), Moldova (ANCD — cơ quan nhà nước), Cuba (Fundación UH), Jamaica (UWI Mona TISC),
+Ecuador (ESPOL i3LAB), Kazakhstan (Nazarbayev University — nhiều đơn vị cụ thể thử đều không
+sống, dùng homepage trường), Senegal (UCAD), Zimbabwe (NUST), Mozambique (Eduardo Mondlane
+University), Malawi (MUST TISC), Lebanon (AUB Office of Innovation and Transformation), Iran
+(Sharif University of Technology — trang Technology Park riêng không sống, dùng trang trường
+`en.sharif.ir`), Nepal (Tribhuvan University IT Innovation Center), Bhutan (Royal University
+of Bhutan, homepage), Nicaragua (UNAN-Managua, homepage), Honduras (UNAH, homepage),
+Afghanistan (Kabul University IT Dept), El Salvador (Universidad de El Salvador, homepage).
+
+`ROSTER`: 929 → **949**. Thử nhưng KHÔNG ra kết quả sống (để lại việc mở): Botswana (BIUST
+tech-transfer + homepage đều lỗi kết nối), Fiji (USP), Papua New Guinea (Unitech), Palestine
+(Birzeit — mọi URL đều HTTPError), Mauritius (UTM), Madagascar (Univ. Antananarivo), Togo
+(Univ. Lomé), Mali (USTTB), Burkina Faso (Univ. Ouagadougou) — các trường hợp lỗi kết nối
+(URLError/HTTPError) khi kiểm từ máy này, không phải "trang không tồn tại" — có thể đáng thử
+lại sau (chặn bot tạm thời, DNS/mạng, hoặc thật sự không sống).
+
+**Lần trước:** 2026-09-08 (tiếp — Trung Mỹ/Caribbean/Trung Á/Balkan còn lại, checkpoint 3) —
 +9 mục thật, mở MỚI HOÀN TOÀN 7 nước: Guatemala (USAC), Cộng hòa Dominica (INTEC), Bolivia
 (UMSA CIDE), Venezuela (UCV), Panama (UTP Emprende — trang riêng `emprende.utp.ac.pa` không
 sống, dùng `utp.ac.pa` theo quy tắc homepage), Tajikistan (UIDT), Turkmenistan (Oguz Han
