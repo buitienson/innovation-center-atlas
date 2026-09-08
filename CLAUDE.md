@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 969 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 979 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,24 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (tiếp — checkpoint 5, quét rộng khắp thế giới) — +20 mục thật, mở
+**Lần cuối:** 2026-09-08 (tiếp — checkpoint 6, quét rộng khắp thế giới) — +10 mục thật, mở
+MỚI HOÀN TOÀN 8 nước: Comoros, Somalia, Sierra Leone (Njala University), Palestine (An-Najah
+National University TTO — Birzeit đã thử lượt trước nhưng chết, An-Najah mới là nguồn dùng
+được), Central African Rep. (Université de Bangui), S. Sudan (University of Juba), Mali
+(USTTB — thử lại `http://` không `www` mới sống), Fiji (USP — cũng phải bỏ `www` mới sống),
+Maldives (MNU), Cabo Verde (Universidade de Cabo Verde).
+
+`ROSTER`: 969 → **979**.
+
+Thử nhưng KHÔNG sống dù đổi nhiều biến thể `http`/`https`/`www`: Botswana (BIUST), eSwatini,
+Congo Brazzaville (`umng.cg`), Burkina Faso, Guinea (Conakry lẫn Ouskei Academy), Togo,
+Madagascar, Djibouti, Papua New Guinea, Niger, Gabon (`uob.ga`), Equatorial Guinea
+(`ungecampus.com`), Guinea-Bissau (`uac.gw`), Chad — đều là lỗi kết nối (URLError/HTTPError),
+không phải "domain không tồn tại/parking", nên có thể vẫn đáng thử lại ở lượt sau, khác thời
+điểm mạng. Vanuatu/Solomon Is. có campus USP nhưng dùng chung domain `usp.ac.fj` (đã tính là
+Fiji) nên không tính mục riêng.
+
+**Lần trước:** 2026-09-08 (tiếp — checkpoint 5, quét rộng khắp thế giới) — +20 mục thật, mở
 MỚI HOÀN TOÀN 18 nước: Lithuania (VILNIUS TECH KTTC + KTU NIEC, 2 mục), Cyprus (CUT), Malta
 (Univ. of Malta Knowledge Transfer), Yemen (Sana'a University), Kosovo (Univ. Pristina),
 Suriname (Anton de Kom University), Barbados (UWI Cave Hill), Lesotho (NUL Innovation Hub),
