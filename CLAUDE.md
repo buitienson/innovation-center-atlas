@@ -53,49 +53,50 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-07 — routine tự động thêm 2 tin + 2 cơ hội tài trợ/cuộc thi vào
-`src/atlas.html`. Tin tức: "Đại học Quốc gia Hà Nội phát động cuộc thi khởi nghiệp RND to
-Startup 2026" (Nhân Dân, 4/9) và "VK Connect 2026 — Diễn đàn Kết nối tri thức Việt Nam - Hàn
-Quốc tại Daegu" (Nhân Dân, 5/9). Fund/Hackathon: RND to Startup 2026 (hạn 30/9/2026, cùng
-sự kiện với tin tức ở trên nhưng thêm riêng vào `FUNDING` vì còn đang mở hồ sơ) và đặt hàng
-nhiệm vụ KH&CN "phát triển sản phẩm từ cây Bách bộ tại vùng đệm VQG Xuân Sơn" của Bộ KH&CN
-(hạn 21/9/2026). Đã build + kiểm `node --check` + cân bằng thẻ, commit + push. Chưa publish
-lại Artifact (routine tự động không tự làm bước này).
+**Lần cuối:** 2026-09-08 — commit mới nhất `3657795`. Thêm tab **Fund/Hackathon** (21 mục,
+nối vào routine tin tức hằng ngày) và tab **Thuật ngữ/Glossary** (30 mục, liên kết chéo).
+Phóng to quả cầu 3D chiếm gần trọn màn hình, bỏ hẳn lưới wireframe kinh/vĩ tuyến, sửa thông
+báo fallback phân biệt đúng "máy không hỗ trợ WebGL" với "thư viện tải lỗi". Đổi tên site:
+"Atlas of University Innovation Centers"→"Atlas of Innovation Centers",
+"Atlas Trung tâm Nghiên cứu, Đổi mới sáng tạo"→"Atlas Trung tâm Đổi mới sáng tạo". Sửa ghi
+chú vùng Đông Nam Á/Việt Nam cho trung thực (tỷ lệ VN áp đảo là do độ sâu thu thập dữ liệu
+khác nhau giữa các nước, không phải một phát hiện thật).
 
-**Lần trước:** 2026-09-06 tối — hai việc chẩn đoán, chưa xong, sếp cần quyết định tiếp:
+**Xác nhận quả cầu 3D lỗi trên máy sếp là driver GPU hỏng ở hệ điều hành** — dùng
+`claude-in-chrome` xem trực tiếp Edge/Chrome thật của sếp, `edge://gpu` báo
+`VENDOR=0x0000 DEVICE=0x0000`, mọi hardware-acceleration "Disabled" — không phải lỗi code.
+Sếp đã khởi động lại máy sau đó nhưng **CHƯA XÁC NHẬN** `edge://gpu` đã ra số thật chưa, cũng
+chưa xác nhận lỗi font tiếng Việt vỡ dấu (ảnh chụp trước đó) đã hết chưa — việc mở.
 
-1. **Quả cầu 3D trên Edge — xác nhận KHÔNG PHẢI lỗi code.** Xin quyền
-   computer-use xem trực tiếp Edge của sếp (chỉ xem, không click/gõ được —
-   giới hạn cứng của công cụ với trình duyệt): trang tải xong đầy đủ, nhưng
-   hiện đúng thông báo "không hỗ trợ WebGL" (`nowebgl`), không phải bản "thư
-   viện bị chặn" (`libfail`) vừa sửa tối nay. Nghĩa là `canvas.getContext
-   ('webgl')` trên máy/Edge của sếp thật sự trả về null — nguyên nhân nằm ở
-   cấu hình máy/trình duyệt (hardware acceleration bị tắt, GPU bị Edge đưa
-   vào danh sách chặn...), không phải thứ sửa được từ phía code trang web.
-   Cần sếp tự gõ `edge://gpu` khi rảnh (tôi không gõ hộ được) để xác nhận
-   nguyên nhân cụ thể — chưa gõ được vì sếp đang dùng điện thoại.
-2. **Routine mở rộng ROSTER bằng Gemini — chạy thử thất bại, đã truy đến tận
-   gốc.** Test tay bằng key Gemini hiện có (đọc từ `~/.zshrc`, không ghi ra
-   file/log) qua cả `roster_grow_worker.py` lẫn `curl` trực tiếp, lặp lại
-   nhiều lần trong ~20 phút: gọi Gemini **bình thường** luôn thành công, gọi
-   **kèm Google Search grounding** (đúng cái routine cần) luôn **429
-   RESOURCE_EXHAUSTED ngay lập tức**. Kết luận: **hạn mức grounding của
-   key/project này = 0** (không phải key hết hạn mức chung) — khả năng do
-   Google cắt hạn mức miễn phí 50-80% từ 12/2025, và bật billing (nếu chưa
-   bật) sẽ xoá toàn bộ hạn mức miễn phí khác chứ không chỉ mở khoá grounding.
-   Đã nâng cấp `roster_grow_worker.py` để tự chẩn đoán đúng lỗi này ở mọi lần
-   chạy sau (phân biệt "chỉ grounding bị chặn" với "cả key hết hạn mức").
-   **Chưa tạo cloud routine** — đã ghi chi tiết đầy đủ + 3 hướng lựa chọn vào
-   mục "Tình trạng hiện tại" của `_claude/routine-roster-grow.md`, chờ sếp
-   đọc `ai.dev/rate-limit` (cần đăng nhập, tôi không xem hộ được) rồi chọn
-   hướng.
+**Dựng xong hạ tầng mở rộng `ROSTER` bằng Gemini** (không tốn token Claude), đã chạy tay
+thành công, chưa lên cloud routine tự động: `_claude/tools/roster_common.py` (module dùng
+chung, có `check_url()` — lưới an toàn chống Gemini bịa URL, đã vá 4 lớp false-positive thật
+lúc dựng: trang parking domain HTTP 200, JS redirect ẩn tới trang parking, site thật bị coi
+nhầm "thin" vì `<head>` dài, site thật dùng redirect cùng dạng với trang parking — giải quyết
+bằng cách theo dấu redirect 1 bước rồi mới phán). `roster_grow_worker.py` thêm tổ chức MỚI từ
+một URL nguồn cụ thể (dùng Gemini `url_context`, KHÔNG dùng `google_search` — quota
+`google_search` trên key hiện có = 0 không billing, đã xác nhận qua nhiều lần test).
+`roster_fill_websites.py` điền `url` còn thiếu cho mục đã có sẵn. Kết quả thật đã merge:
+điền 97 `url` còn thiếu, thêm 25 mục Đông Nam Á có thật đã kiểm sống từng URL (Malaysia
+4→23, Indonesia +3, Philippines +1, Thailand +2, dùng nguồn `itma.my` cho Malaysia).
 
-Không git push gì cho mục 1 (đã push tối nay trước đó, xem "Lần trước"). Mục
-2 chỉ có thay đổi tài liệu + code chẩn đoán (`roster_grow_worker.py`,
-`routine-roster-grow.md`) — sẽ commit cùng lúc viết mục này.
+Số liệu hiện tại (đếm lại bằng script Python đọc `src/atlas.html`, đừng chép số cũ):
+`ROSTER` **811** (221 còn thiếu `url`), `NEWS` 9, `FUNDING` 21, `TERMS` 30.
 
-Việc mở, cần sếp làm khi rảnh: (1) gõ `edge://gpu`, báo lại dòng WebGL nói gì;
-(2) đọc `ai.dev/rate-limit`, quyết bật billing / dùng key khác / đổi routine
-sang chạy trên Claude+WebSearch / bỏ tự động hoá — xem 3 lựa chọn trong
-`_claude/routine-roster-grow.md`.
+**Việc mở, ưu tiên rõ theo yêu cầu của sếp**: rà cho hết Đông Nam Á lên "chuẩn" TRƯỚC khi mở
+rộng Châu Á/thế giới. Malaysia đã có độ sâu thật; Thái Lan/Indonesia/Philippines mới nhích
+nhẹ; Singapore/Campuchia/Myanmar/Brunei chưa động tới. Bước kế tiếp: tìm nguồn danh bạ thật
+cho từng nước còn thiếu (kiểu `itma.my`), chạy `roster_grow_worker.py --source-urls <url>`.
+
+**Cạm bẫy:** `_claude/roster-grow-queue.md` (38 `[pending]`/1 `[done]`) KHÔNG khớp việc thật
+đã làm (Malaysia/Indonesia/Philippines/Thailand đã có tiến triển nhưng chưa đánh dấu trong
+file này) — đừng tin số trong file đó, kiểm ROSTER thật bằng script.
+
+Chi tiết đầy đủ (kể cả câu lệnh tiếp tục) ở `Brain/_shared/so-ban-giao.md`, mục
+`2026-09-08 · Innovation Center Atlas`.
+
+**Lần trước:** 2026-09-07 — routine tự động thêm 2 tin + 2 cơ hội tài trợ/cuộc thi vào
+`src/atlas.html` (RND to Startup 2026, VK Connect 2026, đặt hàng nhiệm vụ KH&CN cây Bách bộ
+VQG Xuân Sơn). Đã build + kiểm + commit + push. Chưa publish lại Artifact (routine tự động
+không tự làm bước này).
 (Claude)
