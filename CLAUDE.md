@@ -84,6 +84,36 @@ liệt kê các CITE công lập — CHƯA mở để lấy danh sách+URL. **Me
 `ime.edomex.gob.mx/sites/ime.edomex.gob.mx/files/files/Directorio_Incubadoras2024.pdf` (danh
 bạ incubadoras cấp bang Estado de México, không phải toàn quốc) — CHƯA thử tải/trích.
 
+**Đã thử ngay sau đó và XÁC NHẬN không dùng được (đừng thử lại trừ khi đổi mạng/có lý do mới):**
+- **Peru CITE** (`gob.pe`, `itp.gob.pe`, `data-peru.itp.gob.pe`) — CẢ BA domain đều trả trang
+  chặn kiểu tường lửa (`itp.gob.pe`: "The URL you requested has been blocked"; `data-peru...`:
+  HTTP 500 trang chặn WAF) — giống hệt ca Indonesia `sentraki.dgip.go.id` "Error 15" trước đây.
+  Không phải nghẽn mạng thoáng qua (đã kiểm Google sống bình thường cùng lúc).
+- **Mexico** `ime.edomex.gob.mx` — domain không kết nối được từ mạng hiện tại (`curl`/browser
+  đều fail), giống ca China Torch.
+- **Spain RedOTRI** (`redotriuniversidades.net`) — domain đã CHẾT HẲN, không resolve DNS nữa
+  (site của mạng lưới OTRI Tây Ban Nha, có vẻ đã ngừng hoạt động/đổi tên miền).
+- **Chile CORFO** — chỉ ~19 incubator/accelerator được xếp hạng (quá nhỏ, hầu hết đã có sẵn
+  trong ROSTER vì là tên tuổi lớn như Start-Up Chile).
+- **France SATT** — chỉ 13 tổ chức toàn quốc, quá nhỏ để đáng một đợt riêng.
+- **Germany TransferAllianz** (trước là TechnologieAllianz) — 65 thành viên nhưng KHÔNG tìm ra
+  trang danh sách công khai có link (trang chủ không có mục "Mitglieder" dẫn tới danh sách).
+- **Enterprise Europe Network** (`een.ec.europa.eu`) — đã tìm sâu hơn (kiểm tra script inline
+  395KB ở trang `/about/branches` xem có nhúng JSON kiểu ANPROTEC không) — KHÔNG có, trang chọn
+  quốc gia không lộ endpoint dữ liệu trong thời gian tìm.
+- **US SBA/SBDC** (`sba.gov`, `americassbdc.org`) — mạng lưới thật ~900+ điểm, nhưng công cụ
+  tra cứu theo ZIP code (không phải danh sách toàn quốc 1 lần) — cần lặp hàng nghìn mã ZIP mới
+  phủ hết, không hiệu quả; Mỹ cũng là nước lớn đã được rà khá kỹ từ trước, độ ưu tiên thấp hơn.
+
+**Kết luận cho lượt sau:** sau khi cạn 2 nguồn lớn (TISC, africatechschools) và thử nhiều nguồn
+vừa/nhỏ (ANPROTEC +127, Colombia +23, rồi một loạt dead-end ở trên), tốc độ tăng đã CHẬM LẠI
+RÕ RỆT so với đầu phiên. Để tới mốc **5000** (còn thiếu ~2600) cần: (1) tiếp tục dò kiểu "đăng
+ký chính thức chính phủ có cột website" (thành công ở Colombia) cho từng nước Mỹ Latinh/Châu Á
+còn lại — tốn công tra cứu nhưng chất lượng cao nhất; (2) tiếp tục dò kiểu "JSON nhúng sẵn
+trong bản đồ thành viên hiệp hội" (thành công ở ANPROTEC) — cần tìm thêm hiệp hội dùng đúng kiểu
+plugin bản đồ này; (3) chấp nhận rằng mốc 5000 nhiều khả năng cần RẤT NHIỀU phiên làm việc nữa,
+không phải một phiên có thể xong — nên báo cáo tiến độ trung thực cho sếp thay vì cố ép tốc độ.
+
 **Lần trước:** 2026-09-09 (checkpoint 18 — **NGUỒN MỚI: ANPROTEC Brazil, kỹ thuật mới "đọc
 JS nhúng sẵn thay vì scrape HTML"**) — sau khi xác nhận africatechschools.com/TISC hết, cho
 agent nghiên cứu tìm nguồn lớn tiếp theo. Kết quả quan trọng nhất: **Startup India** (danh bạ
