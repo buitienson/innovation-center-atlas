@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 842 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 852 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,35 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (tiếp nữa nữa) — mở 3 nước Đông Nam Á CHƯA TỪNG có mục nào
+**Lần cuối:** 2026-09-08 (mở rộng Châu Á, theo yêu cầu trực tiếp của sếp — không còn giới
+hạn ưu tiên "Đông Nam Á trước") — mở 3 khu vực/nước Châu Á còn mỏng hoặc chưa có mục nào,
+đều tìm tay từng tổ chức qua WebSearch + kiểm sống `check_url()` (không có trang danh bạ
+nhiều-tổ-chức tốt cho các nơi này, giống cách làm Brunei/Campuchia/Myanmar):
+
+- **Hong Kong (0→5)** — 5/6 trường "Big Six" đều có TTO riêng, dễ tìm, tiếng Anh đầy đủ: HKU
+  Technology Transfer Office (`tto.hku.hk`), HKUST Office of Knowledge Transfer
+  (`okt.hkust.edu.hk`), CUHK Knowledge Transfer Office (`kto.cuhk.edu.hk`), PolyU Knowledge
+  Transfer and Entrepreneurship Office (`polyu.edu.hk/kteo`), CityU Knowledge Transfer Office
+  (`cityu.edu.hk/kto`). Chưa thêm Hong Kong Baptist University (chưa tìm ra URL riêng).
+- **UAE (2→5)** — thêm EBTIC (Emirates ICT Innovation Center, Khalifa University —
+  **khác** với mục "Khalifa University Enterprises (KUEC)" đã có sẵn trong ROSTER, một đơn vị
+  chuyên ICT riêng, không trùng), University of Sharjah TTO (**khác** American University of
+  Sharjah đã có sẵn — hai trường khác nhau dù tên gần giống, cẩn thận đừng nhầm), UAEU
+  Innovation Hub. (Thử thêm URL cho mục KUEC có sẵn nhưng `ku.ac.ae/kuec/` không sống lúc
+  kiểm — để nguyên, chưa điền được.)
+- **Sri Lanka (0→1):** The Enterprise / TTO, University of Moratuwa (`enterprise.uom.lk`).
+- **Bangladesh (0→1):** RISE - Research and Innovation Centre for Science and Engineering,
+  BUET (`rise.buet.ac.bd`).
+
+`ROSTER`: 842 → **852**.
+
+**Việc mở:** còn nhiều nước/khu vực Châu Á = 0 hoặc rất mỏng — Kazakhstan (thử tìm URL riêng
+cho Nazarbayev University's Office of Industry Engagement and Commercialization nhưng không
+ra, chỉ có tên người phụ trách; office không có site riêng), Uzbekistan, Mông Cổ, Nepal,
+Pakistan (hiện 1), Iran, Iraq, Lebanon, Trung Quốc (hiện chỉ 10 — rất mỏng so với quy mô hệ
+sinh thái CGCN thật của TQ, cần một đợt riêng có nguồn tiếng Trung tốt hơn).
+
+**Lần trước:** 2026-09-08 (tiếp nữa nữa) — mở 3 nước Đông Nam Á CHƯA TỪNG có mục nào
 (Brunei/Campuchia/Myanmar), mỗi nước 1 mục thật đầu tiên (không tìm được danh bạ nhiều-tổ-
 chức, tìm tay từng tổ chức đơn lẻ theo đúng ngoại lệ đã dùng cho Singapore/Thái Lan — WebSearch
 + kiểm sống bằng `check_url()`, không qua worker vì không có trang nguồn nhiều mục):
