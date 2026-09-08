@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 984 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 989 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,27 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (tiếp — checkpoint 7, quét rộng khắp thế giới, sắp cạn nước dễ) —
+**Lần cuối:** 2026-09-08 (tiếp — checkpoint 8) — **PHÁT HIỆN QUAN TRỌNG VỀ QUY TRÌNH:** giữa
+lượt rà, `check_url()` báo "chết" hàng loạt cho CẢ `google.com` lẫn `en.sharif.ir` (một trang
+vừa xác nhận sống phút trước) — hoá ra là NGHẼN MẠNG TẠM THỜI phía máy đang chạy (không phải
+site chết), tự hồi phục sau ~10 giây. Thử lại ngay các mục vừa bị báo "chết" oan trong batch
+đó: University of Botswana, USTM Gabon (mở 2 nước mới), Kenyatta University Research
+Division, Université de Yaoundé I (đào sâu Kenya/Cameroon), University of Antananarivo (mở
+Madagascar) — TẤT CẢ đều sống khi thử lại.
+
+`ROSTER`: 984 → **989** (Botswana +1, Gabon +1, Madagascar +1, Kenya +1, Cameroon +1).
+
+**Quy tắc mới bắt buộc:** nếu `check_url()` báo chết cho một domain lớn/nổi tiếng đáng lẽ
+phải sống (vd trang chính phủ, đại học lớn, hoặc bất kỳ trang nào vừa kiểm sống ở bước trước
+đó trong cùng phiên) — ĐỪNG kết luận "chết", hãy nghi ngờ mạng trước, kiểm tra bằng
+`curl -sI --max-time 8 https://www.google.com` xem có phản hồi không, rồi thử lại
+`check_url()` sau vài giây. Việc này giải thích một phần lý do Guinea/Togo/Niger/Equatorial
+Guinea/Guinea-Bissau bị đánh giá "chết" ở các lượt trước — dù đã thử lại một số domain này
+lần nữa trong lượt này và VẪN chết nhất quán (khác kiểu lỗi thoáng qua), nên có thể thật sự có
+vấn đề riêng (định tuyến bị chặn theo ccTLD, hoặc site thật sự không ổn định) — vẫn đáng thử
+lại lần nữa ở phiên khác/mạng khác trước khi kết luận hẳn.
+
+**Lần trước:** 2026-09-08 (tiếp — checkpoint 7, quét rộng khắp thế giới, sắp cạn nước dễ) —
 +5 mục thật, mở MỚI HOÀN TOÀN 5 nước: Burkina Faso (2iE — viện kỹ thuật nước/năng lượng/môi
 trường, KHÔNG phải Université Nazi Boni đã thử trước — cả hai đều sống nhưng 2iE nổi tiếng
 hơn nên chọn), eSwatini (Eswatini College of Technology — Limkokwing chi nhánh Eswatini vẫn
