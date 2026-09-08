@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 1313 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 1465 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,18 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (checkpoint 13 — **VÁ LỖI GỐC RỄ TRONG `roster_common.py`**, sếp
+**Lần cuối:** 2026-09-08 (checkpoint 14) — merge batch TISC thứ 4: Philippines/Trung Quốc/
+Ai Cập/Uganda/Tunisia/Kyrgyzstan/Tajikistan/Oman/Ấn Độ/Honduras/Chile/El Salvador/Costa Rica/
+Guatemala/Cộng hòa Dominica/Panama/Qatar/Uruguay/Venezuela/Bangladesh/Nicaragua/Cambodia.
++152 mục thật (loại 30 trùng — phần lớn là các trường Philippines đã thêm từ danh bạ ITSO
+lượt trước, cơ chế lọc trùng theo domain hoạt động đúng, tự động nhận ra dù tên gọi trong TISC
+khác chữ với tên đã dùng, vd "Mapua Institute of Technology" (TISC) trùng domain với "Mapua
+University ITSO" đã có). Trung Quốc đóng góp nhiều nhất (~30 thành phố khác nhau).
+
+`ROSTER`: 1313 → **1465**. Batch5 (Malaysia/Saudi Arabia/Thái Lan, 110 mục) đã tải xong, đang
+kiểm sống — merge ở lượt kế tiếp.
+
+**Lần trước:** 2026-09-08 (checkpoint 13 — VÁ LỖI GỐC RỄ TRONG `roster_common.py`, sếp
 nâng mốc tiếp: 2000 → **3000**) — trong lúc merge batch Argentina/Colombia/Cuba/Ecuador/
 Georgia/Jamaica/Jordan/Kenya/Mongolia/Nigeria/Palestine/Peru/Nga/Sao Tome/Nam Phi/Sri Lanka/
 Trinidad/Zambia từ TISC, `load_roster()` báo lỗi JSON — hoá ra một tên tổ chức THẬT lấy từ
