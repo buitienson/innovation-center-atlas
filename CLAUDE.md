@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 2253 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 2380 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,57 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 17 — **VƯỢT MỐC 2000, đợt 2 africatechschools.com**) —
+**Lần cuối:** 2026-09-09 (checkpoint 18 — **NGUỒN MỚI: ANPROTEC Brazil, kỹ thuật mới "đọc
+JS nhúng sẵn thay vì scrape HTML"**) — sau khi xác nhận africatechschools.com/TISC hết, cho
+agent nghiên cứu tìm nguồn lớn tiếp theo. Kết quả quan trọng nhất: **Startup India** (danh bạ
+1518 vườn ươm thật, API `POST api.startupindia.gov.in/sih/api/noauth/search/profiles` với body
+`{"roles":["Incubator"],"dpiitRecogniseUser":false,...}` — bẫy: mặc định JS gửi
+`dpiitRecogniseUser:true` lọc gần hết, phải đặt `false` mới ra đủ 1518) **NHƯNG trang public
+profile của từng tổ chức KHÔNG lộ URL riêng** (chỉ ẩn số điện thoại/email dạng XXXX, mục
+"Portfolio" chỉ có link của startup được ươm chứ không phải link của chính vườn ươm) — đây là
+**GIỚI HẠN CỨNG** của nguồn này, không có cách nào lấy URL thật hàng loạt mà không đăng nhập
+(không được làm) hoặc đoán domain (không đạt chuẩn) — ĐÃ BỎ nguồn này dù dữ liệu tên+địa điểm
+rất tốt. China Torch (`chinatorch.gov.cn`) vẫn KHÔNG kết nối được từ mạng hiện tại (curl lẫn
+`WebFetch` đều timeout/ECONNREFUSED) — để lại việc mở, thử mạng khác. Enterprise Europe Network
+(`een.ec.europa.eu`) là trang chọn quốc gia bằng bản đồ tương tác, chưa tìm ra endpoint dữ liệu
+trong thời gian cho phép — để lại việc mở.
+
+**Nguồn dùng được: ANPROTEC** (`anprotec.org.br/site/sobre/associados-anprotec/`, hiệp hội
+vườn ươm/khu công nghệ/coworking Brazil) — phát hiện kỹ thuật MỚI, hiệu quả hơn hẳn scrape HTML
+từng trang: trang bản đồ thành viên dùng plugin WordPress "wp-google-map-gold", TOÀN BỘ dữ liệu
+478 tổ chức (tên, thành phố, bang, **URL thật trong field `location.extra_fields.site`**, hạng
+mục) đã nhúng sẵn dạng JSON ngay trong một `<script>` inline của trang — KHÔNG cần gọi API
+riêng, KHÔNG cần phân trang, chỉ cần render trang bằng trình duyệt thật rồi `javascript_tool`
+trích chuỗi JSON sau khoá `"places":[...]` (đếm ngoặc `[`/`]` kiểu string-aware, giống
+`find_roster_span`). 478 mục, 330 có `site` khác rỗng → `check_url()` giữ **143/330** sống →
+lọc trùng tên/domain với ROSTER (16 trùng + 1 lỗi định dạng bang "Rio Grande do Sul" thay vì mã
+"RS", đã sửa tay merge riêng) → merge **127 mục mới thật** (126 tự động + 1 tay).
+
+**Bài học kỹ thuật quan trọng cho lượt sau:** khi một trang "bản đồ thành viên hiệp hội" dùng
+Google Maps nhúng (không phải bản đồ SVG/canvas riêng), rất đáng kiểm tra xem dữ liệu marker có
+nhúng sẵn dạng JSON trong `<script>` inline hay không (tìm bằng cách lọc script có chứa
+`"lat"`/`"marker"`/tên hiệp hội) TRƯỚC KHI nghĩ đến việc gọi API hoặc scrape từng trang con —
+nếu có, đây là cách nhanh và đầy đủ nhất, thường sạch hơn cả gọi API vì đã bao gồm mọi field
+(kể cả `site`/`email` mà API danh sách công khai có thể không trả). Toạ độ dùng centroid CẤP
+BANG của Brazil (`BR_STATE_CENTROID`, 27 bang, viết tay trong script merge tạm) — chính xác hơn
+centroid cấp quốc gia đã dùng cho batch Châu Phi, vì Brazil dữ liệu có sẵn field bang riêng.
+
+`ROSTER`: 2253 → **2380**. Đơn vị trên bản đồ: **2389**.
+
+**Việc mở cho lượt sau (hướng tới mốc 5000):** (1) thử lại China Torch từ mạng khác — danh bạ
+chính thức ~178+ khu công nghệ cao TQ, có thể vẫn bị chặn theo ccTLD giống các nước Châu Phi
+`.gn`/`.tg` trước đây. (2) Tìm endpoint dữ liệu thật của Enterprise Europe Network (~600 đối
+tác) — trang chọn quốc gia bằng bản đồ, chưa rõ cơ chế tải dữ liệu. (3) Áp dụng ĐÚNG kỹ thuật
+vừa học (tìm JSON nhúng sẵn trong script bản đồ) cho các hiệp hội vườn ươm/khu công nghệ quốc
+gia KHÁC còn chưa thử — Mexico, Colombia, Argentina, Tây Ban Nha (có bài báo nhắc "mapa de
+incubadoras y aceleradoras" của Social Innovation Monitor nhưng site chính `socialinnovation
+monitor.com` bị chặn bởi Cloudflare bot-check, không truy cập được) — mỗi hiệp hội quốc gia
+kiểu này thường chỉ ra 100-500 mục, không lớn bằng TISC/africatechschools nhưng cộng dồn vẫn
+đáng kể, và kỹ thuật trích JSON nhúng nhanh hơn nhiều so với scrape từng trang. (4) Cân nhắc
+đầu tư công sức reverse-engineer `iasp.ws` (ASP.NET postback) nếu không tìm ra nguồn JSON/tĩnh
+nào khác — đã tạm bỏ 2 lần nhưng vẫn là danh bạ khu khoa học lớn nhất chưa khai thác.
+
+**Lần trước:** 2026-09-09 (checkpoint 17 — **VƯỢT MỐC 2000, đợt 2 africatechschools.com**) —
 sếp nâng mục tiêu tổng lên **5000 đơn vị**. Checkpoint 16 mới chỉ duyệt trang khu vực MỘT LẦN
 mỗi trang (đủ để lấy 861 mục) nhưng một lần fetch tĩnh không lấy hết được toàn bộ danh sách —
 xác nhận bằng cách fetch lại nhiều lần cùng 1 trang `?page=N`, kết quả hội tụ dần: West Africa
