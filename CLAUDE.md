@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 1035 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 1149 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,37 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (tiếp — checkpoint 11, tiếp tục hướng "khai thác nốt nguồn cũ") —
+**Lần cuối:** 2026-09-08 (checkpoint 12 — TÌM RA NGUỒN LỚN NHẤT PHIÊN NÀY, sếp nâng mốc
+1100→1200→**2000**) — phát hiện danh bạ TISC (Technology and Innovation Support Center) của
+WIPO: `wipo.int/tisc` — **1908 tổ chức thật trên toàn cầu**, mỗi mục có sẵn trường "Web site"
+(không cần đoán domain!). Quan trọng: trang tìm kiếm là SPA gọi API JSON công khai, không cần
+đăng nhập:
+- Danh sách: `https://www.wipo.int/o/api/v1/wipo-tisc/search?lang=en_US&limit=100&page=N`
+  (0-indexed, `meta.total_pages` cho biết tổng số trang).
+- Chi tiết từng mục (có `website`): `https://www.wipo.int/o/api/v1/wipo-tisc/details?id=<ID>&lang=en_US`
+  — `curl` thẳng được, không cần trình duyệt, rất nhanh.
+
+Quy trình đã chạy: tải hết 1908 mục (id+tên+nước) → lọc theo nước ưu tiên (nước mỏng trong
+ROSTER + nước có nhiều mục trong TISC) → gọi API `details` từng id lấy `website` → tự kiểm
+sống bằng `check_url()` → lọc trùng tên/domain với ROSTER → merge. Lượt này xử lý xong
+Algeria/Belarus/Bhutan/Botswana/Burkina Faso/Cameroon/Côte d'Ivoire/Djibouti/Ghana/Indonesia
+(một phần) — chủ yếu ra từ Algeria (đợt đầu TISC chỉ có 1 mục Algeria trong ROSTER, nguồn TISC
+có 158!). +114 mục thật (sau khi loại 11 trùng).
+
+`ROSTER`: 1035 → **1149**. Đã tải sẵn (chưa xử lý hết) thêm ~230 mục cho Nga/Peru/Colombia/
+Argentina/Kenya/Nam Phi/Sri Lanka/Jordan/Ecuador/Mongolia/Palestine/Cuba/Senegal/Nigeria/
+Rwanda... ở `/tmp/tisc-details-batch3.json` (file tạm, KHÔNG có trong git — mất khi phiên kết
+thúc, nếu cần dùng lại thì tải lại từ API bằng câu lệnh trên) — Nga có tới **172 mục trong
+TISC mà ROSTER mới chỉ có 4**, cơ hội lớn nhất tiếp theo.
+
+**Việc mở, làm tiếp ngay khi có phiên mới:** còn nguyên các nước TISC CHƯA ĐỘNG TỚI:
+Philippines (114 — khác hẳn danh bạ ITSO đã dùng, đáng thử), China (98), Ai Cập (59), Uganda
+(39), Tunisia (39), Kyrgyzstan (25), Tajikistan (25), Oman (22), Ấn Độ (12), Honduras/Chile/
+El Salvador/Costa Rica/Guatemala/Cộng hòa Dominica/Panama/Qatar/Uruguay/Venezuela/Armenia/
+Bangladesh/Nicaragua/Zimbabwe (mỗi nước dưới 15 mục). Cứ lặp lại đúng quy trình 3 bước ở trên
+cho từng batch nước, kiểm sống, lọc trùng, merge, build, kiểm, push mỗi ~50-100 mục.
+
+**Lần trước:** 2026-09-08 (tiếp — checkpoint 11, tiếp tục hướng "khai thác nốt nguồn cũ") —
 +10 mục thật. Trung Quốc (+5): quay lại đúng danh sách MOST batch-6 đã dùng dở, lấy nốt các
 tên trường chưa xử lý (Southwest Jiaotong University, Wuhan Institute of Technology, China
 University of Mining and Technology, Nanjing Institute of Technology, Yancheng Institute of
