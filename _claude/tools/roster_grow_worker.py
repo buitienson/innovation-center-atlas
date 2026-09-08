@@ -83,6 +83,7 @@ def main():
     roster = c.load_roster(args.roster_html)
     existing_names = {c.normalize_name(r[0]) for r in roster}
     existing_domains = {c.domain_of(r[3]) for r in roster if len(r) > 3 and r[3]}
+    source_domains = {c.domain_of(u) for u in args.source_urls if c.domain_of(u)}
 
     urls_block = "\n".join(args.source_urls)
     user_text = (
@@ -130,6 +131,9 @@ def main():
         dom = c.domain_of(url)
         if norm in existing_names or (dom and dom in existing_domains):
             continue  # already in ROSTER
+        if dom and dom in source_domains:
+            print(f"Bo qua (URL trung voi trang nguon, khong phai trang rieng cua to chuc): {name} - {url}", file=sys.stderr)
+            continue
         ok, reason = c.check_url(url)
         if not ok:
             print(f"Bo qua ({reason}): {name} - {url}", file=sys.stderr)

@@ -6,11 +6,10 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, ~786 mục ở tab Toàn cầu) có sẵn hạ tầng cho một routine hằng ngày
-**riêng** chạy trên Gemini (không tốn token Claude) để mở rộng dần (xem
-`_claude/routine-roster-grow.md` — **hiện đang CHẶN**: key Gemini hiện có bị 0 hạn mức
-Google Search grounding, cần sếp quyết định hướng đi tiếp — đọc mục "Tình trạng hiện tại"
-trong file đó); các mục còn lại Sơn tự sửa tay khi cần.
+mục mở rộng (`ROSTER`, 831 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
+`_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
+tự sửa tay khi cần.
 
 **Live:** https://buitienson.github.io/innovation-center-atlas/
 **Artifact (bản xem/sửa nhanh):** https://claude.ai/code/artifact/175ea757-eca9-4a87-acc8-47981ab5b129
@@ -53,49 +52,66 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 — commit mới nhất `3657795`. Thêm tab **Fund/Hackathon** (21 mục,
-nối vào routine tin tức hằng ngày) và tab **Thuật ngữ/Glossary** (30 mục, liên kết chéo).
-Phóng to quả cầu 3D chiếm gần trọn màn hình, bỏ hẳn lưới wireframe kinh/vĩ tuyến, sửa thông
-báo fallback phân biệt đúng "máy không hỗ trợ WebGL" với "thư viện tải lỗi". Đổi tên site:
-"Atlas of University Innovation Centers"→"Atlas of Innovation Centers",
-"Atlas Trung tâm Nghiên cứu, Đổi mới sáng tạo"→"Atlas Trung tâm Đổi mới sáng tạo". Sửa ghi
-chú vùng Đông Nam Á/Việt Nam cho trung thực (tỷ lệ VN áp đảo là do độ sâu thu thập dữ liệu
-khác nhau giữa các nước, không phải một phát hiện thật).
+**Lần cuối:** 2026-09-08 (tiếp) — làm sâu Đông Nam Á theo đúng ưu tiên đã chốt (SEA "chuẩn"
+trước khi mở rộng Châu Á/thế giới). Tìm nguồn danh bạ thật kiểu `itma.my` cho từng nước:
 
-**Xác nhận quả cầu 3D lỗi trên máy sếp là driver GPU hỏng ở hệ điều hành** — dùng
-`claude-in-chrome` xem trực tiếp Edge/Chrome thật của sếp, `edge://gpu` báo
-`VENDOR=0x0000 DEVICE=0x0000`, mọi hardware-acceleration "Disabled" — không phải lỗi code.
-Sếp đã khởi động lại máy sau đó nhưng **CHƯA XÁC NHẬN** `edge://gpu` đã ra số thật chưa, cũng
-chưa xác nhận lỗi font tiếng Việt vỡ dấu (ảnh chụp trước đó) đã hết chưa — việc mở.
+- **Philippines** — nguồn `info.ipophil.gov.ph/itso/itsos-by-region/` (danh bạ CHÍNH THỨC
+  của IPOPHL, mạng lưới 77 ITSO — trang render bằng JS, phải đọc qua `get_page_text` sau khi
+  trang tải xong, không phải `WebFetch` tĩnh). Chạy `roster_grow_worker.py`, Gemini giữ lại
+  14/20 mục sau kiểm sống. Merge tay 13 mục (bỏ "De La Salle University" trùng với mục
+  "DLSU Innovation and Technology Office" đã có sẵn trong ROSTER — cùng một đơn vị, khác
+  tên), đổi tên mỗi mục thành "<Trường> ITSO" cho khớp quy ước đặt tên hiện có (mục cũ đặt
+  tên theo đơn vị cụ thể, không phải tên trường trần). Philippines: 4→17.
+- **Singapore** — nguồn `enterprisesg.gov.sg/.../coi-directory` (danh bạ Centres of
+  Innovation chính thức của Enterprise Singapore). `roster_grow_worker.py` KHÔNG dùng được ở
+  đây — xem lỗi mới bên dưới. Đã tự kiểm sống 7 URL thật (lấy từ nội dung trang qua
+  `WebFetch`, kiểm lại bằng đúng hàm `check_url()` trong `roster_common.py` cho cùng mức độ
+  nghiêm ngặt) rồi merge tay — **đây là ngoại lệ, không qua worker**, vì worker không trích
+  được link riêng từng trung tâm từ trang này (xem bên dưới). Singapore: 3→10.
+- **Indonesia** — thử nguồn `sentraki.dgip.go.id/kampus` (danh bạ Sentra KI chính thức của
+  DJKI, 616 tổ chức, phân trang) — chỉ giữ được 1/12 mục sau kiểm sống, và mục đó cũng dính
+  lỗi mới nên đã loại (xem bên dưới). Trang chỉ hiện 12 mục ở trang 1 (phân trang JS, không
+  đổi URL) nên nguồn này cần cách khai thác khác (duyệt bằng trình duyệt thật + phân trang
+  tay) mới dùng được — CHƯA làm được lượt này, để lại việc mở.
+- **Thái Lan** — chưa tìm được một trang danh bạ tổng hợp có link riêng từng đơn vị (mạng
+  lưới UBI của Bộ ĐH KH&CN Thái Lan — trang `mua.go.th` cũ đã chết tên miền; chưa tìm được
+  trang thay thế). Để lại việc mở.
+- **Campuchia/Myanmar/Brunei** — chưa tìm được nguồn danh bạ thật (chỉ có từng viện lẻ, không
+  phải danh bạ nhiều đơn vị). Để lại việc mở, CHƯA động tới.
 
-**Dựng xong hạ tầng mở rộng `ROSTER` bằng Gemini** (không tốn token Claude), đã chạy tay
-thành công, chưa lên cloud routine tự động: `_claude/tools/roster_common.py` (module dùng
-chung, có `check_url()` — lưới an toàn chống Gemini bịa URL, đã vá 4 lớp false-positive thật
-lúc dựng: trang parking domain HTTP 200, JS redirect ẩn tới trang parking, site thật bị coi
-nhầm "thin" vì `<head>` dài, site thật dùng redirect cùng dạng với trang parking — giải quyết
-bằng cách theo dấu redirect 1 bước rồi mới phán). `roster_grow_worker.py` thêm tổ chức MỚI từ
-một URL nguồn cụ thể (dùng Gemini `url_context`, KHÔNG dùng `google_search` — quota
-`google_search` trên key hiện có = 0 không billing, đã xác nhận qua nhiều lần test).
-`roster_fill_websites.py` điền `url` còn thiếu cho mục đã có sẵn. Kết quả thật đã merge:
-điền 97 `url` còn thiếu, thêm 25 mục Đông Nam Á có thật đã kiểm sống từng URL (Malaysia
-4→23, Indonesia +3, Philippines +1, Thailand +2, dùng nguồn `itma.my` cho Malaysia).
+**Lỗi false-positive MỚI phát hiện + đã vá** trong `roster_grow_worker.py` (không phải
+`roster_common.py` — sửa đúng file, không đụng module dùng chung để giữ an toàn): khi trang
+nguồn không có link riêng cho từng tổ chức (Indonesia, Singapore ở trên), Gemini có xu hướng
+điền URL = CHÍNH TRANG NGUỒN thay vì URL riêng của tổ chức — và trang nguồn dĩ nhiên luôn
+"sống" nên lọt qua `check_url()` (hàm đó chỉ kiểm sống/parking/redirect, không so sánh với
+nguồn). Đã thêm một điều kiện hẹp trong `roster_grow_worker.py` (không phải `roster_common.py`):
+loại bỏ bất kỳ candidate nào có domain trùng domain của chính `--source-urls` đã giao. Test
+lại trên Indonesia + Singapore xác nhận lọc đúng (0 mục lọt qua khi không có link riêng).
 
 Số liệu hiện tại (đếm lại bằng script Python đọc `src/atlas.html`, đừng chép số cũ):
-`ROSTER` **811** (221 còn thiếu `url`), `NEWS` 9, `FUNDING` 21, `TERMS` 30.
+`ROSTER` **831** (Philippines 17, Singapore 10, Malaysia 23, Thailand 6, Indonesia 6 —
+Campuchia/Myanmar/Brunei vẫn 0), `NEWS` 9, `FUNDING` 21, `TERMS` 30. Đã `python3 build.py`,
+kiểm `node --check` + cân bằng thẻ div/section, xem thử bằng `python3 -m http.server` +
+Browser pane (số liệu hiển thị đúng trên trang, không lỗi console) trước khi commit + push.
 
-**Việc mở, ưu tiên rõ theo yêu cầu của sếp**: rà cho hết Đông Nam Á lên "chuẩn" TRƯỚC khi mở
-rộng Châu Á/thế giới. Malaysia đã có độ sâu thật; Thái Lan/Indonesia/Philippines mới nhích
-nhẹ; Singapore/Campuchia/Myanmar/Brunei chưa động tới. Bước kế tiếp: tìm nguồn danh bạ thật
-cho từng nước còn thiếu (kiểu `itma.my`), chạy `roster_grow_worker.py --source-urls <url>`.
+**Việc mở, ưu tiên không đổi**: Thái Lan/Indonesia còn mỏng (6 mỗi nước) — cần tìm cách khai
+thác `sentraki.dgip.go.id` qua nhiều trang (phân trang JS, không đổi URL — cần duyệt trình
+duyệt thật rồi giao từng trang cho Gemini bằng cách khác, hoặc chấp nhận chỉ lấy trang 1 mỗi
+lượt) và tìm nguồn thay cho `mua.go.th` (đã chết) cho Thái Lan. Campuchia/Myanmar/Brunei vẫn
+CHƯA ĐỘNG TỚI — ưu tiên thấp hơn làm sâu 2 nước trên trước khi mở nước mới hoàn toàn.
 
-**Cạm bẫy:** `_claude/roster-grow-queue.md` (38 `[pending]`/1 `[done]`) KHÔNG khớp việc thật
-đã làm (Malaysia/Indonesia/Philippines/Thailand đã có tiến triển nhưng chưa đánh dấu trong
-file này) — đừng tin số trong file đó, kiểm ROSTER thật bằng script.
+**Cạm bẫy nhắc lại:** `_claude/roster-grow-queue.md` vẫn KHÔNG khớp việc thật đã làm — đừng
+tin số trong file đó, kiểm ROSTER thật bằng script (`roster_common.load_roster`).
 
-Chi tiết đầy đủ (kể cả câu lệnh tiếp tục) ở `Brain/_shared/so-ban-giao.md`, mục
-`2026-09-08 · Innovation Center Atlas`.
+**Lần trước:** 2026-09-08 (đầu phiên) — dựng xong hạ tầng mở rộng `ROSTER` bằng Gemini
+`url_context` (không tốn token Claude), vá 4 lớp false-positive trong `check_url()`
+(`roster_common.py`), merge thật 97 `url` còn thiếu + 25 mục Đông Nam Á (Malaysia 4→23,
+Indonesia +3, Philippines +1, Thailand +2, dùng nguồn `itma.my` cho Malaysia). Ngoài ra xác
+nhận quả cầu 3D lỗi trên máy sếp là driver GPU hỏng ở hệ điều hành (`edge://gpu` báo
+`VENDOR=0x0000 DEVICE=0x0000`) — sếp đã khởi động lại máy nhưng CHƯA XÁC NHẬN đã hết lỗi
+chưa, cũng chưa xác nhận lỗi font tiếng Việt vỡ dấu đã hết chưa — vẫn là việc mở.
 
-**Lần trước:** 2026-09-07 — routine tự động thêm 2 tin + 2 cơ hội tài trợ/cuộc thi vào
+**Lần trước nữa:** 2026-09-07 — routine tự động thêm 2 tin + 2 cơ hội tài trợ/cuộc thi vào
 `src/atlas.html` (RND to Startup 2026, VK Connect 2026, đặt hàng nhiệm vụ KH&CN cây Bách bộ
 VQG Xuân Sơn). Đã build + kiểm + commit + push. Chưa publish lại Artifact (routine tự động
 không tự làm bước này).

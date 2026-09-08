@@ -52,6 +52,22 @@ giới hạn 15 mục/lượt. Script tự chẩn đoán khi gặp lỗi hạn m
 thêm 1 lệnh gọi không kèm tool để phân biệt "chỉ `url_context` bị chặn" với
 "cả key hết hạn mức".
 
+**Cập nhật 2026-09-08 (lượt sau) — false-positive thứ 4, vá trong
+`roster_grow_worker.py` (không phải `roster_common.py`):** khi trang nguồn
+liệt kê nhiều tổ chức nhưng KHÔNG có link riêng cho từng tổ chức (thử với
+`sentraki.dgip.go.id/kampus` và `enterprisesg.gov.sg/.../coi-directory`),
+Gemini không phải lúc nào cũng "ước lượng URL hợp lý" như system instruction
+yêu cầu — nhiều lần nó điền thẳng URL = CHÍNH trang nguồn đã giao. Trang
+nguồn luôn "sống" nên lọt qua `check_url()` (hàm đó không biết gì về nguồn,
+chỉ kiểm sống/parking/redirect). Đã vá bằng một điều kiện hẹp trong
+`roster_grow_worker.py`: so `domain_of(candidate.url)` với domain của từng
+`--source-urls` đã giao, loại nếu trùng. **Hệ quả cho việc chọn nguồn:** nguồn
+kiểu trang danh bạ CÓ SẴN link riêng từng tổ chức trong HTML (kiểu `itma.my`
+— dù không link cũng còn được vì Gemini ước lượng domain từ tên) vẫn dùng
+tốt; nguồn kiểu bảng/thẻ không có `<a href>` riêng (site chính phủ dùng JS
+render bảng) có tỷ lệ giữ lại rất thấp hoặc bằng 0 với cách làm hiện tại —
+cân nhắc nguồn khác hoặc chấp nhận tỷ lệ giữ lại thấp.
+
 ### Việc cần làm tiếp trước khi tạo cloud routine
 
 1. Bổ sung URL nguồn thật cho các mục trong `roster-grow-queue.md` (hiện chỉ
