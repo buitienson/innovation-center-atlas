@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 852 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 855 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,39 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (mở rộng Châu Á, theo yêu cầu trực tiếp của sếp — không còn giới
+**Lần cuối:** 2026-09-08 (tìm nguồn tiếng Trung tốt hơn cho Trung Quốc, theo yêu cầu trực
+tiếp) — kết quả MỎNG hơn kỳ vọng, đáng ghi lại lý do:
+
+Tìm ra nguồn CHÍNH THỐNG cấp quốc gia thật: danh sách "第六批国家技术转移示范机构" (đợt 6,
+84 tổ chức) do Bộ Khoa học Công nghệ TQ (MOST) công bố, file `.doc` tải được trực tiếp từ
+`most.gov.cn` (`textutil -convert txt` đọc được, không cần OCR). ĐÂY LÀ NGUỒN THẬT — nhưng
+CHỈ có tên tổ chức, KHÔNG có link nào (giống hệt vấn đề gặp ở Indonesia's Sentra KI). Thử
+nhờ Gemini đoán URL cho 18 tên (gọi thẳng, không qua `roster_grow_worker.py` vì không có
+trang để `url_context` đọc — chỉ có danh sách tên tĩnh) — kết quả: Gemini đoán ĐÚNG MỘT KIỂU
+domain trường (vd `hbut.edu.cn`, `nankai.edu.cn`) cho gần hết, tức là chỉ đoán ra TRANG CHỦ
+TRƯỜNG chứ không phải trang riêng của trung tâm CGCN — không đạt chuẩn chất lượng ROSTER
+(giống vấn đề gặp với ITSO Philippines, nhưng lần này không có "trang danh bạ đã ITSO hoá"
+để đổi tên bù — nên KHÔNG dùng các kết quả đoán trang chủ này).
+
+Chuyển sang tìm tay từng trường (như Đông Nam Á) — tỷ lệ ra kết quả THẤP: phần lớn trường chỉ
+có "科技处"/"科学技术发展院" (phòng KH&CN chung chung, không phải "trung tâm CGCN" riêng như
+tên trong danh sách MOST) — không đạt chuẩn nên bỏ (Nankai, Hohai, 中国地质大学 — cả 3 không
+thêm). Ra được đúng 3 mục thật có trang riêng xác nhận sống: Southeast University Technology
+Transfer Center (`ttc.seu.edu.cn`), USST Technology Transfer Center (`jszy.usst.edu.cn`),
+Nanjing Forestry University Technology Transfer Center (`kjc.njfu.edu.cn/lbt/jszyzx`). Tiện
+thể tìm ra URL thật cho mục "Shanghai Jiao Tong University Technology Transfer Center" ĐÃ CÓ
+SẴN trong ROSTER (trước đó thiếu url) — điền `aitri.sjtu.edu.cn/aitri/`, không phải mục mới.
+
+`ROSTER`: 852 → **855** (+3 mục mới, +1 url điền cho mục cũ). Trung Quốc: 10 → 13.
+
+**Kết luận rút ra (áp dụng cho mọi nguồn tiếng Trung sau này):** danh sách chính thức TQ
+(MOST, Bộ Giáo dục) là THẬT nhưng hầu như không kèm link — giống vấn đề Indonesia, khác hẳn
+kiểu nguồn tốt Malaysia/Thái Lan (đã có link hoặc dễ đoán domain đơn nhất-đơn-vị). Muốn mở
+rộng Trung Quốc đáng kể cần: (1) tìm tay từng trường lớn có tên riêng rõ ràng cho đơn vị CGCN
+(không phải phòng ban chung), hoặc (2) chấp nhận tỷ lệ giữ lại thấp như lượt này. KHÔNG dùng
+cách nhờ Gemini đoán hàng loạt domain trường — chỉ ra trang chủ, không phải trang riêng.
+
+**Lần trước:** 2026-09-08 (mở rộng Châu Á, theo yêu cầu trực tiếp của sếp — không còn giới
 hạn ưu tiên "Đông Nam Á trước") — mở 3 khu vực/nước Châu Á còn mỏng hoặc chưa có mục nào,
 đều tìm tay từng tổ chức qua WebSearch + kiểm sống `check_url()` (không có trang danh bạ
 nhiều-tổ-chức tốt cho các nơi này, giống cách làm Brunei/Campuchia/Myanmar):
