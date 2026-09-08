@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 979 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 984 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,24 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (tiếp — checkpoint 6, quét rộng khắp thế giới) — +10 mục thật, mở
+**Lần cuối:** 2026-09-08 (tiếp — checkpoint 7, quét rộng khắp thế giới, sắp cạn nước dễ) —
++5 mục thật, mở MỚI HOÀN TOÀN 5 nước: Burkina Faso (2iE — viện kỹ thuật nước/năng lượng/môi
+trường, KHÔNG phải Université Nazi Boni đã thử trước — cả hai đều sống nhưng 2iE nổi tiếng
+hơn nên chọn), eSwatini (Eswatini College of Technology — Limkokwing chi nhánh Eswatini vẫn
+không sống), Congo (Université Denis Sassou Nguesso — khác Université Marien Ngouabi đã thử
+trước và chết), Djibouti (Université de Djibouti), Papua New Guinea (UPNG).
+
+`ROSTER`: 979 → **984**.
+
+**Nhận ra một mẫu hình rõ:** với 4 nước Guinea/Togo/Madagascar/Niger, đã thử NHIỀU trường
+khác nhau (không chỉ 1 trường/nước) và TẤT CẢ đều URLError từ máy này — khả năng cao là domain
+quốc gia (`.gn`/`.tg`/`.mg`/`.ne`) bị chặn/lỗi định tuyến từ vị trí mạng hiện tại chứ không
+phải các trường đó thật sự chết hết — đáng thử lại từ vị trí mạng khác trước khi kết luận
+"không có nguồn". Bài học chung: khi 1 trường trong nước X chết, thử nguồn KHÁC nhau (trường
+khác, không chỉ URL khác của cùng trường) trước khi kết luận cả nước đó bế tắc — 2iE/UDSN vừa
+tìm được đúng theo cách này.
+
+**Lần trước:** 2026-09-08 (tiếp — checkpoint 6, quét rộng khắp thế giới) — +10 mục thật, mở
 MỚI HOÀN TOÀN 8 nước: Comoros, Somalia, Sierra Leone (Njala University), Palestine (An-Najah
 National University TTO — Birzeit đã thử lượt trước nhưng chết, An-Najah mới là nguồn dùng
 được), Central African Rep. (Université de Bangui), S. Sudan (University of Juba), Mali
