@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 855 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 870 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,21 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (tìm nguồn tiếng Trung tốt hơn cho Trung Quốc, theo yêu cầu trực
+**Lần cuối:** 2026-09-08 (sếp chốt quy tắc mới) — sếp yêu cầu rõ: **khi không tìm ra trang
+riêng của đơn vị CGCN cụ thể, cứ dùng TRANG CHỦ TRƯỜNG làm `url` thay vì bỏ qua/để trống** —
+ngược với lựa chọn thận trọng ở lượt trước (đã bỏ 15/18 kết quả Gemini đoán vì chỉ ra trang
+chủ trường). Đã quay lại 15 mục đó, kiểm sống lại từng URL bằng `check_url()` (một số domain
+cần thử biến thể `https://www.` mới sống — `njupt`, `ustl`, `hbu`, `gzu`; `hebeu.edu.cn`
+— Hebei University of Engineering — vẫn không kết nối được kể cả sau khi tra lại domain đúng,
+BỎ mục này), merge 15/16 mục còn lại với `url` = trang chủ trường. `ROSTER`: 855 → **870**.
+Trung Quốc: 13 → 28.
+
+**Quy tắc chuẩn từ giờ:** khi thêm mục ROSTER, nếu tìm được trang riêng của đơn vị thì dùng
+trang riêng (ưu tiên vẫn thế); nếu KHÔNG tìm được, dùng trang chủ trường/tổ chức chủ quản làm
+`url` — miễn là trang đó xác nhận sống qua `check_url()` — thay vì bỏ mục hoặc để trống. Áp
+dụng cho mọi nước từ giờ, không chỉ Trung Quốc.
+
+**Lần trước:** 2026-09-08 (tìm nguồn tiếng Trung tốt hơn cho Trung Quốc, theo yêu cầu trực
 tiếp) — kết quả MỎNG hơn kỳ vọng, đáng ghi lại lý do:
 
 Tìm ra nguồn CHÍNH THỐNG cấp quốc gia thật: danh sách "第六批国家技术转移示范机构" (đợt 6,
