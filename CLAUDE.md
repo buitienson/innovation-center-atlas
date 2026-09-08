@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 1025 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 1035 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,22 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-08 (tiếp — checkpoint 10, sếp đặt mốc tiếp **1100**) — vượt mốc **1034**
+**Lần cuối:** 2026-09-08 (tiếp — checkpoint 11, tiếp tục hướng "khai thác nốt nguồn cũ") —
++10 mục thật. Trung Quốc (+5): quay lại đúng danh sách MOST batch-6 đã dùng dở, lấy nốt các
+tên trường chưa xử lý (Southwest Jiaotong University, Wuhan Institute of Technology, China
+University of Mining and Technology, Nanjing Institute of Technology, Yancheng Institute of
+Technology). Thử tìm danh sách MOST mới hơn/lớn hơn trên `chinatorch.gov.cn` (420 tổ chức!)
+nhưng domain này KHÔNG kết nối được từ mọi kênh (`WebFetch`, `curl`, browser) — khác hẳn
+`most.gov.cn` (vẫn tải `.doc` được) — để lại việc mở, thử từ mạng khác nếu cần mở rộng thêm
+Trung Quốc. Thái Lan (+5): quay lại đúng nguồn `sciencepark.wu.ac.th/rsp` đã dùng dở, tìm tay
+5/7 trường còn lại trong mạng lưới 16 trường (University of Phayao, Uttaradit Rajabhat
+University, Ubon Ratchathani University Science Park, Burapha University, Thaksin University)
+— Mahasarakham University và PSU Science Park vẫn không kết nối được dù thử nhiều biến thể.
+
+`ROSTER`: 1025 → **1035**. Vượt mốc **1044** đơn vị trên bản đồ, còn ~56 nữa tới mốc 1100 sếp
+đặt.
+
+**Lần trước:** 2026-09-08 (tiếp — checkpoint 10, sếp đặt mốc tiếp **1100**) — vượt mốc **1034**
 đơn vị trên bản đồ (`ROSTER` **1025**). Bài học lớn nhất lượt này: khi đào sâu các nước đã có
 độ phủ vừa (Hàn Quốc/Ireland/Đan Mạch/Phần Lan/New Zealand/Áo/Na Uy...) gần như MỌI tổ chức
 nổi tiếng tìm được đều ĐÃ CÓ SẴN trong ROSTER — dấu hiệu các nước này đã được rà khá kỹ từ
