@@ -97,6 +97,17 @@ này áp dụng được cho MỌI trang chính phủ/hiệp hội có bảng ph
 (3) 45 mục Argentina "chết" ở trên — thử lại từ mạng khác, đây là các đại học công lớn thật sự
 tồn tại, khả năng cao vẫn cứu được nếu đổi vị trí mạng.
 
+**Đã thử ngay sau đó trong cùng phiên, XÁC NHẬN không dùng được (đừng thử lại trừ khi đổi
+mạng):** Peru CITE (`gob.pe/43414-...`) — mở qua trình duyệt thật (không phải `curl`) vẫn ra
+"Acceso restringido", xác nhận lại kết luận chặn ở checkpoint 19, không phải do công cụ tra
+cứu. Indonesia — hai domain đăng ký doanh nghiệp SIPENSI (`sipensi.umkm.go.id` lỗi SSL 526,
+`sipensi.kemenkopukm.go.id` không kết nối được) và `inkubator.brin.go.id` (BRIN) đều không mở
+được, giống mẫu hình các domain `.go.id` Indonesia đã gặp trước đây (`sentraki.dgip.go.id`).
+Ecuador SENESCYT — không tìm thấy danh bạ công khai có sẵn URL (chỉ có cổng ĐĂNG KÝ
+`idearium.gob.ec`/`bancodeideas.gob.ec` cho tổ chức tự khai báo, không phải danh sách đã có
+sẵn để tra cứu). Chile ANID OTL — chỉ tìm thấy trang chương trình tài trợ, không thấy danh bạ
+công khai (có thể nhỏ, tương tự CORFO đã thử ở checkpoint 19).
+
 **Lần trước:** 2026-09-09 (checkpoint 19 — **NGUỒN MỚI: Minciencias Colombia, danh sách chính
 phủ CÓ SẴN cột website**) — nguồn tốt nhất kiểu mới: Bộ KH&CN Colombia (Minciencias) công khai
 file Excel CHÍNH THỨC "Listado de Actores del SNCTeI reconocidos" tại
