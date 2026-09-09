@@ -93,18 +93,55 @@ làm ở đây. Nguồn tưởng đã "chết" (ASP.NET postback không JSON) c�
 tảng — đáng thử lại định kỳ các nguồn lớn đã bỏ dở vì lý do kỹ thuật (chứ không phải vì không
 có dữ liệu).
 
-**Đã thử ngay sau đó trong cùng phiên, XÁC NHẬN không dùng được (đừng thử lại trừ khi có lý do
-mới):** ASTP (`astp4kt.eu`, hiệp hội TTO châu Âu) — thành viên là CÁ NHÂN chuyên gia, không có
-danh bạ tổ chức công khai. RedEmprendia — chỉ 24 đại học, quá nhỏ, đã có sẵn trong ROSTER.
-UNITT Nhật Bản (`unitt.jp`) — chỉ ~82 hội viên, trang danh bạ yêu cầu đăng nhập hội viên,
-trang "Link collection" công khai chỉ có link cơ quan chính phủ, không phải hội viên. AUTM
-(`autm.net/my-autm/member-directory`) — yêu cầu đăng nhập, và là danh bạ CÁ NHÂN chuyên gia chứ
-không phải tổ chức. F6S (`f6s.com/accelerators/<nước>`) — liệt kê CHƯƠNG TRÌNH/ĐỢT TUYỂN có hạn
-nộp đơn (kiểu dữ liệu Fund/Hackathon, không phải tổ chức ổn định có 1 URL cố định — sai khuôn
-dữ liệu ROSTER dù có vẻ lớn). `incubatorlist.com` (21.471 mục "VC & chương trình") — trộn lẫn
-quỹ đầu tư mạo hiểm THUẦN TÚY (ngoài phạm vi ROSTER) với accelerator/incubator, và **URL thật
-của mọi mục đều bị khoá sau "Unlock Pro Access"** (0 link ngoài nào lộ ra trên trang công khai)
-— không lấy được dữ liệu miễn phí.
+**Việc mở cho lượt sau (mục tiêu 10000):** (1) IASP còn ~70 mục "chết" thật (không phải mạng)
+— phần lớn là site chính phủ/đại học Trung Đông (Saudi Arabia, Iran, Oman) và Trung Quốc, có
+thể do chặn theo khu vực từ mạng hiện tại, đáng thử lại từ mạng khác. (2) Tiếp tục 2 hướng đã
+chứng minh: đăng ký chính phủ có cột website (Argentina xong, còn nhiều nước Mỹ Latinh/Á khác)
+và dữ liệu nhúng sẵn (ANPROTEC, IASP xong — còn ASTP-Proton, RedEmprendia, AUTM, UNITT trong
+`_claude/roster-grow-queue.md` mục 30-34, chưa có URL cụ thể). (3) Ở quy mô 10000, cần nhiều
+nguồn cỡ IASP/ANPROTEC (200-500 mục) liên tiếp — ước tính cần ~30 nguồn cỡ này để đạt mục tiêu,
+nên ưu tiên tìm danh bạ hiệp hội/chính phủ đa quốc gia hơn là đào sâu từng nước lẻ.
+
+**2026-09-09 (tiếp checkpoint 21, cùng ngày) — một lượt tìm nguồn KHÔNG ra kết quả mới, ghi lại
+để khỏi lặp công:** thử 8 hướng, 7 loại hẳn, 1 để lại làm việc mở kỹ thuật:
+
+- **WIPO GREEN** — chỉ 160+ đối tác, là chợ công nghệ/nhu cầu chứ không phải danh bạ tổ chức
+  CGCN/ĐMST đúng khuôn ROSTER. Loại.
+- **Poland PARP "Ośrodki Innowacji"** (file PDF chính phủ `gov.pl/attachment/...`) — chỉ 48 mục
+  (2021, nhiều mục đã hết hạn công nhận), KHÔNG có cột website (phải đoán domain từng tên tiếng
+  Ba Lan) — quá nhỏ so với công đoán domain. Loại.
+- **DPIIT Recognized Startups** (`data.gov.in`) — 197.692 mục nhưng là DOANH NGHIỆP khởi
+  nghiệp, không phải đơn vị trung gian hỗ trợ (vườn ươm/CGCN) — sai phạm vi ROSTER hoàn toàn.
+  Loại.
+- **RedEmprendia** — chỉ 24 đại học, đã có sẵn trong ROSTER. Loại (đã ghi ở lượt trước).
+- **UNITT Nhật** (`unitt.jp`) — chỉ ~82 hội viên, trang danh bạ yêu cầu đăng nhập hội viên,
+  trang "Link collection" công khai chỉ có link cơ quan chính phủ, không phải hội viên. Loại.
+- **AUTM** (`autm.net/my-autm/member-directory`) — yêu cầu đăng nhập, và là danh bạ CÁ NHÂN
+  chuyên gia chứ không phải tổ chức. Loại.
+- **F6S** (`f6s.com/accelerators/<nước>`) — liệt kê CHƯƠNG TRÌNH/ĐỢT TUYỂN có hạn nộp đơn (kiểu
+  dữ liệu Fund/Hackathon, không phải tổ chức ổn định có 1 URL cố định — sai khuôn dữ liệu
+  ROSTER dù có vẻ lớn). Loại.
+- **incubatorlist.com** (21.471 mục "VC & chương trình") — trộn lẫn quỹ đầu tư mạo hiểm THUẦN
+  TÚY (ngoài phạm vi ROSTER) với accelerator/incubator, và URL thật của mọi mục đều bị khoá sau
+  "Unlock Pro Access" (0 link ngoài nào lộ ra trên trang công khai) — không lấy được dữ liệu
+  miễn phí. Loại.
+
+**InovaLink** (`inovalink.org` — nền tảng CHÍNH THỨC do MCTI + Sebrae + Anprotec + UFV lập,
+**khác ANPROTEC** dù cùng hệ sinh thái) — **kỹ thuật đầy tiềm năng nhưng KHÔNG khai thác được
+bằng công cụ hiện có, để lại làm việc mở**: quy mô thật ~397 tổ chức (230 vườn ươm + 41
+aceleradora + 76 parque đang hoạt động + 40 đang xây + 10 đang quy hoạch, đếm được qua id-list
+trong response Livewire `/livewire/update`), lớn hơn ANPROTEC và khả năng nhiều mục KHÔNG trùng
+(vì đây là nền tảng đăng ký riêng, không phải danh sách hội viên trả phí của ANPROTEC). **Bẫy
+kỹ thuật khác hẳn ANPROTEC**: đây là app Laravel Livewire, dữ liệu bản đồ KHÔNG nhúng sẵn dạng
+JSON tĩnh trong HTML/script như ANPROTEC (đã kiểm `window.mapping`/`window.distanceMarkers` —
+cả hai là HÀM khởi tạo bản đồ, không phải object dữ liệu) — response Livewire chỉ trả về DANH
+SÁCH ID (`keys: [1,2,3...]`) của các Eloquent model (`Incubator`, `Accelerator`, `Park`,
+`Company`), tên/địa chỉ/website thật phải lấy qua tương tác từng marker (click) hoặc endpoint
+chi tiết riêng chưa xác định — không có cách lấy hàng loạt bằng 1-2 lệnh gọi như ANPROTEC/IASP.
+**Việc mở cho ai thử tiếp**: tìm endpoint Livewire trả chi tiết 1 entity (thử bắt request khi
+click 1 marker thật trên bản đồ, tìm route dạng `/livewire/message/<component>` với payload
+chứa entity id), hoặc tìm trang danh sách/bảng (không phải bản đồ) nếu site có — công đáng bỏ
+vì quy mô lớn, nhưng không nên thử lại kiểu "đọc JSON nhúng sẵn" đã dùng cho ANPROTEC/IASP.
 
 **Nhận định thực tế sau khi thử nhiều hướng không ra kết quả:** khác với TISC/africatechschools/
 ANPROTEC/IASP (danh bạ CHÍNH THỐNG có URL thật miễn phí), phần lớn danh bạ "lớn" còn lại trên
@@ -114,15 +151,6 @@ ROSTER cần (danh bạ TỔ CHỨC, URL MIỄN PHÍ, đúng phạm vi CGCN/ĐMS
 kiểu "quả treo thấp" — tương tự nhận định ở checkpoint 19 cho mốc 5000, nay càng đúng hơn cho
 mốc 10000: khoảng cách còn lại (~7200) lớn hơn TOÀN BỘ số đã gom được qua 21 checkpoint cộng
 lại, nên mốc này cần rất nhiều phiên nữa, không phải một hướng đột phá còn lại.
-
-**Việc mở cho lượt sau (mục tiêu 10000):** (1) IASP còn ~70 mục "chết" thật (không phải mạng)
-— phần lớn là site chính phủ/đại học Trung Đông (Saudi Arabia, Iran, Oman) và Trung Quốc, có
-thể do chặn theo khu vực từ mạng hiện tại, đáng thử lại từ mạng khác. (2) Tiếp tục 2 hướng đã
-chứng minh: đăng ký chính phủ có cột website (Argentina xong, còn nhiều nước Mỹ Latinh/Á khác)
-và dữ liệu nhúng sẵn (ANPROTEC, IASP xong — còn ASTP-Proton, RedEmprendia, AUTM, UNITT trong
-`_claude/roster-grow-queue.md` mục 30-34, chưa có URL cụ thể). (3) Ở quy mô 10000, cần nhiều
-nguồn cỡ IASP/ANPROTEC (200-500 mục) liên tiếp — ước tính cần ~30 nguồn cỡ này để đạt mục tiêu,
-nên ưu tiên tìm danh bạ hiệp hội/chính phủ đa quốc gia hơn là đào sâu từng nước lẻ.
 
 **Lần trước:** 2026-09-09 (checkpoint 20 — **NGUỒN MỚI: Argentina MINCyT "Mapa de la
 Innovación" (UVTs), đăng ký chính phủ CÓ SẴN cột website, khai thác qua dữ liệu DataTable
