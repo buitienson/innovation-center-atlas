@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 18317 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 18524 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **25000**, sếp nâng từ 15000 ở checkpoint 37) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,95 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-10 (checkpoint 40 — **TIẾP TỤC WIKIDATA, ĐỔI ENDPOINT SANG QLEVER MIRROR do
+**Lần cuối:** 2026-09-10 (checkpoint 41 — **NHÃN ĐA NGÔN NGỮ cho 5 class Wikidata đã dùng
+(`research institute` Q31855 + `university institute`/`technology park`/`startup
+accelerator`/`innovation hub` của checkpoint 40), cứu các item KHÔNG có nhãn tiếng Anh**) —
+còn thiếu ~6476 lúc cuối phiên.
+
+Lượt trước (checkpoint 40) để lại việc mở: batch Wikidata mọi lượt trước chỉ lấy item có nhãn
+tiếng Anh (`rdfs:label ... FILTER(LANG=... "en")`), loại thẳng item không có nhãn "en" dù có
+nhãn ngôn ngữ khác — checkpoint 39 xác nhận 53/607 bị loại kiểu này, ước tính còn dư địa. Lượt
+này khai thác đúng dư địa đó: đổi hẳn endpoint QLever cũ (`qlever.cs.uni-freiburg.de`, giờ 308
+redirect sang `qlever.dev`) — endpoint mới **yêu cầu khai báo `PREFIX` tường minh** (khác
+endpoint cũ chấp nhận `wdt:`/`wd:`/`rdfs:` ngầm định), đã thêm 3 dòng `PREFIX` đầu mỗi truy vấn.
+
+**Truy vấn:** `FILTER NOT EXISTS { ?item rdfs:label ?enLabel . FILTER(LANG(?enLabel)="en") }` để
+chỉ lấy phần item ĐÃ BỊ LOẠI ở các lượt trước (không quét lại toàn bộ, không trùng công đã làm),
+rồi with 9 `OPTIONAL` lấy nhãn theo thứ tự ưu tiên ngôn ngữ `zh/ja/ko/ru/ar/es/fr/de/pt` (script
+ngôn ngữ hay gặp ở tổ chức nghiên cứu ngoài khối Anh ngữ), cộng 1 `OPTIONAL` cuối lấy NHÃN BẤT KỲ
+(`?labelAny` không filter ngôn ngữ) làm lưới an toàn cho ngôn ngữ hiếm không nằm trong 9 danh
+sách trên, `COALESCE` theo đúng thứ tự đó. Gộp cả 5 class trong 1 truy vấn `VALUES ?class {...}`.
+Đếm trước khi lấy đủ: `research institute` chiếm áp đảo (690/1013 dòng thô thiếu nhãn EN, 4 class
+nhỏ còn lại cộng chỉ 54) — đúng như dự đoán vì đây là class lớn nhất đã dùng.
+
+**Kết quả truy vấn:** 1013 dòng thô (item,site) → 730 item duy nhất CÓ được 1 nhãn nào đó qua
+chuỗi `COALESCE` (0 item còn trống nhãn sau khi cộng cả 9 ngôn ngữ + nhãn bất kỳ — lưới an toàn
+`?labelAny` hoạt động đúng, không mất item nào vì thiếu nhãn nữa). Lọc trùng ROSTER (base-domain +
+`normalize_name()`, `normalize_name()` Unicode-safe nên so khớp tên chữ Nga/Ả Rập/Hán/Nhật chính
+xác): 166 trùng domain + 1 trùng tên → **306 ứng viên duy nhất**.
+
+**Toạ độ:** 115/306 có sẵn `P625` (regex `POINT(...)` viết hoa, học đúng bài học checkpoint 40).
+272/306 có `P17`→nhãn quốc gia tiếng Anh của Wikidata; 34 hoàn toàn không có quốc gia. Phát hiện
+lại ĐÚNG lỗi centroid-quốc-gia của checkpoint 39: hàm bbox-toàn-bộ-điểm (min/max thô trên mọi
+polygon của một nước) cho ra toạ độ SAI nghiêm trọng với nước có lãnh thổ hải ngoại rải rác — Mỹ
+tính ra (45.19°B, 0.79°Đ, tức miền nam nước Pháp) vì bbox kéo dài tới Guam/Alaska/Puerto Rico,
+Pháp còn tệ hơn (14.86°B, -2.98°Đ, gần Mali) vì tính luôn Guyane thuộc Pháp/Réunion/Polynésie —
+**đây chính là nguồn gốc toạ độ sai đã nằm sẵn trong ROSTER từ checkpoint 39** (dòng "Aldo Leopold
+Wilderness Research Institute" hiện có toạ độ (45.1858, 0.7927) — xác nhận bug, ghi lại làm việc
+mở, KHÔNG tự sửa vì ngoài phạm vi lượt này). **Sửa cho batch này:** đổi sang lấy polygon LỚN NHẤT
+(diện tích shoelace) trong multipolygon mỗi nước rồi mới tính bbox-center của riêng polygon đó —
+kiểm lại Mỹ/Pháp/Trung Quốc/Nhật/Anh/Bồ Đào Nha/Hà Lan đều ra toạ độ đúng vùng lục địa chính. Ưu
+tiên xử lý toạ độ: (1) `P625` thật nếu có; (2) nếu có toạ độ, `CountryLookup` (`country_from_latlon.py`)
+để XÁC MINH LẠI quốc gia thay vì tin nhãn Wikidata thô — sửa đúng lỗi "Liên Xô" (8 item nhãn quốc
+gia Wikidata là "Soviet Union", không map được vào cột quốc gia hiện đại của ROSTER, nhưng có toạ
+độ thật để suy ra quốc gia hiện tại: Nga/Kazakhstan/Ukraina...); (3) nếu chỉ có nhãn quốc gia (không
+"Soviet Union"), centroid-polygon-lớn-nhất theo tên đó + jitter xác định (hash MD5 tên tổ chức,
+±0.8°); (4) nếu thiếu cả toạ độ lẫn quốc gia, suy quốc gia từ ccTLD của domain (`.ru`→Nga,
+`.kz`→Kazakhstan, `.ua`→Ukraina..., dict ~50 mã tự viết cho lượt này) rồi mới centroid; (5) hết cả
+4 cách → LOẠI (12 mục, ví dụ "北海道野生動物研究所", "Pedersen Brain Science Institute" — domain
+`.com`/`.org`/tổ chức mẹ quốc tế không suy ra quốc gia được, không đoán bừa).
+
+**`check_url()` 2 vòng:** vòng 1 (12 luồng/12s) giữ 206/294. Vòng 2 kiểm lại 88 mục chết (6
+luồng/25s) chỉ cứu thêm 1 → 87 vẫn chết, đa số `URLError`/`HTTPError`/timeout — RIÊNG BATCH NÀY có
+tỷ lệ chết cao bất thường (206/294 ≈ 70% thay vì ~80-90% thường thấy), đã NGHI NGỜ lỗi mạng cục bộ
+của máy (nhiều IP nước ngoài khác nhau cùng timeout kết nối TCP) nên đã kiểm chéo bằng
+`WebFetch` (chạy trên hạ tầng Anthropic, đường mạng khác hẳn) cho 2 mẫu (`iar-conicet.gov.ar`,
+`ippuc.org.br`) — CẢ HAI đều lỗi kết nối trên `WebFetch` (`ECONNREFUSED`/`ECONNRESET`) — xác nhận
+đây là site thật sự chết/không truy cập được, không phải do mạng máy cục bộ, KHÔNG cứu thêm.
+**Tổng: 207/306 sống thật.** Rà từ khoá cờ đỏ (agent/gemini/chưa xác minh/unverified) trên 207 mục:
+**0 khớp**. 0 Việt Nam xuyên suốt (lọc từ bước gán quốc gia, xác nhận lại ở bước cuối bằng
+`normalize_name`). Trải 30 quốc gia, dẫn đầu Đức 28, Argentina 22, Ukraina 16, Nhật 15, Nga 15 —
+đúng đặc điểm dữ liệu Wikidata dồi dào cho các nước có cộng đồng biên tập Wikipedia/Wikidata lớn
+bằng ngôn ngữ mẹ đẻ (đặc biệt Đức/Nga/Ukraina/Nhật vốn có rất nhiều viện nghiên cứu tên bằng tiếng
+Đức/Nga/Nhật không có bản dịch tiếng Anh).
+
+`ROSTER`: 18317 → **18524** (+207, khớp đúng số kiểm lại `len(load_roster(...))` ngay trước merge
+— `git status` sạch). Đơn vị trên bản đồ: 18326 → **18533** (+207, giữ nguyên chênh lệch +9).
+Kiểm: `node --check` sạch, thẻ `div`/`section` cân bằng (107/107, 6/6). Mở `index.html` qua HTTP
+server cục bộ (`preview_start`/`preview_stop` của Browser pane) qua Browser pane, đọc
+`get_page_text`: đúng "18533 đơn vị được lập bản đồ" / "18524 trong danh mục mở rộng" / "12 đơn vị
+tại Việt Nam" (không đổi) / "9 case phân tích chuyên sâu" (không đổi), console sạch. Commit
+`6b3512a`, `git push origin main` thành công.
+
+**Còn thiếu ~6476 để đạt 25000.** **Việc mở cho lượt sau:** (1) **kỹ thuật nhãn đa ngôn ngữ lượt
+này coi như ĐÃ CẠN cho 5 class hiện có** (0 item còn thiếu nhãn sau lượt này) — không lặp lại cho
+đúng 5 class cũ, nhưng NÊN áp dụng ngay từ đầu (không tách 2 lượt như đã làm) cho bất kỳ class
+Wikidata MỚI nào thử ở lượt sau, đỡ phải quay lại vá; (2) **bug toạ độ centroid-bbox-toàn-điểm của
+checkpoint 39 vẫn còn nguyên trong ROSTER** (ít nhất dòng "Aldo Leopold Wilderness Research
+Institute" 45.1858/0.7927 sai) — có thể còn nhiều dòng khác cùng lỗi (mọi nước có lãnh thổ hải
+ngoại: Mỹ/Pháp/Anh/Hà Lan/Đan Mạch/Tây Ban Nha/Bồ Đào Nha/Nga...) từ các batch dùng
+"centroid-quốc-gia" kiểu bbox-toàn-điểm ở checkpoint 39 — lượt sau nên quét toàn ROSTER tìm toạ độ
+bất thường (vd. cách xa mọi polygon thật của quốc gia ghi trong cột `country`, dùng chính
+`CountryLookup.country_for()` để đối chiếu ngược) rồi sửa lại bằng phương pháp polygon-lớn-nhất đã
+dùng ở lượt này; (3) tiếp tục tra Q-id mới cho khái niệm CGCN/ĐMST chưa thử: "innovation and
+technology center", "research centre" (nếu tách biệt "research institute"), "living lab",
+"digital innovation hub" (khác `innovation hub` Q28689074); (4) endpoint QLever đã đổi domain
+(`qlever.cs.uni-freiburg.de` → 308 redirect → `qlever.dev`) — dùng thẳng `qlever.dev` từ đầu ở lượt
+sau, tiết kiệm 1 round-trip, và NHỚ khai báo `PREFIX` tường minh (endpoint mới không còn ngầm định
+như endpoint cũ); (5) nguồn OSM và phi-Wikidata khác đã liệt kê ở checkpoint ≤38 coi như cạn.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 40 — **TIẾP TỤC WIKIDATA, ĐỔI ENDPOINT SANG QLEVER MIRROR do
 `query.wikidata.org` (WDQS chính thức) đang bị throttle nặng "active wdqs outage" 1 req/min suốt
 phiên — class `university institute` (Q11946645) + 3 class nhỏ `technology park`/`startup
 accelerator`/`innovation hub`**) — còn thiếu ~6683 lúc cuối phiên.
