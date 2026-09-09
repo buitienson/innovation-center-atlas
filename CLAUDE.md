@@ -6,7 +6,8 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 8936 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 9035 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+hiện tại **15000**, sếp nâng từ 10000 ở checkpoint 30) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +53,103 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 29 — **HackerspaceWiki, trạng thái "building" + "planned"**)
+**Lần cuối:** 2026-09-09 (checkpoint 30 — **NGUỒN LỚN MỚI: OpenStreetMap, 3 tag mới `office=association`/
+`office=ngo`/`office=educational_institution` (lọc từ khoá tên) + `office=research` dạng `relation`**) —
+**sếp vừa nâng mục tiêu từ 10000 lên 15000** (còn thiếu ~6065 lúc đầu phiên, khoảng cách LỚN hơn hẳn 9
+lượt trước cộng lại). Việc mở đầu phiên: tìm nguồn hoàn toàn mới quy mô lớn cho mục tiêu mới.
+
+**Overpass API chính (`overpass-api.de`) và mirror `overpass.kumi.systems` bị CHẶN Ở TẦNG MẠNG lúc đầu
+phiên** (curl timeout ở bước TCP connect, không phải lỗi DNS hay lỗi ứng dụng — `nslookup` vẫn resolve
+đúng IP, nhưng `curl -v` treo ở "Trying ... Connection timed out"; Browser pane cũng báo "navigation...
+denied or failed" cho đúng domain này trong khi domain khác bình thường) — nghi bị chặn do mẫu truy vấn
+Overpass nặng lặp lại nhiều lượt trước từ cùng máy/IP. **Đã tìm ra lối thoát: mirror khác vẫn thông**
+(`overpass.openstreetmap.fr`, `overpass.osm.ch` — kiểm bằng `curl` tới `/api/status` trả 200 bình
+thường) — **GHI NHỚ CHO BATCH SAU**: nếu `overpass-api.de` lại chặn, thử ngay các mirror này trước khi
+kết luận Overpass đã hết dùng được.
+
+Tra `taginfo.openstreetmap.org` API (`/api/4/tag/stats?key=X&value=Y`, trả JSON số liệu trực tiếp,
+nhanh hơn hẳn mở trang web JS) cho một loạt tag `office=*` chưa thử: `office=association` (35656 toàn
+cầu), `office=ngo` (24152), `office=educational_institution` (48294) — đều QUÁ RỘNG để lấy toàn bộ
+(đa số là hội đoàn/NGO/trường học không liên quan chủ đề Atlas, giống bài học `office=coworking` cũ) —
+nên lọc ngay trong câu Overpass QL bằng regex trên `name` (`~"fablab|hackerspace|makerspace|incubat|
+innovat|tech hub|technopark|technology park|science park|repair caf|fab lab|living lab|startup hub|
+entrepreneur|makers",i`) thay vì tải hết rồi lọc sau — giảm tải cho server, tránh timeout (thử gộp cả
+3 tag + `office=research` dạng `relation` trong 1 câu bị timeout ở giây 212, phải TÁCH thành 4 câu
+riêng theo từng tag mới chạy xong, mỗi câu <2 phút). Cũng thử khai thác nốt phần CÒN THIẾU của
+`office=research` (checkpoint 28 chỉ lấy `node`+`way`) bằng `relation["office"="research"]["name"]`
+riêng — 797 relation toàn cầu.
+
+Gộp theo `(type,id)` 4 câu: 936 điểm duy nhất có tên, 326 có `website`/`contact:website` (tỷ lệ có
+website thấp hơn hẳn `office=research` cũ vì bản chất tag rộng/hỗn tạp hơn). Gán quốc gia bằng
+`country_from_latlon.py` (điểm mạnh có sẵn từ checkpoint 28, dùng lại nguyên): 5 điểm rơi ngoài biên
+giới bị loại, 0 Việt Nam (kiểm đúng theo tên quốc gia chuẩn hoá, không có biến thể "Vietnam"/"VN" nào
+lọt qua). Lọc trùng nội bộ batch (domain/tên) loại 118, lọc trùng ROSTER hiện có loại 48 → còn **153**
+ứng viên. Kiểm sống `check_url()` (8 luồng, timeout 15s): alive lượt 1 **115/153**. Retry 38 lỗi (6
+luồng, timeout 20s): cứu thêm **0** → tổng **115/153 sống thật (75,2%)** — cùng tầm với `office=research`
+cũ (79,1%).
+
+**Rà thủ công phát hiện 15 mục lọt lưới từ khoá nhưng SAI CHỦ ĐỀ** (bài học mới: lọc từ khoá tên rộng
+như `innovat`/`entrepreneur`/`makers` vẫn lọt nhiễu, phải đọc tên + tra nhanh từng mục nghi ngờ trước
+khi merge, không chỉ tin domain còn sống) — loại 6 trường phổ thông gắn tên "Innovation"/"Innovative"
+(K-12 thật, không phải trung tâm ĐMST: "Fred Tajaredes School of Innovation", "KNC Innovative Global
+School", "Innovation Spokane Schools 907"), 1 hội hoạ sĩ khắc in khớp nhầm qua hậu tố "-makers"
+("Royal Society of Painter-Printmakers"), 2 công ty trị liệu/chăm sóc sức khoẻ gắn tên "Innovations"
+("Taconic Innovations" — dịch vụ người khuyết tật, "Behaviour Innovations" — trị liệu ABA tự kỷ), 1
+tổ chức nghiên cứu giáo dục gắn tên "Schoolmakers" (khớp nhầm qua "-makers", thực chất là công ty
+nghiên cứu lãnh đạo trường học), 1 tổ chức nhà ở xã hội ("Innovative Housing, Inc."), 1 tổ chức dịch vụ
+gia đình/trẻ em ("Families & Youth Innovations Plus"), 2 câu lạc bộ/hội doanh nhân thuần kết nối không
+phải hạ tầng ươm tạo ("Crown Heights Young Entrepreneurs", "JCI Johor Bahru Entrepreneur",
+"Malaysia China Silk Road Entrepreneurs Association"), 1 trường kinh doanh thuần đào tạo bằng cấp
+("TIME-The Institute of Management and Entrepreneurship"), 1 công ty không rõ ngành nghề tên trùng
+("Josh Innovations"), 1 học viện đào tạo kỹ năng công nghệ tư nhân dạng bootcamp ("Kimit Innovation
+Academy") — kiểm bằng WebSearch xác nhận từng trường hợp trước khi loại. Merge an toàn lần cuối (100
+dòng còn lại): 0 trùng phát sinh thêm. Chỉ 1/100 URL sống là domain mạng xã hội (Facebook, Fablab
+Avignon).
+
+Nguồn theo loại tag: `relresearch` (relation office=research) 58/100, `office=association` (lọc từ
+khoá) 17/100, `office=educational_institution` (lọc từ khoá) 16/100, `office=ngo` (lọc từ khoá) 9/100.
+Quốc gia (top): Đức 26, Mỹ 16, Pháp 10, Ấn Độ 5, Tây Ban Nha 5, Canada 3, Áo 3, Slovakia 3, Brazil 3 —
+Đức vẫn dẫn đầu áp đảo, đúng xu hướng mọi batch OSM trước. `org` để trống toàn batch.
+
+**Hai nguồn khác đã thử và LOẠI hẳn lượt này (đọc kỹ trước khi cân nhắc thử lại):** (1) **ENoLL**
+(European Network of Living Labs, `enoll.org`, ~184 thành viên 41 quốc gia) — có PDF "Members Catalogue
+2025" công khai (`enoll.org/wp-content/uploads/2025/09/Members-Catalogue-2025_Preview.pdf`, 81MB) chứa
+tên+quốc gia+website mỗi thành viên, nhưng layout PDF nhiều cột (tên tổ chức/tên đơn vị chủ quản/quốc
+gia+website xếp cạnh nhau) khiến cả `pdftotext` (thường và `-layout`) lẫn trích xuất theo toạ độ khối
+văn bản (PyMuPDF `get_text("blocks")`) đều occasionally GHÉP SAI tên với website của thành viên KHÁC
+trên cùng trang (xác minh thấy nhiều cặp sai rõ ràng khi rà tay, vd tên "E2L Earth observation Living
+Labs" bị ghép nhầm website "gerontopole-na.fr" của một thành viên Pháp khác) — rủi ro merge sai tên-URL
+quá cao so với yêu cầu chính xác của dự án, KHÔNG dùng. Nếu muốn khai thác nguồn này về sau, cần rà
+THỦ CÔNG từng trong ~184 trang hồ sơ (tốn công, không tự động hoá an toàn được với cấu trúc PDF này).
+(2) **Knowledge Exchange UK** (tên cũ PraxisAuril/Auril/Unico, hội TTO Anh+Ireland, `ke.org.uk`) — có
+API REST công khai `wp-json/wp/v2/civi-member` trả đúng 74 thành viên (tên+link hồ sơ), nhưng RÀ HTML
+từng trang hồ sơ xác nhận KHÔNG có trường website tổ chức nào hiển thị công khai (chỉ có tên + có thể
+vài dòng mô tả, không link ra ngoài) — không có cách lấy URL thật, COI NHƯ CẠN, đừng thử lại trừ khi
+trang web đổi cấu trúc.
+
+`ROSTER`: 8935 → **9035** (+100). Đơn vị trên bản đồ: 8944 → **9044** (+100, giữ nguyên chênh lệch +9).
+Kiểm: `node --check` sạch trên script inline (2.118.541 ký tự), thẻ `div`/`section` cân bằng (107/107,
+6/6), Browser pane qua HTTP server cục bộ hiển thị đúng "9044 đơn vị trên bản đồ" / "9035 trong danh
+mục mở rộng" / "12 đơn vị tại Việt Nam" (không đổi so với trước — xác nhận batch này không lọt Việt
+Nam), không lỗi console.
+
+**Còn thiếu ~5965 để chạm mốc 15000 MỚI** (khoảng cách còn rất lớn, mới đi được ~1,6% chặng đường mới
+mở). **Việc mở cho lượt sau:** (1) mirror Overpass thay thế đã xác nhận thông (`overpass.openstreetmap.
+fr`, `overpass.osm.ch`) — dùng ngay nếu `overpass-api.de` lại chặn; (2) 3 tag `office=association`/`ngo`/
+`educational_institution` mới lọc bằng 1 bộ từ khoá cố định — có thể MỞ RỘNG danh sách từ khoá regex
+(vd thêm "coworking", "accelerator", "vườn ươm" dịch các ngôn ngữ khác, "technopole", "cluster") để vét
+thêm phần còn lại của 3 tag này (hiện chỉ lọc được 207/48294+35656+24152 tổng 3 tag, còn rất nhiều
+chưa xét vì chỉ tag có match từ khoá tên mới được Overpass trả về — muốn vét hết phải tải toàn bộ rồi
+lọc offline, tốn tài nguyên hơn); (3) ENoLL PDF (184 living lab, 41 quốc gia) vẫn là nguồn tiềm năng
+nếu ai đó sẵn sàng rà tay từng trang (không tự động hoá được an toàn, xem chi tiết ở trên); (4) Knowledge
+Exchange UK/PraxisAuril COI NHƯ CẠN (không có trường website); (5) IASP còn ~70 mục "chết" (nghi chặn
+mạng khu vực); (6) BIRAC BioNEST PDF lỗi cấu trúc vẫn chưa sửa được; (7) InovaLink Brazil vẫn bế tắc;
+(8) cần tiếp tục tìm nguồn hoàn toàn mới quy mô lớn khác — ở khoảng cách 15000, các nguồn cỡ 100-500
+như lượt này chỉ là một phần nhỏ, cần ưu tiên tìm nguồn cỡ nghìn (như `office=research` node+way +2182
+ở checkpoint 28, hay `fablabs.io` +1367) nếu còn tồn tại chưa khai thác.
+
+---
+**Lần trước:** 2026-09-09 (checkpoint 29 — **HackerspaceWiki, trạng thái "building" + "planned"**)
 — tiếp tục mục tiêu **10000**. Đây là việc mở đã ghi ở checkpoint 28: khai thác 2 nhóm trạng thái
 còn lại của `Category:Hackerspace` chưa từng lấy (checkpoint 26 chỉ lấy `active`).
 
