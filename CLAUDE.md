@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 9046 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 9509 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **15000**, sếp nâng từ 10000 ở checkpoint 30) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,94 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 31 — **CÙNG NGUỒN OpenStreetMap, kỹ thuật MỚI "tải cấu trúc
+**Lần cuối:** 2026-09-09 (checkpoint 32 — **NGUỒN OSM MỚI: `amenity=university` thay vì `office=*`,
+giới hạn bbox Châu Phi + Trung Đông**) — tiếp tục mục tiêu **15000** (còn thiếu ~5954 lúc đầu phiên).
+
+**Đầu phiên: kiểm lại 7 domain nghi bị chặn tầng mạng ở checkpoint 31.** Retry `check_url()` (timeout
+15-20s, 2 lượt): chỉ **1/7 sống** (`u-touch.org`) — nhưng `WebFetch` xác nhận đây là tổ chức phát triển
+cộng đồng/giáo dục ở Uganda (ICT literacy cho phụ nữ/trẻ em), KHÔNG phải trung tâm CGCN/ĐMST/vườn ươm —
+SAI CHỦ ĐỀ, không thêm. 6 domain còn lại (`inkubator.wloclawek.pl`, `torinosocialinnovation.it`,
+`socialinnovation.ca`, `ciep.ar`, `ciridd.org`, `citralab.lk`) vẫn `URLError`/`HTTPError` cả 2 lượt —
+không cứu thêm được, để nguyên kết luận cũ.
+
+**Nguồn chính: OSM `amenity=university`** (57958 phần tử toàn cầu theo taginfo — CHƯA THỬ, đúng như việc
+mở checkpoint 31 để lại). Theo đúng khuyến nghị: giới hạn phạm vi bằng bounding box thay vì tải toàn cầu
+để bớt tải lọc trùng/kiểm sống. Dùng bbox `(-35,-20,38,52)` (Nam Phi tới Bắc Phi/Trung Đông tới biên Iran
+— bao trọn Châu Phi + phần lớn Trung Đông, đúng vùng ROSTER còn mỏng) — Overpass (`overpass.openstreetmap.
+fr`, `overpass-api.de` báo "server too busy" lúc đầu phiên) trả **1350 phần tử** có `name`+`website`/
+`contact:website`. Lưu ý mới: `overpass-api.de` cần `[timeout:300]` NGAY TRONG câu QL (không chỉ `curl -m`)
+— mirror trả về đúng thông báo "Query timed out... after 121 seconds" khi quên chỉnh, chỉ dùng đúng
+`[timeout:120]` mặc định trong ví dụ cũ.
+
+Lọc trùng nội bộ (domain/tên) + trùng ROSTER hiện có (domain) → còn 985 ứng viên (0 Việt Nam trong bbox
+này). `check_url()` 2 lượt (20 luồng/15s rồi 8 luồng/25s cho phần lỗi) → **587 sống**. Rà thủ công phát
+hiện tiếp 2 vấn đề mới đáng ghi lại cho các lượt `amenity=university` sau:
+
+1. **18 điểm rơi ngoài biên giới NE50** (`country_from_latlon.py` trả `None`) — đều là các đại học/khoa
+   thật ở gần bờ biển/đảo nhỏ (Tây Ban Nha, Lebanon, Bahrain, Kuwait, Iran, Hy Lạp, Bồ Đào Nha, Somalia,
+   Sierra Leone, Thổ Nhĩ Kỳ, Nam Phi) — gán tay quốc gia qua tên/URL cho 16/18, loại 2/18 (`asal.dz` —
+   Trung tâm Kỹ thuật Vũ trụ của cơ quan không gian Algeria, không phải đại học; `Centro Cultural Reina
+   Sofía` — trung tâm văn hoá, gắn nhầm tag `amenity=university`).
+2. **OSM gắn tag `amenity=university` riêng cho TỪNG khoa/campus/cơ sở của cùng 1 trường** (khác subdomain
+   nên dedup theo domain đầy đủ không bắt được) — vd 5 mục khác nhau đều là University of Tehran
+   (`ut.ac.ir`, `geography.ut.ac.ir`, `sport.ut.ac.ir`, `abu.ut.ac.ir`, `farabi.ut.ac.ir`), tương tự
+   Çukurova Üniversitesi (Thổ Nhĩ Kỳ, 3 mục), Universidad de Cádiz (Tây Ban Nha, nhiều khoa). **Giải
+   pháp mới:** viết hàm `base_domain()` tách phần gốc domain kiểu eTLD+1 (xử lý cả TLD 2 tầng như
+   `.ac.za`/`.edu.tr`/`.co.uk`), gộp mọi ứng viên CÙNG base domain trong 1 lượt về ĐÚNG 1 mục (ưu tiên
+   URL ít nhãn phụ nhất = trang chủ trường, tên không chứa từ khoá khoa/campus/toà nhà), đồng thời so
+   base domain (không chỉ domain đầy đủ) với ROSTER hiện có để bắt các trường hợp ROSTER đã có TTO cụ
+   thể dưới 1 subdomain khác của cùng trường. Loại thêm 10 mục chất lượng kém qua rà tay (tên toà nhà
+   chung chung không định danh được tổ chức: "U-Block", "FABNE Block", "Engineering 2", "New Examination
+   Centre", "Coordination Center"; trường phổ thông K-12 gắn nhầm tag: "Brummana High School"; URL trỏ
+   sang bài báo chứ không phải trang tổ chức: "Molelwane Research Farm"; cơ sở đào tạo tôn giáo ngắn hạn
+   không phải đại học: "Fischers Yeshiva", "בית יוסף"/`studienjahr.de`; nhà ở sinh viên: "Sonop Tehuis").
+
+**Áp dụng đúng quy tắc đã chốt từ sếp:** OSM `amenity=university` = trang chủ chính thức của TRƯỜNG ĐẠI
+HỌC — theo đúng phạm vi Atlas đã ghi rõ ("trung tâm CGCN/ĐMST CỦA ĐẠI HỌC"), bản thân trường đại học tự nó
+là 1 đơn vị hợp lệ nếu không tìm ra trung tâm/văn phòng CGCN riêng — nên KHÔNG cần lọc thêm theo từ khoá
+chủ đề như các batch `office=*` trước, chỉ cần là trường đại học/cao đẳng THẬT (đã loại các trường hợp
+KHÔNG PHẢI đại học ở trên).
+
+**Phát hiện + vá lỗi thật trong `_claude/tools/roster_common.py` (công cụ dùng chung, không phải script
+riêng batch này):** `normalize_name()` cũ dùng regex `[^a-z0-9]` sau khi hạ chữ thường — với tên viết
+HOÀN TOÀN bằng chữ không phải Latin (Ả Rập/Ba Tư/Do Thái/Hy Lạp) thì MỌI ký tự đều bị xoá, tên quy về
+chuỗi rỗng `""` — và vì ROSTER đã có sẵn 1 mục cũ cũng quy về `""`, TOÀN BỘ 155 ứng viên tên phi-Latin hợp
+lệ trong batch này bị đánh nhầm "trùng" (khớp `""` với `""`) khi chạy qua script merge dùng hàm này, dù đã
+qua hết các lớp lọc trùng domain/base-domain nghiêm ngặt trước đó. Phát hiện qua log merge in ra toàn tên
+Ả Rập/Ba Tư bị SKIP — kiểm tay bằng `.encode('unicode_escape')` xác nhận đúng nguyên nhân. **Đã vá**:
+đổi sang lọc Unicode-aware (`ch.isalnum()` thay vì regex ASCII), giữ nguyên chữ cái mọi hệ chữ viết, chỉ
+bỏ dấu câu/khoảng trắng — rồi phục hồi đúng 154/155 mục bị đánh nhầm (1/155 là trùng tên thật, loại đúng).
+**Bài học cho các batch sau, đặc biệt Trung Đông/Nam Á/Đông Á:** hàm `normalize_name()` giờ đã đúng, nhưng
+nên luôn kiểm log merge có dòng "SKIP dup" đáng ngờ nào lặp lại bất thường (nhiều tên hoàn toàn khác nhau
+cùng bị skip) trước khi tin kết quả cuối.
+
+Kết quả cuối: 587 sống → loại 12 (2 sai chủ đề + 10 chất lượng kém) → gán quốc gia đủ 587 → loại 63 trùng
+base-domain với ROSTER hiện có → gộp 48 mục trùng base-domain NỘI BỘ batch (chủ yếu Iran/Thổ Nhĩ Kỳ/Tây
+Ban Nha) → còn **464 ứng viên cuối**, trải 56 quốc gia (nhiều nhất: Iran 51, Nigeria 26, Turkey 24,
+Morocco 21, Iraq 20, Algeria 20). Merge qua script chuẩn → phát hiện lỗi `normalize_name` ở trên → vá +
+phục hồi → **463 mục thêm thật** (464 trừ 1 trùng tên thật). 0 Việt Nam.
+
+`ROSTER`: 9046 → **9509** (+463). Đơn vị trên bản đồ: 9055 → **9518** (+463, giữ nguyên chênh lệch +9).
+Kiểm: `node --check` sạch trên script inline (2.176.625 ký tự), thẻ `div`/`section` cân bằng (107/107,
+6/6). Mở `index.html` qua HTTP server cục bộ (`.claude/launch.json`, sửa `runtimeExecutable` thành đường
+dẫn `python.exe` đầy đủ) qua Browser pane: hiển thị đúng "9518 đơn vị được lập bản đồ" / "9509 trong danh
+mục mở rộng" / "12 đơn vị tại Việt Nam" (không đổi), không lỗi console. Commit `e874e7f`, `git push origin
+main` thành công.
+
+**Còn thiếu ~5491 để chạm mốc 15000.** **Việc mở cho lượt sau:** (1) **`amenity=university` còn RẤT
+nhiều dư địa** — mới khai thác 1 bbox Châu Phi+Trung Đông trong tổng 57958 phần tử toàn cầu; các bbox
+CHƯA THỬ: Nam Á (Ấn Độ/Pakistan/Bangladesh — rất nhiều đại học nhỏ), Đông Nam Á, Mỹ Latinh, Đông Âu/
+Trung Á — lặp lại đúng quy trình (bbox → Overpass structural pull → `base_domain()` collapse → gán
+quốc gia → `check_url()`) cho từng vùng, nhớ dùng `[timeout:300]` trong câu QL; (2) cân nhắc chạy luôn
+`amenity=university` KHÔNG giới hạn bbox (toàn cầu) nếu các vùng mỏng đã khai thác hết — rủi ro trùng
+ROSTER cao hơn (nhiều đại học lớn Âu/Mỹ/Đông Á đã có TTO cụ thể trong ROSTER) nhưng `base_domain()` dedup
+mới đã đủ mạnh để lọc phần lớn; (3) hàm `normalize_name()` đã vá trong `roster_common.py` — nhớ tận dụng
+đúng (không cần tự viết lại lọc trùng tên phi-Latin ở batch sau); (4) nguồn khác `office=*`/`amenity=*`
+OSM vẫn còn: `amenity=research_institute`, `amenity=library` (rủi ro nhiễu cao, phần lớn thư viện công
+cộng không liên quan) — chưa thử, độ ưu tiên thấp hơn tiếp tục đào `amenity=university` theo vùng.
+
+---
+**Lần trước:** 2026-09-09 (checkpoint 31 — **CÙNG NGUỒN OpenStreetMap, kỹ thuật MỚI "tải cấu trúc
 trước, lọc từ khoá SAU" (offline) thay vì lọc từ khoá ngay trong Overpass QL**) — tiếp tục mục tiêu
 **15000** (còn thiếu ~5965 lúc đầu phiên).
 
