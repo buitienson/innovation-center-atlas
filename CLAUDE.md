@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 8837 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 8936 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,66 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 28 — **CÙNG NGUỒN OpenStreetMap, tag MỚI `office=research`**)
+**Lần cuối:** 2026-09-09 (checkpoint 29 — **HackerspaceWiki, trạng thái "building" + "planned"**)
+— tiếp tục mục tiêu **10000**. Đây là việc mở đã ghi ở checkpoint 28: khai thác 2 nhóm trạng thái
+còn lại của `Category:Hackerspace` chưa từng lấy (checkpoint 26 chỉ lấy `active`).
+
+**Trước tiên đã thử và LOẠI `shop=repair` qua Overpass** (ưu tiên đầu tiên ghi ở checkpoint 28):
+`taginfo.openstreetmap.org` báo 7328 điểm toàn cầu, nhưng đây LÀ vấn đề — kiểm tra
+`[out:json];(node["shop"="repair"]["name"]["website"];...);out tags center;` trả về 945 điểm có
+tên+website, lấy mẫu đọc tên: tuyệt đại đa số là cửa hàng sửa chữa THƯƠNG MẠI thuần túy (thủy lực,
+dịch vụ IT, may vá, sửa xe đạp, sửa điện thoại...) — hoàn toàn KHÔNG phải "repair café" cộng đồng
+phi lợi nhuận đúng chủ đề Atlas. Kiểm bằng từ khoá tên ("cafe"/"repair caf"/"reparatur"/"community"/
+"nonprofit"/"association"/"foundation"/"stichting"/"verein"...) chỉ khớp 45/945 (4,8%), và tra
+`taginfo` xác nhận KHÔNG có tag OSM chuyên biệt nào cho "repair café" (`repair_cafe`, `community_repair`
+đều 0 lượt dùng) để lọc riêng. Kết luận: `shop=repair` là tag cho cửa hàng dịch vụ thương mại, khác
+hẳn phong trào Repair Café cộng đồng đã lấy riêng ở checkpoint trước (nguồn Repair Café Foundation
+chính thức) — KHÔNG dùng batch này, không lãng phí thêm công kiểm sống.
+
+Cũng thử kiểm lại xem có nên "cứu" một phần dữ liệu `office=coworking` (đã loại hoàn toàn ở
+checkpoint 27 vì đa số là chuỗi thương mại WeWork/Regus/Spaces) bằng cách lọc tên theo từ khoá
+"makerspace"/"hackerspace"/"fablab"/"innovation"/"incubator"/"tech hub" trên dữ liệu 5859 điểm đã
+cache sẵn từ checkpoint 27 — chỉ khớp 83/5859 (1,4%), quá nhỏ để đáng một batch riêng, KHÔNG dùng.
+
+**Nguồn dùng:** HackerspaceWiki (`wiki.hackerspaces.org`), tái sử dụng đúng dữ liệu SMW `askargs`
+đã cache từ checkpoint 26 (`hs_merged.json`, 2587 trang `Category:Hackerspace`, không cần query lại
+wiki) — chỉ đổi bộ lọc trạng thái từ `active` (đã lấy) sang `building` (238 trang) + `planned` (351
+trang). Trích xuất giống hệt `extract_hs.py` cũ (bổ sung vài centroid quốc gia thiếu: Jordan, Andorra,
+Guatemala, Moldova, xứ Wales→UK) → **338** trang có `Website` hợp lệ (246 trong 589 trang building+
+planned KHÔNG có trường Website — tỷ lệ thiếu cao hơn hẳn nhóm `active` cũ, đúng logic: dự án còn ở
+giai đoạn "đang xây dựng"/"mới lên kế hoạch" thường chưa kịp lập trang web).
+
+Lọc trùng: 22 trùng nội bộ batch + 22 trùng ROSTER hiện có (domain/tên) → còn **294** ứng viên. Kiểm
+sống `check_url()` (8 luồng, timeout 15s): alive lượt 1 chỉ **98/294**. Retry 196 lỗi (6 luồng, timeout
+20s): cứu thêm **1** → tổng **99/294 sống thật (33,7%)** — THẤP HƠN HẲN so với mọi batch trước (`active`
+86,7%, `office=research` 79,1%, `leisure=hackerspace` 71,5%) — đúng như dự đoán ở checkpoint 28 khi xếp
+việc này "độ ưu tiên thấp": trang wiki trạng thái "building"/"planned" phần lớn là dự án chưa từng đi
+vào hoạt động thật hoặc đã bị bỏ dở từ lâu (domain hết hạn/không còn phản hồi), khác hẳn "active" là
+nhóm đã xác nhận đang hoạt động khi trang wiki cập nhật gần nhất. Merge an toàn lần cuối: 0 trùng phát
+sinh thêm. 7/99 (7%) URL sống là domain mạng xã hội (Facebook/Twitter) — đúng chính sách đã chốt.
+
+Quốc gia (top): Mỹ 49, Đức 7, Anh 4, Pháp 3, Tây Ban Nha 3, Ấn Độ 3 — phân bố lệch Mỹ mạnh hơn hẳn
+các batch OSM (đúng đặc điểm HackerspaceWiki: cộng đồng dùng wiki này đông nhất ở Mỹ). `org` để trống
+toàn batch (cùng quy ước các batch HackerspaceWiki/OSM trước). 50 "planned" + 49 "building" trong 99
+mục — không lệch hẳn về một trạng thái.
+
+`ROSTER`: 8837 → **8936** (+99). Đơn vị trên bản đồ: 8846 → **8945** (+99, giữ nguyên chênh lệch +9).
+Kiểm: `node --check` sạch trên script inline (2.108.287 ký tự), thẻ `div`/`section` cân bằng (107/107,
+6/6), Browser pane qua HTTP server cục bộ hiển thị đúng "8945 đơn vị trên bản đồ", không lỗi console.
+
+**Còn thiếu ~1064 để chạm mốc 10000** (chưa đạt mốc lượt này). **Việc mở cho lượt sau:** (1)
+HackerspaceWiki giờ đã khai thác HẾT cả 3 trạng thái hữu ích (active/building/planned) — nguồn này
+COI NHƯ ĐÃ CẠN, đừng quay lại trừ khi wiki có thêm trang mới; (2) `shop=repair` và lọc từ khoá
+`office=coworking` đã thử và LOẠI hẳn lượt này — đừng thử lại; (3) cần tìm NGUỒN LỚN HOÀN TOÀN MỚI
+(kỹ thuật thứ 7?) — đã cạn gần hết danh sách quốc gia/mạng lưới/tag OSM khả thi đã biết, có thể cần
+nghiên cứu thêm wiki cộng đồng SMW khác (chưa xác định trang cụ thể nào), hoặc mạng lưới tổ
+chức phát triển doanh nghiệp lớn dạng ANDE (Aspen Network of Development Entrepreneurs — đã thử
+nhanh `andeglobal.org/members/`, site JS nặng + REST API `wp-json` trả 401 Unauthorized, cần kỹ
+thuật cào khác — WebFetch/browser thật — nếu muốn thử tiếp); (4) 571 hồ sơ Repair Café bị bỏ qua vì
+thiếu quốc gia (việc mở cũ); (5) BIRAC BioNEST PDF lỗi cấu trúc vẫn chưa sửa được; (6) InovaLink
+Brazil vẫn bế tắc.
+
+**Lần trước:** 2026-09-09 (checkpoint 28 — **CÙNG NGUỒN OpenStreetMap, tag MỚI `office=research`**)
 — tiếp tục mục tiêu **10000**. Đây là việc mở đã ghi ở checkpoint 27: thử tag OSM khác ngoài
 `leisure=hackerspace`. Kiểm `taginfo.openstreetmap.org` trước khi query: `office=research` ("An
 office for research and development") có **15715** điểm toàn cầu — lớn hơn hẳn `amenity=science_park`
