@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 18784 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 18847 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **25000**, sếp nâng từ 15000 ở checkpoint 37) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,128 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-10 (checkpoint 42 — **(A) QUÉT TOÀN ROSTER TÌM LỖI CENTROID GIỐNG BUG
+**Lần cuối:** 2026-09-10 (checkpoint 43 — **TIẾP TỤC WIKIDATA DÒ TỪ KHOÁ NHÃN, THÊM TỪ KHOÁ MỚI
++ ÁP MULTI-NGÔN NGỮ NGAY TỪ ĐẦU (11 ngôn ngữ), PHÁT HIỆN LỖ HỔNG MỚI TRONG `check_url()`**) — còn
+thiếu ~6153 lúc cuối phiên.
+
+Lượt trước (checkpoint 42) để lại 2 việc mở chính: (1) còn nhiều từ khoá tiếng Anh chưa thử
+("innovation lab", "startup hub", "technopark"/"techno park", "research park", "innovation
+park", "R&D centre", "tech hub"...); (2) nên áp fallback đa ngôn ngữ NGAY TỪ ĐẦU cho mọi từ khoá
+mới, không tách 2 lượt như checkpoint 40→41 đã phải làm. Lượt này làm cả hai cùng lúc: 14 từ khoá
+tiếng Anh mới ("business incubator" dạng nhãn tự do — khác class Q1132207 đã dùng, "startup hub",
+"digital hub", "open lab", "innovation lab", "r&d center"/"r&d centre", "maker lab", "tech park",
+"research park", "innovation park", "technopark", "techno park", "creative hub") + 23 từ khoá
+BẢN NGỮ (không dịch qua tiếng Anh) trải 11 ngôn ngữ: Đức (Gründerzentrum/Technologiepark/
+Wissenschaftspark/Innovationszentrum/Forschungszentrum), Pháp (incubateur/parc technologique/
+pépinière d'entreprises), Tây Ban Nha (incubadora/parque tecnológico/parque científico/centro de
+innovación), Bồ Đào Nha (incubadora/parque tecnológico), Nga (технопарк/инновационный центр/
+научный парк), Trung (科技园), Nhật (テクノパーク/イノベーションセンター), Ý (parco tecnologico),
+Ba Lan (park technologiczny/inkubator), Hà Lan (incubator), Thổ Nhĩ Kỳ (teknoloji parkı). Test
+đếm riêng từng cặp (ngôn ngữ, từ khoá) trước — hầu hết ra số nhỏ (1-39), riêng "Forschungszentrum"
+(Đức) áp đảo với 99, "technopark" (Anh) 39, "tech park" 30, "coworking" 33 (KHÔNG dùng, xem dưới).
+Cân nhắc loại trước khi gộp: "makerspace" (17), "fab lab" (6), "coworking"/"co-working" (33+1) —
+giữ đúng tiền lệ checkpoint 40 đã loại hẳn 3 class này (rủi ro lẫn không gian hacker/maker sở
+thích cộng đồng và văn phòng chia sẻ thương mại thuần tuý, không phải CGCN/ĐMST đại học); "spin-
+off hub"/"spinoff hub" ra 0, coi như ngõ cụt.
+
+**Bài học kỹ thuật QUAN TRỌNG — lỗi timeout QLever khi gộp UNION nhãn + đường dẫn P31/P279* + P856
++ OPTIONAL trong 1 truy vấn:** thử gộp cả 39 cặp (ngôn ngữ, từ khoá) thành 1 truy vấn UNION lớn
+kèm `?item wdt:P31/wdt:P279* wd:Q43229 . ?item wdt:P856 ?site . OPTIONAL{P625} OPTIONAL{P17+nhãn}`
+— timeout liên tục dù chia nhỏ còn 4 từ khoá/truy vấn (lỗi `"Operation timed out. Last operation:
+OptionalJoin on ?item"` / `"Sort (internal order)"`), trong khi các truy vấn ĐẾM riêng từng cặp
+(không có `P856`/`OPTIONAL`) chạy nhanh bình thường (như checkpoint 42 đã dùng). Nguyên nhân: vế
+`?item wdt:P31/wdt:P279* wd:Q43229` khớp MỌI tổ chức trên Wikidata (rất lớn), kết hợp `P856` (mọi
+tổ chức có website — cũng rất lớn) khiến trình tối ưu truy vấn chọn thứ tự join kém khi vế trái là
+UNION của nhiều nhánh nhãn nhỏ. **Giải pháp: tách 2 giai đoạn** — giai đoạn 1 lấy THẲNG `?item` cho
+từng cặp (ngôn ngữ, từ khoá) riêng lẻ (đúng hình dạng truy vấn đếm đã chứng minh nhanh — label +
+lớp tổ chức, KHÔNG kèm P856/OPTIONAL), gộp ID vào 1 tập; giai đoạn 2 dùng `VALUES ?item {...}` với
+danh sách ID đã có (250 ID/lô) để tra `P856`/`P625`/`P17` — tra theo ID cụ thể nhanh, không cần
+duyệt lại toàn đồ thị. **Ghi lại kỹ thuật 2 giai đoạn này để dùng lại mọi lượt Wikidata sau, đừng
+lặp lại việc dò lỗi timeout.**
+
+**Kết quả giai đoạn 1:** 370 item duy nhất (gộp cả 39 cặp). **Giai đoạn 2:** 205/370 có ít nhất 1
+website (`P856`) — 165 item không có website bị loại ngay. Lọc trùng ROSTER (base-domain +
+`normalize_name()`): 84 trùng domain + 1 trùng tên → 120; loại 1 Việt Nam (qua nhãn quốc gia
+Wikidata) + 5 thiếu cả toạ độ lẫn quốc gia hợp lệ (không suy được qua ccTLD, domain `.com/.org`
+chung chung như "Kanata Research Park"/"Yahoo Beijing Global R&D Center"/"Technopark, Kollam" —
+đúng 4 cách đã chốt, không đoán qua tên dù tên có gợi ý địa danh) → **114 ứng viên**. Loại thêm 5
+qua rà phạm vi thủ công (đọc toàn bộ, không phải mẫu, vì lô nhỏ): "Museumsdepot Wissenschaftspark"
+(Đức — kho lưu trữ hiện vật bảo tàng đặt trong toà nhà tên "Wissenschaftspark", bản thân không
+phải tổ chức R&D/ĐMST), "VIPACH | Vienna Photo Art & Creative HUB" và "Te Puna Creative Hub" (Áo/
+New Zealand — không gian nghệ thuật/nhiếp ảnh cộng đồng, sai lĩnh vực dù khớp từ khoá "creative
+hub"), "Goyki 3 Art Inkubator" (Ba Lan — ươm tạo NGHỆ THUẬT, không phải doanh nghiệp/công nghệ),
+"Parc technologique et archéologique des collines métallifères de Grosseto" (Ý — thực chất là
+công viên di sản khảo cổ mỏ cũ, tên gốc tiếng Ý "Parco Tecnologico e Archeologico" gây nhầm, không
+phải khu công nghệ) → **109 ứng viên**. Gán toạ độ: 61/109 có `P625` thật (xác minh qua
+`CountryLookup`, chỉ 1 lệch biên do độ phân giải Natural Earth 50m — Thâm Quyến (22.54,114.05) bị
+gán "Hong Kong" dù đúng là đại lục Trung Quốc, giữ nguyên như thông lệ các lỗi biên tương tự đã
+gặp), 48/109 dùng centroid quốc gia ĐÃ DÙNG SẴN trong ROSTER (đối chiếu qua bảng tần suất toạ độ
+theo quốc gia dựng từ chính ROSTER hiện có, không tự bịa). Chuẩn hoá "Russia"→"Russian Federation"
+(436 so 144 mục hiện có) và "People's Republic of China"→"China" (456 so 40) khớp đa số ROSTER.
+
+**`check_url()` 2 vòng (16 luồng/15s → 6 luồng/25s) + vòng UA Chrome thật (0 cứu thêm):** 109 →
+68 sống (tỷ lệ chết 38%, bình thường). Kiểm chéo 2 mẫu tưởng chết oan bằng `WebFetch`: Suntory
+(`suntory.com/sic`) bị 403 (chặn bot, không kết luận được) và Fiat (`crf.it`) báo **chứng chỉ SSL
+đã hết hạn thật** — xác nhận tỷ lệ chết phần lớn là chết thật, không phải lỗi mạng cục bộ.
+
+**PHÁT HIỆN LỖ HỔNG MỚI trong `check_url()` — chuyển hướng khác domain hoàn toàn không bị bắt:**
+`urllib.request.urlopen()` tự động theo mọi redirect HTTP (kể cả 301 sang domain KHÁC hẳn) trước
+khi `check_url()` kiểm nội dung — nếu trang đích (dù ở domain khác, không liên quan) có đủ >200 ký
+tự văn bản và không chứa cụm "for sale", hàm vẫn báo "ok" dù domain gốc đã đổi chủ/hết hạn. Phát
+hiện qua rà tay: "Bangladesh Open Innovation Lab" (`boiledbhoot.org`) chuyển 301 sang
+`boilerdeck.org` — một domain gần như trống, không liên quan gì, `check_url()` vẫn báo sống. Quét
+lại toàn bộ 68 mục sống bằng script so `base_domain()` của URL gốc với `base_domain()` của
+`resp.geturl()` sau khi fetch: ra **7 mục có chuyển-domain**, xác minh tay từng mục qua `WebFetch`
+— 4 mục ĐÚNG LÀ HỎNG (loại): "Bangladesh Open Innovation Lab" (domain trống không liên quan),
+"Hans Höllwart - Forschungszentrum für integrales Bauwesen AG" (Áo, `fibag.at`→`sfl-
+engineering.com`, đã đổi thành công ty khác hẳn), "Parque Científico y Tecnológico Agroalimentario
+de Lérida" (Tây Ban Nha, `pcital.com`→`hoteles-andalucia.com`, domain bị bán lại cho chuỗi khách
+sạn), "诺丁汉生物科技园"/Nottingham BioCity (Anh, `biocity.co.uk`→`thepioneergroup.com`, đổi
+thương hiệu thành "Pioneer Group" không còn mang tên/định danh gốc); 3 mục là CHUYỂN DOMAIN CHÍNH
+ĐÁNG cùng 1 tổ chức (giữ, cập nhật URL theo domain đích): "Association of University Research
+Parks" (`aurp.net`→`aurp.org`, xác nhận qua `WebFetch` vẫn đúng tổ chức), "Deutsches
+Krebsforschungszentrum, Zentralbibliothek" (`dkfz-heidelberg.de`→`dkfz.de/bibliothek`, cùng viện
+DKFZ), "Parc technologique du Vallès" (`ptv.es`→`ptv.cat`, đổi tên miền theo vùng Catalunya, cùng
+tổ chức). **→ 105 mục.** Loại thêm 1 trùng nội bộ batch ("Pohang TechnoPark"/"Pohang Techno Park"
+— 2 item Wikidata khác nhau cùng trỏ 1 site `ptp.or.kr`) → **63 ứng viên cuối cùng**. Rà từ khoá cờ
+đỏ (yoga/spa/tarot/tôn giáo/lái xe/thẩm mỹ/bảo hiểm...): 0 khớp. 0 Việt Nam. Trải 25 quốc gia, dẫn
+đầu Đức 17 (đa số nhóm "Forschungszentrum" — thư viện/kho lưu trữ/trung tâm nghiên cứu đủ lĩnh vực
+từ y sinh, môi trường, âm nhạc, khảo cổ đến hạt nhân, đúng tiền lệ mở rộng phạm vi rộng đã chốt từ
+checkpoint 39-41), Hàn Quốc 11 (toàn bộ mạng lưới TechnoPark cấp vùng — 11/17 tỉnh thành chưa có
+trong ROSTER), Trung Quốc 5, Mỹ/Pháp 3 mỗi nước.
+
+**Việc mở quan trọng nhất cho lượt sau — vá lỗ hổng `check_url()`:** hàm hiện tại KHÔNG phát hiện
+khi domain gốc bị đổi chủ/redirect sang 1 tổ chức/trang hoàn toàn không liên quan (chỉ xét nội
+dung trang ĐÍCH cuối cùng, không so domain gốc với domain đích) — nên **thêm bước so
+`base_domain(url_goc)` với `base_domain(resp.geturl())` sau mỗi lần fetch thành công vào chính
+`roster_common.py`** (không chỉ làm tay 1 lần ở lượt này) để mọi lượt sau tự động bắt được lớp
+false-positive này, tránh phải rà tay lại.
+
+`ROSTER`: 18784 → **18847** (+63, khớp `len(load_roster(...))` kiểm ngay trước merge, `git status`
+sạch không có phiên song song). Đơn vị trên bản đồ: 18793 → **18856** (+63, giữ nguyên chênh lệch
++9). Kiểm: `node --check` sạch trên script inline (3,285,498 ký tự), thẻ `div`/`section` cân bằng
+(107/107, 6/6). Mở `index.html` qua HTTP server cục bộ (`preview_start`/`preview_stop`), đọc
+`get_page_text`: đúng "18856 đơn vị được lập bản đồ" / "18847 trong danh mục mở rộng" / "12 đơn vị
+tại Việt Nam" (không đổi) / "9 case phân tích chuyên sâu" (không đổi), console sạch. Commit
+`69bb970`, `git push origin main` thành công.
+
+**Còn thiếu ~6153 để đạt 25000.** **Việc mở cho lượt sau:** (1) **vá lỗ hổng cross-domain-redirect
+trong `check_url()`** (xem trên) — ưu tiên cao vì ảnh hưởng MỌI lượt tương lai, không riêng lượt
+này; (2) kỹ thuật dò-từ-khoá-nhãn-rộng tiếp tục giảm hiệu suất rõ rệt (664→260→63 ứng viên cuối 3
+lượt gần nhất) — còn vài từ khoá tiếng Anh CHƯA THỬ ("science centre"/"science center" khác "science
+park" đã dùng, "startup incubator", "venture lab", "knowledge park", "enterprise hub") và nhiều
+NGÔN NGỮ CHƯA THỬ (Hàn, Ả Rập, Hindi, Thuỵ Điển, Phần Lan, Đan Mạch, Ukraina, Do Thái, Indonesia,
+Thái) — có thể còn vài chục-trăm mục nữa nhưng lợi ích/công sức đang giảm nhanh; (3) **nên chuyển
+hướng nguồn khác hẳn Wikidata cho lượt sau** theo đúng gợi ý Bước 2 đã định: đăng ký chính phủ có
+cột website (Nhật Bản METI/JETRO, Hàn Quốc KOTEC/KIAT — lưu ý mạng lưới TechnoPark Hàn Quốc lượt
+này mới lấy được 11/17 tỉnh qua Wikidata, có thể còn nguồn liệt kê đủ 17 tỉnh trực tiếp từ hiệp hội
+KOTEP/TP mẹ, thử tìm trang đó trước khi quay lại Wikidata cho Hàn Quốc), Trung Quốc thử lại
+`chinatorch.gov.cn`, Bắc Âu/Baltic, hoặc hiệp hội đa quốc gia mới có JSON nhúng bản đồ/API; (4)
+dùng lại kỹ thuật 2 giai đoạn (item ID trước, `VALUES` tra chi tiết sau) cho MỌI truy vấn Wikidata
+tiếp theo có kèm `P856`/`OPTIONAL` — tránh lặp lại việc dò lỗi timeout QLever của lượt này.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 42 — **(A) QUÉT TOÀN ROSTER TÌM LỖI CENTROID GIỐNG BUG
 Mỹ/Pháp CỦA CHECKPOINT 39, (B) WIKIDATA CHUYỂN TỪ DÒ CLASS SANG DÒ TỪ KHOÁ NHÃN RỘNG**) — còn
 thiếu ~6216 lúc cuối phiên.
 

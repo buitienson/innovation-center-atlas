@@ -299,7 +299,7 @@ def _fetch(url, timeout):
         return resp.status, resp.geturl(), resp.read(READ_BYTES).decode("utf-8", errors="ignore")
 
 
-def check_url(url, timeout=10, _hop=0):
+def check_url(url, timeout=10, _hop=0, _orig_domain=None):
     """Returns (ok, reason). ok=False means: don't trust this URL.
 
     A thin page with a client-side redirect isn't damning by itself - lots of
@@ -308,21 +308,45 @@ def check_url(url, timeout=10, _hop=0):
     a parking service hands a domain to its sale page (confirmed: ramot.com
     -> "/lander"). The only way to actually tell them apart is to follow the
     redirect one hop and judge what's really there - real content (UMS) vs.
-    another dead end or parking page (Ramot's "/lander" 403s)."""
+    another dead end or parking page (Ramot's "/lander" 403s).
+
+    Cross-domain HTTP redirect check (added checkpoint 43): `urlopen` follows
+    ANY redirect transparently, including a 301/302 to a completely different
+    registrable domain - the thin+parking-phrase checks above only judge the
+    FINAL landing page's own content, so they never notice when an org's
+    original domain has simply been sold/repurposed and now forwards to an
+    unrelated live site. Confirmed real case: "Bangladesh Open Innovation
+    Lab" (boiledbhoot.org) 301s to boilerdeck.org, an unrelated near-blank
+    domain that nonetheless has >200 chars of generic text and no parking
+    phrase - this function said "ok" before this check was added. Any
+    cross-domain redirect is flagged as untrusted UNLESS it resolves back to
+    the domain of `_orig_domain` (a redirect that bounces through a
+    third domain before landing back on the original, e.g. a login/consent
+    hop, is still fine) - a genuine same-organization domain migration
+    (confirmed real cases: aurp.net->aurp.org, dkfz-heidelberg.de->dkfz.de,
+    ptv.es->ptv.cat) is NOT auto-approved here on purpose: it still needs a
+    human (or WebFetch) to confirm the destination is really the same
+    organization before updating ROSTER's URL to the new domain - silently
+    trusting any cross-domain redirect would readmit exactly the false
+    positive this check exists to catch."""
+    orig_domain = _orig_domain or base_domain(url)
     try:
-        status, _final_url, raw = _fetch(url, timeout)
+        status, final_url, raw = _fetch(url, timeout)
         if not (200 <= status < 400):
             return False, f"HTTP {status}"
         body = raw.lower()
     except Exception as e:
         return False, f"{type(e).__name__}"
+    final_domain = base_domain(final_url)
+    if final_domain and orig_domain and final_domain != orig_domain:
+        return False, f"cross-domain redirect to '{final_domain}' - verify by hand before trusting"
     thin = visible_text_len(raw) < MIN_VISIBLE_TEXT_CHARS
     target = _find_redirect_target(body)
     if thin and target:
         if _hop >= 1:
             return False, "redirect chain still thin after following one hop"
         resolved = urllib.parse.urljoin(url, target)
-        ok, reason = check_url(resolved, timeout=timeout, _hop=_hop + 1)
+        ok, reason = check_url(resolved, timeout=timeout, _hop=_hop + 1, _orig_domain=orig_domain)
         if ok:
             return True, "ok (via same-site redirect target)"
         return False, f"thin page whose redirect target also failed ({reason})"
