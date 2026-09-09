@@ -191,6 +191,32 @@ def domain_of(url):
     return m.group(1).lower() if m else ""
 
 
+def base_domain(url):
+    """eTLD+1 (registrable domain) via `tldextract`'s real Mozilla Public Suffix
+    List - use this (not a hand-rolled 2-tier TLD table) whenever a batch needs
+    to collapse multiple subdomains/campuses of the same institution to one
+    base domain, or compare a candidate's domain against ROSTER's for
+    duplicates. A hand-written TLD table (checkpoint 32-34) only lists a few
+    common 2nd-level labels per ccTLD and silently mis-collapses countries
+    whose real public suffix isn't in the table - e.g. Iran's shared academic
+    suffix `ac.ir` folded 122 distinct Iranian universities into 1 "duplicate"
+    group before this was caught and fixed at checkpoint 35. Requires
+    `pip install tldextract` (installs cleanly, no known hang on this
+    machine). Falls back to the bare domain if tldextract can't parse a
+    registrable name out of it (e.g. a bare IP or an unrecognized suffix).
+    """
+    import tldextract
+    d = domain_of(url)
+    if not d:
+        return ""
+    ext = tldextract.extract(d)
+    if not ext.domain:
+        return d
+    if ext.suffix:
+        return ext.domain + "." + ext.suffix
+    return ext.domain
+
+
 # Shared social-media/platform domains that must NOT be used for domain-level
 # duplicate matching: many unrelated organizations legitimately use the same
 # platform (e.g. a LinkedIn company page) as their listed "website", so two

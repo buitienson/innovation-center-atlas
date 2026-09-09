@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 11799 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 13724 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **15000**, sếp nâng từ 10000 ở checkpoint 30) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,142 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 35 — **CÙNG NGUỒN OSM `amenity=university`, 2 bbox cuối cùng của danh
+**Lần cuối:** 2026-09-10 (checkpoint 36 — **CÙNG NGUỒN OSM `amenity=university`, 2 bbox CUỐI CÙNG còn lại
+trong danh sách checkpoint 32 để lại: Đông Á (Trung Quốc/Nhật/Hàn/Đài Loan/Mông Cổ) + Tây Âu/Bắc Âu/Úc-NZ,
+làm cả 2 trong 1 lượt — cả 7 bbox `amenity=university` đã lên kế hoạch từ checkpoint 32 nay ĐÃ XONG HẾT**)
+— tiếp tục mục tiêu **15000** (còn thiếu ~3201 lúc đầu phiên).
+
+**Đông Á trước** (bbox `(18,73,54,146)`, qua `overpass-api.de`, retry 1 lần do "server too busy" — bài học
+cũ, `[timeout:300]`): `out count;` 1802 phần tử → `out center tags;` tải trọn 1 lần (~1MB). Gộp domain qua
+`base_domain()` (giờ đã chuyển hẳn vào `_claude/tools/roster_common.py` làm hàm dùng chung, dùng
+`tldextract` — đúng bài học checkpoint 35, không tự viết bảng tay nữa) → 1423 nhóm domain duy nhất. Gán
+quốc gia qua `CountryLookup`: 34 điểm rơi ngoài biên NE50 (đảo/mũi đất nhỏ ở Hong Kong/Hàn Quốc/Nhật/Trung
+Quốc/Đài Loan-Mã Tổ) gán tay đủ cả 34 qua tên/TLD; 55 điểm rơi vào Việt Nam (bbox chạm phần Bắc Việt Nam ở
+vĩ độ 18-23°B) loại ngay. Lọc trùng ROSTER (base-domain + `normalize_name()`) loại 468 trùng domain + 9
+trùng tên → còn 891 ứng viên.
+
+**Tây Âu/Bắc Âu + Úc/NZ sau** (2 bbox riêng, gộp xử lý chung 1 lượt): Tây Âu/Bắc Âu `(35,-10,71,32)` —
+`overpass-api.de` báo "server too busy" 2 lần liền dù đã `[timeout:300]` và retry, chuyển hẳn sang mirror
+`overpass.openstreetmap.fr` (đúng bài học "thử mirror khác" tích luỹ nhiều checkpoint) → thành công ngay
+lần đầu, `out count;` 5110 phần tử (LỚN NHẤT từ trước tới nay, vượt cả Mỹ Latinh 2930 ở checkpoint 35),
+`out center tags;` tải trọn không cần chia nhỏ (2.9MB). Úc/NZ `(-47,110,-10,180)` nhỏ hơn nhiều (147 phần
+tử), cùng mirror, không trở ngại. Gộp domain 2 bbox chung 1 lần → 2621 nhóm duy nhất. Gán quốc gia: 81 điểm
+rơi ngoài biên NE50 (đảo/bờ biển nhỏ ở Thuỵ Điển/Đức/Croatia/Tunisia/Bồ Đào Nha/Ireland/Hy Lạp/Thổ Nhĩ
+Kỳ/Monaco/Fiji/Indonesia — trạm nghiên cứu biển, campus vệ tinh, đại học nhỏ ven biển) gán tay đủ 81 qua
+tên/TLD/domain, loại riêng 3 mục sai chủ đề phát hiện ngay ở bước này (Centro Cultural Reina Sofía — lặp
+lại đúng domain đã loại ở checkpoint 32 dạng khác toạ độ; IntoUniversity — tổ chức từ thiện phụ đạo sau
+giờ học ở Anh, không phải đại học; Rum Ortodoks Ruhban Okulu — chủng viện Chính thống giáo đào tạo ngắn
+hạn). 0 Việt Nam (đúng dự kiến, bbox không chạm Việt Nam). Lọc trùng ROSTER (roster đã gồm cả batch Đông Á
+vừa merge) loại 809 trùng domain + 13 trùng tên → còn 1796 ứng viên.
+
+**`check_url()` phát hiện lỗi False-negative mới do WAF chặn User-Agent mặc định của tool — đã thêm vòng
+retry thứ 4 để vá:** sau 3 vòng chuẩn (16 luồng/15s → 8 luồng/25s → 4 luồng/30s), Đông Á còn 288 "chết",
+kiểm tay 1 domain (`thu.edu.tw` — Đại học Đông Hải, Đài Loan, rất nổi tiếng và chắc chắn đang hoạt động)
+phát hiện `curl` với User-Agent mặc định của `check_url()` (chuỗi `"Mozilla/5.0 (roster-tools)"`) bị chặn
+403 bởi WAF, nhưng cùng URL trả 200 OK khi đổi sang User-Agent trình duyệt thật (Chrome/Windows). Kiểm mẫu
+ngẫu nhiên 40/288 domain "chết" bằng User-Agent thật: chỉ 2/40 (5%) phục hồi — xác nhận ĐA SỐ domain "chết"
+còn lại là chết thật (URLError/kết nối thất bại), KHÔNG phải bị chặn UA hàng loạt, nhưng vẫn đáng làm 1
+vòng retry toàn bộ vì tỷ lệ phục hồi khác 0. Viết script retry riêng (`check_round_ua.py`, dùng lại nguyên
+logic `check_url()` gốc — theo redirect 1 hop, phát hiện trang ký gửi domain — chỉ đổi User-Agent) chạy
+trên toàn bộ danh sách "chết" cuối cùng của cả 2 batch: Đông Á +8 sống (`thu.edu.tw`/`ctbc.edu.tw` Đài Loan
+trong đó), Tây Âu/Úc-NZ +6 sống. **Bài học cho batch `check_url()` sau: cân nhắc thêm hẳn 1 vòng retry
+User-Agent trình duyệt thật vào quy trình chuẩn (sau vòng 3, trước khi chốt danh sách chết) — chi phí thấp
+(chỉ chạy trên phần đã chết, không phải toàn bộ), lợi ích nhỏ nhưng chắc chắn dương (~1-2% tổng số ứng
+viên mỗi batch, đặc biệt cao ở Đài Loan lần này).** Không sửa `check_url()` gốc trong `roster_common.py`
+(vẫn giữ User-Agent cũ làm mặc định) vì đa số domain vẫn nhận diện tốt user-agent đó, chỉ thêm script retry
+riêng dùng khi cần.
+
+Kết quả `check_url()` cuối: Đông Á 891 → 603+8=**611 sống**; Tây Âu/Úc-NZ 1796 → 1309+13+3+6=**1331 sống**.
+
+**Quét từ khoá cờ đỏ trên tên trước khi rà tay (đúng kỹ thuật checkpoint 35):** Đông Á chỉ 3/611 bị gắn cờ
+— cả 3 đọc `<title>` xác nhận hợp lệ, giữ nguyên 2 ("Temple University, Japan Campus" — campus thật của
+Temple University Mỹ tại Nhật; "The Film School of Tokyo"/映画美学校 — trường điện ảnh chuyên ngành thật),
+sửa lỗi chính tả 1 ("SN Bose National Centre for Basic Schiences" → "...Sciences", viện nghiên cứu quốc gia
+Ấn Độ thật thuộc Bộ KHCN). Riêng vòng UA-retry đón thêm lại đúng 1 mục "Oxford University Press" (domain
+`oup.co.in` khác hẳn domain đã loại ở checkpoint 33) — LOẠI LẠI vì cùng vấn đề: chi nhánh Ấn Độ của 1 NHÀ
+XUẤT BẢN, không phải trường — ghi nhớ thêm `oup.co.in` vào danh sách domain loại tay tích luỹ.
+
+Tây Âu/Úc-NZ 217/1331 bị gắn cờ (nhiều hơn hẳn Đông Á vì đa số đại học châu Âu đặt tên campus/khoa dài kiểu
+"[Tên Trường] [Tên Campus]" khớp từ khoá "campus"/"site" xây trong bộ lọc) — áp đúng quy tắc tinh chỉnh
+checkpoint 34 "chỉ đổi tên khi tên gốc THẬT SỰ không tự nhận diện được tổ chức mẹ": ĐA SỐ (206/217) là tên
+kiểu "Monash University, Clayton Campus"/"University of Worcester Lakeside Campus" đã tự ghi rõ tên trường
+mẹ — GIỮ NGUYÊN không đổi, không cần đọc trang thật. Chỉ đọc `<title>`+mô tả trang thật cho ~23 mục thật sự
+mơ hồ (acronym ngắn không tự nhận diện, hoặc từ khoá nghi sai chủ đề như "hospital"/"bank"/"press"/"seminary"/
+"hotel" — phần lớn hoá ra vẫn là trường thật dùng từ đó trong tên hợp lệ, vd "Bankovní Institut Vysoká
+škola" = đại học ngân hàng thật, "Continental Theological Seminary" = chủng viện CÓ cấp bằng Cử nhân/Thạc
+sĩ thần học được công nhận nên GIỮ (khác case Halki bên Đông Á loại vì đào tạo ngắn hạn không cấp bằng)) →
+loại 11 mục xác nhận sai chủ đề/không xác định được qua đọc trang thật: **CESNET** Czech (hiệp hội hạ tầng
+mạng nghiên cứu quốc gia, không phải đại học), **AFALVI** Tây Ban Nha (tiêu đề trang không xác định được là
+tổ chức giáo dục), **ESAMUR** Tây Ban Nha (cơ quan xử lý nước thải vùng Murcia), **GEO600** Đức (cơ sở
+thiết bị nghiên cứu sóng hấp dẫn, không cấp bằng), **ICJT** Slovenia (trung tâm đào tạo hạt nhân, không xác
+định được là bậc đại học), **Law Society of Ireland** (hiệp hội luật sư/cơ quan quản lý nghề, không phải
+trường — cùng loại "Colegio de Abogados" checkpoint 35), **Mercy University Hospital Centre of Nurse
+Education** Ireland (trung tâm đào tạo điều dưỡng do 1 bệnh viện vận hành, không phải đại học độc lập),
+**Centre for Alternative Technology** Xứ Wales (trung tâm/từ thiện môi trường, không phải đại học được công
+nhận), **CREPS** Pháp (cơ sở lưu trú/thể thao vùng, không tự cấp bằng), **"DA"** Đức (tên OSM không xác
+định được — URL trỏ trang "Standorte"/danh sách địa điểm chung của Hochschule Karlsruhe, không định danh
+được cơ sở cụ thể nào), **RIPAM 7** Ý (xác nhận qua `<title>` là 1 HỘI NGHỊ/sự kiện về di sản kiến trúc
+Địa Trung Hải, không phải tổ chức). **Đổi tên 6 mục** qua xác nhận nội dung trang thật: "Minerva Building"
+(Anh, `lincoln.ac.uk` không tự nêu tên trường) → "University of Lincoln"; "IUT" (Pháp, `iut-valence.fr`) →
+"IUT de Valence"; "UNED" (Tây Ban Nha, domain lạ `uneddenia.es` khác hẳn domain chính `uned.es` — đây là
+Trung tâm Liên kết địa phương của UNED tại Denia) → "UNED Denia (Centro Asociado)"; "ISNAB" (Pháp) → "ISNAB
+- Institut des Sciences de la Nature et de l'Agroalimentaire de Bordeaux"; "SOFI" (Đức) → "SOFI -
+Soziologisches Forschungsinstitut Göttingen"; "DRCMR" (Đan Mạch) → "DRCMR - Danish Research Centre for
+Magnetic Resonance". Các acronym ngắn còn lại đọc trang xác nhận là brand công khai thật của chính tổ chức
+(CEFAM, IGEMA, IPABO, ISPRA, ISNAB gốc, BPP, SAE, VUT, UMIT, FHDW, INSEEC, ISEP, EPSI, ENSATT...) — GIỮ
+NGUYÊN.
+
+Kết quả cuối: Đông Á 611 sống → loại 1 (Oxford University Press) → sửa lỗi chính tả 1 → **610 mục thêm
+thật**. Tây Âu/Úc-NZ 1331 sống → loại 11 (sai chủ đề/không xác định) → đổi tên 6 → 1320 ứng viên → merge
+qua script chuẩn loại thêm 5 trùng tên thật trong nội bộ batch (IUT/Webster University/Wyższe Seminarium
+Duchowne/Staatliche Akademie der Bildenden Künste/Uniwersytet Artystyczny — đã có mục khác cùng tên từ
+trước trong chính batch này qua toạ độ/domain khác) → **1315 mục thêm thật**. Đông Á theo quốc gia: Nhật
+Bản 311, Trung Quốc 188, Hàn Quốc 83, Nga 14, Mông Cổ 4, Ấn Độ 3, Kyrgyzstan 2, Hong Kong 2, Đài Loan 2,
+Bangladesh 1. Tây Âu/Úc-NZ theo quốc gia (48 quốc gia): Đức 271, Pháp 196, Anh 87, Ý 86, Tây Ban Nha 75, Áo
+57, Hà Lan 54, Ba Lan 48, Nga 44, CH Séc 37, Úc 36, Thuỵ Sĩ 33, Bỉ 31, Bồ Đào Nha 26, Phần Lan 25, Ireland
+24, Croatia 22, Thuỵ Điển 19, Slovakia 17, Na Uy 17, Đan Mạch 16, Thổ Nhĩ Kỳ 16, New Zealand 12, Bosnia và
+Herzegovina 11, Hungary 10, Latvia 10, Slovenia 9, Estonia 6, Belarus 3, Serbia 3, Montenegro 2, Ukraine 2,
+Algeria 2, Litva 2, Fiji 2, và 11 nước còn lại 1 mục mỗi nước (Hy Lạp, San Marino, Isle of Man, Bắc
+Macedonia, Vanuatu, Monaco, Romania, Bulgaria, New Caledonia...). **0 Việt Nam** (xác nhận lại ở cả 2 batch,
+cả bước đầu và bước cuối).
+
+**Chuyển `base_domain()` vào `_claude/tools/roster_common.py` làm hàm dùng chung** (bài học tồn đọng từ
+checkpoint 35 "cân nhắc viết thẳng vào roster_common.py thay vì mỗi batch tự cài lại") — dùng `tldextract`,
+không còn phải chép lại logic mỗi batch nữa, các batch domain-dedup sau (không riêng `amenity=university`)
+import thẳng `from roster_common import base_domain`.
+
+`ROSTER`: 11799 → 12409 (Đông Á, +610) → **13724** (Tây Âu/Úc-NZ, +1315; tổng lượt này +1925 — kỷ lục mới
+về số mục thêm trong 1 lượt, vượt qua +1500 của checkpoint 35). Đơn vị trên bản đồ: 11808 → **13733**
+(+1925, giữ nguyên chênh lệch +9). Kiểm sau khi merge cả 2 batch: `node --check` sạch trên script inline
+(2.693.930 ký tự), thẻ `div`/`section` cân bằng (107/107, 6/6). Mở `index.html` qua HTTP server cục bộ
+(`.claude/launch.json`) qua Browser pane: hiển thị đúng "13733 đơn vị được lập bản đồ" / "13724 trong danh
+mục mở rộng" / "12 đơn vị tại Việt Nam" (không đổi) / "9 case phân tích chuyên sâu" (không đổi), không lỗi
+console. Xoá thư mục `_claude/scratch/` (dữ liệu thô tạm của lượt này) trước khi commit để tránh phình repo
+— đúng quy tắc "Nguồn tham khảo còn lưu" ở đầu file này. Commit `0a50632`, `git push origin main` thành
+công (`git log --oneline -3` xác nhận đã lên `origin/main`).
+
+**Còn thiếu ~1276 để chạm mốc 15000.** **Việc mở cho lượt sau:** (1) **CẢ 7 bbox `amenity=university` đã
+lên kế hoạch từ checkpoint 32 (Châu Phi+Trung Đông, Nam Á, Đông Nam Á, Mỹ Latinh, Đông Âu/Trung Á, Đông Á,
+Tây Âu/Bắc Âu+Úc-NZ) NAY ĐÃ LÀM XONG HẾT** — coi kỹ thuật bbox-theo-vùng lớn với tag `amenity=university` là
+ĐÃ CẠN. Lựa chọn cho lượt sau: (a) chạy 1 lượt `amenity=university` KHÔNG giới hạn bbox (toàn cầu) để vét
+phần còn sót giữa biên các bbox cũ — rủi ro trùng ROSTER cao (đã phủ gần hết các vùng lớn) nhưng
+`base_domain()` dedup mạnh đủ lọc; cân nhắc trước tiên vì gần chạm mốc 15000 (chỉ còn ~1276, không cần khối
+lượng lớn như các lượt trước); (b) chuyển sang tag OSM khác cùng họ giáo dục: `amenity=college` (chưa thử,
+tên tag khác nhưng OSM dùng khá lẫn lộn với `university` ở nhiều nước, có thể còn nhiều cao đẳng/viện chưa
+bắt được qua `amenity=university`), hoặc `amenity=research_institute` (rủi ro nhiễu cao hơn, cần lọc kỹ hơn
+nữa vì không tự động là "đại học" như university/college); (2) **User-Agent trình duyệt thật cứu thêm được
+1-2% domain "chết"** ở vòng retry cuối — cân nhắc đưa hẳn thành vòng chuẩn thứ 4 trong quy trình
+`check_url()` mọi batch sau (script `check_round_ua.py` ở lượt này dùng lại được, chỉ cần đổi input); (3)
+domain loại tay tích luỹ cần nhớ (ngoài danh sách checkpoint 35): `oup.co.in` (Oxford University Press chi
+nhánh Ấn Độ, khác domain checkpoint 33 nhưng cùng vấn đề NXB), domain Centro Cultural Reina Sofía
+(`institucional.cadiz.es` — lặp lại đúng tổ chức đã loại ở checkpoint 32 dạng domain khác); (4)
+`base_domain()` giờ đã có sẵn trong `roster_common.py` — import thẳng, không tự viết lại; (5) 217/1331 =
+16% tỷ lệ gắn cờ ở Tây Âu (cao hơn hẳn 3/611 = 0.5% ở Đông Á) xác nhận đúng dự đoán "đại học châu Âu đặt
+tên campus/khoa dài" — kỹ thuật quét từ khoá + chỉ đọc tay phần thật sự mơ hồ (không phải toàn bộ phần gắn
+cờ) vẫn hiệu quả, giữ dùng tiếp.
+
+---
+**Lần trước:** 2026-09-09 (checkpoint 35 — **CÙNG NGUỒN OSM `amenity=university`, 2 bbox cuối cùng của danh
 sách: Mỹ Latinh + Đông Âu/Trung Á, làm cả 2 trong 1 lượt**) — tiếp tục mục tiêu **15000** (còn thiếu
 ~4701 lúc đầu phiên).
 
