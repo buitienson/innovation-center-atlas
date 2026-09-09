@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 14799 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 15756 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **25000**, sếp nâng từ 15000 ở checkpoint 37) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,64 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-10 (checkpoint 37 — **SẾP NÂNG MỤC TIÊU TỪ 15000 LÊN 25000; NGUỒN OSM MỚI
+**Lần cuối:** 2026-09-10 (checkpoint 38 — **NGUỒN OSM MỚI `amenity=research_institute` (khác namespace
+`office=research` đã làm ở checkpoint 28), toàn cầu 1 lượt, chất lượng CAO NHẤT trong các batch OSM gần
+đây**) — còn thiếu ~9244 lúc cuối phiên.
+
+Overpass `overpass-api.de`, `[timeout:280]`, 1 truy vấn duy nhất `out center tags;` cho toàn bộ
+`amenity=research_institute` toàn cầu (không cần chia bbox — tag hiếm hơn hẳn `university`/`college`):
+`out count;` báo 6662 phần tử (2047 node + 4156 way + 459 relation), tải trọn ~2.7MB 1 lần không timeout.
+Trích tên+URL (ưu tiên `website`/`contact:website`/`url`, chấp nhận `contact:facebook`/`contact:instagram`/
+`contact:linkedin` theo đúng chính sách mạng xã hội đã chốt) → 2661 ứng viên có cả tên+URL (383 không tên,
+3618 không URL bị loại ngay). Gán quốc gia qua `CountryLookup`: 107 điểm ngoài biên NE50, 38 điểm rơi Việt
+Nam loại ngay → 2516 ứng viên hợp lệ, trải **102 quốc gia** (không tập trung 1-2 nước như các batch trước —
+Đức 320, Nga 313, Mỹ 241, Pháp 203, Tây Ban Nha 136 dẫn đầu nhưng phân bố rộng khắp).
+
+Gộp multi-campus qua `base_domain()` → 1746 nhóm domain duy nhất. Lọc trùng ROSTER (base-domain qua
+`tldextract` + `normalize_name()`) loại 423 domain + 4 tên → **1319 ứng viên mới**.
+
+**Khảo sát chất lượng trước khi tải hàng loạt (bài học từ rủi ro `amenity=college` ở checkpoint 37):** đọc
+mẫu ngẫu nhiên 80/1319 + quét từ khoá cờ đỏ (tôn giáo/yoga/lái xe/thẩm mỹ/nấu ăn — chỉ khớp **1/1319**, khác
+hẳn tình trạng nhiễu cao của `amenity=college`) — kết luận tag `amenity=research_institute` SẠCH hơn hẳn
+`amenity=college` ở mọi vùng địa lý đã thử (không giới hạn Nam Á/ĐNÁ), vì tên gọi "research institute"
+trong OSM community-mapping có xu hướng chỉ áp cho cơ sở nghiên cứu thật (viện hàn lâm khoa học Nga/Ukraine/
+Serbia dạng "НИИ"/Институт, Leibniz/Helmholtz/Max-Planck Đức, CNRS/labo Pháp, trạm quan trắc/nông nghiệp/
+khí tượng nhiều nước, national lab Mỹ...) — không lẫn trường phổ thông/dạy nghề như `college`. Loại 1 mục
+"Buddhism Research Institute" (Mỹ) qua quét từ khoá tôn giáo, giữ **1318 sạch**.
+
+`check_url()` 4 vòng (16 luồng/15s → 8/25s → 4/30s → vòng UA trình duyệt thật): 1318 → 940 (vòng 1) → +11
+→ +3 → +5 (UA) = **959 sống**. Rà tay đọc toàn bộ 959 dòng theo từng nhóm quốc gia (không chỉ mẫu) do quy
+mô vừa phải: phát hiện 2 URL Facebook dạng `/posts/<id>` (bài đăng cụ thể, không phải trang định danh tổ
+chức — dễ biến mất/không đại diện tổ chức, khác hẳn URL trang Facebook Page đã chốt chính sách chấp nhận) ở
+Malaysia, loại cả 2; dọn 1 query-string tracking LinkedIn (`?trk=similar-pages`) không loại bỏ mục. Còn lại
+**957 mục thật, duy nhất**, trải 72 quốc gia (Nga 186, Đức 96, Mỹ 71, Pháp 69, Nhật 50, Tây Ban Nha 31, Ba
+Lan/Anh/Ukraine 27 mỗi nước dẫn đầu). Bao gồm 1 điểm ở Nam Cực (SANAE IV, trạm South African National
+Antarctic Programme — nước "Antarctica" mới, hợp lệ vì đúng vị trí thật) và xác nhận lại quy ước quốc gia có
+sẵn cho "Kosovo"/"N. Cyprus" khớp đúng ROSTER. **0 Việt Nam** (xác nhận ở cả bước gán quốc gia và bước cuối).
+
+`ROSTER`: 14799 → **15756** (+957, khớp đúng số kiểm lại `len(load_roster(...))` ngay trước merge, không có
+phiên song song nào ghi đè lần này — `git status` sạch, `git log` không đổi so với đầu phiên). Đơn vị trên
+bản đồ: 14808 → **15765** (+957, giữ nguyên chênh lệch +9 do 9 case phân tích chuyên sâu). Kiểm: `node
+--check` sạch trên script inline, thẻ `div`/`section` cân bằng (107/107, 6/6). Mở `index.html` qua HTTP
+server cục bộ (`.claude/launch.json`) qua Browser pane: hiển thị đúng "15765 đơn vị được lập bản đồ" /
+"15756 trong danh mục mở rộng" / "12 đơn vị tại Việt Nam" (không đổi) / "9 case phân tích chuyên sâu" (không
+đổi), không lỗi console.
+
+**Còn thiếu ~9244 để đạt 25000.** **Việc mở cho lượt sau:** (1) `amenity=research_institute` đã khai thác
+TOÀN CẦU trong 1 lượt (không như `university`/`college` phải chia bbox) — tag này coi như ĐÃ XONG, đừng lặp
+lại; (2) 2 tag OSM giáo dục/nghiên cứu chính (`amenity=university` 7 bbox, `amenity=college` Nam Á+ĐNÁ,
+`amenity=research_institute` toàn cầu) + `office=research`/`office=*` (checkpoint 27-30) coi như đã khai
+thác gần hết các namespace OSM "an toàn" (tên gọi rõ nghĩa, ít nhiễu) — namespace OSM còn lại nếu muốn thử
+tiếp nên khảo sát mẫu kỹ trước (như lượt này) vì nguy cơ nhiễu như `college`/`office=association` tăng dần
+khi namespace càng chung chung; (3) `amenity=college` Tây Âu/Mỹ Latinh/Châu Phi+Trung Đông/Úc-NZ vẫn còn
+"CÓ dữ liệu nhưng nhiễu cao" như checkpoint 37 đã khảo sát — cân nhắc kỹ trước khi đầu tư công rà tay; (4) ở
+khoảng cách ~9244, cần nguồn thật lớn — nên dành thời gian nghiên cứu SÂU 1-2 nguồn hoàn toàn mới quy mô
+lớn thay vì tiếp tục chia nhỏ OSM (sắp cạn các tag "an toàn"), hoặc quay lại 1 trong 5 kỹ thuật khác đã
+chứng minh (đăng ký chính phủ, JSON nhúng bản đồ hiệp hội, API REST toàn bộ, API phân trang+cào hồ sơ, SMW
+askargs) áp dụng cho quốc gia/lĩnh vực chưa từng thử.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 37 — **SẾP NÂNG MỤC TIÊU TỪ 15000 LÊN 25000; NGUỒN OSM MỚI
 `amenity=college` (khác `amenity=university` đã cạn ở checkpoint 36), bbox Nam Á + Đông Nam Á, PHÁT HIỆN
 VÀ XỬ LÝ 1 PHIÊN SONG SONG ghi đè cùng file `src/atlas.html`**) — còn thiếu ~10201 lúc cuối phiên.
 
