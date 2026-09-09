@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 9859 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 10299 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **15000**, sếp nâng từ 10000 ở checkpoint 30) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,102 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 33 — **CÙNG NGUỒN OSM `amenity=university`, bbox Nam Á** (Ấn Độ/
+**Lần cuối:** 2026-09-09 (checkpoint 34 — **CÙNG NGUỒN OSM `amenity=university`, bbox Đông Nam Á**
+(Indonesia/Philippines/Malaysia/Thailand/Myanmar/Campuchia/Singapore/Lào/Brunei/Timor-Leste, tràn thêm
+sang Trung Quốc/Đài Loan/Hong Kong/Nhật (Okinawa)/Ấn Độ (Andaman) do bbox rộng)) — tiếp tục mục tiêu
+**15000** (còn thiếu ~5141 lúc đầu phiên).
+
+**Chọn đúng vùng ưu tiên checkpoint 33 để lại:** Đông Nam Á (mỏng nhất sau Nam Á đã làm — 250 mục hiện có
+lúc đó). Bbox dùng đúng gợi ý cũ `(-11,92,29,142)` (Nam Timor-Leste tới biên Trung Quốc/Myanmar, Andaman
+tới Papua) — CHỦ Ý bbox này tràn cả vào lãnh thổ Việt Nam nên phải lọc kỹ.
+
+**Kỹ thuật lặp lại y hệt checkpoint 32/33:** `overpass.openstreetmap.fr` bị chặn (403) đầu phiên,
+`overpass.osm.ch` cũng lỗi (400) — chuyển sang `overpass-api.de` (200, đúng bài học "thử mirror khác"
+tích luỹ từ checkpoint 30), `[timeout:300]` trong câu QL. `out count;` trước: 1071 phần tử (143 node + 928
+way) có `name`+`website`/`contact:website` — tải `out center tags;` toàn bộ 1 lần (654KB), không cần chia
+nhỏ.
+
+**Lọc Việt Nam NGAY TỪ ĐẦU bằng `CountryLookup` (không dựa vào bbox thủ công):** gán quốc gia cho toàn bộ
+1071 phần tử trước, đếm được đúng **111 phần tử rơi vào Việt Nam** trong bbox này (bị loại bỏ hoàn toàn
+ngay ở bước đầu, không đưa vào bất kỳ bước lọc trùng/kiểm sống nào sau đó) — phân bố còn lại: Indonesia
+231, Philippines 167, China 146, Malaysia 108, Thailand 106, Taiwan 66, Myanmar 32, Singapore 12,
+Cambodia 11, Japan 7, Hong Kong 5, India 3, Laos 3, Timor-Leste 1, cộng 62 điểm rơi ngoài biên NE50 (đảo
+nhỏ/bờ biển, gán tay sau). Xác nhận lại 0 Việt Nam ở bước cuối trước khi merge (kiểm `'vietnam' in
+country.lower()` trên toàn ROSTER sau merge = 0, không đổi so với trước batch).
+
+**`base_domain()` eTLD+1** viết lại y hệt checkpoint 32/33 (thêm TLD 2 tầng Đông Nam Á + các nước tràn bbox
+vào bảng: `ac.id`/`co.id`/`or.id`/`sch.id`, `ac.th`/`co.th`, `edu.my`/`com.my`, `edu.sg`, `edu.ph`/`ac.ph`,
+`edu.kh`, `edu.la`, `edu.mm`/`ac.mm`, `edu.bn`, `edu.cn`/`ac.cn`, `edu.tw`, `ac.jp`, `ac.in`/`edu.in`,
+`edu.bd`/`ac.bd`) — gộp 960 phần tử (sau loại Việt Nam) về 695 nhóm domain duy nhất. Lọc trùng ROSTER hiện
+có (base-domain + `normalize_name()`) loại 86 (toàn bộ trùng domain, 0 trùng tên riêng) → còn 609 ứng
+viên.
+
+**62 điểm rơi ngoài biên NE50** (34 còn lại sau khi loại Việt Nam trong nhóm này) — toàn bộ là đảo nhỏ/mũi
+đất/khu vực ven biển độ phân giải 50m không phủ tới (Cebu/Mindanao Philippines, Surabaya/Kalimantan/Kupang
+Indonesia, Hong Kong, Ma Tổ Đài Loan, Zhuhai/Xiamen/Quảng Đông Trung Quốc, Songkhla/Samut Prakan Thái Lan,
+Brunei) — gán tay cả 34/34 qua TLD + tên xác nhận, không loại (khác batch trước có vài điểm phải loại vì
+không xác định được — lần này toàn bộ xác định được rõ ràng qua đuôi domain quốc gia).
+
+`check_url()` 3 lượt y hệt quy trình chuẩn (16 luồng/15s → 416 sống; retry 8 luồng/25s trên 193 lỗi → +26;
+retry lần 3 4 luồng/30s trên 167 lỗi còn lại → +2, xác nhận lại phần lớn lỗi còn lại là domain chết thật)
+→ **444 sống**.
+
+**Rà thủ công đọc nội dung trang thật (không chỉ tin `check_url()` sống), tiếp nối bài học checkpoint
+33:** loại 3 mục qua đọc `<title>`+text thật — (1) "National Management College" (Myanmar theo toạ độ,
+domain `nmcauditingcollege.com`) hoá ra là ĐÚNG CÙNG một trung tâm luyện thi CA/CMA ở Tamil Nadu, Ấn Độ đã
+bị loại ở checkpoint 33 (South Asia batch) — node OSM khác ID nhưng cùng domain/tên, rơi trúng bbox Đông
+Nam Á do toạ độ gán ở Myanmar, vẫn sai chủ đề y hệt, loại lại; (2) "St. Clare College of Caloocan"
+(`stclareonline.com`) — trang thật hiện "ST. CLARE ONLINE EDUCATION SYSTEM", giống 1 cổng LMS dùng chung
+hơn là trang chủ chính thức của 1 trường cụ thể, không đủ tin cậy để xác nhận đúng tổ chức; (3) "Vidyācaraṇa
+Buddhist Resource" (Malaysia, `vidyacarana.org.my`) — trang chỉ trả về CSS/JS thô, không đọc được tiêu đề
+hay nội dung nào, không xác minh được là đại học/cao đẳng thật.
+
+Đổi tên 7 mục tên toà nhà/khoa/phòng ban chung chung sang đúng tên tổ chức xác nhận qua `<title>` trang
+thật (đúng kỹ thuật checkpoint 33): "Dr. Carlos Lanting College Annex Building" → "Dr. Carlos S. Lanting
+College", "Arellano University in Pasig - Elementary Department" → "Arellano University (Pasig)" (trang
+thật là toàn bộ đại học, không riêng bậc tiểu học), "SUTD Parcel D" → "Singapore University of Technology
+and Design (SUTD)", "TMAB" (Indonesia, acronym vô nghĩa không tự nhận diện được) → "Politeknik Negeri
+Balikpapan", "Kantor Rektorat IAILM Suryalaya" → "Institut Agama Islam Latifah Mubarokiyah (IAILM)
+Suryalaya", "คณะวิศวกรรมศาสตร์" (chỉ ghi "Khoa Kỹ thuật", không tên trường) → "คณะวิศวกรรมศาสตร์
+มหาวิทยาลัยเกษตรศาสตร์" (Khoa Kỹ thuật, ĐH Kasetsart), "อาคารศูนย์ภาษา" (tên toà nhà "Toà nhà Trung tâm
+Ngôn ngữ") → "ศูนย์ภาษาและความสัมพันธ์ระหว่างประเทศ มหาวิทยาลัยราชภัฏหมู่บ้านจอมบึng" (Trung tâm Ngôn
+ngữ & QHQT, ĐH Rajabhat Muban Chombueng). **Khác checkpoint 33:** các mục "Faculty of X, [tên trường]" đã
+TỰ ghi rõ tên trường mẹ trong tên gốc (vd "Faculty Economics and Business, UIN Syarif Hidayatullah",
+"Fakultas Teknik Universitas Hasanuddin", "Pascasarjana UIN Sultan Syarif Kasim Riau") — GIỮ NGUYÊN không
+đổi tên, chỉ đổi tên khi tên gốc KHÔNG tự nhận diện được tổ chức mẹ (bài học tinh chỉnh: chỉ đổi tên thật
+sự mơ hồ, không đổi tên đã đủ rõ dù dài).
+
+Kết quả cuối: 444 sống → loại 3 (đọc nội dung trang) → đổi tên 7 → 441 ứng viên → merge qua script chuẩn
+(an toàn kiểm lại tên/org 1 lần nữa) loại thêm 1 trùng tên thật ("Singapore University of Technology and
+Design (SUTD)" đã có sẵn trong ROSTER qua 1 domain khác không bắt được ở bước lọc domain) → **440 mục
+thêm thật**. Quốc gia: Indonesia 133, China 95, Philippines 56, Taiwan 46, Thailand 41, Malaysia 29,
+Myanmar 16, Cambodia 6, Japan 5, Singapore 4, Hong Kong 3, India 3, Laos 2, Brunei 1. **0 Việt Nam** (xác
+nhận lại ở bước đầu VÀ bước cuối).
+
+`ROSTER`: 9859 → **10299** (+440). Đơn vị trên bản đồ: 9868 → **10308** (+440, giữ nguyên chênh lệch +9).
+Kiểm: `node --check` sạch trên script inline (2.272.083 ký tự), thẻ `div`/`section` cân bằng (107/107,
+6/6). Mở `index.html` qua HTTP server cục bộ (`.claude/launch.json` có sẵn từ checkpoint 31, dùng lại
+nguyên) qua Browser pane: hiển thị đúng "10308 đơn vị được lập bản đồ" / "10299 trong danh mục mở rộng" /
+"12 đơn vị tại Việt Nam" (không đổi), không lỗi console. Commit `97e7189`, `git push origin main` thành
+công.
+
+**Còn thiếu ~4701 để chạm mốc 15000.** **Việc mở cho lượt sau:** (1) **`amenity=university` còn dư địa ở
+2 vùng chưa thử**: Mỹ Latinh (885 mục hiện có tính từ checkpoint 32, dày hơn Đông Nam Á/Nam Á nhưng vẫn
+còn khoảng trống ở Ecuador/Bolivia/Trung Mỹ), Đông Âu/Trung Á (622 mục) — 2 vùng còn lại trong danh sách 4
+vùng checkpoint 32 để lại; (2) bbox Đông Nam Á vừa làm TRÀN sang Trung Quốc/Đài Loan/Hong Kong/Nhật/Ấn Độ
+— các nước lớn này CHƯA được khai thác toàn diện (chỉ có phần rơi vào bbox hẹp), có thể đáng làm bbox
+riêng cho Đông Á (Trung Quốc/Nhật/Hàn/Đài Loan) nếu muốn khai thác tiếp nguồn `amenity=university` sau khi
+xong Mỹ Latinh/Đông Âu; (3) tiếp tục dùng đúng `base_domain()` + `normalize_name()`, nhớ bổ sung TLD 2 tầng
+vùng mới; (4) bài học mới lượt này: khi loại 1 domain vì sai chủ đề ở batch trước, GHI NHỚ domain đó có
+thể xuất hiện lại ở batch vùng khác nếu OSM có node trùng lặp toạ độ lệch qua biên giới vùng (case
+`nmcauditingcollege.com` lặp lại y hệt) — nên cân nhắc giữ 1 danh sách domain đã loại thủ công tích luỹ
+qua các batch `amenity=university` để tự động loại ngay từ đầu, đỡ phải đọc lại nội dung trang 2 lần; (5)
+bài học tinh chỉnh quy tắc đổi tên: chỉ đổi tên khi tên gốc THẬT SỰ không tự nhận diện được tổ chức (toà
+nhà/acronym/chức danh chung chung), KHÔNG đổi tên các mục "Faculty of X, [Tên Trường]" đã tự ghi rõ trường
+mẹ trong tên — giữ nguyên đủ rõ ràng, tránh mất thông tin cấp khoa/đơn vị con thật.
+
+---
+**Lần trước:** 2026-09-09 (checkpoint 33 — **CÙNG NGUỒN OSM `amenity=university`, bbox Nam Á** (Ấn Độ/
 Pakistan/Bangladesh/Sri Lanka/Nepal/Afghanistan/Bhutan)) — tiếp tục mục tiêu **15000** (còn thiếu ~5491
 lúc đầu phiên).
 
