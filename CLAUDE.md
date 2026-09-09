@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 9035 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 9046 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **15000**, sếp nâng từ 10000 ở checkpoint 30) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,113 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 30 — **NGUỒN LỚN MỚI: OpenStreetMap, 3 tag mới `office=association`/
+**Lần cuối:** 2026-09-09 (checkpoint 31 — **CÙNG NGUỒN OpenStreetMap, kỹ thuật MỚI "tải cấu trúc
+trước, lọc từ khoá SAU" (offline) thay vì lọc từ khoá ngay trong Overpass QL**) — tiếp tục mục tiêu
+**15000** (còn thiếu ~5965 lúc đầu phiên).
+
+**Đổi kỹ thuật vì lý do hiệu suất:** lượt trước (checkpoint 30) lọc từ khoá ngay trong câu Overpass QL
+(`name~"..."`) — cách này khiến Overpass phải chạy regex phức tạp trên toàn bộ tập `office=association`/
+`ngo`/`educational_institution` (35656+24152+48294 phần tử) MỖI LẦN đổi bộ từ khoá, dễ timeout khi mở
+rộng danh sách từ khoá (xác nhận lại: thử gộp cả bộ từ khoá mở rộng đa ngôn ngữ vào 1 câu Overpass y hệt
+lượt trước → timeout ở giây 61 dù chỉ đọc `office=foundation` nhỏ hơn nhiều). **Lối thoát:** tách quy
+trình 2 bước — (1) Overpass CHỈ lọc theo cấu trúc rẻ (đã có tag `office=X` + có `name` + có `website`
+hoặc `contact:website`, không regex tên) rồi `out;` toàn bộ phần tử khớp — bước này NHANH vì office=X là
+chỉ mục có sẵn; (2) tải file JSON kết quả về, lọc từ khoá bằng Python OFFLINE — không giới hạn độ phức
+tạp regex, không lo timeout, có thể thử nhiều vòng từ khoá khác nhau trên cùng 1 lần tải mà không phải
+gọi lại Overpass. Kiểm cỡ tập trước khi tải bằng `out count;`: `office=association`+website 12230,
+`office=ngo`+website 5759, `office=educational_institution`+website 7999 — cả 3 tải "out;" đầy đủ tags
++ toạ độ thành công qua `overpass-api.de` (timeout Python phải đặt ≥260s, một số lần đầu bị "read
+operation timed out"/504 phải retry qua mirror `overpass.openstreetmap.fr`). Bài học kỹ thuật: `out
+tags;` KHÔNG trả toạ độ (chỉ trả tags) — lần đầu quên, phải đổi thành `out;` rồi refetch; sau đó phát
+hiện có thể tiết kiệm băng thông hơn nữa bằng cách CHỈ refetch toạ độ cho đúng các ID đã lọc từ khoá
+xong (`node(id:...)`) thay vì tải lại toàn bộ tập gốc lần 2.
+
+Bộ từ khoá offline mở rộng thêm so với checkpoint 30 (đa ngôn ngữ: `incubateur`/`pépinière`/`technopole`
+(Pháp), `inkubator`/`incubatore`/`gründerzentrum` (Đức/Ý/Ba Lan), `vivero de empresas`/`parque
+tecnológico` (Tây Ban Nha/Bồ Đào Nha)...) — nhưng khớp từ khoá vẫn RẤT THẤP trên cả 4 tag đã thử: `office=
+association` 38/12230 (0,3%), `office=ngo` 21/5759 (0,4%), `office=educational_institution` 36/7999
+(0,5%), `office=charity` (tag hoàn toàn mới, 914 phần tử có website) chỉ 1/914 (0,1%) — xác nhận các tag
+`office=*` rộng này đã gần cạn khả năng khai thác bằng từ khoá, đúng nhận định checkpoint 30.
+
+**Rà thủ công + WebSearch xác nhận từng trường hợp nghi ngờ** (95 ứng viên gộp 4 tag, loại 12 trước khi
+kiểm URL): 2 trường K-12 lặp lại đúng tên đã loại ở checkpoint 30 ("KNC Innovative Global School",
+"Innovation Spokane Schools 907" — khớp lại vì quét rộng hơn tình cờ bắt lại đúng bản ghi cũ), 1 câu lạc
+bộ doanh nhân thuần kết nối lặp lại ("JCI Johor Bahru Entrepreneur" — cũng đã loại ở checkpoint 30), 1 tổ
+chức dịch vụ gia đình lặp lại ("Families & Youth Innovations Plus"), 1 học viện bootcamp tư nhân lặp lại
+("Kimit Innovation | Academy") — 4/12 là các mục ĐÃ TỪNG bị loại thủ công ở checkpoint 30 nhưng quét lại
+vẫn xuất hiện vì Overpass trả về theo ID khác nhau mỗi lần, phải rà lại từ đầu chứ không tự động loại
+được chỉ bằng dedup ROSTER (chúng chưa từng được MERGE nên không nằm trong ROSTER để dedup bắt được) —
+**bài học mới: nên giữ một danh sách tên/OSM-ID đã loại thủ công lâu dài (không chỉ trong CLAUDE.md dạng
+văn xuôi) nếu muốn tránh rà lại y hệt các lượt sau**. Các trường hợp MỚI xác minh qua WebSearch: loại
+"Professional School of Management, Innovation & Technology" (PFH — cả một trường đại học tư, không phải
+1 trung tâm), "Integral (INnovative TEaching, GRooming ALchemy)" (bẫy chơi chữ viết tắt, thực chất là 1
+trường cao đẳng thường), "Pépinière jeunesses centre sud..." (chương trình xã hội cho thanh niên, không
+phải vườn ươm doanh nghiệp dù tên có "pépinière"), "Great Lakes Incubator Farm" (chương trình đào tạo
+nông dân/canh tác tái sinh của một Conservation District Mỹ, "incubator" theo nghĩa nông nghiệp chứ
+không phải doanh nghiệp/công nghệ), "European Institute of Innovation, Entrepreneurship and Technology"
+(eiiet.com — xác nhận qua WebSearch là 1 trường tư dạy khách sạn/du lịch, gắn mác "innovation" thuần
+marketing), "Lawrence Center for Entrepreneurship" (tổ chức CÓ THẬT ở Lawrence, Kansas — nhưng URL gắn
+trong OSM `larryville.com` KHÔNG phải site thật của họ, site thật là `larryville-entrepreneur.blogspot.
+com`/Facebook — loại vì URL sai dù tổ chức đúng chủ đề, không tự sửa URL). Giữ lại các trường hợp
+WebSearch xác nhận ĐÚNG dù ban đầu nghi ngờ: "Centre for Innovative Planning and Development" (CIPD, UTM
+Malaysia — trung tâm R&D cấp đại học thật, đúng diện "trung tâm nghiên cứu của đại học"), "Great Lakes"
+loại nhưng "safety innovation center gGmbH" (Paderborn, Đức — tổ chức phi lợi nhuận R&D thật, có dự án
+Horizon Europe) và "Repair Café" tại `manoceanindien.fr` (xác nhận đúng là Repair Café thật của MAN Océan
+Indien, Mayotte, dù domain tên khác) đều GIỮ.
+
+Sau loại 12 + 1 trùng nội bộ (2 bản ghi "Fablab d'Alençon"/"Fablab d'alençon" viết hoa khác nhau, cùng
+URL) còn 82 ứng viên → lọc trùng ROSTER (domain/tên) loại tới **58/82** (đa số trùng vì bộ từ khoá mới
+vẫn chứa nguyên bộ từ khoá cũ của checkpoint 30, quét lại bắt trúng nhiều bản ghi ĐÃ merge) → còn 24. 0
+Việt Nam. Kiểm `check_url()`: đợt 1 (8 luồng, 15s) chỉ **8/24 sống**; đợt 2 retry 16 lỗi (6 luồng, 25s)
+**0/16 cứu thêm** — TOÀN BỘ đều lỗi `URLError` dù nhiều tên miền (vd `socialinnovation.ca`, tổ chức phi
+lợi nhuận lớn thật ở Toronto) chắc chắn không phải đã chết thật. **Rà tay bằng `curl`/`nslookup` phát
+hiện: mạng phiên này CHẶN Ở TẦNG TCP một số tên miền cụ thể dù DNS phân giải đúng và Internet nói chung
+vẫn thông** (`github.com`/`wikipedia.org`/`bbc.com` load tức thì) — cùng hiện tượng "chặn tầng mạng theo
+domain cụ thể, không phải chặn toàn mạng" đã ghi nhận với Overpass mirror ở checkpoint 30. Domain bị chặn
+lượt này: `u-touch.org`, `inkubator.wloclawek.pl`, `torinosocialinnovation.it`, `socialinnovation.ca`,
+`ciep.ar` (đều `URLError`/timeout TCP dù DNS đúng); `ciridd.org`, `citralab.lk` trả 403 (có thể chặn bot
+qua Cloudflare, không hẳn cùng nguyên nhân). Ngược lại `tarantomakers.it` và `coworking-savona.org` ban
+đầu cũng lỗi nhưng RETRY THÀNH CÔNG (200/ok) — xác nhận đây là hiện tượng chặn/nghẽn KHÔNG ỔN ĐỊNH theo
+thời điểm chứ không phải domain chết vĩnh viễn — **việc mở cho lượt sau: thử lại đúng 7 domain bị chặn ở
+trên bằng `check_url()`, nhiều khả năng phần lớn là tổ chức thật đang bị bỏ sót oan**. `innovatedublin.
+org`, `c2i.unilim.fr`, `eiccatalystnetwork.org`, `excellenceskills.com.my` xác nhận qua `nslookup` là
+NXDOMAIN thật (domain đã chết hẳn, không phải do mạng) — loại chắc chắn. `ccfeh.com` là trang rao bán
+domain (namecheap) — loại. `toulouse-metropole-habitat.fr/.../FABLAB-La-Gloire` trả 404 thật — loại.
+`innovup.fefa.tg` DNS timeout không kết luận được — loại theo hướng an toàn.
+
+Cũng thử `office=foundation` (4591 phần tử toàn cầu) làm nguồn mới — chỉ 18 khớp từ khoá tiếng Anh, quá
+nhỏ để đáng theo tiếp, KHÔNG dùng riêng (đã gộp thử vào batch `office=charity` ở trên cho đủ số).
+
+Kết quả cuối: **11 mục sống + đúng chủ đề** (8 qua `check_url()` bình thường + 2 cứu qua retry tay
+`tarantomakers.it`/`coworking-savona.org` + 1 từ `office=charity` "PepSE — Pépinière des Solidarités
+Etudiantes", Brest, Pháp, đại học). Quốc gia: Ba Lan 3, Đức 2, Ý 2, còn lại Thuỵ Sĩ/Brazil/Áo/Pháp mỗi
+nước 1 — không có Việt Nam.
+
+`ROSTER`: 9035 → **9046** (+11). Đơn vị trên bản đồ: 9044 → **9055** (+11, giữ nguyên chênh lệch +9).
+Kiểm: `node --check` sạch trên script inline, thẻ `div`/`section` cân bằng (107/107, 6/6). Mở
+`index.html` qua HTTP server cục bộ (tạo mới `.claude/launch.json` ở cả gốc phiên và gốc repo — script
+`python -m http.server --directory <repo>`, cần đường dẫn `python.exe` đầy đủ vì alias Windows Store
+không chạy được trong môi trường Browser pane) qua Browser pane: hiển thị đúng "9055 đơn vị được lập bản
+đồ" / "9046 trong danh mục mở rộng" / "12 đơn vị tại Việt Nam" (không đổi), không lỗi console.
+
+**Còn thiếu ~5954 để chạm mốc 15000.** **Việc mở cho lượt sau:** (1) **ưu tiên cao — thử lại 7 domain
+nghi bị chặn tầng mạng tạm thời** (`u-touch.org`, `inkubator.wloclawek.pl`, `torinosocialinnovation.it`,
+`socialinnovation.ca`, `ciep.ar`, `ciridd.org`, `citralab.lk` — đều là tổ chức có vẻ thật, chỉ cần
+`check_url()` thành công là đủ điều kiện thêm ngay, không cần rà lại nội dung); (2) kỹ thuật "tải cấu
+trúc trước, lọc từ khoá sau" đã chứng minh khả thi nhưng tỷ lệ khớp từ khoá trên `office=association`/
+`ngo`/`educational_institution`/`charity`/`foundation` đều RẤT THẤP (0,1–0,5%) — 4 tag lớn này coi như
+ĐÃ KHAI THÁC GẦN HẾT bằng từ khoá, đừng lặp lại trừ khi nghĩ ra bộ từ khoá hẳn mới; (3) CHƯA THỬ:
+`amenity=university` (57958 phần tử, rất lớn nhưng rủi ro trùng đại học đã có + sai chủ đề vì đây là
+toàn bộ trường đại học chứ không phải trung tâm/văn phòng cụ thể — cân nhắc kỹ trước khi làm, có thể chỉ
+đáng thử với bộ lọc quốc gia đang thiếu dữ liệu); (4) nên bắt đầu ghi riêng 1 file danh sách tên/OSM-ID
+đã loại thủ công (bài học ghi ở trên) để lượt sau tự động loại được ngay từ bước lọc, không tốn công
+WebSearch lại; (5) cần tìm HẲN nguồn ngoài OSM — danh mục các tag `office=*` liên quan chủ đề coi như đã
+quét gần hết, nên quay lại hướng đăng ký chính phủ/hiệp hội quốc gia (nhiều nước vẫn chưa thử, xem danh
+sách "Nguồn ĐÃ THỬ" tích luỹ qua 30 checkpoint bên dưới) hoặc tìm nguồn dữ liệu lớn hoàn toàn mới ngoài
+cả 2 hướng OSM lẫn đăng ký quốc gia.
+
+---
+**Lần trước:** 2026-09-09 (checkpoint 30 — **NGUỒN LỚN MỚI: OpenStreetMap, 3 tag mới `office=association`/
 `office=ngo`/`office=educational_institution` (lọc từ khoá tên) + `office=research` dạng `relation`**) —
 **sếp vừa nâng mục tiêu từ 10000 lên 15000** (còn thiếu ~6065 lúc đầu phiên, khoảng cách LỚN hơn hẳn 9
 lượt trước cộng lại). Việc mở đầu phiên: tìm nguồn hoàn toàn mới quy mô lớn cho mục tiêu mới.
