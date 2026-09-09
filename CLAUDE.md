@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 2770 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 3069 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,74 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 21 — **NGUỒN LỚN MỚI: IASP (International Association of
+**Lần cuối:** 2026-09-09 (checkpoint 22 — **NGUỒN MỚI: danh bạ chính thức EDIH (European
+Digital Innovation Hubs) của Uỷ ban châu Âu**) — tải export
+`european-digital-innovation-hubs.ec.europa.eu/edih-catalogue/export-edih?page&_format=xls`:
+đúng như dự đoán, server báo `Content-Type: application/vnd.ms-excel` và tên `.xls` nhưng NỘI
+DUNG THỰC LÀ `.xlsx` (`file` xác nhận "Microsoft Excel 2007+") — đổi đuôi rồi mở bằng `openpyxl`
+bình thường. Sheet "EDIH Catalogue", đúng 463 dòng.
+
+**Bẫy dữ liệu MỚI, chưa có trong sổ tay cũ:** cột "Website" TƯỞNG có giá trị ở 424/463 dòng
+nhưng thực ra CHỈ 384 là URL http(s) thật — 40 dòng còn lại giá trị chỉ là chữ "Website" trần
+trụi (label liên kết Drupal, không có `cell.hyperlink` để trích, đã kiểm) hoặc một đường dẫn NỘI
+BỘ tương đối quay lại chính trang catalogue của EC (vd `/edih-catalogue/edih-saxony-website`) —
+không phải URL thật của tổ chức, phải loại bỏ theo đúng quy tắc "không đoán domain" chứ không
+suy luận tiếp. Thêm 5 dòng khác cột Website bị CẮT NGẮN với dấu ba chấm `…` (U+2026) dính liền
+cuối chuỗi (bug từ nguồn) khiến `urllib` ném `UnicodeEncodeError` khi gửi request (KHÔNG phải
+trang chết) — xác minh bằng traceback đầy đủ (`request.encode('ascii')` thất bại đúng tại vị trí
+ký tự `…`); phần hostname đầu các URL này vẫn nguyên vẹn/có thật (không phải đoán), nên cắt về
+domain gốc rồi `check_url()` lại — cứu được 3/4 domain gốc còn sống (dòng thứ 5 đã bị lọc trùng
+ở bước trước đó).
+
+Lọc trùng ROSTER hiện có bằng `domain_of`+`normalize_name` như thường lệ nhưng phát hiện thêm 1
+loại false-positive domain-level chưa gặp trước đây: 2 dòng khớp domain `linkedin.com` với 1 mục
+Eritrea có sẵn trong ROSTER dùng trang LinkedIn làm "website" — hai tổ chức không liên quan cùng
+dùng chung platform, KHÔNG phải trùng thật; đã loại trừ danh sách domain nền tảng chung
+(`linkedin.com`, `facebook.com`, `twitter.com`/`x.com`, `instagram.com`, `youtube.com`,
+`medium.com`) khỏi vòng so khớp domain (chỉ còn so khớp tên cho các domain này) — quy tắc này
+hiện chỉ nằm trong script merge tạm, nên đưa thẳng vào `roster_common.py` cho các batch sau
+(giống bài học "sẽ mất khi phiên kết thúc" đã ghi ở checkpoint 21). 13 trùng thật còn lại đa số
+là 1 tổ chức mẹ có sẵn trong ROSTER dưới tên khác vận hành EDIH trên cùng domain (vd Science
+Technology Park Belgrade ↔ CIPS/STP Belgrade/BITF cùng domain `ntpark.rs`). Còn lại 371 mục.
+
+`check_url()` giữ 282/371 lượt đầu (timeout 10s), cứu thêm 3 qua sửa domain-cắt-ngắn ở trên
+(285), rồi cứu thêm 14 qua 1 lượt kiểm lại toàn bộ số chết còn lại với timeout 20s (loại nhiễu
+mạng thoáng qua) — tổng **299/371 sống thật** (≈80,6%, khớp ước tính ~80% đầu bài nêu). Toạ độ
+dùng centroid CẤP QUỐC GIA, tự viết `COUNTRY_CENTROID` cho 39 nước xuất hiện trong dữ liệu (27
+nước EU + Iceland/Liechtenstein/Norway/Albania/Bosnia/Kosovo/Moldova/Montenegro/North Macedonia/
+Serbia/Ukraine/Türkiye — rộng hơn khối EU vì EDIH phủ cả EEA và một số nước liên kết Digital
+Europe Programme, nhiều hơn ước tính "27-30 nước" nêu trong đầu bài).
+
+Tên đơn vị: dùng "EDIH Name" làm gốc; nếu "EDIH Title" khác Name, ngắn (≤12 từ) và không lồng
+sẵn Name bên trong thì ghép dạng "Name (Title)" (vd "DIPS (Digitalization and Innovation of
+Public Services)"); nếu Title dài như một câu mô tả/khẩu hiệu (>12 từ, có trường hợp toàn viết
+hoa kiểu khẩu hiệu dự án) thì giữ nguyên Name, bỏ Title; nếu Title đã chứa sẵn Name bên trong (vd
+Name "DIH4CAT", Title "Catalonia Digital Innovation Hub (DIH4CAT)") thì dùng thẳng Title, không
+lồng ngoặc kép thừa. `org` để trống cho toàn bộ batch này (EDIH Catalogue không có cột tổ chức
+chủ quản tách biệt khỏi tên).
+
+`ROSTER`: 2770 → **3069** (+299). Đơn vị trên bản đồ: 2779 → **3078**.
+
+**Bài học kỹ thuật mới cho lượt sau:** (1) một cột "Website" không trống KHÔNG đồng nghĩa với URL
+dùng được — luôn kiểm `str(value).lower().startswith("http")` trước khi tin, đặc biệt với export
+từ CMS Drupal (field liên kết có thể serialize thành label hiển thị thay vì href thật); (2)
+domain của các nền tảng mạng xã hội dùng chung (LinkedIn...) phải loại khỏi vòng so khớp trùng
+theo domain — 1 tổ chức trong hàng nghìn dùng chung platform đó không có nghĩa 2 tổ chức bất kỳ
+cùng dùng nó là trùng nhau; (3) một URL bị cắt ngắn giữa chừng (`…`) làm `urllib` crash bằng lỗi
+Unicode chứ không trả lỗi HTTP — đây KHÔNG phải dấu hiệu trang chết, cần thử domain gốc (vẫn
+nguyên vẹn trong chuỗi, không phải đoán) trước khi loại hẳn.
+
+**Việc mở cho lượt sau:** (1) đưa danh sách loại trừ domain nền tảng chung
+(`linkedin.com`/`facebook.com`/...) vào thẳng `roster_common.py` như hằng số dùng chung, tránh
+mỗi batch tự viết lại rồi mất khi hết phiên; (2) 72 mục EDIH còn "chết thật" sau 2 lượt kiểm —
+phần lớn `URLError`/`HTTPError` trên các domain dự án nhỏ kiểu `*-edih.eu` (đăng ký ngắn hạn theo
+vòng đời dự án tài trợ EU, nhiều khả năng đã hết hạn tên miền thật chứ không phải lỗi mạng) —
+không đáng thử lại trừ khi có lý do cụ thể; (3) EDIH Catalogue còn cột "Seal of Excellence" (dự
+án được công nhận nhưng chưa cấp vốn — đã gộp chung, không tách riêng) và các cột sectors/
+services/technologies chưa dùng tới — không cần cho ROSTER nhưng có thể hữu ích nếu sau này làm
+phân loại chủ đề.
+
+**Lần trước:** 2026-09-09 (checkpoint 21 — **NGUỒN LỚN MỚI: IASP (International Association of
 Science Parks and Areas of Innovation), danh bạ khu khoa học/công nghệ quốc tế — đã bỏ 2 lần
 trước vì ASP.NET postback, phiên này site đã ĐỔI NỀN TẢNG, dùng lại thành công**) — sếp nâng
 mục tiêu ROSTER lên **10000 đơn vị** trong phiên này. `iasp.ws/our-members/directory` nay là
