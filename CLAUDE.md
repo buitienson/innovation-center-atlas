@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 10299 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 11799 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **15000**, sếp nâng từ 10000 ở checkpoint 30) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,122 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 34 — **CÙNG NGUỒN OSM `amenity=university`, bbox Đông Nam Á**
+**Lần cuối:** 2026-09-09 (checkpoint 35 — **CÙNG NGUỒN OSM `amenity=university`, 2 bbox cuối cùng của danh
+sách: Mỹ Latinh + Đông Âu/Trung Á, làm cả 2 trong 1 lượt**) — tiếp tục mục tiêu **15000** (còn thiếu
+~4701 lúc đầu phiên).
+
+**Chọn cả 2 vùng lớn nhất còn lại trong 1 lượt** (đúng gợi ý ưu tiên checkpoint 34 để lại — 2 vùng còn
+lại đều LỚN hơn Đông Nam Á vừa làm nên tiềm năng đóng góp cao): Mỹ Latinh (899 mục ROSTER hiện có, bbox
+`(-56,-118,33,-30)` — toàn bộ Trung+Nam Mỹ+Caribbean, KHÔNG tách Mexico riêng vì Overpass xử lý được cả
+khối trong 1 câu) và Đông Âu/Trung Á (669 mục hiện có, bbox `(35,19,55,90)` — Balkan tới Trung Á, tràn cả
+sang Thổ Nhĩ Kỳ/Hy Lạp/Iran/Iraq/Syria/Afghanistan do bbox rộng, giữ nguyên các nước tràn biên vì đều là
+tổ chức thật hợp lệ, không giới hạn theo danh sách nước "Đông Âu/Trung Á" chặt).
+
+**Overpass `overpass-api.de`, `[timeout:300]`:** `out count;` trước cho cả 2 bbox — Mỹ Latinh 2930 phần
+tử (767 node + 2163 way, LỚN NHẤT trong các batch `amenity=university` từ trước tới nay), Đông Âu/Trung Á
+2095 phần tử (590 node + 1505 way). Cả 2 lần đầu gặp `Dispatcher_Client::request_read_and_idx::timeout`
+("server too busy") — retry sau vài giây là qua, đúng bài học cũ. `out center tags;` toàn bộ 1 lần cho
+mỗi bbox, không cần chia nhỏ (1.48MB và 1.35MB).
+
+**PHÁT HIỆN LỖI NGHIÊM TRỌNG trong `base_domain()` viết tay dùng suốt checkpoint 32-34 — đã SỬA bằng
+`tldextract`:** hàm eTLD+1 tự viết chỉ liệt kê thủ công vài nhãn "2nd-level" phổ biến
+(edu/com/org/gov/net) cho mỗi ccTLD 2 ký tự, KHÔNG bao quát được các "public suffix" vùng/miền thật của
+nhiều nước — ví dụ Iran dùng `ac.ir` làm hậu tố học thuật DÙNG CHUNG cho toàn bộ đại học cả nước (giống
+`edu.in` của Ấn Độ) nhưng `ac.ir` không có trong bảng tự viết, nên hàm cũ mặc định cắt về 2 nhãn
+`ac.ir` — coi TẤT CẢ 122 subdomain đại học Iran khác nhau là "cùng 1 domain", chỉ giữ được 1/122 khi gộp
+nhóm nội bộ. Tương tự với vùng địa lý Ukraine (`*.dp.ua`, `*.kiev.ua`, `*.in.ua`) và nhiều nước khác. Phát
+hiện qua kiểm tra thủ công: đếm số domain 2-nhãn "khả nghi" (nhãn đầu ngắn ≤4 ký tự, TLD 2 ký tự) có
+>1 phần tử gộp chung — ra 90 nhóm nghi vấn, trong đó `ac.ir` có 122 phần tử gộp thành 1 (rõ ràng sai),
+trong khi các nhóm khác như `bsu.by` (18, Belarusian State University — ĐÚNG, vì đây thật sự là domain
+riêng của 1 trường có nhiều subdomain khoa/viện) hay `uoi.gr` (18, University of Ioannina — ĐÚNG tương
+tự) lại là gộp ĐÚNG. Không thể phân biệt đúng/sai bằng heuristic tự chế thêm — **chuyển hẳn sang thư viện
+`tldextract`** (`pip install tldextract`, cài được bình thường không treo) dùng Public Suffix List thật
+của Mozilla thay vì bảng tự liệt kê. Kết quả: số nhóm domain duy nhất của Đông Âu/Trung Á tăng từ 1164 lên
+1312 (+148, chủ yếu là các đại học Iran bị gộp nhầm được tách lại đúng — riêng Iran từ 12 lên 106 sau khi
+sửa). Mỹ Latinh ít ảnh hưởng hơn (1525→1544, +19) vì hầu hết TLD Mỹ Latinh đã có trong bảng cũ. **Bài học
+cho các batch `amenity=university`/domain-dedup sau: LUÔN dùng `tldextract` (hoặc PSL thật) ngay từ đầu,
+đừng tự liệt kê bảng TLD 2 tầng bằng tay nữa — cách cũ chỉ đúng tình cờ với các nước đã kiểm tay, sai âm
+thầm (không báo lỗi) với các nước chưa kiểm, mức độ sai tỉ lệ thuận với số ccTLD lạ trong bbox.**
+
+**Loại Mỹ (United States) khỏi batch Mỹ Latinh:** bbox `(-56,-118,33,-30)` trải tới vĩ độ 33°B nên dính cả
+Texas/Florida/Puerto Rico — 135 phần tử gán quốc gia Mỹ qua `CountryLookup`, loại thẳng (ROSTER đã có sẵn
+940 mục Mỹ, không phải trọng tâm lượt này). Puerto Rico (lãnh thổ Mỹ nhưng NE50 gán tên riêng "Puerto
+Rico") vẫn GIỮ lại (không phải "United States" nên không bị loại, và về địa lý/văn hoá thuộc vùng
+Caribbean — giữ nhất quán với các đảo Caribbean nhỏ khác đã giữ ở batch này). 0 Việt Nam ở cả 2 bbox (xác
+nhận qua `CountryLookup` trước khi lọc, không dựa bbox thủ công).
+
+Lọc trùng ROSTER hiện có (base-domain qua `tldextract` + `normalize_name()`) trên nhóm đã gán quốc gia (đã
+loại "None"/ngoài biên NE50 và Mỹ): Mỹ Latinh loại 157 trùng domain + 17 trùng tên → còn 1175 ứng viên;
+Đông Âu/Trung Á loại 147 trùng domain + 14 trùng tên → còn 1124 ứng viên.
+
+`check_url()` 3 lượt mỗi vùng (16 luồng/15s → 8 luồng/25s trên lỗi → 4 luồng/30s trên lỗi còn lại, đúng
+quy trình chuẩn, retry lần 3 chỉ cứu thêm 3-5 mục mỗi vùng — xác nhận phần lớn lỗi còn lại là domain chết
+thật): Mỹ Latinh **715 sống** (703+7+5), Đông Âu/Trung Á **791 sống** (782+6+3).
+
+**Rà thủ công qua đọc `<title>`/nội dung trang thật (không chỉ tin `check_url()` sống), quét tự động bằng
+regex trên tên trước khi đọc tay để thu hẹp danh sách nghi vấn** (khác cách đọc từng mục thủ công của các
+checkpoint trước — với ~1500 ứng viên, quét từ khoá cờ đỏ trong TÊN trước, chỉ đọc trang thật cho các mục
+bị gắn cờ): quét acronym ngắn viết hoa (≤6 ký tự) + quét từ khoá toà nhà/khoa/phòng ban + quét từ khoá
+sai chủ đề (bệnh viện/phòng khám/luyện thi/hiệp hội luật sư/nhà xuất bản) → loại **6 mục**: (1) "CEPUNT"
+Peru — trang thật "Asegura tu ingreso" (đảm bảo trúng tuyển) = trung tâm LUYỆN THI đầu vào, không phải
+trường; (2) "UEA" Ecuador (`uea.edu.ec`) — trang trả về rỗng hoàn toàn (0 ký tự văn bản, không `<title>`),
+không xác minh được nội dung dù `check_url()` báo sống; (3) "Instituto preuniversitario Motolinia de León
+Oaxaca" Mexico — tên tự ghi rõ "preuniversitario" (dự bị đại học/cấp phổ thông), không phải bậc đại học;
+(4) "Colegio de Abogados" Argentina (`caq.org.ar`) — Đoàn Luật sư (hiệp hội nghề nghiệp), không phải
+trường; (5) "МИБС" Nga (`orenburg.ldc.ru`) — trang thật "МРТ в Оренбурге: адреса и телефоны :: МИБС" =
+chuỗi phòng khám chẩn đoán hình ảnh (MRI), không phải giáo dục; (6) "МУЦА"/IUCA Kyrgyzstan (`iuca.kg`) —
+trang trả về rỗng, không đọc được `<title>` hay nội dung. **Đổi tên 2 mục** qua xác nhận `<title>` trang
+thật: "ITFIP" (Colombia) → "UniEspinal" (trang thật tự giới thiệu "UniEspinal – Entidad pública de
+Educación Superior", xác nhận tổ chức đã đổi thương hiệu, dùng đúng tên hiện tại thay vì tên cũ trong tag
+OSM); "ABCD" (Brazil) → "ABCD Piauí" (rõ nghĩa hơn, khớp `<title>` "ABCD Piauí", xác nhận là trường
+chuyên đào tạo sau đại học ngành Nha khoa được Bộ Giáo dục Brazil (MEC) công nhận). **Các acronym ngắn
+khác GIỮ NGUYÊN** (không đổi tên) sau khi đọc `<title>` xác nhận đúng là tên thương hiệu công khai của
+chính tổ chức đó, khớp với domain riêng (vd "UNA"→Universidad Nacional de las Artes, "СГЭУ"→Samara State
+University of Economics, "ТГАСУ"→Tomsk State University of Architecture and Building) — tiếp nối bài học
+tinh chỉnh checkpoint 34: chỉ đổi tên khi tên gốc thật sự không tự nhận diện được, không đổi khi acronym
+đã là brand công khai thật.
+
+Kết quả cuối: 715+791=1506 sống → loại 6 → đổi tên 2 → 1500 ứng viên → merge qua script chuẩn (an toàn
+kiểm lại tên/domain 1 lần nữa qua `tldextract`) loại thêm **0** (không có trùng nào lọt qua bước lọc
+trước) → **1500 mục thêm thật, cả 2 vùng trong 1 lượt**. Mỹ Latinh (711): Brazil 263, Mexico 141, Colombia
+42, Argentina 41, Peru 36, Chile 22, Ecuador 22, Bolivia 21, Venezuela 18, Uruguay 13, Paraguay 13, Costa
+Rica 12, Puerto Rico 7, Cuba 7, Nicaragua 7, Dominican Republic 6, El Salvador 6, Haiti 5, Guatemala 5,
+Honduras 4, Trinidad and Tobago 3, Panama 3, France 2, Jamaica 2, Aruba 2, Antigua and Barbuda 1, Bahamas
+1, Belize 1, Saint Kitts and Nevis 1, Netherlands 1, Curaçao 1, Barbados 1, Bermuda 1. Đông Âu/Trung Á
+(789): Ukraine 129, Russian Federation 108, Poland 80, Uzbekistan 76, Turkey 70, Romania 38, Serbia 34,
+Albania 32, Bulgaria 26, Hungary 24, Belarus 23, Kazakhstan 22, Georgia 20, Iran 19, Armenia 16, Moldova
+16, Slovakia 12, Lithuania 9, Azerbaijan 8, Kyrgyzstan 5, Tajikistan 5, Greece 4, North Macedonia 4,
+Turkmenistan 4, Kosovo 3, China 1, Bosnia and Herzegovina 1. **0 Việt Nam** (xác nhận lại ở bước đầu VÀ
+bước cuối).
+
+`ROSTER`: 10299 → **11799** (+1500, kỷ lục về số mục thêm trong 1 lượt — nhờ gộp 2 vùng lớn nhất còn lại
++ sửa lỗi `base_domain()` cứu thêm ~148 ứng viên đáng lẽ mất do gộp nhầm). Đơn vị trên bản đồ: 10308 →
+**11808** (+1500, giữ nguyên chênh lệch +9). Kiểm: `node --check` sạch trên script inline (2.476.865 ký
+tự), thẻ `div`/`section` cân bằng (107/107, 6/6). Mở `index.html` qua HTTP server cục bộ
+(`.claude/launch.json` có sẵn từ checkpoint 31) qua Browser pane: hiển thị đúng "11808 đơn vị được lập bản
+đồ" / "11799 trong danh mục mở rộng" / "12 đơn vị tại Việt Nam" (không đổi), không lỗi console. Commit
+`48755fb`, `git push origin main` thành công.
+
+**Còn thiếu ~3201 để chạm mốc 15000.** **Việc mở cho lượt sau:** (1) **CẢ 5 bbox `amenity=university` của
+danh sách checkpoint 32 để lại nay đã LÀM XONG** (Châu Phi+Trung Đông, Nam Á, Đông Nam Á, Mỹ Latinh, Đông
+Âu/Trung Á) — coi kỹ thuật bbox-theo-vùng với tag này là ĐÃ CẠN theo nghĩa "vùng lớn rõ ràng", nhưng còn 2
+hướng khai thác tiếp CÙNG TAG này chưa thử: (a) bbox riêng cho Đông Á (Trung Quốc/Nhật/Hàn/Đài Loan) —
+các batch Đông Nam Á + Đông Âu/Trung Á đều TRÀN qua Trung Quốc/Nhật nhưng chỉ vét được phần rơi vào bbox
+hẹp, chưa khai thác toàn diện (Trung Quốc chỉ có ~96+1=97 mục qua 2 lần tràn bbox, so với dân số/số đại
+học thực tế); (b) bbox Tây Âu/Bắc Âu/Úc-New Zealand — CHƯA TỪNG THỬ với tag `amenity=university`, có thể
+còn nhiều nếu ROSTER các nước này còn mỏng (cần đếm trước khi làm); (2) **BÀI HỌC QUAN TRỌNG NHẤT lượt
+này: LUÔN dùng `tldextract` cho `base_domain()`** ở mọi batch domain-dedup sau (không riêng
+`amenity=university`) — cân nhắc viết thẳng vào `roster_common.py` làm hàm dùng chung thay vì mỗi batch
+tự cài `pip install tldextract` lại; (3) kỹ thuật quét từ khoá cờ đỏ trên TÊN trước rồi mới đọc tay
+(thay vì đọc tay từng mục) hiệu quả tốt cho batch lớn (~1500 ứng viên) — giữ dùng tiếp cho các batch lớn
+sau, mở rộng danh sách từ khoá cờ đỏ nếu phát hiện loại sai chủ đề mới; (4) domain loại thủ công tích luỹ
+cần nhớ (ngoài `nmcauditingcollege.com` từ trước): `orenburg.ldc.ru` (МИБС, chuỗi phòng khám MRI), `caq.
+org.ar` (Đoàn Luật sư Argentina), `cepunt.edu.pe` (trung tâm luyện thi Peru), `educem.mx` (dự bị đại học
+Mexico) — các domain này nếu OSM có node trùng toạ độ lệch bbox khác có thể lặp lại như case
+`nmcauditingcollege.com` ở checkpoint 34.
+
+---
+**Lần trước:** 2026-09-09 (checkpoint 34 — **CÙNG NGUỒN OSM `amenity=university`, bbox Đông Nam Á**
 (Indonesia/Philippines/Malaysia/Thailand/Myanmar/Campuchia/Singapore/Lào/Brunei/Timor-Leste, tràn thêm
 sang Trung Quốc/Đài Loan/Hong Kong/Nhật (Okinawa)/Ấn Độ (Andaman) do bbox rộng)) — tiếp tục mục tiêu
 **15000** (còn thiếu ~5141 lúc đầu phiên).
