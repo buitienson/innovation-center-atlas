@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 5501 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 6134 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,80 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 25 — **NGUỒN LỚN MỚI: Repair Café toàn cầu, danh bạ chính
+**Lần cuối:** 2026-09-09 (checkpoint 26 — **NGUỒN LỚN MỚI: HackerspaceWiki (wiki.hackerspaces.org),
+kỹ thuật MỚI "truy vấn Semantic MediaWiki `askargs`"**) — tiếp tục mục tiêu **10000**. Trước khi tìm
+ra nguồn này, đã kiểm tra và LOẠI:
+
+- **SpaceAPI directory (`directory.spaceapi.io`)** — đã nằm sẵn trong danh sách loại đầu phiên
+  ("SpaceAPI hackerspace"), kiểm tra lại xác nhận đúng lý do: chỉ **250** mục, mỗi mục là cặp
+  tên→URL endpoint API trạng thái riêng (không phải website), phải mở từng endpoint mới thấy field
+  `url` (website thật) — quy mô quá nhỏ (250) so với công cần bỏ ra để cào từng endpoint tự host
+  (nhiều domain khác nhau, độ tin cậy thấp). Xác nhận loại đúng, không thử tiếp.
+
+**Quá trình dò tìm HackerspaceWiki:** trang liệt kê `wiki.hackerspaces.org/List_of_hackerspaces` là
+MediaWiki thường (không có nút export), nhưng site này chạy **Semantic MediaWiki (SMW)** — mỗi
+hackerspace là một trang có thuộc tính có cấu trúc (`Country`, `Website`, `Hackerspace_status`,
+`Has_coordinates`, `City`...), nhập qua form `Special:FormStart/Hackerspace`. Dò ra API chuẩn SMW
+`action=askargs` tại `https://wiki.hackerspaces.org/w/api.php` (LƯU Ý: phải dùng path `/w/api.php`,
+KHÔNG PHẢI `/api.php` ở gốc — gọi nhầm path gốc trả về trang lỗi HTML "No such action" chứ không báo
+404, dễ nhầm là API không tồn tại). Truy vấn mẫu:
+`?action=askargs&conditions=Category:Hackerspace&printouts=Country|Website|Hackerspace_status|
+Has_coordinates|City&parameters=limit=500|offset=N&format=json` — xác nhận bằng cách `browsebysubject`
+một trang mẫu (Noisebridge) để tìm đúng tên property trước khi query hàng loạt. Đây là kỹ thuật MỚI:
+**truy vấn Semantic MediaWiki để lấy dữ liệu có cấu trúc trực tiếp từ một trang wiki cộng đồng**,
+khác hẳn kỹ thuật 2 cũ (JSON nhúng sẵn trong trang bản đồ) — áp dụng được cho bất kỳ site nào chạy
+SMW/Cargo có category + property phù hợp.
+
+Phân trang `limit=500` từng đợt (offset 0/500/1000/1500/2000/2500/3000, `curl --compressed` — response
+gzip ~30KB giải nén ra ~280KB/trang, không cần hạ luồng vì đây là 1 site trả JSON lớn một lần, không
+phải hàng nghìn request riêng lẻ) → gộp được **2587** trang thuộc `Category:Hackerspace`. Lọc theo
+`Hackerspace_status`: active 846, closed 670, suspected inactive 394, planned 351, building 238,
+unknown 37, (none) 28, reformatting 23 — **lần đầu tiên nguồn có sẵn trường trạng thái vòng đời rõ
+ràng**, nên áp dụng thêm lớp lọc chất lượng MỚI (khác các checkpoint trước không có field này): CHỈ
+giữ `active`. Trong 846 "active", có Website 811 → trích xuất đủ 811 (0 bị bỏ vì thiếu quốc gia/toạ
+độ centroid dự phòng).
+
+**Điểm mạnh dữ liệu — toạ độ CHÍNH XÁC CẤP ĐỊA ĐIỂM sẵn có:** 719/811 (89%) có sẵn field
+`Has_coordinates` (lat/lon) do chính người quản trị hackerspace điền khi tạo trang — CHÍNH XÁC HƠN
+hẳn centroid quốc gia thường dùng ở các checkpoint khác. 92 mục còn lại (31 quốc gia) dùng centroid
+quốc gia (dict viết tay mới cho batch này). Vài tên quốc gia lệch chuẩn trong nguồn gốc đã ánh xạ về
+đúng quy ước ROSTER hiện có: "United States of America"/"US"→"United States", "CANADA"→"Canada",
+"INDIA"→"India", "Catalonia"→"Spain", "Scotland"→"United Kingdom", "Georgia (Sakartvelo)"→"Georgia",
+"Macedonia"→"North Macedonia", "Türkiye"→"Turkey" (giữ "Russian Federation"/"Czech Republic" vì đây
+đã là biến thể PHỔ BIẾN HƠN trong ROSTER hiện có, không phải "Russia"/"Czechia"). 0 mục Việt Nam.
+
+Lọc: bỏ 8 trùng NỘI BỘ batch (domain/tên trùng), bỏ 73 trùng với ROSTER hiện có → còn **730** ứng
+viên đưa vào `check_url()` (10 luồng, timeout 15s — không cần hạ luồng như Repair Café vì đây là 730
+domain KHÁC NHAU, không phải hàng nghìn request cùng 1 site sau WAF). Alive lượt 1: **629/730**
+(86%). Retry 101 lỗi với 8 luồng/timeout 20s: chỉ cứu thêm **4** — khác hẳn bài học Repair Café, ở
+đây phần lớn 97 mục chết THẬT (site cá nhân/nhóm nhỏ đã ngừng hoạt động, tên miền hết hạn bị chiếm
+làm trang bán domain — nhiều lỗi "parking-page phrase 'godaddy/namecheap'"), không phải lỗi mạng
+thoáng qua. Tổng **633/730 sống thật (86,7%)**. Chỉ **3/633 (0,5%)** URL sống là domain mạng xã hội
+— tỉ lệ thấp nhất trong các checkpoint gần đây, vì hackerspace thường tự lưu trữ website/wiki riêng.
+
+Quốc gia (top): Mỹ 162, Đức 126, Anh 37, Pháp 24, Canada 23, Hà Lan 20, Thuỵ Sĩ 18, Áo 14, Úc 14, Ý
+13, Thuỵ Điển 13 — đúng đặc điểm phong trào hackerspace/makerspace khởi phát mạnh ở Đức (CCC/Chaos-
+treff) và Mỹ. `org` để trống toàn batch (nguồn không có cột tổ chức chủ quản tách biệt).
+
+`ROSTER`: 5501 → **6134** (+633). Đơn vị trên bản đồ: 5510 → **6143** (+633, giữ nguyên chênh lệch
++9 đã ghi nhận ổn định qua nhiều checkpoint — không phải lỗi). Kiểm bằng Browser pane qua HTTP server
+cục bộ (`python -m http.server`, `file://` bị chặn đúng như ghi chú cũ): trang hiển thị đúng
+"6143 đơn vị được lập bản đồ" / "6134 trong danh mục mở rộng", không lỗi console, `node --check` qua
+script inline (1,833,098 ký tự) sạch, thẻ `div`/`section` cân bằng (107/107, 6/6).
+
+**Việc mở cho lượt sau (mục tiêu 10000, còn thiếu ~3866):** (1) HackerspaceWiki còn **238 "building"**
++ **351 "planned"** chưa khai thác — có thể là nguồn bồi thêm nếu chấp nhận hạ tiêu chuẩn "đang hoạt
+động thật" (độ ưu tiên thấp, cân nhắc kỹ trước khi dùng vì "planned"/"building" nhiều khả năng chưa
+từng đi vào hoạt động thật); (2) các hướng nêu từ checkpoint 25 vẫn CHƯA THỬ: Restart Project, FixIt
+Clinic, Freecycle network, Time Bank network, Creative Reuse network, TechShop, Library of Things,
+Seedstars, Village Capital, UnternehmerTUM, EIT Community, đăng ký Estonia/Latvia/Lithuania, Canada
+NRC IRAP, Australia accelerator registry — đáng thử TRƯỚC ở lượt sau; (3) kỹ thuật MỚI "SMW askargs"
+ở checkpoint này đáng thử lại cho các wiki cộng đồng khác chạy Semantic MediaWiki/Cargo nếu tìm thấy
+(vd site FabLab/makerspace khu vực khác dùng cùng nền tảng wiki); (4) 571 hồ sơ Repair Café bị bỏ qua
+vì thiếu quốc gia (việc mở cũ từ checkpoint 25, độ ưu tiên thấp); (5) BIRAC BioNEST PDF lỗi cấu trúc
+vẫn chưa sửa được; (6) InovaLink Brazil vẫn bế tắc (Livewire, không phải REST list).
+
+**Lần trước:** 2026-09-09 (checkpoint 25 — **NGUỒN LỚN MỚI: Repair Café toàn cầu, danh bạ chính
 thức repaircafe.org, kỹ thuật MỚI "API danh sách + cào từng trang hồ sơ lấy trường Website"**) —
 tiếp tục mục tiêu **10000**. Trước khi tìm ra nguồn này, đã thử và LOẠI các hướng gợi ý đầu phiên:
 
