@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 19446 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 19815 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **25000**, sếp nâng từ 15000 ở checkpoint 37) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,96 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-10 (checkpoint 45 — **NGUỒN HOÀN TOÀN MỚI: CORDIS (CSDL dự án NC&PT do EU
+**Lần cuối:** 2026-09-10 (checkpoint 46 — **CORDIS FP7 (chương trình 2007-2013) — GIÁ TRỊ VẪN CÒN
+NHƯNG THẤP HƠN H2020/HORIZON, VÀ LẦN ĐẦU GẶP CORDIS THIẾU `geolocation`**) — còn thiếu ~5185 lúc
+cuối phiên.
+
+Lượt trước (checkpoint 45) để lại việc mở rõ ràng nhất: `cordis-fp7projects-csv.zip` (33MB) tải
+sẵn nhưng chưa dùng — cùng cấu trúc `organization.csv` như Horizon Europe/H2020, chương trình kết
+thúc trước 2014 nên quần thể tổ chức tham gia có thể khác phần nào. Lượt này xử lý đúng file đó,
+lặp lại kỹ thuật REC-filter → dedup ROSTER → scope-filter → `check_url()` → gán toạ độ → merge của
+checkpoint 45.
+
+**Trích xuất REC:** 140064 dòng tổ chức-tham-gia-dự-án FP7 → 33065 dòng `activityType=REC` → gộp
+theo `organisationID` → **3701 tổ chức REC duy nhất**, trong đó **2881 có `organizationURL`
+(~78%)** — CAO HƠN HẲN tỉ lệ điền URL của H2020/Horizon (~38%, checkpoint 45), có thể vì FP7 dùng
+form khai báo tổ chức khác/bắt buộc hơn thời đó.
+
+**Lọc trùng ROSTER** (19446 mục lúc này, đã bao gồm +594 CORDIS Horizon+H2020 của checkpoint 45 —
+nên tự động loại lại bất kỳ tổ chức FP7 nào đã lọt qua ở lượt trước mà không cần đối chiếu
+`organisationID` chéo 2 lượt): loại 1457 trùng domain + 33 trùng tên → **1391 ứng viên mới**. Lọc
+từ khoá phạm vi (đúng danh sách 21 từ khoá của checkpoint 45: HOSPITAL/MUSEUM/MINISTRY/CITY OF...)
+loại 76 (nhiều bệnh viện đại học Pháp/Ý/Tây Ban Nha, viện bảo tàng lịch sử tự nhiên, 1 sở thú Anh)
+→ **1315 ứng viên**.
+
+**`check_url()` toàn bộ 1315** (2 batch 660+655, `ThreadPoolExecutor` 24 luồng): chỉ **373 sống
+(28%)** — THẤP HƠN NHIỀU so với 57% của H2020/Horizon ở checkpoint 45, đúng như dự đoán vì dự án
+FP7 kết thúc từ 2007-2013, nhiều tổ chức/domain đã đổi tên, sáp nhập, hoặc ngừng hoạt động sau
+hơn một thập kỷ. Lý do chết: `URLError`/`HTTPError`/timeout áp đảo (507+150+20=677), **219 ca cờ
+"cross-domain redirect"** (số lượng lớn hơn hẳn checkpoint 45 — trải trên rất nhiều domain đích
+khác nhau, gồm cả những domain đã gặp ở checkpoint 45 như `ri.se`/`fraunhofer.de`/`gov.uk`, đúng
+kiểu tổ chức đổi domain thật giữa các chương trình CORDIS mà không xác minh tay lượt này), 20 ca
+trang đỗ tên miền ("domain may be for sale" v.v.). Kiểm tay 6 URL ngẫu nhiên qua `curl` xác nhận
+cả 6 sống thật (HTTP 200) — không phát hiện false-positive.
+
+**Vấn đề MỚI chưa gặp ở CORDIS trước đây — `geolocation` gần như TRỐNG trong FP7:** chỉ **20/373
+(5%)** có toạ độ thật trong CSV, khác hẳn ghi chú checkpoint 45 rằng CORDIS "luôn có toạ độ thật
+cấp địa chỉ" — hoá ra điều đó chỉ đúng với Horizon Europe/H2020 (dự án gần đây, form khai báo bắt
+buộc geolocation), còn FP7 (form cũ hơn, 2007-2013) phần lớn để trống trường này. **Xử lý: quay
+lại kỹ thuật centroid quốc gia CỦA CÁC CHECKPOINT TRƯỚC CORDIS** — không tự tính bbox/mean mới, mà
+lấy điểm (lat,lon) ĐÃ DÙNG NHIỀU NHẤT cho đúng quốc gia đó ngay trong chính `ROSTER` hiện có (dựng
+bảng tần suất toạ độ theo quốc gia từ `ROSTER`, chọn điểm lặp nhiều nhất — vd Đức
+(51.1657,10.4515) dùng lại từ 203/1873 mục Đức có sẵn, Mỹ (39.8283,-98.5795) từ 275/1379 mục) —
+đối chiếu qua `CountryLookup.country_for()`: đa số khớp đúng quốc gia khai báo, một số nước nhỏ/
+quần đảo (Thuỵ Điển, Hy Lạp, Indonesia, Philippines, Đan Mạch, Iceland, Monaco) cho kết quả "None"
+vì điểm rơi ra biển ở độ phân giải polygon Natural Earth 50m (bug đã ghi nhận từ checkpoint 39-40)
+— CHẤP NHẬN vì đây là toạ độ THẬT ĐÃ CÓ SẴN VÀ ĐÃ ĐƯỢC XÁC MINH trong ROSTER cho đúng quốc gia đó
+ở một mục khác, không phải centroid bịa mới. **351/369 mục cuối cùng dùng centroid kiểu này, chỉ
+20 dùng toạ độ thật từ CSV** (đảo ngược hẳn tỉ lệ so với checkpoint 45 dùng 100% toạ độ thật).
+Thêm 2 mã quốc gia CORDIS chưa có trong bảng ánh xạ: `MC`→Monaco, `DZ`→Algeria (cả 2 đều có sẵn
+toạ độ thật trong CSV, không cần centroid).
+
+**Việt Nam:** phát hiện 2 ứng viên FP7 có `country=VN` lọt qua toàn bộ bộ lọc trên (kể cả
+`check_url()` sống) — LOẠI THẲNG theo đúng quy tắc ROSTER không chứa đơn vị Việt Nam, không merge.
+
+**Lọc trùng NỘI BỘ batch theo domain** (bước mới bổ sung lượt này — checkpoint 45 chưa làm bước
+này, tự phát hiện 2 cặp): "Ceit Alanova Gemeinnützige GmbH" và "Ceit Raltec Gemeinnützige GmbH"
+cùng dùng `ceit.at` (2 pháp nhân con Áo, giữ 1 để tránh 2 điểm bản đồ trùng URL); "Eötvös Károly
+Közpolitikai Nonprofit Közhasznú Korlátolt Felelősségű Társaság" và tên viết tắt cũ "...Kht" cùng
+dùng `ekint.org` — rõ ràng CÙNG một tổ chức ghi 2 `organisationID` khác nhau qua các năm (Hungary
+đổi luật hình thức pháp nhân phi lợi nhuận "Kht"→dạng đầy đủ giữa 2007-2014, đúng giai đoạn FP7) —
+giữ 1 bản tên đầy đủ mới hơn.
+
+**Sửa lỗi thẩm mỹ `smart_titlecase`:** 8 tên có hậu tố pháp nhân đã sẵn dấu chấm trong CSV gốc (vd
+"...NONPROFIT KFT.") bị thuật toán map thêm 1 dấu chấm nữa ("...Kft.." — bảng ánh xạ hậu tố của
+checkpoint 45 tự thêm dấu chấm không kiểm tra trùng) → regex `\.\.+`→`.` dọn lại sau khi sinh tên,
+không sửa thuật toán gốc (vẫn dùng nguyên cho các đợt sau, chỉ cần dọn hậu kỳ).
+
+**Kết quả merge:** 371 dòng qua bước gán toạ độ, trừ 2 trùng nội bộ domain → **369 mục mới**. Xác
+nhận `git status` sạch + `len(load_roster(...))` = 19446 đúng ngay trước khi ghi. `ROSTER`: 19446
+→ **19815** (+369). Đơn vị trên bản đồ: 19455 → **19824** (+369, giữ nguyên chênh lệch +9 với
+ROSTER). Kiểm: `node --check` sạch (script inline 3,389,711 ký tự), thẻ `div`/`section` cân bằng
+(107/107, 6/6). Mở `index.html` qua HTTP server cục bộ (`.claude/launch.json` cấu hình
+`static-server` có sẵn từ checkpoint trước), đọc qua Browser pane: đúng "19824 đơn vị được lập bản
+đồ" / "19815 trong danh mục mở rộng" / "12 đơn vị tại Việt Nam" (không đổi) / "9 case phân tích
+chuyên sâu" (không đổi), console sạch. Commit và `git push origin main` lên live (xem hash ở cuối
+báo cáo phiên).
+
+**CORDIS coi như ĐÃ KHAI THÁC HẾT cho `activityType=REC`** sau khi dùng cả 3 chương trình
+(Horizon Europe + H2020 ở checkpoint 45, FP7 ở checkpoint này) — tổng **963 mục** từ nguồn này qua
+2 checkpoint (594+369), năng suất giảm dần đúng như dự đoán vì trùng lặp tổ chức xuyên chương
+trình tăng dần. **Việc mở cho lượt sau:** (1) tổ chức HES (nguyên trường đại học) và PUB/OTH bị
+loại hẳn ở CORDIS vì sai độ chi tiết ROSTER — nếu muốn khai thác cần tra tay từng trường xem có
+đơn vị CGCN/nghiên cứu con cụ thể không (việc lớn, chậm); (2) **219 ca CORDIS FP7 bị `check_url()`
+gắn cờ "cross-domain redirect"** (số lượng đáng kể, trải nhiều domain đích khác nhau — có thể còn
+tổ chức thật đã đổi domain giữa 3 chương trình CORDIS chưa xác minh tay, việc mở lớn hơn hẳn ~20
+ca của checkpoint 45); (3) quay lại nguồn khác ngoài CORDIS: SBIR/STTR Mỹ
+(`sbir.gov`, chưa thử qua 46 checkpoint), Hàn Quốc Daegu/Gwangju/Gyeonggi Daejin TechnoPark (nghi
+chặn IP/bot, có thể thử lại giờ khác hoặc qua Wayback Machine), Na Uy SIVA (có tên tổ chức cụ thể
+từ checkpoint 44, chưa tra URL riêng).
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 45 — **NGUỒN HOÀN TOÀN MỚI: CORDIS (CSDL dự án NC&PT do EU
 tài trợ), TẢI HÀNG LOẠT KHÔNG QUA CÀO TRANG, TOẠ ĐỘ THẬT CÓ SẴN TRONG DỮ LIỆU NGUỒN**) — còn thiếu
 ~5554 lúc cuối phiên.
 
