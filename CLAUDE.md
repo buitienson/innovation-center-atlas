@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 18524 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 18784 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **25000**, sếp nâng từ 15000 ở checkpoint 37) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,97 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-10 (checkpoint 41 — **NHÃN ĐA NGÔN NGỮ cho 5 class Wikidata đã dùng
+**Lần cuối:** 2026-09-10 (checkpoint 42 — **(A) QUÉT TOÀN ROSTER TÌM LỖI CENTROID GIỐNG BUG
+Mỹ/Pháp CỦA CHECKPOINT 39, (B) WIKIDATA CHUYỂN TỪ DÒ CLASS SANG DÒ TỪ KHOÁ NHÃN RỘNG**) — còn
+thiếu ~6216 lúc cuối phiên.
+
+**(A) Quét lỗi centroid — có sửa, commit riêng `3d6402b` trước khi tăng trưởng.** Lượt 41 để
+lại việc mở: nghi còn nhiều dòng cùng lỗi bbox-toàn-điểm (Mỹ/Pháp) ở các nước có lãnh thổ hải
+ngoại khác. Viết script gộp `ROSTER` theo toạ độ làm tròn 4 chữ số thập phân, với mỗi nhóm
+toạ độ có ≥4 mục CÙNG 1 quốc gia, đối chiếu quốc gia đó với `CountryLookup.country_for()` (tra
+ngược qua polygon Natural Earth thật) — nếu KHÔNG khớp thì nghi vấn. Ra 21 nhóm mismatch; phần
+lớn là false positive (biến thể tên: "Türkiye"/"Turkey", "Czechia"/"Czech Republic", "The
+Gambia"/"Gambia", "Chinese Taipei"/"Taiwan" — chỉ khác cách viết, không phải lỗi toạ độ; hoặc
+điểm ở sát bờ biển/đảo nhỏ mà lưới Natural Earth 50m không đủ phân giải để bắt trúng polygon —
+Hy Lạp/Đan Mạch/Nam Phi/New Zealand(-40.9,174.9)/Israel-Palestine — toạ độ ĐÚNG khu vực thực,
+không sửa). **8 nhóm là bug thật** — cùng kiểu bbox-toàn-điểm của checkpoint 39/41 (điểm rơi
+giữa đại dương, cách xa lãnh thổ hàng nghìn km, trong khi domain `.nl/.fr/.es/.no/.pt/.se` của
+từng mục xác nhận đúng quốc gia ghi trong cột `country`): Hà Lan (49 mục, điểm ở giữa Đại Tây
+Dương), Pháp (40, gần Mali — CHÍNH LÀ lỗi checkpoint 41 đã cảnh báo nhưng chưa sửa vì lượt đó
+chỉ sửa phần Mỹ), Tây Ban Nha (35, ngoài khơi Maroc), Na Uy (23, biển Na Uy), Bồ Đào Nha (22,
+giữa Đại Tây Dương gần Azores), Thuỵ Điển (20, vịnh Bothnia), New Zealand (8, ngoài khơi Nam
+Phi — cùng lỗi bbox tính luôn đảo Chatham/Kermadec), Nga (4, kinh độ bị hỏng thành đúng `0.0`
+trong khi vĩ độ vẫn đúng ~61.5°B — có thể do lỗi parse/truncate ở batch nguồn, không phải bbox).
+**Sửa:** thay toạ độ sai bằng centroid ĐÃ DÙNG SẴN nhiều lần cho đúng quốc gia đó ở nơi khác
+trong `ROSTER` (không tự bịa centroid mới) — riêng Nga không có cụm centroid-quốc-gia sẵn (chỉ
+có điểm St. Petersburg dùng 5 lần, là điểm THÀNH PHỐ không phải centroid quốc gia) nên dùng
+centroid Nga chuẩn công khai (61.5240, 105.3188, cùng bộ dữ liệu Google public country centroids
+mà mọi centroid "OK" khác trong ROSTER đã khớp — xác nhận qua Mỹ/Anh/Canada/Úc). **201 mục sửa
+toạ độ, KHÔNG đổi số lượng** (`len(ROSTER)` giữ 18524). Kiểm bằng HTTP server cục bộ: số liệu
+không đổi, console sạch. Commit `3d6402b`, push thành công trước khi sang việc tăng trưởng.
+
+**(B) Tăng trưởng — Wikidata dò từ khoá nhãn, không giới hạn class.** 5 class Wikidata cũ
+(`research institute`, `university institute`, `technology park`, `startup accelerator`,
+`innovation hub`) coi như cạn từ checkpoint 41. Đổi cách tiếp cận: thay vì liệt kê từng class cụ
+thể, lọc THEO TỪ KHOÁ trong nhãn tiếng Anh (`CONTAINS(LCASE(STR(?label)), "...")`) trên MỌI item
+có `P31/P279* wd:Q43229` (organization) — rộng hơn hẳn, không phụ thuộc việc ai đó đã gắn đúng
+class cụ thể cho item trên Wikidata hay chưa. Test đếm từng từ khoá riêng trước khi gộp (endpoint
+`qlever.dev`, nhớ khai `PREFIX` tường minh như checkpoint 41 đã học): "research centre" 423,
+"science park" 51, "innovation center" 41, "innovation centre" 32, "technology transfer" 26,
+"incubator" 29, "coworking space" 6, "living lab" 8, "innovation hub" 5, "entrepreneurship
+cent[er/re]" 2 — CÒN 3 từ khoá thử mà ra 0: "tech transfer" (viết tắt, không ai dùng làm nhãn
+chính thức), "startup studio", "digital innovation hub" (không có item nào khớp đúng cụm này dù
+class Q-id riêng đã dùng ở checkpoint 40 vẫn còn — nghĩa là nhãn "digital innovation hub" hiếm
+gặp trong text, khác hẳn việc được gắn class). Gộp cả 10 từ khoá có kết quả vào 1 truy vấn UNION
+bằng `||`, lấy kèm `P856` (website, bắt buộc), `P17`→nhãn quốc gia tiếng Anh, `P625` nếu có.
+
+**Kết quả truy vấn:** 664 dòng thô → 619 item duy nhất. Lọc trùng ROSTER (base-domain +
+`normalize_name()`): 198 trùng domain + 5 trùng tên → 416 ứng viên. `check_url()` 2 vòng (vòng 1
+16 luồng/10s giữ 275/416; vòng 2 kiểm lại 141 mục chết, 6 luồng/25s, cứu thêm 4) → **279 sống
+thật** (tỷ lệ chết ~33%, bình thường, không cần kiểm chéo `WebFetch`). Trong 279: **0 mục nào có
+`P625`** (khác hẳn checkpoint 41 — có vẻ nhóm item khớp từ khoá nhãn ít được gắn toạ độ hơn nhóm
+item khớp class cụ thể); 16 mục hoàn toàn không có `P17`. Xử lý 16 mục này: chỉ giữ 3 mục suy
+được quốc gia qua ccTLD rõ ràng (`.ru`→Nga, `.hr`→Croatia, `.bd`→Bangladesh), LOẠI 13 mục còn lại
+(domain `.com/.org` chung chung hoặc trang `academia.edu` — không phải domain riêng của tổ chức,
+không đoán bừa qua tên dù vài cái có gợi ý địa danh trong tên như "Los Angeles"/"Texas"/
+"Tanzania" — không nằm trong 4 cách đã chốt nên không dùng). Rà trùng NỘI BỘ batch (2 item
+Wikidata khác nhau nhưng cùng 1 tổ chức thật, vd "Bhopal Memorial Hospital & Research Centre" và
+"...Research Centre, Bhopal", hay "International Development Research Centre" bị gắn nhầm P17 là
+Ấn Độ thay vì Canada) → loại thêm 6. **Tổng 260 ứng viên cuối.** 0 Việt Nam. Dẫn đầu Ấn Độ 59
+(nhiều "XYZ Medical/Ayurvedic/Homeopathic College and Research Centre" — vẫn giữ vì tiền lệ
+checkpoint 39-41 đã nhận rộng rãi cả nhóm "research institute" không riêng CGCN/ĐMST hẹp), Anh
+31, Úc 16, Canada 11.
+
+**Toạ độ (không có `P625` nào):** dùng centroid quốc gia ĐÃ DÙNG SẴN trong ROSTER cho từng nước
+(tương tự phần (A)), xác minh lại bằng `CountryLookup.country_for()` — phát hiện ngay lỗi tương tự
+(A) cho Nga (điểm St. Petersburg lặp lại 5 lần không phải centroid quốc gia) nên dùng centroid Nga
+chuẩn công khai như đã sửa ở (A). **Greenland lần đầu xuất hiện trong ROSTER** ("Greenland Climate
+Research Centre", domain `.gl`) — Natural Earth có polygon Greenland riêng (không gộp vào Đan
+Mạch), tính centroid vùng đất chính (71.7069, -42.6043), xác minh `CountryLookup` khớp. Croatia
+cũng lần đầu — dùng centroid chuẩn công khai (45.1, 15.2), tình cờ trùng khớp hoàn toàn điểm đã
+dùng sẵn 11 lần cho các mục Croatia khác trong ROSTER (xác nhận đúng quy ước).
+
+`ROSTER`: 18524 → **18784** (+260, khớp `len(load_roster(...))` kiểm ngay trước merge, `git
+status` sạch). Đơn vị trên bản đồ: 18533 → **18793** (+260, giữ nguyên chênh lệch +9). Kiểm:
+`node --check` sạch, thẻ `div`/`section` cân bằng (107/107, 6/6). Mở `index.html` qua HTTP server
+cục bộ, `get_page_text`: đúng "18793 đơn vị được lập bản đồ" / "18784 trong danh mục mở rộng" /
+"12 đơn vị tại Việt Nam" (không đổi) / "9 case phân tích chuyên sâu" (không đổi), console sạch.
+Commit `db5fb5b`, `git push origin main` thành công.
+
+**Còn thiếu ~6216 để đạt 25000.** **Việc mở cho lượt sau:** (1) kỹ thuật dò-từ-khoá-nhãn-rộng
+CÒN NHIỀU DƯ ĐỊA — mới thử 13 từ khoá, còn có thể thử thêm biến thể ("innovation lab", "startup
+hub", "technopark"/"techno park" liền/tách, "research park", "innovation park", "business park"
+[cẩn thận lẫn bất động sản thương mại thường], "R&D centre", "tech hub") VÀ áp fallback đa ngôn
+ngữ (COALESCE 9 ngôn ngữ + `?labelAny`, kỹ thuật checkpoint 41) NGAY TỪ ĐẦU cho các từ khoá tiếng
+Anh — hiện lượt này CHỈ lọc nhãn tiếng Anh nên chắc chắn bỏ sót item chỉ có nhãn ngôn ngữ khác chứa
+từ khoá tương đương (vd tiếng Đức "Gründerzentrum", tiếng Pháp "incubateur", tiếng Tây Ban Nha
+"parque científico") — nếu thử tiếp nên tra từ khoá BẢN NGỮ luôn, không chỉ dịch tiếng Anh; (2)
+bug centroid-bbox-toàn-điểm coi như ĐÃ QUÉT HẾT các nhóm ≥4 mục cùng quốc gia — nhưng CHƯA quét
+nhóm nhỏ hơn (2-3 mục) vì chi phí/lợi ích thấp, để ngỏ nếu phát hiện thêm qua công việc khác; (3)
+nguồn OSM và phi-Wikidata khác đã liệt kê ở checkpoint ≤38 coi như cạn.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 41 — **NHÃN ĐA NGÔN NGỮ cho 5 class Wikidata đã dùng
 (`research institute` Q31855 + `university institute`/`technology park`/`startup
 accelerator`/`innovation hub` của checkpoint 40), cứu các item KHÔNG có nhãn tiếng Anh**) —
 còn thiếu ~6476 lúc cuối phiên.
