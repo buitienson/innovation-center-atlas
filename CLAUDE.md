@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 2532 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 2770 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,57 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 20 — **NGUỒN MỚI: Argentina MINCyT "Mapa de la
+**Lần cuối:** 2026-09-09 (checkpoint 21 — **NGUỒN LỚN MỚI: IASP (International Association of
+Science Parks and Areas of Innovation), danh bạ khu khoa học/công nghệ quốc tế — đã bỏ 2 lần
+trước vì ASP.NET postback, phiên này site đã ĐỔI NỀN TẢNG, dùng lại thành công**) — sếp nâng
+mục tiêu ROSTER lên **10000 đơn vị** trong phiên này. `iasp.ws/our-members/directory` nay là
+CMS Tangora chứ không phải ASP.NET cũ, có bộ lọc theo quốc gia (81 nước) và mỗi mục có trang
+chi tiết `/our-members/directory/@<id>/<slug>` chứa sẵn trường "Website" và "Location"
+(thành phố, quốc gia) — vừa đúng kiểu nguồn tốt (URL thật + vị trí có sẵn, không cần đoán).
+
+**Bẫy kỹ thuật + cách gỡ:** trang danh bạ mặc định chỉ hiện một danh sách NGẪU NHIÊN ~29 tổ
+chức không liên quan tới bộ lọc (carousel "gợi ý", nằm trong `module10_2`/`listrotator` khác
+hẳn khối kết quả lọc thật `#listMasterView_65`/`module276_2`/class `member-item`) — nếu không
+phân biệt hai khối DOM này sẽ tưởng lọc "không hoạt động" hoặc lẫn kết quả sai nước, đúng như
+lý do 2 lần thử trước bị bỏ dở. Cách xác định điều hướng lọc theo nước: đổi `<select>` quốc
+gia rồi `filterControlChange(443)` cập nhật URL thành
+`...directory?filtercontrol651=<Country>&...` — URL này ĐIỀU HƯỚNG TRỰC TIẾP được (không cần
+click), nên chỉ cần `navigate` batch 79 URL (một cho mỗi nước, trừ Vietnam theo quy ước ROSTER)
+rồi lọc DOM đúng khối `#listMasterView_65` là ra danh sách CHUẨN, không lẫn carousel.
+
+Quy trình: 79 lượt `navigate` (browser, theo batch ~10 nước/lượt qua `browser_batch` để giảm
+round-trip) → 327 URL chi tiết duy nhất → tải hàng loạt bằng `curl`/`urllib` (trang chi tiết là
+HTML tĩnh, không cần trình duyệt) → trích `<h1>` (tên), `class='sectionlink' href="..."`
+(website), field `Location` (thành phố, quốc gia) bằng regex → lọc 20 mục không có website
+(đa số là hội viên CÁ NHÂN — vd "Barbara Harley", "Esteban Pablo Cassin" — không phải tổ chức,
+IASP có loại thành viên cá nhân/tư vấn ngoài tổ chức) → lọc trùng domain/tên với ROSTER (21
+trùng) → `check_url()` giữ **237/286** ngay lượt đầu, cứu thêm 2 qua 1 lượt kiểm lại (20s
+timeout) → merge **238 mục mới thật** (239 qua kiểm, 1 trùng nội bộ batch).
+
+Toạ độ dùng centroid CẤP QUỐC GIA (`COUNTRY_CENTROID`, 76 nước xuất hiện trong batch này, viết
+tay trong script merge tạm — quy mô địa lý quá rộng, 76 nước một lượt, nên chấp nhận độ chính
+xác thô hơn cấp tỉnh/bang đã dùng cho các nguồn nhỏ hơn trước đó).
+
+`ROSTER`: 2532 → **2770**. Đơn vị trên bản đồ: **2779**.
+
+**Bài học kỹ thuật quan trọng cho lượt sau:** khi một trang danh bạ có bộ lọc nhưng client-side
+kết quả "trông như không lọc đúng" hoặc lẫn kết quả ngẫu nhiên, ĐỪNG vội kết luận trang không
+dùng được — kiểm tra kỹ cấu trúc DOM xem có nhiều khối kết quả chồng nhau (khối lọc thật vs
+khối carousel/gợi ý không liên quan) bằng cách truy vết ancestor class/id của từng link, như đã
+làm ở đây. Nguồn tưởng đã "chết" (ASP.NET postback không JSON) có thể sống lại sau khi đổi nền
+tảng — đáng thử lại định kỳ các nguồn lớn đã bỏ dở vì lý do kỹ thuật (chứ không phải vì không
+có dữ liệu).
+
+**Việc mở cho lượt sau (mục tiêu 10000):** (1) IASP còn ~70 mục "chết" thật (không phải mạng)
+— phần lớn là site chính phủ/đại học Trung Đông (Saudi Arabia, Iran, Oman) và Trung Quốc, có
+thể do chặn theo khu vực từ mạng hiện tại, đáng thử lại từ mạng khác. (2) Tiếp tục 2 hướng đã
+chứng minh: đăng ký chính phủ có cột website (Argentina xong, còn nhiều nước Mỹ Latinh/Á khác)
+và dữ liệu nhúng sẵn (ANPROTEC, IASP xong — còn ASTP-Proton, RedEmprendia, AUTM, UNITT trong
+`_claude/roster-grow-queue.md` mục 30-34, chưa có URL cụ thể). (3) Ở quy mô 10000, cần nhiều
+nguồn cỡ IASP/ANPROTEC (200-500 mục) liên tiếp — ước tính cần ~30 nguồn cỡ này để đạt mục tiêu,
+nên ưu tiên tìm danh bạ hiệp hội/chính phủ đa quốc gia hơn là đào sâu từng nước lẻ.
+
+**Lần trước:** 2026-09-09 (checkpoint 20 — **NGUỒN MỚI: Argentina MINCyT "Mapa de la
 Innovación" (UVTs), đăng ký chính phủ CÓ SẴN cột website, khai thác qua dữ liệu DataTable
 nhúng sẵn client-side**) — tiếp tục hướng "đăng ký chính phủ có cột website" đã chứng minh
 hiệu quả ở Colombia. Trang `argentina.gob.ar/ciencia/vinculacion-y-transferencia/mapa-de-la-
