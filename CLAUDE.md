@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 15756 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 18229 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **25000**, sếp nâng từ 15000 ở checkpoint 37) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,73 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-10 (checkpoint 38 — **NGUỒN OSM MỚI `amenity=research_institute` (khác namespace
+**Lần cuối:** 2026-09-10 (checkpoint 39 — **ĐỔI HƯỚNG KHỎI OSM, NGUỒN MỚI HOÀN TOÀN: Wikidata SPARQL
+`query.wikidata.org/sparql`, class "research institute" (Q31855), kỹ thuật #3 trong 5 kỹ thuật đã chứng
+minh — lần đầu dùng Wikidata qua 39 checkpoint, quy mô LỚN NHẤT từ 1 nguồn duy nhất tính đến nay**) — còn
+thiếu ~6771 lúc cuối phiên.
+
+Agent lượt trước (checkpoint 38) kết luận các namespace OSM "an toàn" đã cạn, khuyến nghị mạnh nghiên cứu
+Wikidata SPARQL (nguồn có cấu trúc lớn nhất thế giới, miễn phí, chưa từng thử). Tra `wikidata.org` tìm đúng
+Q-id trước: thử "business incubator" (Q1132207, chỉ 69 mục có site), "science park" (Q1976594, 139 mục),
+"technology transfer office" (Q48782630, quá hẹp/rác), **"research institute" (Q31855) cho ra 8533 cặp
+(item,site) trực tiếp — đúng class, không lẫn** (kiểm subclass mở rộng `P279*` cho 24201 nhưng phần lớn là
+`academic department`/`laboratory` — đơn vị con quá nhỏ, KHÔNG dùng subclass, chỉ dùng P31 trực tiếp).
+
+Truy vấn SPARQL `?item wdt:P31 wd:Q31855; wdt:P856 ?site` (P856 = official website) + `OPTIONAL` toạ độ
+P625 và quốc gia P17. **Bài học kỹ thuật quan trọng:** endpoint Wikidata trả 502 khi kèm `SERVICE
+wikibase:label` cho >500 dòng/trang hoặc dùng `ORDER BY` trên tập lớn — phải tách làm 2 bước: (1) trang
+dữ liệu thô (item/site/coord/country **không** label, `LIMIT 2000 OFFSET n`, ổn định) rồi (2) trang nhãn
+riêng (`LIMIT 500 OFFSET n` kèm label service, vẫn thỉnh thoảng 502 — retry lại offset lỗi là qua). Gọi
+API `wbgetentities` để lấy nhãn hàng loạt bị chặn 429 liên tục dù batch 50 id/lần — bỏ hướng này, dùng
+SPARQL label service phân trang nhỏ thay thế, ổn định hơn hẳn.
+
+Kết quả thô: 8865 dòng (item,site) → gộp theo `item` (nhiều dòng do OPTIONAL nhân bản khi 1 item có nhiều
+toạ độ/quốc gia) → **7786 item duy nhất có website**. Toạ độ P625 có sẵn cho 4018/7786 (52%); quốc gia P17
+có cho 7466/7786 (96%). Dùng tự tính centroid quốc gia (bbox-center) từ chính `_ne50_countries_cache.geojson`
+đã cache sẵn (dùng lại `NAME_OVERRIDE` của `country_from_latlon.py`) cho 3046 item có quốc gia nhưng thiếu
+toạ độ — 367 item không có cả toạ độ lẫn quốc gia hợp lệ bị loại thẳng. Lấy nhãn tiếng Anh: 7289/7786 có
+nhãn (1140 item không có nhãn tiếng Anh nào bị loại).
+
+Lọc trùng ROSTER (base-domain qua `tldextract` + `normalize_name()`) + lọc Việt Nam (17 mục) → **3364 ứng
+viên mới, duy nhất**. `check_url()` 4 vòng (16 luồng/15s → 8/25s → 4/30s → vòng UA Chrome thật) mất tổng
+~40 phút (chạy nền qua watcher lệnh Bash, không dùng `run_in_background`/`&`): 3364 → 2431 (vòng 1) → +20 →
++9 → +14 (UA) = **2474 sống**. Đa số URL "chết" là `URLError`/`HTTPError` thật (site đã ngưng hoạt động),
+không phải bị chặn bot — vòng UA chỉ vớt thêm 14/904, xác nhận hầu hết là chết thật.
+
+**Rà chất lượng:** quét từ khoá cờ đỏ (yoga/tôn giáo/chữa lành/tarot/bảo hiểm/spa...) trên toàn bộ 2474 —
+chỉ 1 mục thật sự đáng ngờ (`Bout Me Healing`, Mỹ, Q-id rất mới Q138679019, toạ độ Wikidata lệch sang Pháp
+— rõ ràng gắn sai `P31` trong Wikidata) → loại thủ công. Còn lại toàn bộ ~29 khớp từ khoá khác đều là khớp
+chuỗi con giả (Space/Spatial chứa "spa", Prayoga chứa "yoga"...) — giữ nguyên. Đọc mẫu ngẫu nhiên 40/2474 +
+toàn bộ 201 item có Q-id rất mới (>130 triệu, tạo gần đây) để dò rác — chất lượng cao đồng đều, phủ rất
+rộng cả châu Phi (Mali, Kenya, Ghana, Algeria, Tunisia, Morocco, Chad, Nigeria) lẫn châu Á/Âu/Mỹ, những khu
+vực OSM trước đây phủ mỏng. Kiểm trùng tên/domain nội bộ batch: 0 domain trùng, 8 tên trùng nhưng đều là
+tên chung ("Institute of Botany" ở nhiều nước khác nhau — không phải cùng 1 tổ chức). **0 Việt Nam** (xác
+nhận cả ở bước lọc quốc gia và bước cuối). Trải **~115+ quốc gia**, dẫn đầu: Mỹ 340, Đức 241, Nhật 150, Nga
+127, Hàn Quốc 109, Pháp/Tây Ban Nha 87 mỗi nước, Ấn Độ 86, Canada 81, Hà Lan 74.
+
+`ROSTER`: 15756 → **18229** (+2473, khớp đúng số kiểm lại `len(load_roster(...))` ngay trước merge —
+`git status` sạch, không có phiên song song). Đơn vị trên bản đồ: 15765 → **18238** (+2473, giữ nguyên
+chênh lệch +9). Kiểm: `node --check` sạch trên script inline, thẻ `div`/`section` cân bằng (107/107, 6/6).
+Mở `index.html` qua HTTP server cục bộ qua Browser pane, đọc trực tiếp qua `javascript_tool` (trang quá lớn
+cho `get_page_text`): hiển thị đúng "18238 đơn vị được lập bản đồ" / "18229 trong danh mục mở rộng" / "12
+đơn vị tại Việt Nam" (không đổi) / "9 case phân tích chuyên sâu" (không đổi), console sạch không lỗi.
+
+**Còn thiếu ~6771 để đạt 25000.** **Việc mở cho lượt sau:** (1) Wikidata SPARQL còn NHIỀU dư địa chưa khai
+thác trong đúng lượt này — mới dùng đúng 1 class (`Q31855` research institute, P31 trực tiếp); (2) thử tiếp
+`Q1132207` (business incubator, chỉ 69 — đã cạn) và `Q1976594` (science park, chỉ 139 — đã cạn) không đáng
+kể, nhưng CHƯA thử `Q3918` (university) hay `Q38723` (higher education institution) — rủi ro trùng lặp rất
+cao với ROSTER hiện có (đã có sẵn rất nhiều đại học) nên cần khảo sát tỉ lệ trùng trước khi đầu tư; (3)
+CHƯA thử các subclass CÓ ý nghĩa riêng của `Q31855` (bỏ qua ở lượt này vì lẫn `academic department`/
+`laboratory`) như đứng riêng: `think tank` (Q155271, 1167 mục có site) hoặc `university institute`
+(Q11946645, 556 mục) — đáng thử riêng từng class thay vì gộp subclass tràn lan; (4) CHƯA thử Wikidata cho
+các class khác hẳn (bảo tàng khoa học, đài quan trắc, vườn ươm công nghệ theo tên riêng...) — tra Q-id
+trước khi chạy SPARQL, đọc kỹ hướng dẫn `Bước 1` ở đầu phiên trước nếu lặp lại kỹ thuật này; (5) nguồn OSM
+coi như đã cạn theo kết luận checkpoint 38, KHÔNG quay lại trừ khi có tag hoàn toàn mới chưa thử; (6) nếu
+Wikidata tiếp tục hiệu quả, đây có thể là nguồn đủ lớn để một mình đưa ROSTER cán đích 25000 — ưu tiên đào
+sâu tiếp nguồn này trước khi tìm nguồn hoàn toàn khác.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 38 — **NGUỒN OSM MỚI `amenity=research_institute` (khác namespace
 `office=research` đã làm ở checkpoint 28), toàn cầu 1 lượt, chất lượng CAO NHẤT trong các batch OSM gần
 đây**) — còn thiếu ~9244 lúc cuối phiên.
 
