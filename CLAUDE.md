@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 2404 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 2532 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,52 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 19 — **NGUỒN MỚI: Minciencias Colombia, danh sách chính
+**Lần cuối:** 2026-09-09 (checkpoint 20 — **NGUỒN MỚI: Argentina MINCyT "Mapa de la
+Innovación" (UVTs), đăng ký chính phủ CÓ SẴN cột website, khai thác qua dữ liệu DataTable
+nhúng sẵn client-side**) — tiếp tục hướng "đăng ký chính phủ có cột website" đã chứng minh
+hiệu quả ở Colombia. Trang `argentina.gob.ar/ciencia/vinculacion-y-transferencia/mapa-de-la-
+innovacion/unidades-de-vinculacion-tecnologica-uvts` liệt kê **209 Unidades de Vinculación
+Tecnológica** (UVT — đơn vị trung gian CGCN chính thức theo Luật 23.877) có sẵn cột "Sitio
+web". Bẫy kỹ thuật: `curl`/`WebFetch` tĩnh trả về trang rỗng (33KB, không có dữ liệu) vì bảng
+render bằng jQuery DataTables phía client — **không có endpoint AJAX/JSON riêng** để gọi
+thẳng (khác ANPROTEC/Colombia). Giải pháp: mở trang thật bằng trình duyệt (Browser pane),
+đợi DataTables khởi tạo xong, rồi gọi thẳng `jQuery('#ponchoTable').DataTable().data()` qua
+`javascript_tool` — API DataTables trả về TOÀN BỘ 209 dòng đã nạp sẵn trong bộ nhớ (dù giao
+diện chỉ hiện 10 dòng/trang), không cần thao tác phân trang. **Bài học kỹ thuật mới cho lượt
+sau:** khi một trang chính phủ dùng thư viện bảng phổ biến (DataTables, hoặc tương tự) để
+hiện danh sách phân trang mà không thấy request AJAX nào trong network log, nghi ngay khả năng
+dữ liệu đã nạp hết vào bộ nhớ JS phía client (không server-side processing) — thử gọi thẳng
+API của thư viện đó qua console thay vì tìm endpoint hoặc scrape từng trang.
+
+209 dòng → 197 có website → lọc trùng domain/tên với ROSTER (19 trùng, gồm UNC/UBA/UTN các
+chi nhánh đã có từ trước) → còn 178 cần kiểm sống. `check_url()` giữ **132/178** ngay lượt
+đầu. 46 mục "chết" phần lớn là các đại học công lớn (`unsa.edu.ar`, `unju.edu.ar`,
+`unca.edu.ar`...) — nghi ngờ nghẽn mạng tạm thời theo đúng mẫu hình đã ghi nhận nhiều lần
+trước đây, nên chạy lại **2 lượt kiểm tra lại** (timeout tăng dần 15s → 25s, tuần tự có nghỉ
+giữa các lần gọi): chỉ cứu thêm được **1 mục** (Fundación Empresaria de la Patagonia). Kết
+luận khác lần trước: lần này KHÔNG phải nghẽn mạng diện rộng (dù `curl -I` thủ công có lúc
+thành công với vài domain `.edu.ar` — không nhất quán, có thể do khác biệt HEAD vs GET hoặc
+chặn bot theo User-Agent của `urllib`) — tôn trọng lưới an toàn `check_url()`, để lại 45 mục
+này làm việc mở, KHÔNG thêm tay bất kể tên trường nổi tiếng thế nào.
+
+Toạ độ dùng centroid CẤP TỈNH của Argentina (`ARG_PROVINCE_CENTROID`, 23 tỉnh + CABA, viết
+tay trong script merge tạm — mức chính xác giữa cấp quốc gia và cấp thành phố, tương tự cách
+đã làm cho Brazil). Merge **128 mục mới thật** (133 qua kiểm sống, 5 trùng nội bộ trong chính
+batch này — các chi nhánh UTN/UNC khác tên nhưng cùng domain).
+
+`ROSTER`: 2404 → **2532**. Đơn vị trên bản đồ: **2541**.
+
+**Việc mở cho lượt sau (áp dụng đúng 2 hướng đã chứng minh hiệu quả):** (1) "đăng ký chính phủ
+có cột website" — thử các nước Mỹ Latinh còn lại theo mẫu Argentina/Colombia: Chile (ANID),
+Ecuador (SENESCYT), Uruguay (ANII), Mexico (CONAHCYT — khác `ime.edomex.gob.mx` cấp bang đã
+loại), hoặc quay lại Mexico/Peru bằng nguồn khác domain đã bị chặn trước đây. (2) "JSON/dữ
+liệu nhúng sẵn trong trang danh bạ hiệp hội" — mở rộng sang cả các trang dùng thư viện bảng
+(DataTables) chứ không chỉ bản đồ (Google Maps plugin) như đã làm với ANPROTEC — bài học lượt
+này áp dụng được cho MỌI trang chính phủ/hiệp hội có bảng phân trang không thấy AJAX request.
+(3) 45 mục Argentina "chết" ở trên — thử lại từ mạng khác, đây là các đại học công lớn thật sự
+tồn tại, khả năng cao vẫn cứu được nếu đổi vị trí mạng.
+
+**Lần trước:** 2026-09-09 (checkpoint 19 — **NGUỒN MỚI: Minciencias Colombia, danh sách chính
 phủ CÓ SẴN cột website**) — nguồn tốt nhất kiểu mới: Bộ KH&CN Colombia (Minciencias) công khai
 file Excel CHÍNH THỨC "Listado de Actores del SNCTeI reconocidos" tại
 `minciencias.gov.co/sites/default/files/listado_oficial_actores_reconocidos_vigentes.xlsx`
