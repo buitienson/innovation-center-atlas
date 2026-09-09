@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 18852 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 19446 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **25000**, sếp nâng từ 15000 ở checkpoint 37) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,118 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-10 (checkpoint 44 — **CHUYỂN HẲN SANG NGUỒN "ĐĂNG KÝ CHÍNH PHỦ/HIỆP HỘI
+**Lần cuối:** 2026-09-10 (checkpoint 45 — **NGUỒN HOÀN TOÀN MỚI: CORDIS (CSDL dự án NC&PT do EU
+tài trợ), TẢI HÀNG LOẠT KHÔNG QUA CÀO TRANG, TOẠ ĐỘ THẬT CÓ SẴN TRONG DỮ LIỆU NGUỒN**) — còn thiếu
+~5554 lúc cuối phiên.
+
+Lượt trước (checkpoint 44) kết luận cả 2 hướng cũ (Wikidata dò từ khoá, đăng ký chính phủ/hiệp hội
+theo từng nước) đều đang cạn, khuyến nghị tìm NGUỒN HOÀN TOÀN MỚI LOẠI KHÁC. Lượt này khai thác
+`CORDIS` (`cordis.europa.eu`, CSDL công khai của Uỷ ban Châu Âu ghi mọi dự án Horizon
+Europe/H2020/FP7 + toàn bộ tổ chức tham gia từng dự án) — CHƯA TỪNG THỬ qua 44 checkpoint trước.
+
+**Tải dữ liệu:** xác nhận 3 file ZIP tải hàng loạt công khai, không cần đăng nhập/API key, `curl`
+tải thẳng được (không cần `WebFetch`/cào trang): `cordis.europa.eu/data/cordis-HORIZONprojects-
+csv.zip` (37MB), `cordis.europa.eu/data/cordis-h2020projects-csv.zip` (55MB, dùng lượt này),
+`cordis.europa.eu/data/cordis-fp7projects-csv.zip` (33MB, **CHƯA dùng lượt này** — để lại cho lượt
+sau, khả năng còn tổ chức mới vì FP7 kết thúc trước 2014, quần thể tổ chức tham gia có thể khác
+H2020/Horizon Europe). Mỗi ZIP có `organization.csv` — record MỖI lượt một tổ chức tham gia MỘT dự
+án (không phải danh sách tổ chức duy nhất), cột quan trọng: `organisationID` (mã PIC của EU, **nhất
+quán xuyên suốt cả 3 chương trình** — dùng để gộp trùng tổ chức tham gia nhiều dự án/nhiều chương
+trình), `name` (tên pháp nhân, LUÔN VIẾT HOA TOÀN BỘ — xem vấn đề casing bên dưới), `activityType`
+(HES=đại học, REC=viện nghiên cứu, PRC=doanh nghiệp tư nhân, PUB=cơ quan công, OTH=khác),
+`country` (ISO2, ngoại lệ `EL`=Hy Lạp và `UK`=Anh không theo chuẩn ISO thường), `geolocation`
+(chuỗi `"lat,lon"` — **toạ độ thật cấp địa chỉ có sẵn, không cần centroid/geocode gì thêm** — điểm
+mới so với mọi nguồn dùng ở 44 checkpoint trước), `organizationURL`.
+
+**Quyết định phạm vi — chỉ lấy `activityType=REC`:** kiểm mẫu xác nhận `HES` chỉ là tên pháp nhân
+NGUYÊN TRƯỜNG ĐẠI HỌC kèm URL trang chủ chung (vd "THE UNIVERSITY OF EDINBURGH" → `ed.ac.uk/home`),
+không phải đơn vị CGCN/nghiên cứu cụ thể trong trường — SAI khớp độ chi tiết của ROSTER (ROSTER lưu
+đơn vị cụ thể như "TLO Kyoto", "BioNanoNet" — không lưu nguyên trường đại học trần) nên **loại hẳn
+HES**, cũng loại `PRC` (doanh nghiệp tư nhân thường, ngoài phạm vi) và `PUB`/`OTH` (quá tạp, không
+đủ tín hiệu phân biệt). `REC` = định nghĩa chính thức của EU "pháp nhân phi lợi nhuận có NC&PT là
+một trong các mục tiêu chính" — khớp tốt với "trung tâm nghiên cứu" trong phạm vi ROSTER (mẫu: CNR
+Italy, Fraunhofer, TNO/VITO, CEA, AIT, TUBITAK...).
+
+**Số liệu qua từng bước lọc** (script Python, không qua Gemini — dữ liệu đã có cấu trúc sẵn, không
+cần trích xuất bằng AI): Horizon Europe 3538 tổ chức REC duy nhất, H2020 3469 — gộp theo
+`organisationID` xuyên 2 chương trình → **4782 tổ chức REC duy nhất**, trong đó **1805 có
+`organizationURL`** (~38%, thấp hơn nhiều so với tỉ lệ điền URL theo dòng vì các tổ chức tham gia
+nhiều dự án nhất thường điền URL nhất quán, còn tổ chức tham gia 1 lần thì hay bỏ trống). Lọc trùng
+ROSTER bằng `base_domain()` (loại 671) + `normalize_name()` khớp `name` hoặc `shortName` (loại 21)
+→ **1113 ứng viên mới**. Lọc từ khoá phạm vi (loại bệnh viện/viện y tế lâm sàng thuần, bảo tàng, bộ/
+ngành chính phủ, thị chính, nhà thờ, sở thú/rạp hát, nhà tù/công an, trường mầm non/tiểu học — 21
+từ khoá tiếng Anh phổ biến, ví dụ "HOSPITAL"/"MUSEUM"/"MINISTRY"/"CITY OF") → loại 43 (vd "Centre
+Hospitalier Universitaire de Liège", "Naturhistorisches Museum") → **1070 ứng viên**.
+
+**`check_url()` toàn bộ 1070** (2 batch 535, ThreadPoolExecutor 24 luồng song song để chạy nhanh —
+không đổi logic `check_url()` trong `roster_common.py`, chỉ chạy nhiều request cùng lúc — mỗi batch
+xong trong vài chục giây thay vì hàng chục phút chạy tuần tự): **611 sống** (57%), 459 chết —
+`URLError`/`HTTPError`/timeout đa số (219+91), cộng ~20 ca bị `check_url()` gắn cờ "cross-domain
+redirect" (vd `ri.se`, `gov.uk`, `sei.org` — tổ chức đã đổi domain/sáp nhập, đúng thiết kế của hàm,
+KHÔNG tự tin merge, để lại việc mở nếu muốn xác minh tay từng ca), 3-4 ca trang đỗ tên miền thật.
+Không có false-positive nào phát hiện qua rà mẫu lý do chết.
+
+**Vấn đề casing tên (mới, chưa gặp ở nguồn nào trước) — tên trong CSV LUÔN VIẾT HOA TOÀN BỘ, không
+có nguồn nào cho tên viết hoa-thường chuẩn sẵn:** thử fetch `<title>` trang mỗi tổ chức (591/611 lấy
+được) nhưng phần lớn không dùng được — tiêu đề trang thường là "Home"/"Startseite"/"Forside" (điều
+hướng chung, không phải tên tổ chức) hoặc chứa ký tự HTML entity vỡ (`&#8212;`) hoặc chữ không phải
+Latin (tiếng Hy Lạp/Bulgaria/Serbia dùng chữ Cyrillic cho tên tổ chức Latin gốc) — **không đủ tin
+cậy để dùng làm tên hiển thị chính**. Thay vào đó viết thuật toán "smart title-case" tự áp cho tên
+gốc viết hoa: bảng ánh xạ hậu tố pháp nhân phổ biến (GMBH→GmbH, SL→S.L., SA→S.A., NV→N.V., BV→B.V.,
+EV→e.V., KFT→Kft., SRL→S.r.l., SPA→S.p.A., ASBL/VZW giữ nguyên...) + danh sách từ nối viết thường
+đa ngôn ngữ Châu Âu (de/della/dei/van/von/der/het/et/per/voor/y/e...) — **CHẤT LƯỢNG THẤP HƠN tên đã
+xác minh thủ công từng đơn vị ở các checkpoint trước** (không hoàn hảo với tên riêng/họ người, ví dụ
+lỗi phát hiện qua rà mẫu: "M.B.H." → "M.b.h." dù đã map — chấp nhận vì quy mô 594 mục không thể xác
+minh tay từng tên trong 1 lượt). Phát hiện + sửa tay 5 ca lỗi dữ liệu nguồn thật: 3 tên bị nối thêm
+"*BIỆT_DANH" (CSV gộp 2 trường bằng dấu `*`, vd "...FOR DEVELOPMENT*CASTED" → cắt lấy phần trước
+dấu `*`), 2 tên bị nhân đôi dấu ngoặc kép do lỗi encode CSV gốc (vd `""F. DE PAULA ROJAS""""` → sửa
+tay thành `"F. de Paula Rojas"`).
+
+**Toạ độ — dùng thẳng `geolocation` thật từ CORDIS, không centroid:** parse `"lat,lon"`, gọi
+`CountryLookup.country_for(lon, lat)` (đúng thứ tự lon-trước như checkpoint 44 đã học) để vừa lấy
+tên quốc gia đúng quy ước ROSTER vừa xác minh chéo toạ độ đúng nước khai báo. Phát hiện 27 "lệch"
+chỉ do khác biến thể tên (Czechia/Czech Republic, Russia/Russian Federation, DR Congo/Democratic
+Republic of Congo, Guinea Bissau/Guinea-Bissau) — không phải lỗi thật, xử lý bằng nhóm tương đương,
+giữ tên `CountryLookup` trả về (khớp quy ước `NAME_OVERRIDE` có sẵn). **2 lệch THẬT do toạ độ sát
+biên giới** (không phải lỗi centroid như checkpoint trước, mà lỗi độ chính xác toạ độ nguồn): "Istituto
+di Sociologia Internazionale di Gorizia" (Ý, thị trấn biên giới Ý-Slovenia, toạ độ rơi sang phía
+Slovenia) và "World Business Council for Sustainable Development" (trụ sở Geneva, Thuỵ Sĩ, toạ độ
+rơi sang phía Pháp) — cả 2 giữ quốc gia khai báo gốc (Ý, Thuỵ Sĩ) thay vì quốc gia toạ độ trỏ tới,
+vì đây là trụ sở thật đã biết, không phải toạ độ bịa.
+
+**Kết quả merge:** 594 mục mới (0 Việt Nam — không có tổ chức Việt Nam nào lọt qua REC+URL+
+check_url ở CORDIS lượt này). Trải khắp Châu Âu (Tây Ban Nha 73, Ý 58, Đức 53, Pháp 40, Anh 29...)
+kèm một số tổ chức đối tác quốc tế của EU (Trung Quốc 8, Ấn Độ 4, Nga 6, Ukraine 7, Serbia 6, Mexico
+4, Nhật 1, Hàn Quốc 1, Israel 1, Malaysia 1, Sri Lanka 1, Kenya 1, Nigeria 2, Morocco 2, Tanzania 2,
+Botswana 1, Cameroon 1, Seychelles 1, New Zealand 1, Úc 3...). Xác nhận `git status` sạch +
+`len(load_roster(...))` = 18852 đúng ngay trước khi ghi. `ROSTER`: 18852 → **19446** (+594). Đơn vị
+trên bản đồ: 18861 → **19455** (+594, giữ nguyên chênh lệch +9 với ROSTER). Kiểm: `node --check`
+sạch (script inline 3,349,465 ký tự), thẻ `div`/`section` cân bằng (107/107, 6/6). Mở `index.html`
+qua HTTP server cục bộ, đọc `get_page_text`: đúng "19455 đơn vị được lập bản đồ" / "19446 trong
+danh mục mở rộng" / "12 đơn vị tại Việt Nam" (không đổi) / "9 case phân tích chuyên sâu" (không
+đổi), console sạch. Commit `b7a098a`, đã `git push origin main` lên live.
+
+**Còn thiếu ~5554 để đạt 25000 — CORDIS là nguồn hiệu quả nhất tính đến nay (594 mục 1 lượt, so với
+Wikidata 63-260/lượt các checkpoint gần đây).** **Việc mở cho lượt sau:** (1) thử tiếp `cordis-
+fp7projects-csv.zip` (chưa dùng lượt này, cùng cấu trúc `organization.csv`, dự án FP7 kết thúc
+trước 2014 nên quần thể tổ chức tham gia có thể khác phần nào so với H2020/Horizon Europe đã dùng —
+lặp lại đúng quy trình REC-filter → dedup → check_url → merge); (2) ~20 ca bị `check_url()` gắn cờ
+"cross-domain redirect" (tổ chức thật đã đổi domain, vd `ri.se`) chưa xác minh tay — nếu xác minh
+đúng là cùng tổ chức thì có thể thêm URL mới; (3) tổ chức HES (nguyên trường đại học, ~1412/2903 có
+URL) và PUB/OTH bị loại hẳn lượt này vì sai độ chi tiết ROSTER — nếu muốn khai thác sẽ cần tra tay
+từng trường xem có đơn vị CGCN/nghiên cứu con cụ thể không (việc lớn, chậm, không hợp một checkpoint
+đơn); (4) tỉ lệ trùng ROSTER khá cao ở REC (671/1805 = 37% đã có sẵn) cho thấy Châu Âu đã được khai
+thác khá kỹ qua 44 checkpoint trước — hướng CORDIS còn giá trị chính ở tổ chức đối tác quốc tế của
+EU (Châu Á/Phi/Mỹ Latinh tham gia Horizon Europe) hơn là mở rộng thêm Châu Âu thuần.
+
+**Việc mở tồn đọng từ checkpoint 44 (chưa động tới lượt này, vẫn còn giá trị):** Daegu/Gwangju/
+Gyeonggi Daejin TechnoPark Hàn Quốc (nghi chặn IP/bot tạm thời); Nhật Bản JPO/METI TLO list (403);
+Trung Quốc `chinatorch.gov.cn` (chặn mạng nhất quán nhiều checkpoint); Bắc Âu SISP Thuỵ Điển/TEKEL
+Phần Lan (không kết nối được, gợi ý thử qua IASP directory làm proxy); Na Uy SIVA (có tên tổ chức cụ
+thể, chưa tra URL riêng).
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 44 — **CHUYỂN HẲN SANG NGUỒN "ĐĂNG KÝ CHÍNH PHỦ/HIỆP HỘI
 CHÍNH THỨC", KHAI THÁC MẠNG LƯỚI TECHNOPARK HÀN QUỐC, NHIỀU NGUỒN LỚN BỊ CHẶN MẠNG**) — còn thiếu
 ~6148 lúc cuối phiên.
 
