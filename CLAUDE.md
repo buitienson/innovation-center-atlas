@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 18847 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 18852 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **25000**, sếp nâng từ 15000 ở checkpoint 37) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,115 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-10 (checkpoint 43 — **TIẾP TỤC WIKIDATA DÒ TỪ KHOÁ NHÃN, THÊM TỪ KHOÁ MỚI
+**Lần cuối:** 2026-09-10 (checkpoint 44 — **CHUYỂN HẲN SANG NGUỒN "ĐĂNG KÝ CHÍNH PHỦ/HIỆP HỘI
+CHÍNH THỨC", KHAI THÁC MẠNG LƯỚI TECHNOPARK HÀN QUỐC, NHIỀU NGUỒN LỚN BỊ CHẶN MẠNG**) — còn thiếu
+~6148 lúc cuối phiên.
+
+Lượt trước (checkpoint 43) để lại việc mở: kỹ thuật dò-từ-khoá-nhãn Wikidata giảm hiệu suất rõ
+rệt qua 3 lượt (664→260→63), khuyến nghị chuyển hẳn sang nguồn "đăng ký chính phủ có cột website"
+cho các nước lớn CHƯA THỬ — đặc biệt mạng lưới TechnoPark Hàn Quốc (checkpoint 43 mới lấy được
+11/17 qua Wikidata, cần tìm trang danh bạ chính thức đủ hơn).
+
+**Hàn Quốc — TechnoPark, nguồn dùng: Wikipedia tiếng Hàn (bài "한국테크노파크진흥회", đối chiếu
+qua `technopark.kr/find` là trang tìm-theo-vùng của hiệp hội, không liệt kê thẳng URL từng tỉnh
+nên phải tra riêng).** Hiệp hội hiện có **19 thành viên chính thức** (không phải 17 như checkpoint
+43 ước tính — có thêm Gyeonggi Daejin TechnoPark và Sejong TechnoPark là các TP mới thành lập sau
+này, ngoài 17 tỉnh/thành gốc): Seoul, Busan, Daegu, Incheon, Gwangju, Daejeon, Ulsan, Gyeonggi,
+Gangwon, Chungbuk, Chungnam, Jeonbuk, Jeonnam, Gyeongbuk, Gyeongnam, Jeju, Gyeonggi Daejin,
+Pohang (cấp thành phố, không phải cấp tỉnh — đã có sẵn), Sejong. Rà lại ROSTER bằng script (không
+tin bằng mắt — lần rà bằng mắt đầu tiên bỏ sót "Chungnam Techno Park" vì tên có dấu cách
+"Techno Park" khác "Technopark" viết liền mà bộ lọc ban đầu dùng chuỗi con "technopark" không
+khớp) xác nhận ROSTER đã có 11 mục (10 tỉnh + Pohang): Ulsan, Gyeonggi, Gyeongnam, Gyeongbuk,
+Daejeon, Seoul, Incheon, Jeonnam, Jeonbuk, Chungnam, Pohang. **Còn thiếu 8:** Busan, Daegu,
+Gwangju, Gangwon, Chungbuk, Jeju, Gyeonggi Daejin, Sejong.
+
+Tra URL chính thức từng tỉnh còn thiếu qua `WebSearch` (tên tiếng Hàn + "공식 홈페이지"), rồi
+`check_url()` từng cái: **Busan** (`btp.or.kr`), **Gangwon** (`gwtp.or.kr`), **Chungbuk**
+(`cbtp.or.kr`), **Jeju** (`jejutp.or.kr`), **Sejong** (`sjtp.or.kr`) — cả 5 đều **sống thật**.
+Riêng Chungbuk, `check_url()` báo lỗi `URLError: [SSL: DH_KEY_TOO_SMALL]` (máy chủ dùng tham số
+Diffie-Hellman cũ mà OpenSSL mặc định trên máy chặn) — xác minh tay bằng `ssl.create_default_
+context()` + `set_ciphers('DEFAULT@SECLEVEL=1')` để hạ mức bảo mật cipher, fetch thành công HTTP
+200 cùng domain (không redirect), nội dung thật (không phải trang đỗ tên miền) → tính là sống.
+**Ghi lại kỹ thuật SECLEVEL=1 này để dùng lại khi gặp lỗi DH_KEY_TOO_SMALL ở các site chính phủ
+dùng hạ tầng SSL cũ** (chưa vá thẳng vào `roster_common.py` vì đây là workaround thủ công cần soi
+từng trường hợp, không nên tự động hạ bảo mật cho mọi request).
+
+**3 mục còn lại LOẠI vì không kết luận được (không phải vì xác nhận chết):** Daegu (`dgtp.or.kr`
+và biến thể `www.dgtp.or.kr`) và Gwangju (`gjtp.or.kr` và biến thể `www.`/`http://`) — cả hai đều
+`ECONNREFUSED`/timeout nhất quán qua nhiều kênh khác nhau (máy cục bộ qua `urllib`, `WebFetch` từ
+hạ tầng khác, nhiều lần thử lại) — giống hệt tình huống China Torch các checkpoint trước, nghi
+chặn theo IP/khu vực chứ không phải domain thật sự chết; Gyeonggi Daejin (`gdtp.or.kr`) báo `HTTP
+403 Forbidden` nhất quán kể cả với User-Agent trình duyệt thật qua cả `urllib` lẫn `WebFetch` —
+giống ca Suntory/Fiat checkpoint 43, chặn bot chứ không kết luận được là chết. **Cả 3 để lại cho
+lượt sau thử lại** (có thể mạng đỡ chặn hơn vào giờ khác, hoặc thử qua Google cache/Wayback Machine
+chưa thử lượt này).
+
+Lọc trùng ROSTER (base-domain + `normalize_name()`): phát hiện "Chungnam Technopark" đã trùng
+domain+tên với "Chungnam Techno Park" có sẵn (loại, không merge lại) — 5 mục còn lại không trùng.
+Gán toạ độ: dùng toạ độ THÀNH PHỐ THẬT (không dùng centroid quốc gia, cũng không tái dùng cụm
+centroid lỗi `35.9125,128.4709` mà nhiều mục Hàn Quốc cũ đang mắc — xem ghi chú checkpoint 42 về
+lỗi centroid, không thuộc phạm vi sửa lượt này) — Busan (35.1796, 129.0756), Gangwon/Chuncheon
+(37.8813, 127.7298), Chungbuk/Ochang-Cheongju (36.7167, 127.4333), Jeju City (33.4996, 126.5312),
+Sejong (36.48, 127.289) — xác nhận cả 5 điểm đều nằm trong polygon Hàn Quốc thật qua
+`CountryLookup.country_for(lon, lat)` (chú ý thứ tự tham số là lon trước lat, không phải lat/lon
+— lỗi gọi nhầm thứ tự lúc đầu khiến tất cả trả `None`, phát hiện và sửa ngay). → **5 ứng viên
+cuối cùng, tất cả Hàn Quốc, 0 Việt Nam.**
+
+**Các nguồn khác đã THỬ và BỊ CHẶN MẠNG/KHÔNG TIẾP CẬN ĐƯỢC lượt này (ghi lại để lượt sau khỏi
+lặp lại vô ích, thử lại nếu mạng đỡ chặn hơn):** Nhật Bản — trang danh bạ TLO được công nhận
+chính thức của JPO (`jpo.go.jp/toppage/links/tlo.html`) và METI (`meti.go.jp/policy/
+innovation_corp/tlo.html`) đều trả **403 Forbidden** nhất quán qua `WebFetch` (thử cả 2 URL, có
+vẻ chặn bot/IP nước ngoài) — trang Wikipedia tiếng Nhật về TLO cũng không liệt kê danh sách đầy
+đủ, chỉ nêu 1 ví dụ (Okinawa TLO, ghi rõ "không có phê duyệt chính thức" nên không phù hợp). Trung
+Quốc — `chinatorch.gov.cn` (cả `http`/`https`) tiếp tục **không kết nối được** (`curl` timeout,
+giống mọi checkpoint trước — mạng chặn nhất quán, không phải lỗi tạm thời). Thuỵ Điển — SISP
+(`sisp.se`, có trang `/en/members/` liệt kê 63 hội viên theo lời mô tả tìm kiếm) **không kết nối
+được** qua cả `curl` cục bộ lẫn `WebFetch` (DNS phân giải đúng IP nhưng connection refused/reset —
+nghi chặn theo dải IP, không phải DNS). Na Uy — SIVA (`siva.no`) TRUY CẬP ĐƯỢC (khác Thuỵ Điển) 
+nhưng các trang public (`/program/`, `/om-siva/siva-strukturen/`, báo cáo thường niên `arsrapport
+24.siva.no/eierskap-i-innovasjonsselskap/`) chỉ mô tả cấu trúc bằng số liệu tổng (vd "61
+innovasjonsselskaper") và liệt kê TÊN một vài công ty nổi bật (6AM Accelerator, Oslo Cancer
+Cluster Incubator, Oslotech, Kjeller Innovasjon...) nhưng KHÔNG kèm URL — cần tra URL riêng từng
+tên qua tìm kiếm nếu muốn dùng, chưa làm được trong lượt này vì lợi ích/công sức chưa rõ (nhiều
+tên nghe quen, khả năng cao đã có sẵn trong ROSTER qua các lượt trước). Phần Lan — TEKEL (hiệp hội
+science park Phần Lan, `tekel.fi`, 29-32 hội viên theo mô tả tìm kiếm) trang chủ `tekel.fi/in_
+english/` **timeout DNS** (`ETIMEOUT`) qua `WebFetch`, không tra được danh sách hội viên.
+
+**Kỹ thuật mới ghi lại cho lượt sau:** (1) khi rà ROSTER tìm trùng theo TỪ KHOÁ TRONG TÊN, LUÔN
+chạy bằng script với nhiều biến thể cách viết ("technopark" liền/"techno park" cách/"TechnoPark"
+hoa-thường), đừng tin kết quả lọc bằng mắt hoặc regex đơn giản — ca "Chungnam Techno Park" lượt
+này suýt bị merge trùng nếu không chạy `base_domain()`/`normalize_name()` qua script trước khi
+merge; (2) lỗi SSL `DH_KEY_TOO_SMALL` ở site chính phủ cũ → thử `ssl.create_default_context()` +
+`set_ciphers('DEFAULT@SECLEVEL=1')` trước khi kết luận site chết; (3) `CountryLookup.country_for()`
+nhận tham số `(lon, lat)` — THỨ TỰ KINH ĐỘ TRƯỚC, không phải `(lat, lon)` như trực giác — gọi
+nhầm thứ tự sẽ luôn trả `None` dù toạ độ đúng.
+
+`ROSTER`: 18847 → **18852** (+5, khớp `len(load_roster(...))` kiểm ngay trước merge, `git status`
+sạch không có phiên song song). Đơn vị trên bản đồ: 18856 → **18861** (+5, giữ nguyên chênh lệch
++9). Kiểm: `node --check` sạch trên script inline (3,288,518 ký tự), thẻ `div`/`section` cân bằng
+(107/107, 6/6). Mở `index.html` qua HTTP server cục bộ (`preview_start`/`preview_stop`), đọc
+`get_page_text`: đúng "18861 đơn vị được lập bản đồ" / "18852 trong danh mục mở rộng" / "12 đơn vị
+tại Việt Nam" (không đổi) / "9 case phân tích chuyên sâu" (không đổi), console sạch.
+
+**Còn thiếu ~6148 để đạt 25000.** **Việc mở cho lượt sau:** (1) thử lại Daegu/Gwangju TechnoPark
+(`dgtp.or.kr`/`gjtp.or.kr`) và Gyeonggi Daejin TechnoPark (`gdtp.or.kr`) — nghi chặn IP/bot tạm
+thời, không phải chết thật, thử vào thời điểm khác hoặc qua Wayback Machine; (2) Nhật Bản — JPO/
+METI TLO list bị chặn 403, cần tìm cổng khác (Google cache, PDF tải trực tiếp thay vì trang HTML,
+hoặc trang tiếng Anh của METI/JETRO); (3) Trung Quốc — `chinatorch.gov.cn` vẫn chặn mạng nhất
+quán qua nhiều checkpoint, có thể bỏ hẳn hướng này trừ khi tìm được domain thay thế của MOST; (4)
+Bắc Âu — SISP Thuỵ Điển và TEKEL Phần Lan đều không kết nối được (khác kiểu lỗi so với Trung Quốc/
+Hàn Quốc, nghi chặn theo vùng địa lý của chính site chứ không phải do phía ta) — thử qua VPN/proxy
+khác hoặc nguồn thứ cấp (IASP directory đã liệt kê "Finnish Science Parks Association" và "SISP"
+làm hội viên, có thể IASP có trang liệt kê từng hội viên con với URL, xem `iasp.ws/our-members/
+directory/` cho từng tên: `@6307/business-joensuu`, `@469117/finnish-science-parks-association` —
+gợi ý IASP directory có thể dùng làm proxy để lấy URL của các science park Bắc Âu mà không cần
+qua site hiệp hội gốc); (5) Na Uy SIVA — có tên tổ chức cụ thể (6AM Accelerator, Oslo Cancer
+Cluster Incubator, Oslotech, Kjeller Innovasjon, Vaager Innovasjon, KUPA, KPB, Digital Innlandet,
+Industriutvikling Vest, Kongsberg Innovasjon, Proventia, Smart Innovation Norway) cần tra URL
+riêng + check trùng ROSTER trước khi merge, chưa làm lượt này.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 43 — **TIẾP TỤC WIKIDATA DÒ TỪ KHOÁ NHÃN, THÊM TỪ KHOÁ MỚI
 + ÁP MULTI-NGÔN NGỮ NGAY TỪ ĐẦU (11 ngôn ngữ), PHÁT HIỆN LỖ HỔNG MỚI TRONG `check_url()`**) — còn
 thiếu ~6153 lúc cuối phiên.
 
