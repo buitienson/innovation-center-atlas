@@ -93,6 +93,28 @@ làm ở đây. Nguồn tưởng đã "chết" (ASP.NET postback không JSON) c�
 tảng — đáng thử lại định kỳ các nguồn lớn đã bỏ dở vì lý do kỹ thuật (chứ không phải vì không
 có dữ liệu).
 
+**Đã thử ngay sau đó trong cùng phiên, XÁC NHẬN không dùng được (đừng thử lại trừ khi có lý do
+mới):** ASTP (`astp4kt.eu`, hiệp hội TTO châu Âu) — thành viên là CÁ NHÂN chuyên gia, không có
+danh bạ tổ chức công khai. RedEmprendia — chỉ 24 đại học, quá nhỏ, đã có sẵn trong ROSTER.
+UNITT Nhật Bản (`unitt.jp`) — chỉ ~82 hội viên, trang danh bạ yêu cầu đăng nhập hội viên,
+trang "Link collection" công khai chỉ có link cơ quan chính phủ, không phải hội viên. AUTM
+(`autm.net/my-autm/member-directory`) — yêu cầu đăng nhập, và là danh bạ CÁ NHÂN chuyên gia chứ
+không phải tổ chức. F6S (`f6s.com/accelerators/<nước>`) — liệt kê CHƯƠNG TRÌNH/ĐỢT TUYỂN có hạn
+nộp đơn (kiểu dữ liệu Fund/Hackathon, không phải tổ chức ổn định có 1 URL cố định — sai khuôn
+dữ liệu ROSTER dù có vẻ lớn). `incubatorlist.com` (21.471 mục "VC & chương trình") — trộn lẫn
+quỹ đầu tư mạo hiểm THUẦN TÚY (ngoài phạm vi ROSTER) với accelerator/incubator, và **URL thật
+của mọi mục đều bị khoá sau "Unlock Pro Access"** (0 link ngoài nào lộ ra trên trang công khai)
+— không lấy được dữ liệu miễn phí.
+
+**Nhận định thực tế sau khi thử nhiều hướng không ra kết quả:** khác với TISC/africatechschools/
+ANPROTEC/IASP (danh bạ CHÍNH THỐNG có URL thật miễn phí), phần lớn danh bạ "lớn" còn lại trên
+mạng hoặc (a) là hội viên CÁ NHÂN không phải tổ chức, (b) đòi đăng nhập/trả phí để lộ URL, hoặc
+(c) là loại dữ liệu khác hẳn ROSTER (chương trình/đợt tuyển, quỹ đầu tư thuần). Nguồn lớn kiểu
+ROSTER cần (danh bạ TỔ CHỨC, URL MIỄN PHÍ, đúng phạm vi CGCN/ĐMST/vườn ươm) đang cạn dần theo
+kiểu "quả treo thấp" — tương tự nhận định ở checkpoint 19 cho mốc 5000, nay càng đúng hơn cho
+mốc 10000: khoảng cách còn lại (~7200) lớn hơn TOÀN BỘ số đã gom được qua 21 checkpoint cộng
+lại, nên mốc này cần rất nhiều phiên nữa, không phải một hướng đột phá còn lại.
+
 **Việc mở cho lượt sau (mục tiêu 10000):** (1) IASP còn ~70 mục "chết" thật (không phải mạng)
 — phần lớn là site chính phủ/đại học Trung Đông (Saudi Arabia, Iran, Oman) và Trung Quốc, có
 thể do chặn theo khu vực từ mạng hiện tại, đáng thử lại từ mạng khác. (2) Tiếp tục 2 hướng đã
