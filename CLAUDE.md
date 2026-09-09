@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 18229 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 18317 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **25000**, sếp nâng từ 15000 ở checkpoint 37) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,93 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-10 (checkpoint 39 — **ĐỔI HƯỚNG KHỎI OSM, NGUỒN MỚI HOÀN TOÀN: Wikidata SPARQL
+**Lần cuối:** 2026-09-10 (checkpoint 40 — **TIẾP TỤC WIKIDATA, ĐỔI ENDPOINT SANG QLEVER MIRROR do
+`query.wikidata.org` (WDQS chính thức) đang bị throttle nặng "active wdqs outage" 1 req/min suốt
+phiên — class `university institute` (Q11946645) + 3 class nhỏ `technology park`/`startup
+accelerator`/`innovation hub`**) — còn thiếu ~6683 lúc cuối phiên.
+
+Lượt trước (checkpoint 39) khuyến nghị đào sâu tiếp Wikidata, gợi ý thử riêng `think tank`
+(Q155271) và `university institute` (Q11946645) tách khỏi subclass tràn lan của `research
+institute`. **`query.wikidata.org` (WDQS chính thức) ngay từ truy vấn đầu tiên trả 429 liên tục:
+"Aggressively rate-limiting to 1 req/min - this rule was created during active wdqs outage"** — thử
+giãn cách 65s/lệnh + 8 lần retry vẫn 429 liên tục (một tiến trình treo ~9 phút rồi lỗi hẳn) — đây là
+outage thật phía WMF, không phải do nhịp truy vấn của mình. **Chuyển hẳn sang QLever
+(`https://qlever.cs.uni-freiburg.de/api/wikidata`)** — một SPARQL engine bên thứ ba mirror trọn bộ
+RDF dump Wikidata, cùng namespace `wdt:`/`wd:`, KHÔNG bị throttle suốt phiên, và quan trọng hơn: hỗ
+trợ `rdfs:label`/`schema:description` trực tiếp (không cần `SERVICE wikibase:label` đặc thù của
+WDQS) — nghĩa là item/nhãn tiếng Anh/mô tả/website/toạ độ/quốc gia (QID)/nhãn quốc gia đều lấy được
+trong **1 truy vấn duy nhất mỗi class**, không cần giai đoạn lấy nhãn riêng hay phân trang (các class
+thử đều dưới vài nghìn dòng). Đây là nâng cấp kỹ thuật lớn so với quy trình 2 giai đoạn (raw + label
+riêng, phân trang 500-2000 dòng) của checkpoint 39.
+
+**Khảo sát class:** `think tank` (Q155271) qua QLever ra 1192 cặp (item,site) — lấy mẫu 20 dòng
+ngẫu nhiên + quét từ khoá (innovation/technology/science/research institute/scientific/tech
+transfer/r&d/digital/engineering/biotech/nanotech) chỉ khớp **186/1192 (15.6%)**, và ngay trong tập
+khớp từ khoá vẫn lẫn nhiều think tank chính sách công thuần tuý (khớp giả do cụm "research
+institute" quá chung chung nằm trong tên, ví dụ "Africa Policy Research Institute"). Mẫu không khớp
+toàn là think tank ngoại giao/kinh tế/xã hội (Nigerian Institute of International Affairs, Horn
+Economic and Social Policy Institute...) — **KẾT LUẬN: sai phạm vi, bỏ hẳn class này**, không chỉ lọc
+từ khoá vì tỷ lệ nhiễu vẫn cao ngay trong tập đã lọc.
+
+`university institute` (Q11946645, 561 cặp), `technology park` (Q1281153, 18), `startup accelerator`
+(Q4086495, 54), `innovation hub` (Q28689074, 13) — lấy mẫu cả 4 class đều đúng phạm vi rõ ràng
+(viện/trung tâm nghiên cứu trực thuộc đại học, công viên công nghệ, chương trình accelerator khởi
+nghiệp, hub ĐMST) — **dùng cả 4, gộp 1 truy vấn `VALUES ?class {...}`**. Kiểm thêm nhưng loại:
+`business incubator` (Q1132207, 62 — đã cạn từ checkpoint 39), `science park` (Q1976594, 133 — đã
+cạn), `technology transfer office` (Q48782630, 1 — đã biết quá hẹp/rác), `tech incubators and
+accelerators` (Q136436817, 0 — Q-id gộp không có instance trực tiếp); `hackspace` (Q1032372, 327),
+`makerspace` (Q45820240, 69), `fab lab` (Q1390062, 27) — lấy mẫu toàn không gian hacker/maker cộng
+đồng tự phát (hobby club), không phải trung tâm CGCN/ĐMST của đại học, và hackerspace nói riêng đã
+được cào qua OSM `leisure=hackerspace` từ checkpoint 27 — **bỏ cả 3 class này (sai phạm vi + rủi ro
+trùng lặp cao)**.
+
+**Bài học kỹ thuật:** literal toạ độ `P625` từ QLever trả dạng `POINT(...)` viết HOA (khác `Point(...)`
+viết thường mà code checkpoint 39 dựa trên WDQS giả định) — regex phân biệt hoa/thường ban đầu khớp
+0/522 toạ độ, âm thầm rơi hết vào nhánh centroid-quốc-gia mà không báo lỗi; sửa regex
+case-insensitive rồi mới đúng **288/522 (55%) có toạ độ P625 thật**, 234 còn lại dùng centroid bbox
+từ `_ne50_countries_cache.geojson` (tái dùng `NAME_OVERRIDE`). Một chuẩn hoá tên quốc gia cần thêm:
+nhãn Wikidata gốc cho Trung Quốc là "People's Republic of China" (Q148) — đổi về "China" cho khớp
+số đông ROSTER hiện có (452 "China" so với 40 "People's Republic of China" đã có sẵn, không sai
+nhưng để nhất quán batch mới).
+
+Gộp 4 class trong 1 truy vấn: 646 dòng thô → 607 item duy nhất (53 không có nhãn tiếng Anh, loại) →
+522 có toạ độ dùng được (33 loại vì vừa thiếu `P625` vừa thiếu `P17` quốc gia hợp lệ) → lọc trùng
+ROSTER (base-domain + `normalize_name()`): 390 trùng domain + 2 trùng tên + 11 trùng nội bộ batch
+(tỷ lệ trùng domain rất cao — 75% — vì `university institute` chồng lấn nhiều với các viện đại học
+đã vào ROSTER từ đợt `research institute` checkpoint 39) → **119 ứng viên duy nhất**. `check_url()`
+3 vòng (12 luồng/15s → 6 luồng/25s retry → UA Chrome thật): 84 → +3 → +1 = **88 sống**. 0 Việt Nam
+xuyên suốt (đã lọc từ bước gán quốc gia, xác nhận lại ở bước cuối).
+
+**Rà chất lượng:** quét từ khoá cờ đỏ trên 119 ứng viên ra 3 khớp, **cả 3 đều là dương tính giả**:
+"ISPA – University Institute" (Bồ Đào Nha) khớp chuỗi con "spa" trong "ISPA"; "International Research
+Institute for Zen Buddhism at Hanazono University" và "Volos Academy for Theological Studies" là viện
+nghiên cứu nhân văn/tôn giáo học chính thống trực thuộc đại học (không phải cơ sở tôn giáo hành đạo)
+— giữ nguyên cả 3. Trải 35 quốc gia, dẫn đầu Mỹ 13, Anh 12, Bồ Đào Nha 8, Nga 6, Áo 5.
+
+`ROSTER`: 18229 → **18317** (+88, khớp đúng số kiểm lại `len(load_roster(...))` ngay trước merge —
+`git status` sạch). Đơn vị trên bản đồ: 18238 → **18326** (+88, giữ nguyên chênh lệch +9). Kiểm:
+`node --check` sạch, thẻ `div`/`section` cân bằng (107/107, 6/6). Mở `index.html` qua HTTP server cục
+bộ (`.claude/launch.json` config `static-server`, dùng `preview_start`/`preview_stop` của Browser
+pane thay vì tự chạy `&` nền) qua Browser pane, đọc `get_page_text`: đúng "18326 đơn vị được lập bản
+đồ" / "18317 trong danh mục mở rộng" / "12 đơn vị tại Việt Nam" (không đổi) / "9 case phân tích
+chuyên sâu" (không đổi), console sạch.
+
+**Còn thiếu ~6683 để đạt 25000.** **Việc mở cho lượt sau:** (1) **luôn dùng QLever
+(`qlever.cs.uni-freiburg.de/api/wikidata`) cho mọi truy vấn Wikidata tiếp theo**, đừng quay lại
+`query.wikidata.org` trừ khi xác nhận outage đã hết (kiểm nhanh 1 query đơn giản trước) — QLever
+nhanh hơn nhiều và không bị throttle trong suốt phiên này; (2) batch lượt này chỉ lấy item có nhãn
+tiếng Anh (`rdfs:label ... FILTER(LANG=... "en")`) — 53/607 bị loại vì không có nhãn tiếng Anh, có
+thể còn nhiều hơn ở class khác; thử lấy thêm nhãn ngôn ngữ bản địa (đặc biệt Trung/Nhật/Hàn/Nga) cho
+các item bị rơi vì thiếu nhãn "en" — dư địa chưa khai thác; (3) `university institute` mới dùng P31
+trực tiếp — CHƯA thử subclass riêng có ý nghĩa của nó (nếu có) hoặc các class "khoa/viện" khác gần
+nghĩa; (4) tiếp tục tra Q-id mới cho các khái niệm CGCN/ĐMST chưa thử: "innovation and technology
+center", "research centre" (nếu có Q-id tách biệt với "research institute"), "living lab", "digital
+innovation hub" (khác `innovation hub` Q28689074 đã dùng — kiểm xem có Q-id EU DIH riêng không); (5)
+nguồn OSM và các nguồn phi-Wikidata đã liệt kê ở checkpoint ≤38 coi như cạn, không quay lại trừ tag
+hoàn toàn mới.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 39 — **ĐỔI HƯỚNG KHỎI OSM, NGUỒN MỚI HOÀN TOÀN: Wikidata SPARQL
 `query.wikidata.org/sparql`, class "research institute" (Q31855), kỹ thuật #3 trong 5 kỹ thuật đã chứng
 minh — lần đầu dùng Wikidata qua 39 checkpoint, quy mô LỚN NHẤT từ 1 nguồn duy nhất tính đến nay**) — còn
 thiếu ~6771 lúc cuối phiên.
