@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 19815 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 19826 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **25000**, sếp nâng từ 15000 ở checkpoint 37) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,73 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-10 (checkpoint 46 — **CORDIS FP7 (chương trình 2007-2013) — GIÁ TRỊ VẪN CÒN
+**Lần cuối:** 2026-09-10 (checkpoint 47 — **SBIR/STTR MỸ: KIỂM MẪU → LOẠI NGAY VÌ SAI PHẠM VI +
+API ĐANG BẢO TRÌ; HOÀN TẤT VIỆC MỞ NA UY SIVA (+11); IASP-LÀM-PROXY BẮC ÂU XÁC NHẬN ĐÃ CẠN**) —
+còn thiếu ~5174 lúc cuối phiên.
+
+**Nhiệm vụ chính — SBIR.gov (Mỹ): kiểm phạm vi + kỹ thuật TRƯỚC khi tải hàng loạt, theo đúng yêu
+cầu của sếp.** Kỹ thuật: endpoint công khai `api.www.sbir.gov/public/api/awards` trả **403
+Forbidden** nhất quán qua `curl` (nhiều User-Agent khác nhau), qua Browser pane (trình duyệt thật)
+— khớp đúng thông báo chính thức trên `sbir.gov/api`: "the SBIR.gov APIs are currently undergoing
+maintenance". Trang `sbir.gov/data-resources` có nêu file CSV tải hàng loạt (65-290MB) nhưng
+**KHÔNG cần tải** vì đã xác định SAI PHẠM VI trước: `WebSearch` mẫu vài award thật (NASA, NSF, DOE)
+cho ra toàn tên DOANH NGHIỆP NHỎ làm R&D nhận hợp đồng liên bang (vd "Black Swift Technologies",
+"Techshot") — đây là CÔNG TY KHỞI NGHIỆP/công nghệ, không phải ĐƠN VỊ TRUNG GIAN hỗ trợ ĐMST (TTO/
+vườn ươm/khu KH&CN) mà ROSTER yêu cầu — **giống hệt rủi ro đã gặp và LOẠI ở DPIIT India (checkpoint
+21)**. Hai lý do độc lập (sai phạm vi + API bảo trì/chặn) → **LOẠI HẲN SBIR/STTR, không tải/xử lý
+hàng loạt**, chuyển sang các hướng dự phòng đã liệt kê ở checkpoint 46.
+
+**Hướng dự phòng 1 — Hàn Quốc Daegu/Gwangju/Gyeonggi Daejin TechnoPark:** thử lại `curl` (dgtp.or.kr,
+gjtp.or.kr timeout hoàn toàn; gdtp.or.kr 403) và qua Browser pane thật (dgtp.or.kr, gjtp.or.kr đều
+"navigation denied or failed") — **VẪN CHẶN như các checkpoint trước, không phải lỗi tạm thời**,
+xác nhận lại kết luận cũ, không tốn thêm công.
+
+**Hướng dự phòng 2 — Na Uy SIVA (hoàn tất việc mở từ checkpoint 44):** tra `WebSearch` URL riêng
+cho 12 tên tổ chức SIVA đã ghi ở checkpoint 44. Kết quả: 11/12 có URL chính chủ xác nhận qua
+`check_url()` (tất cả **11/11 sống**, không ca nào bị cờ); "Oslotech" là ngoại lệ — hoá ra chính là
+công ty đứng sau "Oslo Science Park" (`forskningsparken.no`) **ĐÃ CÓ SẴN TRONG ROSTER** (khớp
+domain), loại không merge lại. Lọc trùng ROSTER (toàn bộ, cả domain lẫn tên) cho **0 trùng** với 11
+mục còn lại. Gán toạ độ THÀNH PHỐ THẬT theo trụ sở từng tổ chức (Trondheim, Oslo, Kjeller, Dokka,
+Harstad, Bodø, Gjøvik, Knarvik, Kongsberg, Herøya/Porsgrunn, Halden) — 3/11 (Harstad, Bodø, Knarvik)
+cho `CountryLookup.country_for()` = `None` do đúng lỗi độ phân giải polygon Natural Earth 50m ở
+vùng biển/fjord đã ghi nhận từ checkpoint 39-40/46 (không phải toạ độ sai) — **CHẤP NHẬN** theo
+đúng tiền lệ vì đây là toạ độ thành phố thật, có nguồn xác định rõ, không phải centroid bịa.
+**11 mục mới, 0 Việt Nam.**
+
+**Hướng dự phòng 3 — IASP-làm-proxy cho khu vực Bắc Âu chưa tiếp cận trực tiếp được (Thuỵ Điển
+SISP, Phần Lan TEKEL) — gợi ý mở từ checkpoint 42:** lọc trực tiếp `iasp.ws/our-members/directory`
+theo `Country=Sweden` qua Browser pane (cần "Accept Selected" ở cookie-consent trước) → ra 14 tên
+(Ideon Science Park, Lindholmen, Uminova Innovation...) — đối chiếu ROSTER thì **CẢ 14/14 ĐÃ CÓ
+SẴN**, khớp domain và tên chính xác. **Xác nhận dứt điểm: gợi ý "IASP-làm-proxy" của checkpoint 42
+KHÔNG còn giá trị** — IASP đã được khai thác TOÀN BỘ 79 nước (kể cả Bắc Âu) ngay từ checkpoint 21,
+không có gì sót lại để lọc lại theo nước. Đừng thử lại hướng này ở các checkpoint sau.
+
+**Hướng dự phòng 4 (thử nhanh, không theo tới cùng) — MENAinc (mạng lưới vườn ươm/khu công nghệ
+Trung Đông-Bắc Phi của World Bank infoDev):** `WebSearch` không tìm được danh bạ hội viên còn sống
+(chương trình `infoDev` của World Bank đã ngừng khoảng 2018, trang `spica-directory.net` liệt kê
+MENAinc đã **404 Not Found**) — có thể còn cách tiếp cận khác (Wayback Machine cho trang MENAinc/
+infoDev cũ) nhưng CHƯA THỬ, để lại việc mở cho lượt sau nếu muốn theo tới cùng.
+
+**Kết quả merge:** xác nhận `git status` sạch + `len(load_roster(...))` = 19815 đúng ngay trước khi
+ghi. `ROSTER`: 19815 → **19826** (+11, toàn bộ từ Na Uy SIVA). Đơn vị trên bản đồ: 19824 → **19835**
+(+11, giữ nguyên chênh lệch +9). Kiểm: `node --check` sạch (script inline 3,390,592 ký tự), thẻ
+`div`/`section` cân bằng (107/107, 6/6). Mở `index.html` qua HTTP server cục bộ
+(`static-server` có sẵn), đọc qua Browser pane: đúng "19835 đơn vị được lập bản đồ" / "19826 trong
+danh mục mở rộng" / "12 đơn vị tại Việt Nam" (không đổi) / "9 case phân tích chuyên sâu" (không
+đổi). Commit và `git push origin main` lên live (xem hash ở cuối báo cáo phiên).
+
+**Việc mở cho lượt sau:** (1) Nhật Bản JPO/METI TLO vẫn 403 (chưa thử cổng khác: Google cache, PDF
+trực tiếp, trang tiếng Anh METI/JETRO); (2) Trung Quốc `chinatorch.gov.cn` vẫn không kết nối được
+qua nhiều checkpoint — có thể bỏ hẳn; (3) Thuỵ Điển SISP/Phần Lan TEKEL — hướng site gốc vẫn chặn
+mạng, và hướng proxy IASP đã xác nhận CẠN (xem trên) — cần nguồn thứ 3 hoàn toàn khác nếu muốn tiếp
+tục 2 nước này; (4) 219 ca CORDIS FP7 bị `check_url()` gắn cờ "cross-domain redirect" (checkpoint
+46) vẫn chưa xác minh tay; (5) MENAinc/infoDev — thử Wayback Machine nếu muốn theo tới cùng (xem
+trên); (6) cần tìm NGUỒN LỚN HOÀN TOÀN MỚI cỡ CORDIS/IASP/ANPROTEC (hàng trăm-nghìn mục) vì các
+hướng dự phòng nhỏ lẻ (Na Uy, Hàn Quốc còn lại) chỉ cho vài mục/checkpoint — không đủ tốc độ để
+chạm mốc 25000 (còn thiếu ~5174).
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 46 — **CORDIS FP7 (chương trình 2007-2013) — GIÁ TRỊ VẪN CÒN
 NHƯNG THẤP HƠN H2020/HORIZON, VÀ LẦN ĐẦU GẶP CORDIS THIẾU `geolocation`**) — còn thiếu ~5185 lúc
 cuối phiên.
 
