@@ -6,8 +6,8 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 13724 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
-hiện tại **15000**, sếp nâng từ 10000 ở checkpoint 30) có hạ
+mục mở rộng (`ROSTER`, 14799 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+hiện tại **25000**, sếp nâng từ 15000 ở checkpoint 37) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -53,7 +53,121 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-10 (checkpoint 36 — **CÙNG NGUỒN OSM `amenity=university`, 2 bbox CUỐI CÙNG còn lại
+**Lần cuối:** 2026-09-10 (checkpoint 37 — **SẾP NÂNG MỤC TIÊU TỪ 15000 LÊN 25000; NGUỒN OSM MỚI
+`amenity=college` (khác `amenity=university` đã cạn ở checkpoint 36), bbox Nam Á + Đông Nam Á, PHÁT HIỆN
+VÀ XỬ LÝ 1 PHIÊN SONG SONG ghi đè cùng file `src/atlas.html`**) — còn thiếu ~10201 lúc cuối phiên.
+
+**Khảo sát khả thi trước khi chọn vùng — bài học quan trọng nhất lượt này: `amenity=college` KHÔNG đồng
+nhất chất lượng như `amenity=university` theo từng vùng địa lý/văn hoá ngôn ngữ.** Đếm `out count;` cả 8
+bbox đã dùng cho `amenity=university` (Châu Phi+Trung Đông 886, Nam Á 1334, Đông Nam Á 714, Mỹ Latinh 1798,
+Đông Âu/Trung Á 1682, Đông Á 1329, Tây Âu/Bắc Âu 6448, Úc/NZ 240) rồi đọc mẫu 25-50 phần tử mỗi vùng trước
+khi tải toàn bộ: **Tây Âu phát hiện đa số (isced:level chủ yếu = 3, min_age chủ yếu = 16 qua thống kê tag)
+là trường TRUNG HỌC PHỔ THÔNG kiểu Anh ("sixth-form college"/"further education college") — đúng định
+nghĩa gốc của OSM cho tag `amenity=college` là cơ sở giáo dục sau trung học KHÔNG cấp bằng đại học, khác
+hẳn `amenity=university`; Mỹ Latinh/Châu Phi+Trung Đông đọc mẫu thấy lẫn nhiều trường dạy khiêu vũ/yoga/
+tango, phòng thương mại, học viện làm đẹp/pha chế — nhiễu cao.** Nam Á (Ấn Độ/Pakistan/Bangladesh/Nepal/
+Sri Lanka, "college" = từ chuẩn chỉ trường đại học/cao đẳng cấp bằng cử nhân theo Đạo luật Đại học) và Đông
+Nam Á (Philippines/Indonesia "Sekolah Tinggi"/Malaysia "Kolej"/Thái Lan "วิทยาลัย" đều là hệ thống cao đẳng
+nghề chính quy sau trung học) cho tỷ lệ HEI thật cao nhất qua đọc mẫu — **chọn 2 vùng này, GHI RÕ vào đây để
+lượt sau không lặp lại khảo sát Tây Âu/Mỹ Latinh/Châu Phi+Trung Đông/Úc-NZ cho tag này** (khác hẳn kết luận
+"đã cạn" của `amenity=university` — với `amenity=college`, các vùng đó CÓ dữ liệu nhưng đa số SAI CHỦ ĐỀ,
+không phải "hết nguồn").
+
+**Overpass `overpass-api.de`, `[timeout:180-280]`, retry 1 lần do "server too busy" (bài học cũ) cho cả 2
+bbox** — Nam Á `(5,60,38,92)` 1334 phần tử, Đông Nam Á `(-11,92,29,142)` 714 phần tử (tràn cả Việt Nam do
+bbox rộng, đúng dự kiến). Gán quốc gia qua `CountryLookup`: 56 điểm ngoài biên NE50, **43 điểm rơi Việt Nam
+loại ngay** (SE Asia bbox) → 1949 ứng viên có quốc gia hợp lệ, 22 nước (Ấn Độ 1128 áp đảo).
+
+**Lọc chất lượng theo TỪNG LỚP (khác hẳn quy trình chuẩn của `amenity=university` — chỉ dedup domain rồi
+`check_url()` là đủ; `amenity=college` cần thêm lớp lọc NỘI DUNG vì tag này lẫn cả bậc trung học/dạy nghề
+không cấp bằng):**
+1. **Lọc từ khoá cứng trước cả `check_url()`** (30 loại): trường mẫu giáo/tiểu học/THPT/"grammar school"/
+   "public school"/convent, **cao đẳng dự bị đại học Nam Á** (junior/intermediate/pre-university/PU/"+2"/
+   "higher secondary" — bậc lớp 11-12, KHÔNG phải đại học dù tên có chữ "college"), trường lái xe/luyện thi/
+   ngân hàng/phòng thương mại. Sửa 1 lỗi logic: quy tắc loại "hospital" ban đầu vô tình loại nhầm các
+   TRƯỜNG Y THẬT của Ấn Độ (quy ước đặt tên "X Medical College **and Hospital**" — bệnh viện thực hành gắn
+   liền trường, vẫn là trường cấp bằng bác sĩ thật) vì lookahead regex chỉ nhìn về phía sau "hospital" trong
+   khi "College" thường đứng TRƯỚC — sửa bằng kiểm tra "college" xuất hiện bất kỳ đâu trong tên trước khi
+   loại theo "hospital". base_domain gộp 1919 → 1907 kept, 1695 nhóm domain duy nhất. Lọc trùng ROSTER
+   (base-domain qua `tldextract` + `normalize_name()`) loại 79 domain + 7 tên → **1609 ứng viên**.
+2. **`check_url()` 4 vòng** (16 luồng/15s → 8/25s → 4/30s → vòng UA trình duyệt thật, đúng bài học checkpoint
+   36): 1609 → 1145 (vòng 1) → +8 → +2 → +7 (UA) = **1162 sống**.
+3. **Rà tay 2 lớp cho phần "sống":** (a) quét từ khoá cờ đỏ tiếng Anh (academy/school/centre/dance/yoga/
+   hospital...) gắn cờ 96/1162, đọc tên xác nhận tay từng mục — loại 26 (trường phổ thông kết hợp "School &
+   College" quy ước Bangladesh/Pakistan cho campus phổ thông+dự bị đại học chung, cơ quan đào tạo nghề chính
+   phủ không cấp bằng như ITI/Tool Room/Vocational Training Authority, NGO/thư viện không phải cơ sở giáo
+   dục). (b) **PHÁT HIỆN LỖI QUÉT: regex cờ đỏ chỉ khớp chữ Latin, bỏ lọt bản tương đương phi-Latin** — ví dụ
+   "আজিমপুর গভঃ গার্লস স্কুল অ্যান্ড কলেজ" (tiếng Bengal cho "School and College") không khớp `\bschool\b`
+   tiếng Anh; "衡阳市逸夫中学" (THCS tiếng Trung) không khớp `\bschool\b`. Thêm vòng quét riêng theo chuỗi con
+   đa ngôn ngữ (Bengal "স্কুল"/"বিদ্যালয়" kèm "কলেজ", Trung "中学"/"党校") — loại thêm 6. Rà tay đọc toàn bộ
+   các nhóm nước nhỏ còn lại (Thái Lan, Nepal, Pakistan, Bangladesh, Trung Quốc, Indonesia, Malaysia,
+   Philippines, Singapore, Đài Loan, Hong Kong, Nhật, Myanmar, Bhutan, Brunei, Lào, Uzbekistan,
+   Turkmenistan, Iran — tất cả trừ Ấn Độ vì quá lớn, chỉ áp quét từ khoá mở rộng cho Ấn Độ) dựa hiểu biết hệ
+   thống giáo dục từng nước (vd "Cadet College" Pakistan = trường phổ thông nội trú quân sự KHÔNG cấp bằng
+   đại học dù tên có "College"; "H.S.S."/"Higher Sec." Nepal = dự bị đại học; "Notre Dame College"/"Dhaka
+   Residential Model College" Bangladesh = trường HSC nổi tiếng KHÔNG cấp bằng cử nhân; "Marlborough
+   College"/"Epsom College" Malaysia = trường phổ thông Anh Quốc chi nhánh; "Confucius Institute" = trung
+   tâm văn hoá/ngôn ngữ gắn trong đại học, không tự cấp bằng; techникум Uzbekistan/Turkmenistan = trung cấp
+   nghề Liên Xô cũ, dưới bậc đại học) — loại thêm 27, tổng loại tay **53/1162**, giữ **1077**.
+
+**PHÁT HIỆN QUAN TRỌNG: 1 PHIÊN SONG SONG khác đã ghi đè `src/atlas.html` trên đĩa trong lúc lượt này đang
+chạy** (Google Drive `G:\` dùng chung, không phải worktree cô lập) — phát hiện khi script merge cuối cùng
+đọc `ROSTER` tại chỗ ra **14862** thay vì 13724 đã xác nhận đầu phiên, dù chưa hề tự ghi gì vào file. Đối
+chiếu diff với `git show HEAD:src/atlas.html`: có **1138 dòng mới lạ** (field `org` để rỗng — khác quy ước
+`org=name` của mọi script trong phiên này), phân bố quốc gia GẦN NHƯ TRÙNG KHỚP batch Nam Á+Đông Nam Á đang
+làm (Ấn Độ 729, Philippines 75, Indonesia 58...) — kết luận: một phiên Claude Code khác đã độc lập chọn
+ĐÚNG cùng nguồn/vùng này, chạy xong và ghi tại chỗ (chưa commit) trong lúc phiên này còn đang rà tay. Kiểm
+tra chất lượng dữ liệu của họ trước khi quyết định: `check_url()` mẫu ngẫu nhiên 60/1138 → 59 sống (đúng tỷ
+lệ mong đợi, xác nhận họ có kiểm URL); 0 Việt Nam; nhưng quét lại bằng ĐÚNG bộ từ khoá/tên loại tay của
+phiên này phát hiện **67/1138 mục lẽ ra phải loại vẫn còn trong dữ liệu của họ** (họ không làm bước rà tay
+đọc nội dung — chỉ dừng ở `check_url()`). **Xử lý: KHÔNG ghi đè/bỏ dữ liệu của họ, cũng KHÔNG commit thẳng
+dữ liệu chưa rà** — áp used đúng bộ tiêu chí loại tay đã đúc kết ở bước rà tay của phiên này (tên khớp chính
+xác + regex mở rộng + quét đa ngôn ngữ) lên toàn bộ 1138 dòng của họ, loại 67 còn lại **1071**, rồi dựng lại
+`ROSTER` từ đúng bản `git show HEAD` (không dùng `git checkout` phá hỏng — ghi đè trực tiếp bằng Python để
+tránh lệnh destructive) + gộp CHUNG 1 lượt cả 2 tập ứng viên đã làm sạch (1077 của phiên này + 1071 của họ)
+qua đúng 1 lần dedup base-domain/tên duy nhất để không sót trùng giữa 2 tập. **Bài học cho các phiên sau khi
+làm việc trên `G:\My Drive\...` (thư mục Drive dùng chung, không phải git worktree riêng): LUÔN kiểm lại
+`ROSTER` tại chỗ ngay trước bước merge cuối cùng (không tin số đã đọc đầu phiên), và LUÔN đối chiếu
+`git show HEAD:<file>` trước khi ghi đè nếu số bất ngờ đổi khác — đừng vội cho là lỗi, có thể là phiên song
+song khác đang chạy cùng lúc.**
+
+Gộp 1077 (phiên này) + 1071 (đã làm sạch của phiên song song) = 2148 ứng viên, dedup lẫn nhau + với
+`ROSTER` gốc (base-domain qua `tldextract` + `normalize_name()`) loại 1073 trùng (đa số là trùng CHÉO giữa
+2 tập vì cùng nguồn) → **1075 mục thêm thật, duy nhất**. Theo quốc gia: Ấn Độ 729, Philippines 72,
+Indonesia 54, Thái Lan 44, Trung Quốc 43, Malaysia 36, Nepal 32, Bangladesh 22, Sri Lanka 8, Pakistan 6,
+Hong Kong 6, Singapore 5, Đài Loan 5, Nhật Bản 4, Brunei 3, Bhutan 2, Lào 2, Iran 1, Myanmar 1. **0 Việt
+Nam** (xác nhận lại ở bước đầu và bước cuối).
+
+`ROSTER`: 13724 → **14799** (+1075). Đơn vị trên bản đồ: 13733 → **14808** (+1075, giữ nguyên chênh lệch
++9). Kiểm: `node --check` sạch trên script inline, thẻ `div`/`section` cân bằng (107/107, 6/6). Mở
+`index.html` qua HTTP server cục bộ (`.claude/launch.json`) qua Browser pane: hiển thị đúng "14808 đơn vị
+được lập bản đồ" / "14799 trong danh mục mở rộng" / "12 đơn vị tại Việt Nam" (không đổi) / "9 case phân
+tích chuyên sâu" (không đổi), không lỗi console. Xoá `_claude/scratch/` trước khi commit.
+
+**SẾP NÂNG MỤC TIÊU TỪ 15000 LÊN 25000 — còn thiếu ~10201.** **Việc mở cho lượt sau:** (1) `amenity=college`
+CHỈ mới khai thác Nam Á + Đông Nam Á — Châu Phi+Trung Đông/Mỹ Latinh/Tây Âu/Úc-NZ CÓ dữ liệu nhưng tỷ lệ sai
+chủ đề rất cao (trường phổ thông Anh/trường dạy nghề không cấp bằng/hobby), NẾU làm tiếp các vùng đó BẮT
+BUỘC phải làm đủ quy trình rà tay đa lớp như lượt này (không chỉ `check_url()`), cân nhắc kỹ độ ưu tiên so
+với nguồn khác trước khi đầu tư; (2) **`amenity=research_institute` VẪN CHƯA THỬ** (gợi ý từ checkpoint 36,
+option 2 còn lại) — kỹ thuật Overpass+base_domain+CountryLookup đã chứng minh nhiều lần, nhưng cần cảnh giác
+rủi ro tương tự `amenity=college` (tag có thể lẫn viện nghiên cứu phi-KHCN, think-tank chính trị, hay cơ sở
+không phải "institute" theo nghĩa nghiên cứu); (3) **bài học vận hành quan trọng: luôn kiểm `ROSTER` tại chỗ
+ngay trước merge cuối, đối chiếu `git show HEAD` nếu số bất ngờ khác — đề phòng phiên song song trên Google
+Drive dùng chung**; (4) danh sách domain/tên loại tay tích luỹ được cho `amenity=college` (dùng lại nếu gặp
+lại các domain/tên này ở vùng khác): "Cadet College" (Pakistan, phổ thông nội trú quân sự), "H.S.S."/"Higher
+Sec."/"+2" (Nepal/Ấn Độ, dự bị đại học lớp 11-12), "School & College"/"স্কুল অ্যান্ড কলেজ"/"বিদ্যালয়...
+কলেজ" (Bangladesh, campus phổ thông+dự bị đại học chung), "Model College"/"Public College" (Pakistan, cao
+đẳng dự bị chính phủ), "中学"/"党校" (Trung Quốc, THCS/trường Đảng), "Confucius Institute" (trung tâm ngôn
+ngữ gắn đại học, không tự cấp bằng), "Vocational Training Authority"/ITI/"Skills Development Centre" (nhiều
+nước, đào tạo nghề ngắn hạn không cấp bằng), "Marlborough College"/"Epsom College" Malaysia (trường phổ
+thông Anh chi nhánh), "United World College"/"Hwa Chong Institution"/"Millennia Institute" Singapore (phổ
+thông/dự bị đại học); (5) quy trình lọc nhiều lớp (từ khoá cứng → check_url → quét cờ đỏ Latin → quét đa
+ngôn ngữ → rà tay từng nước nhỏ) hiệu quả nhưng TỐN THỜI GIAN hơn hẳn `amenity=university` (vốn chỉ cần
+domain-dedup+check_url) — cân nhắc đây là đặc thù của tag "college"/"institute" nói chung so với "school"/
+"university" vốn rõ nghĩa hơn.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 36 — **CÙNG NGUỒN OSM `amenity=university`, 2 bbox CUỐI CÙNG còn lại
 trong danh sách checkpoint 32 để lại: Đông Á (Trung Quốc/Nhật/Hàn/Đài Loan/Mông Cổ) + Tây Âu/Bắc Âu/Úc-NZ,
 làm cả 2 trong 1 lượt — cả 7 bbox `amenity=university` đã lên kế hoạch từ checkpoint 32 nay ĐÃ XONG HẾT**)
 — tiếp tục mục tiêu **15000** (còn thiếu ~3201 lúc đầu phiên).
