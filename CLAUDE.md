@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 3069 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 3217 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,129 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 22 — **NGUỒN MỚI: danh bạ chính thức EDIH (European
+**Lần cuối:** 2026-09-09 (checkpoint 23 — **NGUỒN MỚI: Impact Hub Global (Google Sheet nhúng
+sẵn trong bản đồ thành viên, đúng kỹ thuật 2) + AIC India (đăng ký chính phủ NITI Aayog, đúng
+kỹ thuật 1)**) — sếp nâng mục tiêu lên **10000**. Trước khi tìm ra 2 nguồn này, đã thử và LOẠI
+một loạt hướng lớn nêu trong đầu bài phiên này:
+
+- **AfriLabs** (`afrilabs.com`, mạng lưới hub công nghệ Châu Phi, 521 hub) — có API WordPress
+  REST công khai `/wp-json/wp/v2/hub` (custom post type `hub`, phát hiện nhanh qua
+  `/wp-json/` route list, giống kỹ thuật AfriLabs/AfriLabs khác EDIH), nhưng kiểm cả field
+  `content.rendered` của 100 hub mẫu và trang chi tiết từng hub (`/hub/<slug>/`, cả REST lẫn
+  HTML render qua trình duyệt thật) đều **KHÔNG có bất kỳ URL ngoài nào** — hoàn toàn không có
+  cột website, giống đúng "GIỚI HẠN CỨNG" đã gặp ở Startup India checkpoint 18. Loại.
+- **ASTP-Proton** (`astp-proton.eu`, hiệp hội TTO châu Âu, mục 30 trong
+  `_claude/roster-grow-queue.md`) — danh bạ hội viên yêu cầu đăng nhập thành viên, không có
+  trang công khai. Loại, xác nhận đúng dự đoán của queue.
+- **KCA/THETA-KTA** (`techtransfer.org.au`, hiệp hội TTO Úc/NZ hợp nhất, mục 34 trong queue) —
+  trang "KCA Members" không lộ danh sách công khai (chỉ trang giới thiệu, đăng nhập hội viên
+  qua nền tảng Membes AMS). Loại.
+- **WAITRO** (`waitro.org`, 190+ viện nghiên cứu công nghiệp toàn cầu) — trang `/members/` chỉ
+  liệt kê 34 "Active Members" dạng TEXT THUẦN (tên – quốc gia, không có link nào), không phải
+  danh bạ đầy đủ 190 thành viên và không có URL nào để trích. Loại.
+- **EBN / EU|BIC** (`ebn.eu`, ~180 trung tâm ươm tạo châu Âu) — trang `/members/` không liệt kê
+  gì, link "membersmap" cũ đã gỡ; dò ra nền tảng `eubic.community` (chạy trên "Mighty", app
+  cộng đồng trả phí) — toàn bộ nội dung đằng sau đăng nhập. Loại.
+- **Turkey Teknopark (teknopark.sanayi.gov.tr)** — domain con của Bộ Công nghiệp không kết nối
+  được (`ERR_TIMED_OUT`, giống mẫu hình các domain chính phủ khác đã bị chặn/quá tải trước
+  đây); dùng thay danh sách Wikipedia tiếng Thổ "Türkiye'deki teknokentler listesi" (97 khu) —
+  đầy đủ tên/thành phố/năm nhưng **KHÔNG có cột website nào cả**, sẽ phải đoán domain nên loại
+  theo đúng quy tắc "không đoán domain".
+- **Philippines DOST TBI** (`dost.gov.ph/innovationmaps/TBI.kml`, file KML bản đồ) — chỉ 47
+  placemark, mỗi placemark chỉ có tên+địa chỉ trong `<description>`, không có trường website.
+  Quá nhỏ và thiếu URL. Loại.
+- **India AIC portal** (`aic.aim.gov.in`) — domain con không kết nối được
+  (`ERR_CONNECTION_TIMED_OUT`) — dùng thay trang tĩnh `aim.gov.in` (xem nguồn dùng được bên
+  dưới).
+- **India AIC_List_data.pdf** (danh sách đầy đủ 93 AIC do AIM/NITI Aayog công bố, state/city/
+  năm thành lập) — TẢI ĐƯỢC nhưng **không có cột website** (đúng bẫy kiểu Poland PARP cũ) — chỉ
+  dùng để đối chiếu quy mô, không trích được URL từ đây.
+- **BIRAC BioNEST Compendium** (`birac.nic.in/webcontent/Bionest_Compendium.pdf`, 73 cơ sở
+  ươm tạo công nghệ sinh học Ấn Độ) — file PDF 2.8MB tải về **bị lỗi cấu trúc xref** (`pypdf`
+  và `pdftoppm`/`pdftotext` của Poppler đều báo "Invalid XRef entry"/"Invalid object in
+  /Pages") dù tải nguyên vẹn theo `curl` (không phải lỗi mạng) — nghi PDF gốc do BIRAC xuất bị
+  lỗi linearization. Không phục hồi được trong thời gian hợp lý, để lại việc mở nếu ai có công
+  cụ sửa PDF hỏng (`qpdf --qdf`/`mutool clean` có thể cứu được).
+- **Uruguay ANII / Czech SVTP** — kiểm nhanh quy mô: ANII Uruguay chỉ có vài incubator lẻ
+  (nước rất nhỏ); SVTP Czech (`svtp.cz/katalog/`) chỉ 27 khu (14 đạt chuẩn + 13 khác), danh
+  sách chỉ có tên+thành phố, KHÔNG có link — cả hai dưới ngưỡng ~100-150 mục đáng làm một đợt
+  riêng, không đào tiếp.
+- **China Torch** (`chinatorch.gov.cn`) — thử lại bằng `WebFetch` (chạy trên hạ tầng
+  Anthropic, không phải mạng máy này) với hy vọng đây là chặn theo mạng cục bộ — vẫn
+  `ECONNREFUSED` ngay ở tầng TCP, xác nhận server tự chặn kết nối từ ngoài Trung Quốc (không
+  phải do mạng máy đang dùng), không đáng thử lại trừ khi có proxy trong nước.
+
+**Nguồn dùng được #1: Impact Hub Global** (`impacthub.net/locations/`, mạng lưới hub ĐMST xã
+hội toàn cầu, ~150 địa điểm tại 60+ nước) — kỹ thuật mới: trang danh sách hiển thị bộ đếm theo
+khu vực (150 địa điểm) nhưng nội dung `<ul>` rỗng, dữ liệu thật nạp qua một `<iframe>` riêng
+(`impacthub.net/locationsmap-2/`) chứa bản đồ Leaflet; script JS của iframe này gọi thẳng
+**Google Sheets API v4 công khai** (`sheets.googleapis.com/v4/spreadsheets/<ID>/values/map`)
+bằng API key nhúng cứng trong JS — đây là hình thức "dữ liệu nhúng sẵn" mới chưa từng gặp
+(không phải JSON tĩnh trong `<script>` như ANPROTEC, mà là một Google Sheet công khai lộ qua
+API key lộ trong client). **Bẫy kỹ thuật**: API key có giới hạn `HTTP_REFERRER` (gọi thẳng bị
+từ chối 403 "Requests from referer <empty> are blocked") — phải thêm header
+`Referer: https://impacthub.net/locationsmap-2/` vào request thì mới qua được giới hạn (không
+phải bẻ khoá gì, chỉ giả lập đúng nguồn gốc request mà key đã cho phép).
+
+Sheet trả về đúng 9 cột có sẵn: Status, IH NAME, LATITUDE, LONGITUDE, WEBSITE, TYPE, REGION,
+COUNTRY, FLAG — **có sẵn cả toạ độ chính xác từng địa điểm** (không cần viết dict centroid
+quốc gia/tỉnh cho batch này, hiếm gặp). 150 dòng → 129 có cột Website không rỗng → loại 1 dòng
+Việt Nam (Impact Hub Saigon, đang "Coming Soon" nên vốn cũng không có website, loại theo đúng
+quy ước Việt Nam) → lọc trùng ROSTER hiện có (10 trùng — đa số là các Impact Hub Châu Phi đã
+vào ROSTER từ trước qua batch africatechschools.com) → 119 mục cần kiểm sống → `check_url()`
+giữ **107/119** ngay lượt đầu, lượt kiểm lại (timeout 20s) không cứu thêm được mục nào (12 mục
+chết là chết thật — phần lớn `URLError`/`HTTPError` trên domain `*.impacthub.net` của các chi
+nhánh đã ngừng hoạt động, cộng 1 mục Origin/Thổ Nhĩ Kỳ và 1 mục Thuỵ Sĩ chết thật). Bao gồm cả
+8 mục loại "Community Partner" (CP, không phải "HUB" chính thức) — đã kiểm tên thật (Build
+Palestine, Temasek Shophouse, Centre d'innovation de Lubumbashi, Social Innovation Academy...)
+đều là tổ chức hỗ trợ ĐMST/khởi nghiệp thật, đúng phạm vi ROSTER, không phải quỹ đầu tư/chương
+trình đơn lẻ — giữ lại. Tên "Imact Hub New York Metropolitan Area" sửa lỗi đánh máy hiển nhiên
+thành "Impact Hub..." (lỗi gõ thiếu chữ "p" trong chính tiền tố thương hiệu dùng thống nhất ở
+135 dòng khác, khác bản chất với các trường hợp "giữ nguyên tên gốc" trước đây vốn là tên hợp
+pháp khác biệt của một tổ chức, không phải lỗi gõ rành rành của chính nền tảng).
+
+**Nguồn dùng được #2: AIC India** (Atal Incubation Centres, NITI Aayog/AIM — đăng ký chính phủ
+Ấn Độ) — trang `aim.gov.in/selected-atal.php` có 60 khối accordion, mỗi khối là hồ sơ mô tả
+một AIC với các trường có cấu trúc rõ **"Website:"** + **"City:"** (57/60 khối có Website, 3
+khối thiếu bị bỏ qua) — đúng kiểu tài liệu chính phủ có sẵn cột website (kỹ thuật 1), khác PDF
+`AIC_List_data.pdf` (93 dòng nhưng KHÔNG có cột website, chỉ dùng đối chiếu quy mô như đã ghi ở
+trên). 57 mục → lọc trùng ROSTER: **0 trùng** (India TISC/khác trước đây không phủ các AIC
+non-trường-đại-học này) → `check_url()` giữ 40/57 lượt đầu, cứu thêm 1 qua lượt kiểm lại
+(timeout 20s) → **41/57 sống thật**. Toạ độ dùng centroid CẤP THÀNH PHỐ (viết tay 28 thành phố
+Ấn Độ xuất hiện trong batch, chính xác hơn cấp quốc gia vì toàn bộ batch chỉ 1 nước).
+
+**Việc mở kỹ thuật cho lượt sau (áp dụng được cho nhiều nguồn khác)**: khi một trang "bản đồ
+thành viên" hiển thị bộ đếm đúng nhưng danh sách/marker rỗng lúc tải tĩnh, đừng vội kết luận
+"không lấy được dữ liệu" — kiểm `<iframe>` bên trong trang (nhất là loại "locationsmap"/"map
+embed") vì nhiều nền tảng nhúng bản đồ dưới dạng trang con riêng, và bên trong iframe đó rất
+đáng tìm xem có gọi thẳng Google Sheets API (`sheets.googleapis.com/v4/spreadsheets/.../values/
+...`) bằng API key lộ trong JS hay không — nếu bị chặn 403 do giới hạn Referer, thử lại với
+header `Referer` trỏ đúng domain nhúng key đó (không phải hành vi bẻ khoá, khoá vẫn công khai
+trong mã nguồn JS phía client).
+
+Đưa hằng số `SOCIAL_PLATFORM_DOMAINS` vào thẳng `_claude/tools/roster_common.py` (việc mở đã
+ghi từ checkpoint 22, nay đã làm) để các batch sau import dùng chung thay vì viết lại mỗi lần.
+
+`ROSTER`: 3069 → **3217** (+148: 107 Impact Hub Global + 41 AIC India). Đơn vị trên bản đồ:
+3078 → **3226** (xác nhận đúng bằng bộ đếm hiển thị trên trang qua `index.html` chạy local
+HTTP server, khớp số script tính ra).
+
+**Việc mở cho lượt sau (mục tiêu 10000, còn thiếu ~6774):** (1) BIRAC BioNEST PDF bị lỗi cấu
+trúc — nếu sửa được bằng `qpdf`/`mutool` sẽ ra thêm ~70 mục Ấn Độ có khả năng có cột website
+(chưa xác minh nội dung PDF thật sự có cột này không, chỉ mới xác nhận PDF hỏng không mở
+được). (2) Impact Hub có 21 địa điểm KHÔNG có website (chủ yếu trạng thái "Initiative"/"Coming
+Soon" — hub dự kiến/đang xây, chưa có site) — không đáng theo dõi lại sớm vì bản chất chưa vận
+hành, khác các mục "chết" thật ở nơi khác. (3) Kỹ thuật mới "tìm Google Sheets API lộ trong
+iframe bản đồ nhúng" đáng thử lại cho các hiệp hội/mạng lưới khác dùng bản đồ kiểu tương tự
+(dấu hiệu nhận biết: trang danh bạ có bộ đếm đúng nhưng danh sách hiển thị rỗng lúc tải tĩnh) —
+chưa xác định được ứng viên cụ thể nào khác, cần dò tiếp. (4) Ở quy mô 10000, các nguồn còn lại
+sau khi cạn WIPO TISC/africatechschools/ANPROTEC/IASP/EDIH/Impact Hub cần tìm là những mạng
+lưới CÓ ĐĂNG KÝ RIÊNG (không phải hiệp hội hội viên đóng phí, nhóm này gần cạn) — ưu tiên tiếp
+tục dò kiểu "đăng ký chính phủ có cột website" (đã hết Colombia/Argentina/AIC India, còn nhiều
+nước Á/Phi khác chưa dò) hơn là tiếp tục tìm hiệp hội quốc tế (WAITRO/EBN/ASTP/KCA đều đã cạn
+trong phiên này).
+
+**Lần trước:** 2026-09-09 (checkpoint 22 — **NGUỒN MỚI: danh bạ chính thức EDIH (European
 Digital Innovation Hubs) của Uỷ ban châu Âu**) — tải export
 `european-digital-innovation-hubs.ec.europa.eu/edih-catalogue/export-edih?page&_format=xls`:
 đúng như dự đoán, server báo `Content-Type: application/vnd.ms-excel` và tên `.xls` nhưng NỘI

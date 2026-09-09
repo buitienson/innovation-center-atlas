@@ -191,6 +191,20 @@ def domain_of(url):
     return m.group(1).lower() if m else ""
 
 
+# Shared social-media/platform domains that must NOT be used for domain-level
+# duplicate matching: many unrelated organizations legitimately use the same
+# platform (e.g. a LinkedIn company page) as their listed "website", so two
+# ROSTER rows sharing one of these domains are not proof they're the same
+# org. First hit: checkpoint 22 (EDIH batch) found 2 EDIH rows sharing
+# linkedin.com with an unrelated Eritrea entry already in ROSTER. When
+# de-duplicating a new batch against ROSTER, skip domain-based matching for
+# any domain in this set (name-based matching still applies).
+SOCIAL_PLATFORM_DOMAINS = {
+    "linkedin.com", "facebook.com", "twitter.com", "x.com",
+    "instagram.com", "youtube.com", "medium.com",
+}
+
+
 def normalize_name(name):
     return re.sub(r"[^a-z0-9]", "", (name or "").lower())
 
