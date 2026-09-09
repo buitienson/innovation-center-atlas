@@ -206,7 +206,18 @@ SOCIAL_PLATFORM_DOMAINS = {
 
 
 def normalize_name(name):
-    return re.sub(r"[^a-z0-9]", "", (name or "").lower())
+    # Unicode-aware: keep any alphanumeric char (Latin, Arabic, Persian,
+    # Hebrew, Greek, Cyrillic, CJK, Vietnamese diacritics...), drop only
+    # punctuation/whitespace. The old `[^a-z0-9]` regex only matched ASCII,
+    # so it silently stripped EVERY character of a non-Latin-script name -
+    # a name written entirely in Arabic/Persian/Hebrew/Greek collapsed to ""
+    # and then compared equal (as a false "duplicate") to any other org
+    # whose name also happened to be non-Latin-only. Confirmed at checkpoint
+    # 32 (OSM amenity=university, Africa/Middle East batch): 155 legitimate,
+    # non-duplicate candidates were wrongly rejected this way by a
+    # dedup script built on this function before the bug was found and
+    # patched here.
+    return "".join(ch for ch in (name or "").lower() if ch.isalnum())
 
 
 # --- URL trust verification -------------------------------------------
