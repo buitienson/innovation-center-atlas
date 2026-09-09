@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 6134 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 6655 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,70 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 26 — **NGUỒN LỚN MỚI: HackerspaceWiki (wiki.hackerspaces.org),
+**Lần cuối:** 2026-09-09 (checkpoint 27 — **NGUỒN LỚN MỚI: OpenStreetMap, kỹ thuật MỚI "Overpass
+API truy vấn tag `leisure=hackerspace`"**) — tiếp tục mục tiêu **10000**. Đầu phiên đã cân nhắc và
+LOẠI hướng "office=coworking" trên cùng nguồn OSM: Overpass trả **3268** điểm có tên+website, nhưng
+phần lớn là chuỗi văn phòng dịch vụ thương mại (WeWork 74, Regus 44, Spaces 39, Design Offices 37,
+Industrious 9...) — không phù hợp chủ đề "trung tâm CGCN/ĐMST/vườn ươm/TTO/fablab/hackerspace/
+repair-café" của Atlas (văn phòng cho thuê thuần thương mại, không phải hạ tầng ĐMST/cộng đồng
+maker), nên KHÔNG dùng. Cũng thử `craft=fablab`/`amenity=fablab`/`amenity=makerspace` riêng —
+chỉ vài chục điểm, không đáng một batch riêng, phần lớn trùng với `leisure=hackerspace` đã lấy.
+
+**Nguồn dùng:** Overpass API (`overpass-api.de/api/interpreter`, không cần API key, không giới hạn
+đăng nhập) truy vấn `[out:json];(node["leisure"="hackerspace"];way["leisure"="hackerspace"];);out
+tags center;` — đây LÀ kỹ thuật MỚI khác hẳn 6 kỹ thuật cũ: dữ liệu địa lý crowd-sourced OpenStreet-
+Map (bất kỳ ai cũng có thể tự gắn thẻ), không phải danh bạ chính thức của một tổ chức trung tâm.
+Trả về **1868** điểm toàn cầu, **1358** có sẵn cả `name` + `website`/`contact:website`. Lọc trùng
+với ROSTER hiện có (theo domain — trừ domain mạng xã hội dùng chung — và theo tên chuẩn hoá): loại
+**519** trùng domain + **56** trùng tên (xác nhận đúng cùng thực thể: phần lớn hackerspace này đã
+có sẵn từ batch HackerspaceWiki checkpoint 26 hoặc fablabs.io checkpoint trước đó — hai nguồn phủ
+cùng "thế giới hackerspace" nhưng khác kỹ thuật thu thập, tỉ lệ trùng cao là dấu hiệu tốt xác nhận
+dữ liệu thật) + **49** trùng nội bộ batch → còn **729** ứng viên.
+
+**Điểm mạnh dữ liệu — toạ độ CHÍNH XÁC CẤP ĐỊA ĐIỂM cho 100% ứng viên** (khác batch trước chỉ- có
+89%): mọi node/way OSM đều có `lat`/`lon` thật do người gắn thẻ xác định vị trí trên bản đồ, không
+cần centroid quốc gia dự phòng bao giờ. Chỉ **69/729** có sẵn field `addr:country` (mã ISO alpha-2,
+dùng lại dict `ISO2_COUNTRY` đã có sẵn từ batch trước); **660** còn lại suy ra quốc gia bằng cách
+MỚI: tải GeoJSON biên giới quốc gia Natural Earth 1:50m (`ne_50m_admin_0_countries`, ~3MB, public,
+không cần đăng nhập) rồi tự viết point-in-polygon (ray-casting thuần Python, không cần cài
+shapely/numpy — máy tải PyPI rất chậm hôm nay, ~50KB/s, cài `reverse_geocoder` bị treo giữa chừng
+tải wheel scipy 36MB nên bỏ hướng đó) — kiểm đúng cả các nước nhỏ (Monaco, Singapore, Malta,
+Liechtenstein) nhờ dùng độ phân giải 50m thay vì 110m. 0 ứng viên bị bỏ vì thiếu quốc gia.
+
+Kiểm sống `check_url()` (8 luồng, timeout 15s): alive lượt 1 **518/729**. Retry 211 lỗi (6 luồng,
+timeout 20s): cứu thêm **3** → tổng **521/729 sống thật (71,5%)** — thấp hơn HackerspaceWiki
+(86,7%) vì đây là dữ liệu OSM ai cũng sửa được, nhiều điểm cũ không ai dọn khi hackerspace đã đóng
+cửa hoặc đổi tên miền. Dựng xong 521 dòng (quốc gia + toạ độ chính xác), kiểm trùng an toàn lần
+cuối với ROSTER + trong batch → **0 trùng phát sinh thêm**, 521 dòng merge nguyên vẹn. Chỉ **2/521
+(0,4%)** URL là domain mạng xã hội.
+
+Quốc gia (top): Pháp 153, Đức 96, Mỹ 82, Tây Ban Nha 27, Ý 17, Anh 17, Thuỵ Sĩ 15, Canada 12, Bỉ
+11, Áo 10 — Pháp đứng đầu bất ngờ (nhiều "La Cantine"/"Fab Lab" địa phương do chính quyền tỉnh
+Pháp tài trợ tự gắn thẻ OSM tốt), khác phân bố Đức/Mỹ dẫn đầu ở batch HackerspaceWiki. `org` để
+trống toàn batch (tag OSM không có field tổ chức chủ quản tách biệt, giống quy ước batch trước).
+
+`ROSTER`: 6134 → **6655** (+521). Đơn vị trên bản đồ: 6143 → **6664** (+521, giữ nguyên chênh lệch
++9 đã ghi nhận ổn định qua nhiều checkpoint). Kiểm bằng Browser pane qua HTTP server cục bộ (`python
+-m http.server`): trang hiển thị đúng "6664 đơn vị được lập bản đồ" / "6655 trong danh mục mở
+rộng", không lỗi console, `node --check` qua script inline sạch, thẻ `div`/`section` cân bằng
+(107/107, 6/6).
+
+**Việc mở cho lượt sau (mục tiêu 10000, còn thiếu ~3345):** (1) HackerspaceWiki còn 238 "building" +
+351 "planned" chưa khai thác (độ ưu tiên thấp, xem lý do ở checkpoint 26); (2) các hướng đã thử
+lượt này và LOẠI vì quá nhỏ/không có danh bạ công khai: hOurworld time bank (333 cộng đồng, không
+API, chỉ duyệt web), Restart Project (mạng lưới sự kiện, không phải tổ chức có site riêng), Library
+of Things (chỉ 22 địa điểm, chỉ UK), EIT Community RIS Hubs/partners (~80 đối tác, không đủ lớn),
+Seedstars/Seedspace (chỉ 13 hub), Village Capital/VilCap Communities (~50 cộng đồng), UnternehmerTUM
+(1 tổ chức, không phải danh bạ), NRC IRAP Canada (nhân sự hiện trường, không phải tổ chức có site),
+Baltic accelerator list (chỉ các bài blog liệt kê, không phải đăng ký chính thức) — ĐỪNG thử lại;
+(3) hướng còn mở thật sự: các wiki cộng đồng khác dùng Semantic MediaWiki (kỹ thuật checkpoint 26)
+— chưa tìm ra ứng viên cụ thể lượt này, cần tìm kỹ hơn; (4) các tag OSM khác qua Overpass API (kỹ
+thuật MỚI lượt này) đáng thử: `shop=repair` (có thể trùng nhiều với Repair Café đã lấy, nhưng đáng
+kiểm), `office=research` hoặc `office=coworking` đã lọc kỹ theo tên (loại chuỗi thương mại) thay vì
+loại cả nhóm nếu muốn thử lại; (5) 571 hồ sơ Repair Café bị bỏ qua vì thiếu quốc gia (việc mở cũ);
+(6) BIRAC BioNEST PDF lỗi cấu trúc vẫn chưa sửa được; (7) InovaLink Brazil vẫn bế tắc.
+
+**Lần trước:** 2026-09-09 (checkpoint 26 — **NGUỒN LỚN MỚI: HackerspaceWiki (wiki.hackerspaces.org),
 kỹ thuật MỚI "truy vấn Semantic MediaWiki `askargs`"**) — tiếp tục mục tiêu **10000**. Trước khi tìm
 ra nguồn này, đã kiểm tra và LOẠI:
 
