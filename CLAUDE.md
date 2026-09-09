@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 4584 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 5501 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,86 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 24 — **NGUỒN LỚN MỚI: fablabs.io, danh bạ toàn cầu chính
+**Lần cuối:** 2026-09-09 (checkpoint 25 — **NGUỒN LỚN MỚI: Repair Café toàn cầu, danh bạ chính
+thức repaircafe.org, kỹ thuật MỚI "API danh sách + cào từng trang hồ sơ lấy trường Website"**) —
+tiếp tục mục tiêu **10000**. Trước khi tìm ra nguồn này, đã thử và LOẠI các hướng gợi ý đầu phiên:
+
+- **Hackerspaces.org, TechShop, Library of Things, Seedstars, Village Capital, UnternehmerTUM,
+  Canada NRC IRAP registry, Australia accelerator registry, mạng co-working phi lợi nhuận châu
+  Âu/Á** — KHÔNG thử (thời gian phiên dồn hết vào nguồn Repair Café một khi xác nhận khả thi và đủ
+  lớn; đây là các hướng còn để ngỏ cho phiên sau, chưa "thử và loại" theo đúng nghĩa).
+- **Estonia/Latvia/Lithuania đăng ký khu công nghệ/vườn ươm chính thức** — KHÔNG thử, cùng lý do.
+- **EIT Community (European Institute of Innovation & Technology) danh sách đối tác** — KHÔNG
+  thử, cùng lý do trên.
+
+**Quá trình dò tìm Repair Café (`repaircafe.org`):** trang "Visit" của mạng lưới có ô tìm kiếm bản
+đồ hiển thị **4005 Repair Café** toàn cầu, dựng bằng một widget JS tuỳ biến (`rc-app`, không phải
+plugin bản đồ chuẩn). Dò qua REST API discovery document (`/wp-json/`) lộ ra route
+`/repaircafe/v1/search` (namespace RIÊNG của theme, KHÔNG phải route chuẩn `events-manager/v1`
+vốn yêu cầu đăng nhập/nonce — route `events-manager/v1/locations`/`events-manager/v1/events` trả
+lỗi 401/rơi về trang index, ĐÃ THỬ và LOẠI vì cần auth). `/repaircafe/v1/search?s=&pp=60&pg=N`
+công khai không cần khoá/nonce, trả JSON `{total, members:[{id,name,addr,url}]}` — `pp` bị chặn
+trần ở 60 dù truyền giá trị lớn hơn (khác hẳn kiểu "bỏ qua tham số, trả nguyên mảng" của fablabs.io
+checkpoint 24), nên phải phân trang thật qua 68 lượt gọi `pg=1..68` để lấy đủ 4005 bản ghi — đây là
+biến thể MỚI của kỹ thuật 3 (API công khai không cần khoá) khi trang thật sự phân trang bắt buộc,
+không bỏ qua tham số như các lần trước.
+
+**Phát hiện quan trọng — trường `url` trong API KHÔNG PHẢI website tổ chức:** mỗi bản ghi chỉ có
+`url` trỏ về trang hồ sơ NỘI BỘ trên chính `repaircafe.org` (`/en/cafe/{slug}/`), không phải site
+riêng của nhóm Repair Café địa phương. Mở thử một trang hồ sơ mẫu lộ ra bảng field tuỳ biến kiểu
+Events Manager location, trong đó CÓ MỘT DÒNG `<td class="label">Website</td>` chỉ xuất hiện khi
+người tổ chức đã điền — đây là kỹ thuật MỚI, chưa từng dùng ở các checkpoint trước: "API liệt kê
+toàn bộ bản ghi + cào riêng từng trang hồ sơ để lấy trường URL bên ngoài thật", cần thiết khi API
+danh sách gốc không lộ sẵn cột website (khác các nguồn trước luôn có sẵn cột website trong chính
+JSON/CSV gốc).
+
+**Bẫy kỹ thuật MỚI — cào 4005 trang hồ sơ với 20 luồng làm sập tỉ lệ thành công:** lượt cào đầu
+(`ThreadPoolExecutor` 20 luồng, timeout 10s) chỉ hoàn tất sạch **1418/4005** (35%; 734 có Website +
+684 xác nhận trống), còn lại **2587/4005 (65%)** lỗi `502 Bad Gateway`/timeout — rõ ràng WAF
+Cloudflare phía trước site phản ứng với mức độ đồng thời cao bằng cách rớt kết nối hàng loạt, KHÔNG
+PHẢI do các trang hồ sơ đó thật sự lỗi. Lượt 2 CHỈ retry đúng 2587 bản ghi lỗi, hạ xuống 8 luồng/
+timeout 20s — cứu thêm **2531/2587 (97,8%)** thành công thật (trong đó 1360 có Website điền sẵn,
+tỉ lệ trúng Website trong nhóm retry cao hơn hẳn nhóm gốc, xác nhận đây đúng là lỗi mạng thoáng qua
+do quá tải luồng chứ không lệch mẫu dữ liệu — chỉ còn đúng 56/4005 hồ sơ thật sự không lấy được sau
+2 lượt). **Bài học cho lượt sau:** với site có WAF Cloudflare, KHÔNG bắt đầu bằng số luồng cao (20+)
+cho hàng nghìn request riêng lẻ tới cùng domain — nên bắt đầu ngay ở 8-10 luồng, chấp nhận chậm hơn
+một chút để tránh phải chạy lại gần 2/3 khối lượng.
+
+Kết quả cào: **2094/4005 (52,3%)** hồ sơ có điền trường Website. Lọc: bỏ 63 dòng `website` trỏ
+ngược lại chính `repaircafe.org` (không phải site ngoài thật), bỏ 571 dòng không suy ra được quốc
+gia từ chuỗi địa chỉ tự do (đa ngôn ngữ nl/en/fr/de/es, một số thiếu hẳn token quốc gia — CHƯA xử
+lý sâu hơn bằng geocoding thật, chấp nhận bỏ qua vì đã đủ lớn), 0 dòng Việt Nam, lọc trùng NỘI BỘ
+batch theo domain (310 trùng — nhiều Repair Café dùng chung website tổ chức mẹ/thư viện/trung tâm
+cộng đồng) → còn **1150** ứng viên. Lọc trùng với ROSTER hiện có theo domain+tên (`SOCIAL_PLATFORM_
+DOMAINS` loại trừ khỏi so khớp domain) — 19 trùng thật → còn **1131** ứng viên đưa vào `check_url()`.
+
+`check_url()` giữ **898/1131** lượt đầu (timeout 12s, 10 luồng), retry 233 mục chết bằng timeout
+20s/8 luồng — cứu thêm **19** → tổng **917/1131 sống thật (81,1%)**. Ghi nhận minh bạch: chỉ
+**11/917 (1,2%)** URL sống là domain mạng xã hội — thấp hơn hẳn tỉ lệ ~31% của fablabs.io checkpoint
+24, hợp lý vì người tổ chức Repair Café ở Tây Âu/Anglosphere (nhóm chiếm đa số batch này: Pháp 239,
+Hà Lan 236, Đức 232, Anh 171) có xu hướng lập blog/site WordPress riêng hoặc dùng site thư viện/tổ
+chức cộng đồng chủ quản hơn là chỉ dùng trang mạng xã hội.
+
+Quốc gia (top): Pháp 239, Hà Lan 236, Đức 232, Anh 171, Mỹ 81, Canada 43, Bỉ 38, Úc 33, Tây Ban Nha
+18, Ý 10 — đúng đặc điểm phong trào Repair Café khởi phát từ Hà Lan, lan mạnh Tây Âu/Anglosphere.
+Toạ độ gán CẤP QUỐC GIA (centroid), không có sẵn lat/lng riêng từng địa điểm trong dữ liệu nguồn.
+`org` để trống toàn batch (tên đã đủ mô tả, giống tiền lệ fablabs.io checkpoint 24 — nguồn không có
+cột tổ chức chủ quản tách biệt).
+
+`ROSTER`: 4584 → **5501** (+917). Đơn vị trên bản đồ: 4593 → **5510** (+917, giữ nguyên chênh lệch
++9 đã ghi nhận ổn định qua nhiều checkpoint — không phải lỗi).
+
+**Việc mở cho lượt sau (mục tiêu 10000, còn thiếu ~4499):** (1) 571 hồ sơ Repair Café bị bỏ qua vì
+không suy ra được quốc gia từ địa chỉ tự do — có thể cứu thêm bằng geocoding thật (Nominatim/Google)
+nếu muốn đào sâu thêm nguồn này, độ ưu tiên thấp vì tỉ lệ nhỏ; (2) các hướng nêu đầu phiên nhưng
+CHƯA THỬ (không phải đã loại): Hackerspaces.org, TechShop, Library of Things, Seedstars, Village
+Capital, UnternehmerTUM, EIT Community, đăng ký Estonia/Latvia/Lithuania, Canada NRC IRAP, Australia
+accelerator registry, mạng co-working phi lợi nhuận châu Âu/Á — đáng thử TRƯỚC ở lượt sau vì chưa
+tốn công loại; (3) bài học WAF/luồng cao ở trên nên áp dụng NGAY từ đầu cho bất kỳ site có Cloudflare
+nào cần cào nhiều trang riêng lẻ trong các lượt sau; (4) BIRAC BioNEST PDF lỗi cấu trúc vẫn chưa sửa
+được — việc mở cũ còn nguyên; (5) InovaLink Brazil vẫn bế tắc (Livewire, không phải REST list).
+
+**Lần trước:** 2026-09-09 (checkpoint 24 — **NGUỒN LỚN MỚI: fablabs.io, danh bạ toàn cầu chính
 thức của Fab Foundation (mạng lưới Fab Lab thế giới)**) — tiếp tục mục tiêu **10000**. Trước khi
 tìm ra nguồn này, đã thử và LOẠI vài hướng nêu trong đầu bài phiên này:
 
