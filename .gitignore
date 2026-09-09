@@ -1,3 +1,4 @@
 .DS_Store
 _claude/tools/usage.log
+_claude/tools/_ne50_countries_cache.geojson
 __pycache__/

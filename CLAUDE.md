@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 6655 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 8837 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,59 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 27 — **NGUỒN LỚN MỚI: OpenStreetMap, kỹ thuật MỚI "Overpass
+**Lần cuối:** 2026-09-09 (checkpoint 28 — **CÙNG NGUỒN OpenStreetMap, tag MỚI `office=research`**)
+— tiếp tục mục tiêu **10000**. Đây là việc mở đã ghi ở checkpoint 27: thử tag OSM khác ngoài
+`leisure=hackerspace`. Kiểm `taginfo.openstreetmap.org` trước khi query: `office=research` ("An
+office for research and development") có **15715** điểm toàn cầu — lớn hơn hẳn `amenity=science_park`
+(chỉ 25, quá nhỏ) và các giá trị tự do không chuẩn hoá "incubator"/"innovation"/"technology_park"
+(không tồn tại như tag key=value thật, chỉ xuất hiện rải rác trong `name`/`description` tự do — OSM
+không có tag chuẩn cho "trung tâm ĐMST/vườn ươm" tách biệt). Lấy mẫu 100 điểm đầu xem tên: đa số là
+viện nghiên cứu đại học/hàn lâm thật (Max-Planck-Institut, Fraunhofer-Institut, viện SAV Slovakia,
+CNRS, trạm nghiên cứu cực...) — đúng nghĩa "trung tâm nghiên cứu của đại học" xếp ĐẦU TIÊN trong
+mô tả Atlas, dù có lẫn thiểu số văn phòng R&D doanh nghiệp/viện ngành hẹp (chấp nhận được, cùng mức
+đa dạng như các batch OSM khác đã dùng).
+
+Truy vấn `[out:json];(node["office"="research"]["name"]["website"];way[...];);out tags center;` +
+biến thể `contact:website` thay `website` (một số điểm chỉ có field này) → gộp theo `(type,id)` được
+**4249** điểm duy nhất có tên. Áp dụng lại kỹ thuật point-in-polygon Natural Earth 1:50m từ checkpoint
+27 (LẦN NÀY LƯU LẠI THÀNH MODULE DÙNG LẠI ĐƯỢC: `_claude/tools/country_from_latlon.py`, class
+`CountryLookup` — checkpoint 27 chỉ viết tay trong scratchpad rồi mất khi phiên kết thúc, phải viết
+lại từ đầu; lần này lưu vào repo để batch sau có sẵn, không cần viết lại lần 3) — 100% điểm có
+lat/lon thật (node/way `center`), phân loại quốc gia cho 4078/4249, loại 154 điểm rơi ngoài mọi biên
+giới quốc gia (đảo nhỏ/vùng biển) và 9 điểm ở Antarctica (không phải quốc gia, loại toàn bộ — ROSTER
+chưa có tiền lệ trạm cực). 0 điểm Việt Nam giữ lại đúng quy tắc.
+
+Lọc trùng: loại 142 trùng domain + 4 trùng tên với ROSTER hiện có, loại 1166 trùng nội bộ batch (nhiều
+viện/phòng ban khác nhau của cùng một đại học/viện hàn lâm dùng chung một domain, vd nhiều "Ústav ...
+SAV" khác nhau nhưng cùng kiểu tên miền phụ — coi là cùng thực thể website cấp tổ chức) → còn **2757**
+ứng viên. Kiểm sống `check_url()` (8 luồng, timeout 15s): alive lượt 1 **2134/2757**. Retry 623 lỗi (6
+luồng, timeout 20s): cứu thêm **48** → tổng **2182/2757 sống thật (79,1%)**. Nga rơi từ 381 ứng viên
+xuống chỉ 5 dòng cuối (phần lớn domain `.ru` không phản hồi qua `check_url()` — hạ tầng mạng, không
+phải lỗi kỹ thuật của batch). Merge an toàn lần cuối: 0 trùng phát sinh thêm. Chỉ **7/2182 (0,3%)** URL
+sống là domain mạng xã hội. `org` để trống toàn batch (tag OSM `office=research` không có field tổ
+chức chủ quản tách biệt với tên).
+
+Quốc gia (top): Đức 563, Mỹ 288, Pháp 191, Tây Ban Nha 97, Ba Lan 71, Áo 70, Ý 68, Anh 52, Hà Lan 51,
+Bỉ 50 — Đức dẫn đầu áp đảo (mật độ gắn thẻ OSM cao nhất thế giới cho loại tag văn phòng/toà nhà, đúng
+xu hướng đã thấy ở các batch OSM trước).
+
+`ROSTER`: 6655 → **8837** (+2182). Đơn vị trên bản đồ: 6664 → **8846** (+2182, giữ nguyên chênh lệch
++9 đã ghi nhận ổn định qua nhiều checkpoint). Kiểm: `node --check` sạch trên script inline
+(2.100.231 ký tự), thẻ `div`/`section` cân bằng (107/107, 6/6), Browser pane qua HTTP server cục bộ
+hiển thị đúng "8846 đơn vị" / "8837 trong danh mục mở rộng", không lỗi console.
+
+**Việc mở cho lượt sau (mục tiêu 10000, còn thiếu ~1163):** (1) `shop=repair` qua Overpass — chưa thử,
+khả năng trùng nhiều với Repair Café đã lấy nhưng đáng kiểm; (2) HackerspaceWiki còn 238 "building" +
+351 "planned" chưa khai thác (độ ưu tiên thấp); (3) các wiki cộng đồng khác dùng Semantic MediaWiki
+chưa tìm ra ứng viên cụ thể; (4) OSM không có tag chuẩn riêng cho "incubator"/"innovation
+center"/"science park" (xác nhận qua taginfo lần này) — nếu muốn khai thác các khái niệm này qua OSM
+phải lọc theo `name`/`description` chứa từ khoá tự do, độ tin cậy thấp hơn nhiều so với tag có cấu
+trúc, cân nhắc kỹ trước khi thử; (5) 571 hồ sơ Repair Café bị bỏ qua vì thiếu quốc gia (việc mở cũ);
+(6) BIRAC BioNEST PDF lỗi cấu trúc vẫn chưa sửa được; (7) InovaLink Brazil vẫn bế tắc; (8) module mới
+`_claude/tools/country_from_latlon.py` (điểm mạnh: point-in-polygon Natural Earth 50m tái sử dụng
+được) — dùng lại ngay cho bất kỳ nguồn OSM/geo nào có lat/lon ở batch sau, đỡ phải viết lại.
+
+**Lần trước:** 2026-09-09 (checkpoint 27 — **NGUỒN LỚN MỚI: OpenStreetMap, kỹ thuật MỚI "Overpass
 API truy vấn tag `leisure=hackerspace`"**) — tiếp tục mục tiêu **10000**. Đầu phiên đã cân nhắc và
 LOẠI hướng "office=coworking" trên cùng nguồn OSM: Overpass trả **3268** điểm có tên+website, nhưng
 phần lớn là chuỗi văn phòng dịch vụ thương mại (WeWork 74, Regus 44, Spaces 39, Design Offices 37,
