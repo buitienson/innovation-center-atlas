@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 3217 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
+mục mở rộng (`ROSTER`, 4584 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
 tự sửa tay khi cần.
@@ -52,7 +52,91 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-09 (checkpoint 23 — **NGUỒN MỚI: Impact Hub Global (Google Sheet nhúng
+**Lần cuối:** 2026-09-09 (checkpoint 24 — **NGUỒN LỚN MỚI: fablabs.io, danh bạ toàn cầu chính
+thức của Fab Foundation (mạng lưới Fab Lab thế giới)**) — tiếp tục mục tiêu **10000**. Trước khi
+tìm ra nguồn này, đã thử và LOẠI vài hướng nêu trong đầu bài phiên này:
+
+- **Startup Genome Membership Directory** (`startupgenome.com/member-directory`) — trang tự ghi
+  rõ **"Private & Confidential – for Startup Genome Members only. Do not share outside the
+  network"** ngay trên trang — loại ngay lập tức dù đủ quy mô (~100 tổ chức, 40+ nước), vì đây là
+  dữ liệu hội viên riêng tư ghi rõ không được chia sẻ ra ngoài, không phải danh bạ công khai
+  (khác hẳn kiểu "cần đăng nhập" thông thường — ở đây có TRUY CẬP được nhưng bị cấm minh thị theo
+  nội dung trang, nên loại theo nguyên tắc đạo đức chứ không phải giới hạn kỹ thuật).
+- **SpaceAPI hackerspace directory** (`directory.spaceapi.io`, 250 hackerspace/makerspace) — giá
+  trị mỗi dòng là URL một **endpoint trạng thái API** (JSON máy đọc, vd
+  `https://hub.57north.org.uk/spaceapi`), không phải trang web tổ chức thật; dùng làm "website"
+  sẽ đưa người xem đến một khối JSON trần trụi thay vì trang giới thiệu — loại vì không đạt tiêu
+  chí "URL dẫn tới trang thật".
+- **Techstars/MassChallenge/GSMA tech hub mapping/Malaysia MRANTI/Saudi MCIT/Thailand NIA/
+  Poland NCBR/Hungary NKFIH/Qatar QSTP** — mỗi hướng đều dừng ở quy mô quá nhỏ (MassChallenge chỉ
+  8 địa điểm), không có danh bạ tải được, hoặc không lộ URL riêng từng tổ chức (Startup Genome/
+  GSMA chỉ có báo cáo/blog tổng hợp số liệu, không phải danh sách chi tiết công khai) — loại
+  nhanh theo tiêu chí "quy mô ≥100 + có URL thật, không đăng nhập" của đầu bài.
+- **InovaLink Brazil** (việc mở từ checkpoint 23) — vào lại bằng trình duyệt thật, bắt network
+  request thấy nền tảng Laravel Livewire gọi `POST /livewire/update` (payload trạng thái
+  component, không phải REST JSON list) — xác nhận đúng dự đoán cũ, không có endpoint danh sách
+  đơn giản, để lại y nguyên trong việc mở.
+
+**Nguồn dùng được: fablabs.io** (`fablabs.io`, nền tảng chính thức của Fab Foundation cho mạng
+lưới Fab Lab toàn cầu — không phải hiệp hội hội viên, là đăng ký trực tiếp từng phòng lab) — có
+API công khai không cần khoá tại `https://www.fablabs.io/api/labs` (bí danh cũ `/0/labs.json` và
+link tải "Download the Fab Labs list" trên trang `/labs` đều redirect về cùng endpoint này), trả
+về MỘT mảng JSON duy nhất chứa TOÀN BỘ 2856 lab (không phân trang — tham số `page`/`per_page`/
+`country_code` bị lờ đi hoàn toàn, luôn trả nguyên mảng đầy đủ). Mỗi bản ghi có sẵn `name`,
+`country_code` (ISO2), `latitude`/`longitude` (có ở 2618/2856 bản ghi), và `links` (mảng URL,
+lấy URL http(s) đầu tiên làm website) — đúng kiểu nguồn tốt nhất (không cần đoán URL, có sẵn
+toạ độ chính xác cho đa số bản ghi).
+
+**Bẫy kỹ thuật MỚI, đáng ghi nhớ cho lượt sau — tải một response JSON lớn (~5MB+) bị cắt cụt bí
+ẩn:** phiên mạng của máy này liên tục cắt cụt kết nối `curl` tải endpoint trên ở quanh mốc
+~5.3MB dù server trả `exit 0` bình thường (không phải lỗi HTTP, giống kiểu giới hạn TỔNG DUNG
+LƯỢNG truyền tải trên một kết nối dài chứ không phải giới hạn thời gian — thử với `-m` (timeout)
+rộng tới 600s vẫn cùng một mốc cắt cụt xảy ra ở các dung lượng ngẫu nhiên gần 5.3MB qua nhiều lần
+thử). **Cách vượt qua:** thêm cờ `curl --compressed` (yêu cầu nén gzip qua `Accept-Encoding`) —
+cùng nội dung logic giảm còn ~1MB truyền trên dây, lọt qua giới hạn, tải trọn vẹn 5.36MB sau giải
+nén (2856 bản ghi, JSON hợp lệ, xác minh bằng `json.load()`). Đáng thử cờ này ĐẦU TIÊN cho bất kỳ
+API nào trả một JSON lớn không phân trang mà gặp hiện tượng cắt cụt tương tự trong môi trường
+này, trước khi kết luận "API lỗi" hay "nguồn không tải được".
+
+**Cảnh báo giả (không phải lỗi thật):** một số tên hiển thị lỗi thành `C�te d'Ivoire` khi in ra
+console/terminal — kiểm lại bằng đọc thẳng byte UTF-8 trong file JSON xác nhận dữ liệu gốc và
+file trung gian đều ĐÚNG (`C\xc3\xb4te` hợp lệ), lỗi chỉ là do bảng mã hiển thị của terminal
+Windows khi `print()`, không ảnh hưởng dữ liệu thực tế ghi vào ROSTER — không cần sửa gì, chỉ ghi
+lại để lượt sau không hoảng khi thấy hiện tượng tương tự.
+
+Lọc: bỏ 115 dòng Việt Nam (`country_code=="VN"`, đúng quy tắc), bỏ 455 dòng không có `links` nào
+là URL http(s) thật, lọc trùng ROSTER hiện có bằng `domain_of`+`normalize_name`
+(`SOCIAL_PLATFORM_DOMAINS` loại trừ khỏi so khớp domain) — 70 trùng thật, lọc trùng NỘI BỘ batch
+theo domain — 151 trùng (nhiều lab dùng chung 1 website tổ chức mẹ) → còn **2065 ứng viên**. 144
+bản ghi thiếu sẵn toạ độ (tổng cộng rơi vào 56 nước khác nhau) được gán centroid CẤP QUỐC GIA viết
+tay (`COUNTRY_CENTROID`, chỉ phủ đúng các nước xuất hiện trong batch này); phần lớn (~92%) giữ
+nguyên toạ độ chính xác có sẵn từ nguồn — hiếm gặp mức chính xác này cho một batch cỡ 2000+.
+
+`check_url()` giữ **1321/2065** lượt đầu (timeout 12s, 10 luồng `ThreadPoolExecutor`), rồi kiểm
+lại 744 mục chết bằng timeout 20s — cứu thêm **46** (phần lớn lỗi `URLError`/`HTTPError` thoáng
+qua do mạng, đúng mẫu hình đã ghi nhận ở các checkpoint trước) → tổng **1367/2065 sống thật**
+(≈66,2%). Ghi nhận: khoảng 31% (407/1321) URL sống trỏ tới trang mạng xã hội (chủ yếu Facebook/
+Instagram) thay vì website riêng — hợp lý với thực tế nhiều fab lab nhỏ/vùng khó khăn chỉ duy trì
+trang Facebook, đúng tiền lệ đã chấp nhận từ checkpoint 22 (không phải vấn đề mới, không loại).
+
+`org` để trống toàn batch (dữ liệu fablabs.io không có cột tổ chức chủ quản tách biệt khỏi tên
+lab). Gồm cả 3 loại `kind_name`: `fab_lab` (đa số), `mini_fab_lab`, `mobile` — đều là không gian
+chế tạo/fab lab thật, đúng phạm vi ROSTER.
+
+`ROSTER`: 3217 → **4584** (+1367). Đơn vị trên bản đồ: 3226 → **4593** (xác nhận bằng bộ đếm
+hiển thị trên trang qua `index.html` chạy local HTTP server, khớp số script tính ra).
+
+**Việc mở cho lượt sau (mục tiêu 10000, còn thiếu ~5416):** (1) cờ `curl --compressed` nên trở
+thành thao tác MẶC ĐỊNH đầu tiên cho mọi lần tải JSON lớn trong môi trường này, không chỉ khi gặp
+lỗi cắt cụt — tiết kiệm nhiều lượt thử sai; (2) fablabs.io còn ~700 mục "chết thật" sau 2 lượt
+kiểm (chủ yếu domain cá nhân/dự án nhỏ đã hết hạn) — không đáng thử lại; (3) InovaLink Brazil vẫn
+chưa giải quyết được (Livewire component state, không phải REST list) — độ ưu tiên thấp; (4)
+BIRAC BioNEST PDF lỗi cấu trúc vẫn chưa sửa được — việc mở cũ còn nguyên; (5) hướng "đăng ký
+chính phủ có cột website" vẫn là hướng chính cần tìm tiếp cho các nước Á/Phi/Trung Đông chưa dò
+(Malaysia/Saudi Arabia/Thailand/Qatar đã thử và loại phiên này vì không có danh bạ công khai lộ
+URL, không phải vì bị chặn — nên coi là cạn hẳn, không thử lại các nước này).
+
+**Lần trước:** 2026-09-09 (checkpoint 23 — **NGUỒN MỚI: Impact Hub Global (Google Sheet nhúng
 sẵn trong bản đồ thành viên, đúng kỹ thuật 2) + AIC India (đăng ký chính phủ NITI Aayog, đúng
 kỹ thuật 1)**) — sếp nâng mục tiêu lên **10000**. Trước khi tìm ra 2 nguồn này, đã thử và LOẠI
 một loạt hướng lớn nêu trong đầu bài phiên này:
