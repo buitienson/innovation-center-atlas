@@ -337,7 +337,8 @@ nguyên chênh lệch +9). Kiểm trước khi ghi: `git status`/`git log` sạc
 sạch, thẻ `div`/`section` cân bằng (111/111, 6/6), mở qua HTTP server cục bộ (Browser pane) đọc đúng
 "20022 đơn vị được lập bản đồ" / "20013 trong danh mục mở rộng" / "12 đơn vị tại Việt Nam" (không
 đổi) / "9 case phân tích chuyên sâu" (không đổi), console sạch (chỉ favicon 404 có sẵn từ trước).
-Commit `e2f9f52` (gộp cùng phần bản đồ zoom HN/HCM ở mục riêng phía trên), `git push origin main`.
+Commit `c4f0f5a` (riêng; phần bản đồ zoom HN/HCM ở mục riêng phía trên là 2 commit khác,
+`18c80dc`+`c29c356`, cùng phiên), `git push origin main`.
 
 **Còn thiếu ~9987 để đạt 30000.** **Việc mở cho lượt sau:** (1) dewiki `Kategorie:Technologiepark`
 coi như đã khai thác hết (chỉ 50 trang, không có category quốc gia nào khác ngoài Deutschland/
