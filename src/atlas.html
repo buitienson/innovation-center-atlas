@@ -1266,12 +1266,27 @@ function hexToRgb(hex){
    region's lat/lng box — lets the Asia/SEA/Vietnam panels show the same
    roster density as the globe, not just the 6 flagship cases. */
 function rosterPointsInBounds(bounds){
+  // One dot per COUNTRY (the first one encountered in ROSTER order, not
+  // ranked by anything - "hoành tráng nhất" is just whichever comes first)
+  // keeps the glow+blink animation; every other dot of that country is
+  // static. That's animated-element count = country count in view (tens,
+  // not thousands), which keeps the map feeling alive without reintroducing
+  // the perpetual-animation cost that caused CẬP NHẬT 4's regression.
+  var seenCountries = {};
   return ROSTER.filter(function(r){
     return r[4]!=null && r[5]!=null && r[4]>=bounds.latMin && r[4]<=bounds.latMax && r[5]>=bounds.lngMin && r[5]<=bounds.lngMax;
   }).map(function(r){
     var rtype = classifyRosterType(r[0], r[1]);
-    var color = rtype==='university'?'#8FB0F0':rtype==='company'?'#4DD0C8':rtype==='network'?'#B79CE8':'#9AA3B8';
-    return {lat:r[4], lng:r[5], label:r[0], showLabel:false, small:true, color:color};
+    // Same vivid hues as the 3D globe's TYPE_HEX (not the softer pastel
+    // palette shared by badges/chips elsewhere, e.g. VN_TYPE_COLORS) - at
+    // the roster dot's small static size on a 2D map, the pastel tones read
+    // as washed-out/dull (sếp: "màu nhờ nhờ"); the globe's punchier colors
+    // read clearly even at r=1.
+    var color = rtype==='university'?'#408CFF':rtype==='company'?'#00E0C6':rtype==='network'?'#BE5AFF':'#C8D2E6';
+    var country = r[2] || '';
+    var blink = !seenCountries[country];
+    seenCountries[country] = true;
+    return {lat:r[4], lng:r[5], label:r[0], showLabel:false, small:true, color:color, blink:blink};
   });
 }
 /* Small stat summary for a region's roster subset — count, country spread,
@@ -1516,20 +1531,22 @@ function buildCoordMap(svg, bounds, points, opts){
     // scattered "twinkling" rather than every dot pulsing in lockstep.
     var delay = ((pidx*37) % 240) / 100;
     if(p.small){
-      // Glow halo brought back for color/depth (2 circles again, like the
-      // pre-lag original) but WITHOUT the `core-glow`/`core-blink` classes -
-      // those carry a perpetual `animation:...infinite` in CSS, and that
-      // ongoing per-frame animation evaluation across thousands of
-      // concurrently-animating elements turned out to be a real, standalone
-      // cost distinct from the pan/zoom transform-attribute bug fixed
-      // earlier - reintroducing it brought the lag straight back (confirmed
-      // by sếp) even though the transform fix itself is still working fine.
-      // Static color/opacity/radius give most of the "colorful" look without
-      // that ongoing cost; only the flagship "big" points (a handful) still
-      // blink continuously.
+      // Glow halo for color/depth on every dot (2 circles, like the pre-lag
+      // original), but the `core-glow`/`core-blink` animation classes -
+      // which carry a perpetual `animation:...infinite` in CSS - are now
+      // applied to only ONE dot per country (p.blink, set in
+      // rosterPointsInBounds()) instead of every dot. Animating everything
+      // was a real, standalone cost distinct from the pan/zoom transform-
+      // attribute bug fixed earlier and brought the lag straight back when
+      // tried (confirmed by sếp) even with that fix in place; one live
+      // "sparkle" per country (tens of elements, not thousands) keeps the
+      // map feeling alive at negligible cost.
       var sizeMul = p.sizeMul || 1;
-      var glow = svgEl('circle',{class:'roster-glow',cx:xy[0],cy:xy[1],r:2*sizeMul,fill:p.color,opacity:'0.28'});
-      var core = svgEl('circle',{class:'core',cx:xy[0],cy:xy[1],r:1*sizeMul,fill:p.color,opacity:'0.95'});
+      var glowCls = p.blink ? 'roster-glow core-glow' : 'roster-glow';
+      var coreCls = p.blink ? 'core core-blink' : 'core';
+      var glow = svgEl('circle',{class:glowCls,cx:xy[0],cy:xy[1],r:2*sizeMul,fill:p.color,opacity:'0.28'});
+      var core = svgEl('circle',{class:coreCls,cx:xy[0],cy:xy[1],r:1*sizeMul,fill:p.color,opacity:'0.95'});
+      if(p.blink) glow.style.animationDelay = core.style.animationDelay = delay+'s';
       g.appendChild(glow); g.appendChild(core);
       var titleEl = svgEl('title',{}); titleEl.textContent = p.label; g.appendChild(titleEl);
       // showLabel:false (every ROSTER point passed into these maps sets this)
