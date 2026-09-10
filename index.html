@@ -1507,15 +1507,21 @@ function buildCoordMap(svg, bounds, points, opts){
     // scattered "twinkling" rather than every dot pulsing in lockstep.
     var delay = ((pidx*37) % 240) / 100;
     if(p.small){
-      // Smaller than before (was r=5/2.1) - with ROSTER now contributing
-      // thousands of "small" points to these regional maps (Asia alone has
-      // ~4100 in-bounds), the old radius packed them into an unreadable
-      // solid smear wherever points cluster (sếp flagged this directly).
+      // Static, single circle - no glow halo, no blink animation, smaller
+      // radius still shrinking further (was 5/2.1, then 2.6/1.1). With
+      // ROSTER now contributing thousands of "small" points to these maps
+      // (Asia alone ~4100 in-bounds), that used to mean ~2 circles x
+      // thousands of dots ALL running a perpetual `infinite` CSS keyframe
+      // animation at once - a real, ongoing paint/style cost distinct from
+      // (and additional to) the label-overlap bug fixed above, and one CSS
+      // animations on this many concurrent SVG elements can be heavy on
+      // weaker hardware regardless of how cheap any single one looks in
+      // isolation. Sếp asked directly for this simplification after the
+      // label fix alone wasn't enough. The few flagship/"big" points (CASES,
+      // NUS/BLOCK71 - a handful, not thousands) keep their glow+blink below.
       var sizeMul = p.sizeMul || 1;
-      var glow = svgEl('circle',{class:'core-glow',cx:xy[0],cy:xy[1],r:2.6*sizeMul,fill:p.color,opacity:'0.25'});
-      var core = svgEl('circle',{class:'core core-blink',cx:xy[0],cy:xy[1],r:1.1*sizeMul,fill:p.color,opacity:'0.95'});
-      glow.style.animationDelay = core.style.animationDelay = delay+'s';
-      g.appendChild(glow); g.appendChild(core);
+      var core = svgEl('circle',{class:'core',cx:xy[0],cy:xy[1],r:0.9*sizeMul,fill:p.color,opacity:'0.85'});
+      g.appendChild(core);
       var titleEl = svgEl('title',{}); titleEl.textContent = p.label; g.appendChild(titleEl);
       // showLabel:false (every ROSTER point passed into these maps sets this)
       // used to be silently ignored here - unlike the non-small branch below,
