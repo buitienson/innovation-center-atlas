@@ -16,6 +16,26 @@ tự sửa tay khi cần.
 **Artifact (bản xem/sửa nhanh):** https://claude.ai/code/artifact/175ea757-eca9-4a87-acc8-47981ab5b129
 **GitHub:** https://github.com/buitienson/innovation-center-atlas
 
+## Hiệu năng trang — thủ phạm THẬT là bảng danh sách ROSTER, không phải quả cầu 3D
+
+**Bài học quan trọng nhất** (commit `bc8d9ba`, 2026-09-10): sau khi vá quả cầu 3D xuống còn
+16 draw call (xem mục dưới), sếp vẫn báo giật — hoá ra nguyên nhân chính không nằm ở quả cầu
+mà ở **bảng tìm kiếm ROSTER** (`renderRosterTable()`): khi mở trang, KHÔNG có bộ lọc nào áp
+dụng, hàm này dựng nguyên **19848 dòng `<tr>`** (~80000 node DOM) vào `#rosterBody` ngay lúc
+tải trang, khiến tổng trang có **155290 node DOM** — gây giật khi mở trang, khi gõ tìm kiếm
+(dựng lại toàn bộ bảng mỗi phím gõ, không debounce), và khi cuộn qua bảng khổng lồ đó. Đã sửa:
+giới hạn số dòng THỰC SỰ dựng vào DOM ở 300 (`ROSTER_TABLE_MAX`), kèm ghi chú khi bị cắt bớt —
+tìm kiếm/lọc vẫn khớp trên TOÀN BỘ ROSTER trong bộ nhớ, chỉ phần vẽ ra DOM bị giới hạn. Đã đo
+trực tiếp: tổng DOM node giảm từ 155290 xuống 38002.
+
+**Bài học tổng quát cho lần sau khi ROSTER tiếp tục tăng (hướng 25000+):** khi có báo cáo
+"giật/lag" mà đã sửa xong 1 chỗ (vd quả cầu 3D) nhưng vẫn còn — ĐỪNG giả định chỗ vừa sửa
+chưa đủ và đào sâu thêm chỉ ở đó; kiểm tra CẢ TRANG bằng `document.querySelectorAll('*').length`
+xem tổng DOM node có bất thường không, vì bất kỳ danh sách/bảng nào dựng trực tiếp từ `ROSTER`
+mà không giới hạn số dòng (kiểu `rows.map(...).join('')`) đều sẽ tái diễn đúng lỗi này khi
+ROSTER đủ lớn — nên rà toàn bộ chỗ nào có `ROSTER.map`/`ROSTER.forEach` sinh HTML trực tiếp,
+không chỉ chỗ đã biết.
+
 ## Hiệu năng quả cầu 3D
 
 **Fix thật sự** (commit `f52528d`, 2026-09-10): mỗi loại ROSTER (university/company/network/
