@@ -6,7 +6,7 @@
 > Đây là routine **tách riêng** khỏi `_claude/routine-tin-tuc.md` (Tin tức +
 > Fund/Hackathon) — uỷ quyền tự động `git push` ở routine đó KHÔNG áp dụng
 > cho routine này; routine này có uỷ quyền riêng, xác nhận ngày 2026-09-06
-> (xem `CLAUDE.md` mục "Lần cuối").
+> (xem `CLAUDE.md` mục "## Lịch sử tăng trưởng ROSTER").
 
 > ⚠️ **CHƯA TẠO CLOUD ROUTINE.** Cơ chế đã kiểm chứng hoạt động đúng (xem
 > "Tình trạng hiện tại"), nhưng hàng đợi (`roster-grow-queue.md`) mới có mô tả
@@ -150,9 +150,23 @@ có thể ước lượng sai URL của tổ chức khi trang nguồn không có
 6. **Commit + push thẳng lên `main`** (uỷ quyền riêng cho routine này, xác
    nhận 2026-09-06 — không cần hỏi lại mỗi lượt). Message dạng:
    `Grow roster: <mô tả ngắn mục vừa xử lý> (+N mục, routine tự động, YYYY-MM-DD)`.
-7. **Cập nhật `CLAUDE.md` mục "Lần cuối"** trong cùng commit — ghi đè, không
-   nối — nêu mục vừa xử lý + số lượng thêm được, ghi rõ đây là lượt chạy tự
-   động kèm ngày giờ chạy.
+7. **Cập nhật `CLAUDE.md` mục "## Lịch sử tăng trưởng ROSTER"** trong cùng
+   commit — **NỐI TIẾP, KHÔNG BAO GIỜ ghi đè/xoá**: đổi khối "**Lần cuối:**"
+   hiện có (checkpoint N) thành "**Lần trước:**" (giữ nguyên nội dung), rồi
+   thêm khối "**Lần cuối:**" MỚI (checkpoint N+1) lên đầu, nêu mục vừa xử lý +
+   số lượng thêm được, ghi rõ đây là lượt chạy tự động kèm ngày giờ chạy. Đây
+   là lịch sử tích luỹ qua hàng chục checkpoint (nguồn đã thử/loại) — xoá mất
+   là mất công sức nhiều phiên, không phải chỉ 1 dòng trạng thái.
+
+   **CẢNH BÁO — sự cố thật đã xảy ra 2026-09-10 do đúng câu chữ "ghi đè, không
+   nối" từng viết ở đây (đã sửa lại như trên):** `CLAUDE.md` còn 1 mục KHÁC,
+   RIÊNG BIỆT, tên "## Routine tin tức / fund-hackathon — trạng thái lần chạy
+   gần nhất" (của `_claude/routine-tin-tuc.md`) — mục đó MỚI thực sự dùng quy
+   ước ghi đè. Cả 2 mục đều có dòng bắt đầu bằng "**Lần cuối:**" — một agent
+   chạy routine tin tức từng match nhầm dòng "Lần cuối" của MỤC NÀY (ROSTER)
+   rồi ghi đè mất hơn 3000 dòng lịch sử 47 checkpoint, phải khôi phục từ git.
+   **Khi sửa mục này, chỉ động vào nội dung bên trong heading "## Lịch sử
+   tăng trưởng ROSTER" — tuyệt đối không chạm mục tin tức phía trên nó.**
 
 ## Ràng buộc nội dung — nhắc lại, áp dụng nghiêm ngặt hơn routine tin tức
 

@@ -139,9 +139,25 @@ hoặc ngược lại, hoặc cả hai, hoặc không thêm gì cả.
     cần hỏi lại mỗi lượt). Message dạng:
     `Add N tin + M cơ hội tài trợ/ĐMST (routine tự động, YYYY-MM-DD)` (bỏ phần
     nào bằng 0 khỏi message).
-13. **Cập nhật `CLAUDE.md` mục "Lần cuối"** trong cùng commit — ghi đè, không
-    nối — liệt kê tiêu đề các tin/mục vừa thêm ở cả hai phần (phần nào không có
-    gì thì không cần nhắc), ghi rõ đây là lượt chạy tự động kèm ngày giờ chạy.
+13. **Cập nhật `CLAUDE.md` mục "## Routine tin tức / fund-hackathon — trạng thái
+    lần chạy gần nhất"** trong cùng commit — ghi đè, không nối — liệt kê tiêu đề
+    các tin/mục vừa thêm ở cả hai phần (phần nào không có gì thì không cần nhắc),
+    ghi rõ đây là lượt chạy tự động kèm ngày giờ chạy.
+
+    **CẢNH BÁO — sự cố thật đã xảy ra 2026-09-10, đừng lặp lại:** `CLAUDE.md`
+    còn một mục KHÁC, HOÀN TOÀN RIÊNG, tên "## Lịch sử tăng trưởng ROSTER" —
+    mục đó dùng đúng cụm chữ "**Lần cuối:**" cho checkpoint mới nhất của quy
+    trình MỞ RỘNG DANH MỤC ROSTER (khác hẳn routine tin tức này), và quy ước
+    của mục đó là NỐI TIẾP (đổi "Lần cuối" cũ thành "Lần trước", không bao giờ
+    xoá) — TRÁI NGƯỢC với quy ước "ghi đè" của mục tin tức. Một agent chạy
+    routine này từng match nhầm vào đúng dòng "**Lần cuối:**" của mục ROSTER
+    (vì tìm kiếm chuỗi "Lần cuối" mà không phân biệt 2 mục) và GHI ĐÈ MẤT hơn
+    3000 dòng lịch sử 47 checkpoint ROSTER — phải khôi phục lại từ git history.
+    **Chỉ được sửa đúng bên trong mục "## Routine tin tức / fund-hackathon —
+    trạng thái lần chạy gần nhất" (đã có mốc `---` + heading `##` riêng ngăn
+    cách phía trên nó) — TUYỆT ĐỐI không động vào bất kỳ dòng nào bên trong
+    mục "## Lịch sử tăng trưởng ROSTER" phía dưới, kể cả khi nó cũng chứa chữ
+    "Lần cuối".**
 
 ## Ràng buộc nội dung — nhắc lại từ `CLAUDE.md`
 
