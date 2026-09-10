@@ -1265,9 +1265,10 @@ function hexToRgb(hex){
 /* Roster entries whose (country-level, jittered) coordinates fall inside a
    region's lat/lng box — lets the Asia/SEA/Vietnam panels show the same
    roster density as the globe, not just the 6 flagship cases. */
-// EXPERIMENT (sếp asked to try 2x the blinking-dot count as a stress test):
-// how many dots per country get the glow+blink animation, was 1.
-var BLINK_PER_COUNTRY = 2;
+// EXPERIMENT (sếp pushing this further as a stress test to find the actual
+// ceiling: 1 -> 2 -> now aiming for ~1000 blinking dots) - how many dots per
+// country get the glow+blink animation.
+var BLINK_PER_COUNTRY = 30;
 function rosterPointsInBounds(bounds){
   // BLINK_PER_COUNTRY dots per COUNTRY (the first ones encountered in
   // ROSTER order, not ranked by anything - "hoành tráng nhất" is just
