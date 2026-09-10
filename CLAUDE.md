@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 19848 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20006 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -211,6 +211,18 @@ Các file thô dùng để dựng dữ liệu (roster CGCN/TTO thế giới ~786
 WURI ranking đã tải, script cào/gộp dữ liệu) đang nằm ở thư mục scratchpad của phiên làm
 việc — **sẽ mất khi phiên kết thúc**. Cần giữ lâu dài thì chuyển thủ công vào
 `01-nguon/` ở đây trước khi đóng phiên.
+
+## Panel Việt Nam trên bản đồ 2D — chỉ hiện đúng 149 đơn vị Việt Nam
+
+Đã sửa (commit `7ece197`, `9b48f90`, 2026-09-10): trước đó panel/tab Việt Nam bị
+`rosterPointsInBounds(VN_BOUNDS)` gộp thêm các mục ROSTER của NƯỚC KHÁC rơi vào khung toạ
+độ Việt Nam (149 → 315 đơn vị/9 quốc gia hiển thị sai ở ô thống kê, đồng thời các chấm
+sáng không phải Việt Nam vẫn bị vẽ chồng lên bản đồ). Đã sửa cả 2 lớp: `regionStats()`
+nhận thêm `opts.skipRoster` để tab VN chỉ đếm `VN_UNITS`/mạng lưới, KHÔNG quét ROSTER; và
+`vnPoints` bỏ hẳn `.concat(rosterPointsInBounds(VN_BOUNDS))`. Các nước khác trên bản đồ VN
+giờ tô xám (`grayNonHighlight`), riêng Việt Nam (gồm Hoàng Sa/Trường Sa) giữ màu. **Nhớ:**
+ROSTER theo quy ước không chứa Việt Nam — bất kỳ hàm mới nào lấy dữ liệu cho tab/panel
+Việt Nam PHẢI dùng `VN_UNITS`/mạng lưới riêng, không được quét ROSTER theo toạ độ.
 
 ## Quy tắc nội dung — nhắc lại vì đã bị vi phạm nhiều lần trong lúc dựng
 
