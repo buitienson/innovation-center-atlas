@@ -2194,6 +2194,21 @@ document.addEventListener('click', function(e){
 // never a placeholder. The site owner adds items here over time — this is
 // not an automated feed.
 var NEWS = [
+  {date:'2026-09-09', source:'Deccan Herald', url:'https://www.deccanherald.com/india/karnataka/bengaluru/iiscs-fsid-appoints-omprakash-subbarao-as-ceo-startup-incubator-targets-300-startups-by-2030-4139320',
+    image:'https://media.assettype.com/deccanherald%2F2026-09-08%2Fn5uv1vr7%2Ffile87i0uaef1z61hja2bzw.jpeg?rect=0%2C17%2C902%2C474&w=1200&ar=40%3A21&auto=format%2Ccompress&ogImage=true&mode=crop',
+    title:{vi:'FSID của Viện Khoa học Ấn Độ (IISc) bổ nhiệm CEO mới, đặt mục tiêu 300 startup deep-tech đến 2030', en:'IISc\'s FSID appoints new CEO, targets 300 deep-tech startups by 2030'},
+    summary:{vi:'Foundation for Science, Innovation and Development (FSID) thuộc Viện Khoa học Ấn Độ (IISc, Bengaluru) bổ nhiệm Omprakash Subbarao làm CEO đầu tiên xuất thân từ giới công nghiệp, hiện có hơn 140 startup trong hệ sinh thái và đặt mục tiêu 300 startup deep-tech cùng 1.000 dự án hợp tác doanh nghiệp đến năm 2030.',
+      en:'The Foundation for Science, Innovation and Development (FSID) at the Indian Institute of Science (IISc, Bengaluru) has appointed Omprakash Subbarao as its first industry-background CEO; FSID currently hosts over 140 startups and aims to build a portfolio of 300 deep-tech startups and 1,000 industry projects by 2030.'}},
+  {date:'2026-09-03', source:'Cambridge Enterprise', url:'https://www.enterprise.cam.ac.uk/news/ai-digital-twin-platform-outperforms-conventional-biomarkers-in-predicting-response-in-pancreatic-cancer/',
+    image:'https://www.enterprise.cam.ac.uk/wp-content/uploads/2026/09/farrsight-over-shoulder-mockup.png',
+    title:{vi:'Concr (Cambridge Enterprise) công bố nền tảng AI "digital twin" FarrSight dự đoán đáp ứng điều trị ung thư tuyến tụy', en:'Cambridge Enterprise spin-out Concr unveils FarrSight AI digital-twin platform for pancreatic cancer treatment response'},
+    summary:{vi:'Concr, công ty trong danh mục đầu tư của Cambridge Enterprise, công bố nền tảng AI digital twin FarrSight dựa trên mô hình Bayesian và 25 tỷ điểm dữ liệu; trong nghiên cứu về ung thư tuyến tụy, nền tảng đạt AUC 72,3% so với 44,8% của biomarker thông thường.',
+      en:'Concr, a Cambridge Enterprise portfolio company, unveiled its FarrSight AI digital-twin platform, built on a Bayesian model and 25 billion data points; in a pancreatic cancer study it achieved an AUC of 72.3% versus 44.8% for conventional biomarkers.'}},
+  {date:'2026-09-03', source:'Báo Nhân Dân', url:'https://nhandan.vn/xay-dung-he-sinh-thai-khoi-nghiep-sang-tao-ben-vung-post986205.html',
+    image:'https://cdn.nhandan.vn/images/IvCZyovHroGqKo00FqhL-LNJjOAx2iaJHgP74nE7DWr35v5VM1_TcteGLWVYjPWJa7jNEfODgfVC1ugKZPZuLA/page4-grid-1-img1.jpg.webp',
+    title:{vi:'Đà Nẵng xây dựng hệ sinh thái khởi nghiệp đổi mới sáng tạo bền vững', en:'Da Nang builds a sustainable innovation-startup ecosystem'},
+    summary:{vi:'Theo StartupBlink, Đà Nẵng có tốc độ tăng trưởng hệ sinh thái khởi nghiệp nhanh nhất Việt Nam năm 2026; 5 năm qua thành phố phát triển 189 dự án khởi nghiệp sáng tạo, hình thành 83 doanh nghiệp, hướng tới mục tiêu hỗ trợ ít nhất 600 dự án và 500 doanh nghiệp đến năm 2030.',
+      en:'According to StartupBlink, Da Nang had Vietnam\'s fastest-growing startup ecosystem in 2026; over the past 5 years the city has developed 189 innovation-startup projects and formed 83 enterprises, aiming to support at least 600 projects and 500 enterprises by 2030.'}},
   {date:'2026-09-05', source:'Báo Nhân Dân', url:'https://en.nhandan.vn/vk-connect-2026-promotes-knowledge-links-between-viet-nam-rok-post166300.html',
     image:'https://en-cdn.nhandan.vn/images/PGsdfWzXfw3FSVNqQeLLm0WnHh29tUBsJfHYyabQ5hz-uX-lTsuxS7Yiggdqsn2xshCXmgI3hJXGVRYJMfGPzA/diendan3.jpg.webp',
     title:{vi:'Diễn đàn Kết nối tri thức Việt Nam - Hàn Quốc VK Connect 2026 tại Daegu', en:'VK Connect 2026 forum promotes knowledge links between Vietnam and the Republic of Korea'},
@@ -2265,6 +2280,13 @@ function renderNews(){
 // "see official page" instead of guessing one. The site owner adds/updates items
 // over time; this is not an automated feed.
 var FUNDING = [
+  {id:'khoi-nghiep-mien-bac-2026', type:'competition', deadline:'2026-10-25',
+    title:{vi:'Khởi nghiệp sáng tạo miền Bắc 2026 — chủ đề "Sáng tạo số cho tương lai bền vững"', en:'Northern Vietnam Innovation Startup 2026 — theme "Digital creativity for a sustainable future"'},
+    org:{vi:'Trường Quản trị và Kinh doanh (HSB), Đại học Quốc gia Hà Nội, phối hợp Sở GD&ĐT Hà Nội, Quảng Ninh, Hưng Yên', en:'HSB School of Business, Vietnam National University Hanoi, with the Departments of Education & Training of Hanoi, Quang Ninh, and Hung Yen'},
+    theme:{vi:'Ý tưởng/dự án khởi nghiệp sáng tạo số, dành cho học sinh trung học phổ thông.', en:'Digital innovation-startup ideas/projects, for high-school students.'},
+    location:{vi:'Hà Nội, Quảng Ninh, Hưng Yên', en:'Hanoi, Quang Ninh, Hung Yen'},
+    prize:{vi:'Quán quân 30 triệu đồng + học bổng 50% học phí năm 1; các giải Nhì/Ba/Sáng tạo khác', en:'Champion: VND 30 million + 50% first-year tuition scholarship; additional runner-up/creativity prizes'},
+    url:'https://nhandan.vn/khoi-dong-cuoc-thi-khoi-nghiep-sang-tao-mien-bac-danh-cho-hoc-sinh-trung-hoc-pho-thong-post987323.html'},
   {id:'rnd-to-startup-2026', type:'competition', deadline:'2026-09-30',
     title:{vi:'RND to Startup 2026 — Cuộc thi khởi nghiệp sáng tạo ĐHQGHN', en:'RND to Startup 2026 — VNU Hanoi innovation startup contest'},
     org:{vi:'Đại học Quốc gia Hà Nội', en:'Vietnam National University, Hanoi'},
