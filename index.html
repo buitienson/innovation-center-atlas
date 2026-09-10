@@ -1252,8 +1252,13 @@ function countryFlag(countryName){
 }
 var MODEL_HEX = {tto:'#FFCC4E', holdings:'#4DD0C8', network:'#B79CE8', hybrid:'#F472B6'};
 var CONT_HEX = {as:'#E8B84B', eu:'#6FA8DC', af:'#7FBF7F', na:'#E8935A', sa:'#5BC0B8', oc:'#B79CE8', an:'#8A93A8'};
-function landColors(country){
+function landColors(country, grayOthers){
   if(country.vn) return {fill:'rgba(255,90,99,0.22)', stroke:'#FF5A63', width:1.6};
+  // grayOthers: the Vietnam-focused panel wants every OTHER country flat
+  // gray instead of colored by continent, so Vietnam is the one thing that
+  // visually pops (sếp: "bỏ bản đồ quốc gia khác thành 1 màu xám đi"). Only
+  // that panel passes this - Asia/SEA keep per-continent coloring.
+  if(grayOthers) return {fill:'rgba(120,128,145,0.14)', stroke:'#5b6272', width:0.7};
   var hex = CONT_HEX[country.cont] || '#C7D0E8';
   var rgb = hexToRgb(hex);
   return {fill:'rgba('+rgb+',0.16)', stroke:hex, width:0.7};
@@ -1299,12 +1304,22 @@ function rosterPointsInBounds(bounds){
    dominant institution type — computed straight from ROSTER, not maintained
    by hand, so it stays correct as the catalogue grows. extraCases lets the
    flagship CASES inside that region's bounds count toward the total too. */
-function regionStats(bounds, extraCases, extra){
+function regionStats(bounds, extraCases, extra, opts){
   // extra (optional): {count, type:'university'|'company'|'network', countryName}
   // — folds in a dataset the global roster doesn't cover (e.g. VN_UNITS,
   // since Vietnam wasn't part of the roster's bulk-search scope) so the
   // stat block matches what the map itself actually shows.
-  var inBounds = ROSTER.filter(function(r){
+  // opts.skipRoster (optional): for a single-country panel (Vietnam), a
+  // lat/lng box alone can't cleanly exclude a neighboring country's ROSTER
+  // entries near the border - counting them inflated the stat tiles (315/9
+  // countries) past what the panel's own header and text (149, 1 country)
+  // said, which sếp flagged as confusing. Vietnam's real data lives entirely
+  // in `extra`/`extraCases` (ROSTER excludes Vietnam by convention anyway),
+  // so skipping the ROSTER scan there makes the tiles agree with the rest of
+  // the panel. Asia/SEA keep the ROSTER scan (skipRoster left falsy) since
+  // those panels are meant to show broad multi-country roster density.
+  opts = opts || {};
+  var inBounds = opts.skipRoster ? [] : ROSTER.filter(function(r){
     return r[4]!=null && r[5]!=null && r[4]>=bounds.latMin && r[4]<=bounds.latMax && r[5]>=bounds.lngMin && r[5]<=bounds.lngMax;
   });
   var countries = {};
@@ -1488,7 +1503,7 @@ function buildCoordMap(svg, bounds, points, opts){
   // land masses (simplified silhouettes) + country name labels (revealed on zoom)
   if(opts.land && opts.land.length){
     opts.land.forEach(function(country){
-      var lc = landColors(country);
+      var lc = landColors(country, opts.grayNonHighlight);
       country.rings.forEach(function(ring){
         var pts = ring.map(function(p){ var xy=projectPoint(p[0],p[1],bounds,w,h,pad); return xy[0].toFixed(1)+','+xy[1].toFixed(1); }).join(' ');
         content.appendChild(svgEl('polygon',{points:pts,
@@ -1749,7 +1764,7 @@ function renderCoordMaps(){
   var vnPoints = spreadCluster(VN_UNITS).map(function(u){
     return {lat:u._lat,lng:u._lng,label:'', showLabel:false, color: u.host?'var(--screen-accent)':(u.st==='full'?'var(--screen-vn)':'var(--screen-pending)')};
   }).concat(rosterPointsInBounds(VN_BOUNDS)).concat(vnNetworkAsSmallPoints());
-  var vnMap = buildCoordMap(mapVNsvg, VN_BOUNDS, vnPoints, {step:4, w:VN_W, h:VN_H, land:COUNTRIES, boxes:[
+  var vnMap = buildCoordMap(mapVNsvg, VN_BOUNDS, vnPoints, {step:4, w:VN_W, h:VN_H, land:COUNTRIES, grayNonHighlight:true, boxes:[
     {latMin:20.8,latMax:21.6,lngMin:105.0,lngMax:106.6,label:(LANG==='vi'?'Cụm Hà Nội':'Hanoi cluster'),color:'var(--screen-accent-dim)'},
     {latMin:10.6,latMax:11.1,lngMin:106.4,lngMax:107.0,label:(LANG==='vi'?'Cụm TP.HCM':'HCMC cluster'),color:'var(--screen-vn-dim)'}
   ]});
@@ -1934,32 +1949,18 @@ function vnSideHTML(){
   var bounds = {latMin:6,latMax:23.5,lngMin:101,lngMax:118};
   var vnNetCount = vnNetworkAsSmallPoints().length;
   var vnCount = VN_UNITS.length + vnNetCount; // = vnTotalPlottedCount()
-  var stats = regionStats(bounds, casesInBounds(bounds), {count:vnCount, type:'university', countryName:'Vietnam'});
-  // The stat tiles above (via regionStats) also count any ROSTER entry whose
-  // lat/lng happens to fall inside this box, regardless of country — a loose
-  // lat/lng box can catch a stray neighbor. Naming that stray explicitly
-  // keeps the "N đơn vị / M quốc gia" tiles and this note in agreement,
-  // instead of the note quietly citing a smaller, different number (as it
-  // used to — VN_UNITS.length alone, ignoring the HANISA/VNEI/fund points
-  // the tiles already include).
-  var strayCountries = {};
-  ROSTER.forEach(function(r){
-    if(r[4]==null || r[5]==null) return;
-    if(r[4]<bounds.latMin || r[4]>bounds.latMax || r[5]<bounds.lngMin || r[5]>bounds.lngMax) return;
-    if(r[2]==='Vietnam') return;
-    strayCountries[r[2]] = (strayCountries[r[2]]||0)+1;
-  });
-  var strayNames = Object.keys(strayCountries);
-  var strayTotal = strayNames.reduce(function(sum,c){ return sum+strayCountries[c]; }, 0);
-  // Only break the total down per-country when there's more than one — with
-  // a single stray country the per-country count would just repeat strayTotal.
-  var strayListVi = strayNames.length>1 ? strayNames.map(function(c){ return (COUNTRY_VI_NAMES[c]||c)+' ('+strayCountries[c]+')'; }).join(', ') : (COUNTRY_VI_NAMES[strayNames[0]]||strayNames[0]);
-  var strayListEn = strayNames.length>1 ? strayNames.map(function(c){ return c+' ('+strayCountries[c]+')'; }).join(', ') : strayNames[0];
-  var strayNoteVi = strayTotal ? (' Ngoài ra có '+strayTotal+' đơn vị thuộc '+strayListVi+' rơi vào khung toạ độ này do giáp ranh, không tính vào mạng lưới Việt Nam.') : '';
-  var strayNoteEn = strayTotal ? (' Also, '+strayTotal+' unit(s) from '+strayListEn+' fall inside this coordinate box because of the border overlap, and aren\'t counted as part of the Vietnam network.') : '';
+  // skipRoster:true — this panel is Vietnam-only (sếp: "chỉ nên lấy dữ liệu
+  // của riêng Việt Nam"). Without it, the stat tiles counted any ROSTER
+  // entry whose lat/lng falls inside the coordinate box regardless of
+  // country - a loose box catches neighbors near the border - which
+  // inflated the tiles (315 units/9 countries) past what the header and
+  // this note actually describe (149, 1 country). ROSTER excludes Vietnam
+  // by convention anyway, so nothing Vietnam-relevant is lost by skipping it
+  // here; Vietnam's real data all comes through `extra` below.
+  var stats = regionStats(bounds, casesInBounds(bounds), {count:vnCount, type:'university', countryName:'Vietnam'}, {skipRoster:true});
   var intro = '<div class="note-box vn">'+(LANG==='vi'
-    ? vnCount+' đơn vị mạng lưới ĐMST tại Việt Nam: '+VN_UNITS.length+' đơn vị hỗ trợ ĐMST tại các trường đại học, cùng '+vnNetCount+' đơn vị trong mạng lưới HANISA, VNEI và các quỹ đầu tư — xem đầy đủ trong danh mục bên dưới.'+strayNoteVi+' '+tf(STR.regionRosterCaveat)
-    : vnCount+' Vietnam innovation-network units: '+VN_UNITS.length+' university innovation-support units, plus '+vnNetCount+' units from the HANISA/VNEI networks and VC funds — see the full list below.'+strayNoteEn+' '+tf(STR.regionRosterCaveat))+'</div>';
+    ? vnCount+' đơn vị mạng lưới ĐMST tại Việt Nam: '+VN_UNITS.length+' đơn vị hỗ trợ ĐMST tại các trường đại học, cùng '+vnNetCount+' đơn vị trong mạng lưới HANISA, VNEI và các quỹ đầu tư — xem đầy đủ trong danh mục bên dưới. '+tf(STR.regionRosterCaveat)
+    : vnCount+' Vietnam innovation-network units: '+VN_UNITS.length+' university innovation-support units, plus '+vnNetCount+' units from the HANISA/VNEI networks and VC funds — see the full list below. '+tf(STR.regionRosterCaveat))+'</div>';
   return regionStatsHTML(stats) + intro;
 }
 
