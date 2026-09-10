@@ -1821,8 +1821,12 @@ function renderCoordMaps(){
   var ZOOM_W=380, ZOOM_H=320;
   var hnPoints = vnUnitPointsLabeled.filter(function(p){return ptInBounds(p,HN_BOUNDS);}).concat(vnNetPointsLabeled.filter(function(p){return ptInBounds(p,HN_BOUNDS);}));
   var hcmPoints = vnUnitPointsLabeled.filter(function(p){return ptInBounds(p,HCM_BOUNDS);}).concat(vnNetPointsLabeled.filter(function(p){return ptInBounds(p,HCM_BOUNDS);}));
-  var vnhnMap = buildCoordMap(document.getElementById('mapVNHN'), HN_BOUNDS, hnPoints, {step:0.2, w:ZOOM_W, h:ZOOM_H});
-  var vnhcmMap = buildCoordMap(document.getElementById('mapVNHCM'), HCM_BOUNDS, hcmPoints, {step:0.1, w:ZOOM_W, h:ZOOM_H});
+  // land:COUNTRIES so these read as an actual map (coastline/land fill under
+  // the dots), not bare graph paper — sếp flagged the first version as
+  // "missing the Hanoi/HCMC map" for exactly this reason. Same Natural Earth
+  // 50m polygon data + grayNonHighlight styling as the main VN map above.
+  var vnhnMap = buildCoordMap(document.getElementById('mapVNHN'), HN_BOUNDS, hnPoints, {step:0.2, w:ZOOM_W, h:ZOOM_H, land:COUNTRIES, grayNonHighlight:true});
+  var vnhcmMap = buildCoordMap(document.getElementById('mapVNHCM'), HCM_BOUNDS, hcmPoints, {step:0.1, w:ZOOM_W, h:ZOOM_H, land:COUNTRIES, grayNonHighlight:true});
 
   // Reset-view buttons look up the CURRENT panZoom instance at click time
   // (via this shared object) rather than a closure captured at render time,

@@ -224,7 +224,7 @@ giờ tô xám (`grayNonHighlight`), riêng Việt Nam (gồm Hoàng Sa/Trườn
 ROSTER theo quy ước không chứa Việt Nam — bất kỳ hàm mới nào lấy dữ liệu cho tab/panel
 Việt Nam PHẢI dùng `VN_UNITS`/mạng lưới riêng, không được quét ROSTER theo toạ độ.
 
-## Bản đồ zoom cụm Hà Nội / TP.HCM (commit `18c80dc`, 2026-09-10)
+## Bản đồ zoom cụm Hà Nội / TP.HCM (commit `18c80dc` + `1f2c9a1`, 2026-09-10)
 
 Sếp báo bản đồ Việt Nam ở mức zoom toàn quốc: 2 cụm Hà Nội/TP.HCM (~150 điểm dồn vào 1
 khung toạ độ nhỏ) chỉ hiện thành 1 quầng sáng mờ, không phân biệt được từng đơn vị. Đã
@@ -237,6 +237,20 @@ trải ra nhiều pixel hơn hẳn nên tách rời được. Đơn vị trườ
 điểm/cụm) gắn nhãn tên cố định; điểm mạng lưới HANISA/VNEI/quỹ (hàng chục điểm/cụm) dùng
 lại hệ thống "hiện nhãn khi zoom sâu, né chồng lấn" có sẵn trong `buildCoordMap()` (bật
 `showLabel` thay vì `false` như bản đồ chính) + tooltip hover (`<title>`) luôn có sẵn.
+
+**CẬP NHẬT ngay sau đó (cùng ngày) — sếp báo "thiếu bản đồ" trong 2 ô:** bản đầu KHÔNG
+truyền `opts.land`, nên 2 khung chỉ có lưới toạ độ + chấm nổi trên nền trống — đúng chức
+năng nhưng KHÔNG "trông giống bản đồ". Đã thêm `land:COUNTRIES, grayNonHighlight:true`
+(giống hệt cách bản đồ VN chính đang dùng) — đường bờ biển/khối đất Việt Nam (độ phân giải
+Natural Earth 1:50m, đã đủ dùng cho bản đồ chính) giờ hiện dưới dạng khối tô đỏ nhạt phủ
+khắp khung (vì cả 2 khung đều nằm sâu trong đất liền, không có ranh giới nào khác lọt vào
+tầm nhìn). Xác nhận qua kiểm cấu trúc DOM (không chụp màn hình được — Browser pane bị ẩn
+suốt lượt kiểm này, `screenshot` timeout liên tục): `mapVNHN` có đúng 8 polygon tô màu
+Việt Nam (`fill:rgba(255,90,99,0.22)`), 1 vòng trong đó có 421 điểm trải bbox
+(xmin -554 → xmax 928, ymin -270 → ymax 2715) PHỦ TRÙM khung `viewBox 0 0 380 320` — tức
+khối đất Việt Nam chắc chắn phủ kín khung nhìn, không phải mảnh rời rạc. Cùng đường code
+`buildCoordMap()`/`landColors()` đã dùng ổn định cho bản đồ VN/Asia/SEA chính nhiều
+checkpoint — không phải hướng đi mới, chỉ là quên truyền `opts.land` ở bản đầu.
 
 **Bug phát sinh + đã vá cùng lúc:** nhãn lưới toạ độ (`coord-label`) của `buildCoordMap()`
 in thẳng biến `la`/`lo` — bước lưới số nguyên (10°, 4°) trước giờ không lộ vấn đề, nhưng
