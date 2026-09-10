@@ -50,6 +50,25 @@ __pickHit(x,y)`, x/y là NDC -1..1) trả đúng tổ chức thật. Nhấp nhá
 theo LOẠI (4 lần/khung hình) vì material dùng chung cho cả point cloud — các case tiêu biểu +
 điểm Việt Nam (chỉ ~10 điểm, vẫn là Sprite riêng) vẫn nhấp nháy độc lập từng điểm như cũ.
 
+**2 việc chỉnh thêm ngay sau đó** (commit `b581877`, cùng ngày):
+1. **Sếp báo hiệu ứng nhấp nháy xấu** ("sáng lốm đốm chứ không nên cùng sáng cùng tắt") — đúng
+   như cảnh báo ở trên: gộp cả loại thành 1 material khiến TOÀN BỘ điểm cùng loại nhấp nháy
+   ĐỒNG BỘ, nhìn như "bật/tắt" chứ không tự nhiên. Đã sửa: chia mỗi loại thành
+   `ROSTER_PULSE_BUCKETS=24` nhóm nhỏ (gán vòng tròn theo thứ tự duyệt ROSTER — KHÔNG theo địa
+   lý, để 2 điểm gần nhau trên bản đồ, vốn hay liền nhau trong mảng vì nhập theo batch quốc
+   gia/khu vực, rơi vào 2 nhóm khác nhau, không nhấp nháy cùng lúc), mỗi nhóm 1 material + 1
+   pha riêng — vẫn chỉ ~100 draw call (đo được 108), không phải hàng nghìn.
+2. **Phát hiện thêm qua đo trực tiếp:** `pickHit()` (raycast vào point cloud) tốn ~1ms/lần gọi
+   — trong khi sự kiện `mousemove` có thể bắn ra nhanh hơn thế nhiều khi di chuột qua quả cầu
+   (kể cả KHÔNG giữ chuột để xoay), làm nghẽn main thread chỉ vì di chuột qua lại. Đã giới hạn
+   `onHover` chạy tối đa 1 lần/50ms — vẫn mượt cho tooltip hover, giảm tải vài lần.
+
+**Bài học cho lượt sau nếu vẫn có báo cáo giật:** đã có TIỀN LỆ 2 lần liên tiếp là fix tưởng đủ
+nhưng chưa đủ — **luôn đo bằng số liệu thật** (`renderer.info.render.calls`, `document.
+querySelectorAll('*').length`, `performance.now()` quanh hàm nghi ngờ) thay vì chỉ suy luận lý
+thuyết rồi coi là xong; nếu sếp báo còn giật sau khi đã đo/sửa 1 chỗ, đó là tín hiệu rất mạnh
+rằng còn ít nhất 1 nguyên nhân khác CHƯA được đo tới, không phải bản fix vừa rồi sai.
+
 **Bản fix đầu (commit `6747431`, chỉ gộp material dùng chung theo loại) KHÔNG đủ** — sếp xác
 nhận vẫn giật sau khi lên bản đó, vì gộp material chỉ giảm số lần chuyển trạng thái GPU giữa
 các draw call, không giảm SỐ LƯỢNG draw call (vẫn ~20000). Bài học: khi thấy hàng chục nghìn
