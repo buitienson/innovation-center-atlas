@@ -769,7 +769,8 @@ var STR = {
   rosterColCountry:{vi:"Quốc gia", en:"Country"}, rosterColWeb:{vi:"Website", en:"Website"},
   rosterAllCountries:{vi:"Tất cả quốc gia", en:"All countries"},
   rosterCountLabel:{vi:" mục", en:" entries"},
-  rosterNoWebsite:{vi:"chưa có", en:"none found"}
+  rosterNoWebsite:{vi:"chưa có", en:"none found"},
+  rosterTruncatedNote:{vi:" — chỉ hiện {n} dòng đầu, thu hẹp bằng tìm kiếm/quốc gia để xem đủ", en:" — showing the first {n} rows only, narrow with search/country to see the rest"}
 };
 var LANG = (function(){ try{ return localStorage.getItem('ica_lang') || 'vi'; }catch(e){ return 'vi'; } })();
 function t(key){ var e = STR[key]; if(!e) return key; return e[LANG] || e.vi; }
@@ -2720,13 +2721,25 @@ function rosterFiltered(){
     return (r[0]+' '+r[1]+' '+r[2]).toLowerCase().indexOf(q)>-1;
   });
 }
+// Rendering every matched row as a <tr> is fine for a search/filter result of
+// a few hundred, but with ROSTER now in the tens of thousands the *default*
+// view (no search, no country picked) used to dump ~20000 rows - ~80000 DOM
+// nodes - into #rosterBody on every page load and on every keystroke in the
+// search box, which is real, measurable page-wide jank (page load, typing,
+// scrolling) independent of the 3D globe. Capping the DOM to a page's worth
+// of rows keeps the search/filter feature itself unlimited (it still matches
+// against the full ROSTER, only what's painted to the table is capped).
+var ROSTER_TABLE_MAX = 300;
 function renderRosterTable(){
   var rows = rosterFiltered();
-  document.getElementById('rosterBody').innerHTML = rows.map(function(r){
+  var shown = rows.length > ROSTER_TABLE_MAX ? rows.slice(0, ROSTER_TABLE_MAX) : rows;
+  document.getElementById('rosterBody').innerHTML = shown.map(function(r){
     var web = r[3] ? '<a href="'+r[3]+'" target="_blank" rel="noopener noreferrer">'+r[3].replace(/^https?:\/\//,'').replace(/\/$/,'')+'</a>' : '<span>'+t('rosterNoWebsite')+'</span>';
     return '<tr><td>'+r[0]+'</td><td class="rc-host">'+(r[1]||'—')+'</td><td class="rc-country">'+(r[2]||'—')+'</td><td class="rc-web">'+web+'</td></tr>';
   }).join('');
-  document.getElementById('rosterCount').textContent = rows.length + t('rosterCountLabel') + ' / ' + ROSTER.length;
+  var countText = rows.length + t('rosterCountLabel') + ' / ' + ROSTER.length;
+  if(rows.length > ROSTER_TABLE_MAX) countText += t('rosterTruncatedNote').replace('{n}', ROSTER_TABLE_MAX);
+  document.getElementById('rosterCount').textContent = countText;
 }
 document.getElementById('rosterSearch').addEventListener('input', function(e){ rosterSearchTerm = e.target.value; renderRosterTable(); });
 document.getElementById('rosterCountry').addEventListener('change', function(e){ rosterCountryFilter = e.target.value; renderRosterTable(); });
