@@ -250,7 +250,107 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-10 (checkpoint 52 — **Wikipedia `Category:Coworking space providers` +
+**Lần cuối:** 2026-09-10 (checkpoint 53 — **`List of Biomakerspaces in the United States`
+(Wikidata Q140001361, việc mở để lại từ checkpoint 52) qua kỹ thuật Wikidata P856-hop quen thuộc —
+nguồn RẤT NHỎ (chỉ 16 mục "Active"), sau lọc trùng ROSTER + xác minh tay chỉ còn 7 mục thật sự mới
+(+7)**) — còn thiếu ~9994 lúc cuối phiên.
+
+**Bước 0 — xác nhận trang tồn tại:** `Special:EntityData/Q140001361.json` xác nhận nhãn "List of
+Biomakerspaces in the United States", sitelink `enwiki` đúng tên, `P31` có giá trị (danh sách hợp
+lệ) — khớp với ghi chú "mới tìm thấy, chưa cào" của checkpoint 52.
+
+**Nguồn dùng:** cào wikitext trang (`action=parse&prop=wikitext`, 3811 ký tự — RẤT NGẮN so với các
+trang "List of..." trước đây hàng trăm/nghìn mục). Trang chia 2 mục `== Active ==` (16 mục, 4 vùng
+giờ Pacific/Mountain/Central/Eastern) và `== Inactive ==` (18 mục) — **chỉ lấy mục `Active`, bỏ hẳn
+toàn bộ `Inactive` vì đây là danh sách các biomakerspace ĐÃ NGỪNG HOẠT ĐỘNG theo chính Wikipedia tự
+phân loại** (không cần check_url mới biết loại — khác các lượt trước phải tự phát hiện qua đọc tay
+nội dung trang đích).
+
+**Kỹ thuật lấy URL — kết hợp 3 nguồn tuỳ mục:** (1) URL trực tiếp trong `<ref>` của bullet không có
+wikilink (Berkeley BioLabs, MIT BioMakers, Cap City Biohackers dạng Inactive nên bỏ); (2) hop qua
+Wikidata P856 cho bullet có wikilink dạng `[[Tên]]` — `pageprops&redirects=1` lấy `wikibase_item`
+rồi `wbgetentities` lấy `P856`/`P625`: chỉ **2/7 trang có P31 tồn tại có P856** (BioCurious, và
+Genspace không có P856 nhưng có P625 — cả hai đều đã trùng ROSTER nên không dùng); các trang còn lại
+(SoundBio Lab, HeatSync Labs, ChiTownBio, FamiLAB, Baltimore Underground Science Space) hoàn toàn
+không có `P856`/`P625` trên Wikidata — phải tìm URL qua bước 3; (3) **`WebSearch` cho từng mục
+không có `<ref>` lẫn không có `P856`** (kỹ thuật bổ sung mới, cần thiết vì nguồn quá nhỏ để tự động
+hoá as bulk) — tìm và xác nhận domain chính chủ cho Counter Culture Labs, SoundBio Lab, HeatSync
+Labs, ChiTownBio, Baltimore Underground Science Space (BUGSS), Genspace, Ronin Genetics, Triangle
+DIY Biology, Bio Tech and Beyond, Biodidact — 10/16 mục Active cần bước này.
+
+**Lọc trùng ROSTER (base_domain + normalize_name, baseline 19999):** phát hiện **tỉ lệ trùng CỰC
+CAO — 7/15 mục có URL đã trùng domain VÀ tên chính xác với ROSTER hiện có** (Counter Culture Labs,
+SoundBio Lab, BioCurious, HeatSync Labs, Baltimore Underground Science Space/BUGSS, Genspace,
+FamiLAB) — xác nhận đúng dự đoán của checkpoint 52 rằng đợt hackerspace/makerspace lớn trước đó (nguồn
+OSM `amenity=hackerspace`) đã quét qua hầu hết các case nổi tiếng này, kể cả khi chúng xuất hiện lại
+qua nguồn Wikipedia khác. Cũng thử `Baltimore Hackerspace` (mục mới thấy qua `WebSearch` phụ, KHÔNG
+nằm trong trang Biomakerspaces — phân biệt với BUGSS) qua Wikidata P856 → `baltimorehackerspace.com`
+nhưng CŨNG đã trùng ROSTER (domain + tên) — loại.
+
+**`check_url()` + đọc tay 8 ứng viên còn lại sau lọc trùng, đúng kỷ luật domain-hijack của checkpoint
+52:** 1 ca (`Biodidact`, qua domain chính `biodidact.net`) bị `URLError` khi truy cập trực tiếp,
+domain thay thế `losalamosmakers.org` (tìm qua `WebSearch`, cùng tổ chức theo mô tả "The Community
+Lab") trả 200 OK qua `check_url()` nhưng là site Wix render phía client — đọc tay 200KB đầu không tìm
+thấy chữ "Biodidact"/"Los Alamos" hay bất kỳ `<title>`/`og:title` nào trong HTML tĩnh (nội dung thật
+chỉ render bằng JS phía trình duyệt, không xác minh được bằng `urllib`) — kết hợp với tín hiệu phụ
+quan trọng: kết quả `WebSearch` cho thấy mục Yelp của Biodidact ghi rõ **"BIODIDACT - CLOSED"** →
+**LOẠI hẳn, không đủ căn cứ xác nhận còn hoạt động** (bài học mới: khi trang JS-rendered không xác
+minh được nội dung tĩnh VÀ có tín hiệu bên ngoài gợi ý đã đóng cửa, không nên tin theo hướng có lợi
+chỉ vì HTTP 200). 7 ca còn lại đều xác nhận đúng qua đọc `<title>`/`og:title`/`og:site_name` khớp rõ
+tên tổ chức: `Berkeley BioLabs`("Berkley BioLabs"), `La Jolla Library Bio Lab` (title khớp chính xác
+trang IDEA Lab của City of San Diego — giữ dù là trang chính quyền vì là trang RIÊNG cho dịch vụ cụ
+thể, không phải cổng thông tin chung chung), `Bio, Tech, and Beyond` (title "HOME | biotechandbeyond",
+og:site_name "biotechandbeyond" — xác nhận qua đọc 200KB vì trang JS-heavy không lộ `<title>` ở byte
+đầu), `ChiTownBio` ("Chicago's Community Biology Lab"), `MIT BioMakers` ("MIT BioMakers"), `Ronin
+Genetics` ("Ronin Genetics"), `Triangle DIY Biology` (og:site_name "Triangle DIY Biology", title
+"Home" chung chung nên phải đọc og:site_name mới xác nhận được — cùng bài học "og:title/og:site_name
+khi title JS-app chung chung" của checkpoint 50).
+
+**Cân nhắc phạm vi:** `Ronin Genetics`/`Triangle DIY Biology` là nhóm DIYbio hoạt động NHỜ không gian
+của tổ chức khác (SplatSpace, Durham NC) chứ không sở hữu địa điểm riêng — vẫn GIỮ vì có website/hoạt
+động thật riêng biệt (Ronin Genetics có dịch vụ sequencing thật), cùng logic đã chấp nhận các case
+"tenant"/chương trình gắn với không gian khác trong ROSTER hiện có.
+
+**Gán toạ độ:** không mục nào trong 7 mục cuối có `P625` → dùng **centroid Mỹ tính lại từ 1419 mục
+`United States` hiện có trong ROSTER** (38.818126697451845, -94.63002571520904 — gần khớp centroid
+checkpoint 52 dùng, chênh nhỏ do ROSTER đã lớn hơn).
+
+**Mở rộng thử thêm qua Wikipedia `list=search` (bước 1 phần 2 của việc giao) trước khi merge:** thử
+10 từ khoá ("list of hackerspaces", "list of makerspaces", "list of fab labs", "list of science
+parks", "list of technology transfer offices", "list of research parks", "list of business
+incubators", "list of coworking spaces", "list of living labs") — **không tìm được trang "List
+of..." MỚI nào chưa từng dùng qua 52 checkpoint trước**, chỉ trả lại các trang đã biết
+(`List of research parks`, `List of science parks in the United Kingdom`, `List of startup
+incubators in the United States`...) hoặc các trang không đúng định dạng danh sách tổ chức kèm URL.
+1 mục mới lộ ra (`HiveBio Community Laboratory`) hoá ra đã có mặt trong chính trang Biomakerspaces ở
+mục Inactive — đã loại theo đúng quy tắc trên. **Kết luận: hướng Wikipedia "List of..." + category
+CƠ BẢN ĐÃ CẠN** (khớp với dự đoán của checkpoint 52) — không tìm thêm được trang nguồn mới nào qua
+`list=search`.
+
+**Kết quả merge:** `ROSTER`: 19999 → **20006** (+7). Đơn vị trên bản đồ: 20008 → **20015** (+7, giữ
+nguyên chênh lệch +9). Kiểm trước khi ghi: `git status`/`git log` sạch — phát hiện 1 phiên khác đã
+push 2 commit không liên quan ROSTER (`7ece197`, `9b48f90` — sửa panel bản đồ Việt Nam) TRONG lúc
+phiên này đang xử lý, nhưng `len(load_roster(...))` vẫn = 19999 cả trước và sau các commit đó (không
+đụng dữ liệu ROSTER) nên không cần dedup lại. Kiểm sau ghi: `node --check` sạch (script inline
+3,424,717 ký tự), thẻ `div`/`section` cân bằng (107/107, 6/6), mở `index.html` qua HTTP server cục
+bộ (`static-server`) qua Browser pane: đúng "20015 đơn vị được lập bản đồ" / "20006 trong danh mục mở
+rộng" / "12 đơn vị tại Việt Nam" (không đổi) / "9 case phân tích chuyên sâu" (không đổi). Commit
+`17f4272`, `git push origin main` — xác nhận fast-forward `9b48f90..17f4272`.
+
+**Còn thiếu ~9994 để đạt 30000.** **Việc mở cho lượt sau:** (1) nguồn Wikipedia "List of..."/
+category-crawl/`list=search` nay ĐÃ XÁC NHẬN CẠN qua 3 checkpoint liên tiếp (51-53) thử nhiều hướng
+khác nhau — KHÔNG nên tiếp tục đầu tư thời gian vào hướng này nữa trừ khi có ý tưởng kỹ thuật hoàn
+toàn mới (vd nguồn ngôn ngữ khác ngoài Wikipedia tiếng Anh — chưa từng thử `dewiki`/`frwiki`/
+`jawiki`... "Liste von..."/"Liste des..." có thể còn mục chưa trùng bản tiếng Anh); (2) InBIA
+(checkpoint 49, mục 7) — vẫn mở, chưa làm, nguồn LỚN nhất từng tìm được nhưng bị gate sau đăng nhập;
+(3) tốc độ 7 mục/checkpoint lần này (nguồn nhỏ nhất trong nhiều checkpoint gần đây) cộng dồn với
+tốc độ dao động 7-94 của 3 checkpoint trước — khoảng cách 9994 vẫn cực lớn so với tốc độ hiện tại,
+**cần báo cáo lại nghiêm túc với sếp về nguồn hoàn toàn mới hoặc điều chỉnh kỳ vọng tốc độ/mốc
+30000** (đã nhắc ở checkpoint 52, nay càng rõ hơn khi cả hướng Wikipedia lẫn category lẫn `list=search`
+đều xác nhận cạn cùng lúc).
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 52 — **Wikipedia `Category:Coworking space providers` +
 `Category:Hackerspaces` (+2 sub-cat) + `Category:Fab labs`, cùng kỹ thuật Wikidata P856-hop, nhưng
 đợt này lộ RÕ tầm quan trọng của bước rà tay nội dung sau `check_url()` — 8/15 ứng viên "OK" tự
 động hoá vẫn là false positive khi đọc tay (+7 thật)**) — còn thiếu ~10001 lúc cuối phiên.
