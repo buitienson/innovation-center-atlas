@@ -361,6 +361,21 @@ directory (checkpoint 49, mục 4) — vẫn mở, kỹ thuật truy cập chưa
 toàn mới khác** — tốc độ ~22-67 mục/checkpoint gần đây quá chậm so với khoảng cách còn lại 10035;
 cân nhắc báo cáo lại với sếp về tính khả thi thời gian của mốc 30000 nếu tốc độ này tiếp diễn.
 
+**Ghi chú bổ sung (phát hiện SAU khi checkpoint 50 đã commit+push):** ngay sau commit `67ad372`
+của checkpoint 50, một phiên khác chạy CÙNG LÚC (`git log` cho thấy commit `47ac10b`, tác giả "Bui
+Son", đẩy lên `origin/main` trong lúc phiên này đang soạn mục CLAUDE.md này) đã cùng hướng Wikipedia
+"List of..." + Wikidata, mở rộng thêm sang `Category:Science parks`/`Category:Business incubators`
+theo ~65 sub-category quốc gia, tự re-dedup theo đúng ROSTER tại thời điểm đó và cộng thêm **+27**
+(nêu rõ trong log của họ: "another session had already added 15 overlapping candidates from the
+same sources" — tức phiên đó đã biết và xử lý trùng với chính checkpoint 50 này). Phiên đó KHÔNG
+tự cập nhật mục lịch sử này trong `CLAUDE.md`. Vì vậy: **ROSTER thực tế sau cả 2 phiên = 19965 + 27
+= 19992** (không phải 19965 như số cuối checkpoint 50 ở trên) — **còn thiếu ~10008 để đạt 30000**.
+Lượt sau ĐỪNG hoảng khi thấy `len(load_roster(...))` không khớp 19965 lúc bắt đầu — 19992 mới là
+con số đúng để dùng làm baseline xác nhận trước khi merge tiếp. Bài học: khi làm việc trên repo này
+đồng thời với phiên khác (biểu hiện: `git log` xuất hiện commit lạ không phải do chính mình tạo),
+KHÔNG cần hoảng hoặc revert — chỉ cần `git fetch`/kiểm `git log` để xác nhận không có xung đột thật
+(không cùng sửa 1 dòng ROSTER), rồi tiếp tục dựa trên baseline MỚI NHẤT.
+
 ---
 **Lần trước:** 2026-09-10 (checkpoint 49 — **NHIỆM VỤ "TÌM NGUỒN LỚN HOÀN TOÀN MỚI": KHÔNG THÀNH
 CÔNG — mọi ứng viên lớn đều bị chặn/hijack/gate; chỉ cứu được 1 nguồn nhỏ-sạch chưa từng thử
