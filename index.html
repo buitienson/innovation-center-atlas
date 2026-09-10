@@ -2911,15 +2911,26 @@ function initGlobe(){
   };
   var texByType = {};
   Object.keys(TYPE_HEX).forEach(function(k){ texByType[k] = glowTexture(TYPE_HEX[k], true); });
+  // One shared SpriteMaterial per type (4 total), not one per marker - with
+  // ROSTER now in the tens of thousands, giving every dot its own material
+  // instance (even pointing at the same shared texture) forced the renderer
+  // to state-sort/switch tens of thousands of times per frame, which is what
+  // made the globe stutter on open and while dragging as ROSTER grew past a
+  // few thousand rows. Sharing the material means opacity can only be
+  // animated per-type (see animate() below), not per-dot, but at this marker
+  // density the individual pulse-phase was already imperceptible.
+  var rosterMatByType = {};
+  Object.keys(TYPE_HEX).forEach(function(k){
+    rosterMatByType[k] = new THREE.SpriteMaterial({map:texByType[k], transparent:true, opacity:0.85, depthWrite:false});
+  });
   var rosterGroup = new THREE.Group();
   ROSTER.forEach(function(r){
     if(r[4]==null || r[5]==null) return;
     var rtype = classifyRosterType(r[0], r[1]);
-    var mat = new THREE.SpriteMaterial({map:texByType[rtype], transparent:true, opacity:0.85, depthWrite:false});
-    var spr = new THREE.Sprite(mat);
+    var spr = new THREE.Sprite(rosterMatByType[rtype]);
     spr.position.copy(latLngToVec3(r[4], r[5], R*1.015));
     spr.scale.set(0.044,0.044,1);
-    spr.userData = {roster:r, baseScale:0.044};
+    spr.userData = {roster:r, baseScale:0.044, sharedMat:true};
     rosterGroup.add(spr); beacons.push(spr);
   });
   group.add(rosterGroup);
@@ -3111,13 +3122,23 @@ function initGlobe(){
         beacons.forEach(function(b,i){
           var base = b.userData.baseScale || 0.10;
           // Every beacon — flagship cases and the roster's hundreds of dots alike —
-          // pulses in both size AND brightness, a glow/blink rather than a flat
-          // resize, so the globe reads as an instrument full of active points.
+          // pulses in size, so the globe reads as an instrument full of active
+          // points. Brightness (material.opacity) is per-OBJECT only for the
+          // few "important" beacons (cases/Vietnam marker), each with its own
+          // material; ROSTER dots share one material per type (see marker
+          // creation above), so their opacity is animated once per type below
+          // instead of once per dot - setting it here too would just mean the
+          // last dot of each type in this loop wins, for no benefit at 20k+ scale.
           var wave = Math.sin(t2*2.6 + i*0.9);
           var s = base * (1 + wave*0.38);
           b.scale.set(s,s,1);
-          b.material.opacity = 0.6 + wave*0.4;
+          if(!b.userData.sharedMat) b.material.opacity = 0.6 + wave*0.4;
         });
+        var typeKeys = Object.keys(rosterMatByType);
+        for(var ti=0; ti<typeKeys.length; ti++){
+          var tWave = Math.sin(t2*2.6 + ti*1.7);
+          rosterMatByType[typeKeys[ti]].opacity = 0.6 + tWave*0.4;
+        }
       }
       renderer.render(scene, camera);
       if(__frameCount%2===0) updateGlobeLabels();
