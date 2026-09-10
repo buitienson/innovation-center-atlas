@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 19826 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 19848 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **25000**, sếp nâng từ 15000 ở checkpoint 37) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -53,7 +53,83 @@ Sếp đã bắt bỏ đúng loại nội dung này nhiều lần (screenshot le
 sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả địa cầu).
 
 ---
-**Lần cuối:** 2026-09-10 (checkpoint 47 — **SBIR/STTR MỸ: KIỂM MẪU → LOẠI NGAY VÌ SAI PHẠM VI +
+**Lần cuối:** 2026-09-10 (checkpoint 48 — **ROR (Research Organization Registry) — NGUỒN LỚN
+NHƯNG CHỦ YẾU NGOÀI PHẠM VI: TỪ >134000 TỔ CHỨC CHỈ LỌC RA 22 MỤC MỚI THẬT SỰ**) — còn thiếu ~5152
+lúc cuối phiên.
+
+**Nhiệm vụ chính — ROR (`ror.org`), chưa từng thử qua 47 checkpoint trước.** Bước 1: bản dump hàng
+loạt (Zenodo, DOI `10.5281/zenodo.6347574`) **KHÔNG khả dụng** — `zenodo.org` (và cả domain thay thế
+`zenodo-rdm.web.cern.ch`) trả **504 Gateway Time-out** nhất quán qua `curl`, `WebFetch`, và Browser
+pane thật (không phải mạng bị chặn — trang chủ zenodo.org cũng 504) → chuyển hẳn sang API
+`api.ror.org/v2/organizations` (REST, hoạt động bình thường, **134298 tổ chức** tổng).
+
+**Kiểm mẫu phạm vi trước khi tải hàng loạt (đúng yêu cầu):** lọc thô theo `filter=types:facility`
+(14610)/`nonprofit`(19920)/`other`(10024) cho thấy số lượng vẫn quá lớn để duyệt tay, và quan trọng
+hơn — **query từ khoá đơn giản qua `query=` bị "phẳng" theo từng từ riêng lẻ** (vd `"research park"`
+→ 9357 kết quả vì khớp rời rạc "research" HOẶC "park"), không dùng được. Chuyển sang
+`query.advanced=names.value:(...)` (cú pháp Elasticsearch query_string, hỗ trợ cụm từ trong ngoặc
+kép + OR) — cho kết quả đúng cụm từ, nhỏ gọn hơn nhiều (vd `"science park"` phrase = 27, `"technology
+transfer"` = 27, `incubator` = 12). **Kết luận phạm vi:** ROR có >134000 tổ chức nhưng đây là cơ sở
+dữ liệu định danh tổ chức có công bố khoa học (affiliation cho Crossref/DataCite/OpenAlex) — nó phủ
+RẤT SÂU đại học/viện nghiên cứu/bệnh viện/công ty/quỹ tài trợ (đã có sẵn phần lớn trong ROSTER qua
+IASP/CORDIS/Wikidata các checkpoint trước) nhưng **RẤT MỎNG** cho đúng nhóm ROSTER cần (TTO/vườn
+ươm/khu KH&CN) — các trung tâm trung gian hiếm khi tự đứng tên affiliation trong bài báo khoa học
+nên ít được ROR cấp ID riêng. Ngược hẳn với kỳ vọng ban đầu.
+
+**Kỹ thuật lọc:** 2 vòng `query.advanced` gộp ~45 từ khoá cụm (tiếng Anh + Bồ Đào Nha/Tây Ban Nha/
+Ý/Pháp/Đức: "innovation center/centre", "science/technology/research park", "incubator"/
+"incubadora", "technology transfer", "technopark"/"technopole"/"tecnoparque", "living lab", "fab
+lab", "makerspace", "cluster", "Gründerzentrum"/"Technologiezentrum"/"Innovationszentrum"...) →
+**227 + 12 = 239 dòng thô**. Kiểm tay toàn bộ (không chỉ mẫu 50-100 vì tổng chỉ 239) theo đúng bài
+học DPIIT/SBIR — loại thẳng: cơ sở vật lý gia tốc hạt (từ khoá "accelerator" bắt nhầm hàng loạt
+"Fermilab"/"SLAC"/"KEK"/"J-PARC"...), chương trình "2011 Collaborative Innovation Center" của Trung
+Quốc (quỹ nghiên cứu đại học, không phải TTO), trung tâm R&D nội bộ doanh nghiệp (Unilever/Suntory/
+Intesa Sanpaolo/Nissatech), cơ quan tài trợ/chính sách chính phủ thuần tuý (Innosuisse, BRIN
+Indonesia, các "Innovation Agency" khu vực), viện nghiên cứu học thuật gắn trong 1 đại học (AIMS
+Rwanda, KIOS Cyprus) → còn **114 ứng viên giữ lại**.
+
+**Lọc trùng ROSTER** (base-domain + tên chuẩn hoá, 19826 mục): loại **67/114** trùng — tỉ lệ trùng
+RẤT CAO, xác nhận ROSTER đã khai thác khá kỹ mảng science park/incubator châu Âu qua IASP/CORDIS các
+checkpoint trước (vd toàn bộ "Ideon", "Kyoto Research Park", "AREA Science Park", "Qatar Science and
+Technology Park"... đã có sẵn) → **47 ứng viên mới**.
+
+**`check_url()` toàn bộ 47** (timeout 8s rồi thử lại 20s cho nhóm lỗi mạng): **19 sống ngay**, 28 chết
+— trong đó vài ca đáng chú ý cần tay xác minh thêm: **"Association of the Innovation Center of
+Electronics" (Czechia, domain `incel.cz`) — tên miền đã bị CHIẾM DỤNG, nội dung hiện tại là trang
+quảng cáo/mã độc (`newrotatormarch23.bid`), KHÔNG liên quan tổ chức gốc** (bài học domain-squatting
+mới, khác kiểu parking-page/redirect-lander đã biết); "Incubadora Venezolana de la Ciencia" domain
+đã bán cho bên thứ 3 (chuyển hẳn sang `seekingenglish.com`); vài ca 403 (`irbm.it`, `corvinno.com`,
+`activation.capital`) không xác minh được nội dung thật nên LOẠI theo nguyên tắc không đoán; "Centre
+de Transfert de Technologie du Mans" chỉ có 1 bộ phận (Âm học) được `almacoustic.com` tiếp quản, KHÔNG
+phải đổi tên toàn bộ tổ chức → LOẠI. Xác minh tay 3 ca lỗi mạng tạm thời (không phải parking/dead
+thật) rồi cho sống lại: `netport.se` (chuyển URL gốc, bỏ `/en`), `incubo.eu`, `polomagona.it` → tổng
+**22 mục sống, đúng nguồn, đúng phạm vi**.
+
+**Gán toạ độ:** dùng thẳng toạ độ thật `geonames_details.lat/lng` có sẵn trong ROR cho cả 22 mục
+(không cần centroid/suy đoán). Tên: bỏ hậu tố phân biệt `(Country)` mà ROR tự thêm khi trùng tên
+toàn cầu (vd "GWT-TUD GmbH (Germany)" → "GWT-TUD GmbH") vì đây là hậu tố kỹ thuật của ROR, không phải
+tên chính thức của tổ chức.
+
+**Kết quả merge:** xác nhận `git status` sạch + `len(load_roster(...))` = 19826 đúng ngay trước khi
+ghi. `ROSTER`: 19826 → **19848** (+22). Đơn vị trên bản đồ: 19835 → **19857** (+22, giữ nguyên
+chênh lệch +9). Kiểm: `node --check` sạch, thẻ `div`/`section` cân bằng (107/107, 6/6). Mở
+`index.html` qua HTTP server cục bộ (`static-server`), đọc qua Browser pane: đúng "19857 đơn vị được
+lập bản đồ" / "19848 trong danh mục mở rộng" / "12 đơn vị tại Việt Nam" (không đổi) / "9 case phân
+tích chuyên sâu" (không đổi). Commit và `git push origin main` lên live (xem hash ở cuối báo cáo
+phiên).
+
+**Việc mở cho lượt sau:** (1) ROR coi như đã khai thác hết phần khả thi (>45 cụm từ khoá đa ngôn
+ngữ đã quét, tỉ lệ trùng ROSTER rất cao 59%) — KHÔNG quay lại nguồn này trừ khi có ý tưởng từ khoá
+hoàn toàn mới chưa thử; (2) Zenodo/`zenodo-rdm.web.cern.ch` đang 504 toàn trang (không phải do
+mạng) — nếu lượt sau cần dump ROR đầy đủ (vd để làm kỹ hơn phần "facility"/"nonprofit" 44000+ dòng
+chưa duyệt tay), thử lại xem Zenodo đã phục hồi chưa; (3) Nhật Bản JPO/METI TLO vẫn 403; (4) Trung
+Quốc `chinatorch.gov.cn` vẫn không kết nối được; (5) Thuỵ Điển SISP/Phần Lan TEKEL — đã xác nhận CẠN
+cả site gốc lẫn proxy IASP (checkpoint 47); (6) **vẫn cần NGUỒN LỚN HOÀN TOÀN MỚI cỡ CORDIS/IASP**
+(hàng trăm-nghìn mục) vì các nguồn nhỏ lẻ gần đây (Na Uy +11, ROR +22) chỉ cho vài chục mục/
+checkpoint — không đủ tốc độ để chạm mốc 25000 (còn thiếu ~5152).
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 47 — **SBIR/STTR MỸ: KIỂM MẪU → LOẠI NGAY VÌ SAI PHẠM VI +
 API ĐANG BẢO TRÌ; HOÀN TẤT VIỆC MỞ NA UY SIVA (+11); IASP-LÀM-PROXY BẮC ÂU XÁC NHẬN ĐÃ CẠN**) —
 còn thiếu ~5174 lúc cuối phiên.
 
