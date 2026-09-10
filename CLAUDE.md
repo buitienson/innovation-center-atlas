@@ -133,6 +133,18 @@ nhấp nháy (bằng đúng số quốc gia trong khung, không phải 4119), t�
 (so với 8000+ gây giật ở CẬP NHẬT 4) — **đây là mức cân bằng tốt giữa "có sức sống" và "nhẹ",
 nên dùng làm mẫu cho các lần thêm hiệu ứng tương tự sau này khi có nhiều điểm dữ liệu.**
 
+**CẬP NHẬT 6 (commit `3d5a4a3`) — sót Việt Nam:** logic "1 điểm/quốc gia" ở CẬP NHẬT 5 chỉ áp
+cho `rosterPointsInBounds()` — nhưng ROSTER theo quy ước KHÔNG có Việt Nam, nên Việt Nam
+KHÔNG BAO GIỜ được hàm đó gán `blink`. Trên bản đồ Asia/SEA, Việt Nam hiện diện qua
+`vnUnitsAsSmallPoints()` (hàm riêng, tách biệt) — chưa từng được sửa để gắn `blink` — nên Việt
+Nam là quốc gia DUY NHẤT không nhấp nháy trong khi mọi nước khác đều có, dễ thấy vì Việt Nam
+lại là mạng lưới được đầu tư nhiều dữ liệu nhất. Đã sửa: gắn `blink:true` cho đơn vị đầu tiên
+trong mảng `VN_UNITS` khi hàm này chạy. **Bài học:** khi thêm 1 hành vi (`blink`) cho "mỗi
+quốc gia/nhóm", phải rà HẾT các hàm sinh điểm cho bản đồ đó (ở đây có 3: `rosterPointsInBounds`,
+`vnUnitsAsSmallPoints`, `vnNetworkAsSmallPoints`), không chỉ hàm đầu tiên nghĩ tới — nhất là khi
+1 nhóm dữ liệu (Việt Nam) bị loại khỏi nguồn chính (ROSTER) vì lý do khác (quy ước phạm vi) chứ
+không phải vì nó kém quan trọng hơn.
+
 ## Hiệu năng quả cầu 3D
 
 **Fix thật sự** (commit `f52528d`, 2026-09-10): mỗi loại ROSTER (university/company/network/
