@@ -36,22 +36,7 @@ mà không giới hạn số dòng (kiểu `rows.map(...).join('')`) đều sẽ
 ROSTER đủ lớn — nên rà toàn bộ chỗ nào có `ROSTER.map`/`ROSTER.forEach` sinh HTML trực tiếp,
 không chỉ chỗ đã biết.
 
-**CẬP NHẬT 2 (commit `0903164`):** sau khi vá bug `showLabel` ở dưới, sếp vẫn thấy nặng và yêu
-cầu thẳng "tắt hiệu ứng, giảm độ lớn điểm sáng cho đỡ nặng" — mỗi điểm ROSTER nhỏ trên bản đồ
-2D trước đó vẽ 2 circle (glow halo + core) và circle core chạy animation CSS `infinite` vĩnh
-viễn — với hàng nghìn điểm/bản đồ, đó là hàng nghìn animation SVG chạy đồng thời liên tục,
-tốn chi phí style/paint riêng, KHÁC với bug O(n²) label đã vá (2 vấn đề cộng dồn, không phải 1).
-Đã sửa: mỗi điểm ROSTER giờ chỉ còn 1 circle tĩnh (r=0.9), không animation — chỉ các điểm case
-tiêu biểu (vài chục, không phải hàng nghìn) còn giữ hiệu ứng glow+nhấp nháy. Đo được: circle
-Asia giảm từ 8238 xuống 4121, tổng DOM node 32335→26668.
-
-**Việc mở nếu vẫn còn báo giật sau tất cả các bước trên:** đã nghi ngờ và xác nhận 1 phần —
-sếp báo "Use hardware acceleration" trong Chrome đang TẮT (ảnh chụp mục Settings→System) rồi tự
-bật lên nhưng CHƯA khởi động lại trình duyệt để áp dụng (Chrome yêu cầu restart hẳn, không chỉ
-bật switch) — nếu tăng tốc phần cứng thực sự tắt trước đó, WebGL/canvas phải chạy bằng renderer
-phần mềm (rất chậm), khớp đúng kiểu "giật khắp nơi, ngay khi mở, không riêng chỗ nào" mà sếp mô
-tả — CHƯA có kết quả sau khi restart tính đến lúc ghi chú này, cần theo dõi tiếp ở phiên sau nếu
-sếp chưa phản hồi. sau khi vá bảng ROSTER ở
+**CẬP NHẬT (commit `6dc68d1`):** sau khi vá bảng ROSTER ở
 trên, sếp VẪN báo giật, lần này kèm phản hồi cụ thể "đốm sáng trên bản đồ 2D chồng lấn nhìn
 không ra" — hoá ra 3 **bản đồ 2D Asia/SEA/Việt Nam** (`buildCoordMap()`, gọi qua
 `rosterPointsInBounds(bounds)`) mỗi cái vẽ TỪNG mục ROSTER trong vùng thành 1 vòng tròn SVG:
@@ -81,6 +66,36 @@ lại có 2 nhánh code xử lý khác nhau cho cùng loại dữ liệu (ở đ
 viết sau hoặc thêm dữ liệu (ROSTER) vào sau khi code đã có sẵn cho mục đích khác (case tiêu
 biểu). Bug bất đối xứng kiểu này (2 nhánh giống nhau nhưng chỉ 1 nhánh đúng) dễ lọt qua vì mỗi
 nhánh nhìn "hợp lý" khi đọc riêng lẻ.
+
+**CẬP NHẬT 2 (commit `0903164`):** sau khi vá bug `showLabel` ở trên, sếp vẫn thấy nặng và yêu
+cầu thẳng "tắt hiệu ứng, giảm độ lớn điểm sáng cho đỡ nặng" — mỗi điểm ROSTER nhỏ trên bản đồ
+2D trước đó vẽ 2 circle (glow halo + core) và circle core chạy animation CSS `infinite` vĩnh
+viễn — với hàng nghìn điểm/bản đồ, đó là hàng nghìn animation SVG chạy đồng thời liên tục,
+tốn chi phí style/paint riêng, KHÁC với bug O(n²) label đã vá (2 vấn đề cộng dồn, không phải 1).
+Đã sửa: mỗi điểm ROSTER giờ chỉ còn 1 circle tĩnh (r=0.9), không animation — chỉ các điểm case
+tiêu biểu (vài chục, không phải hàng nghìn) còn giữ hiệu ứng glow+nhấp nháy. Đo được: circle
+Asia giảm từ 8238 xuống 4121, tổng DOM node 32335→26668.
+
+**CẬP NHẬT 3 (commit `5871a83`):** sếp phản hồi "3D mượt rồi, 2D vẫn là gốc giật" — tức 2 lượt
+vá trên (label O(n²) + bỏ animation) làm nhẹ đi nhưng chưa hết. Tìm tiếp: `attachPanZoom()`
+(dùng chung cho cả 3 bản đồ) áp dụng kéo/zoom bằng cách set THUỘC TÍNH SVG `transform` (không
+phải CSS `transform`) trên nhóm nội dung — với hàng nghìn `<circle>` con còn lại (Asia ~4100,
+SEA ~1250, VN ~310) dù đã tĩnh không animation, set thuộc tính SVG mỗi khung hình kéo/zoom vẫn
+khiến trình duyệt có xu hướng vẽ lại (repaint) toàn bộ hình học bên trong thay vì chỉ dịch
+chuyển 1 layer đã dựng sẵn qua compositor — đây là khoảng cách tăng tốc GPU nổi tiếng giữa
+thuộc tính SVG và CSS transform. Đã sửa: đổi `apply()` sang set `content.style.transform`
+(CSS) thay vì `setAttribute('transform', ...)`, thêm `transform-box:view-box;
+transform-origin:0 0` cho `.map-content` để CSS transform dùng đúng cùng hệ toạ độ (gốc ở góc
+trên-trái viewBox) như thuộc tính cũ — chỉ đổi CÁCH VẼ, không đổi vị trí hiển thị. Đã kiểm
+chứng: kéo chuột 50px di chuyển đúng 1 điểm mẫu (100px, 40px) trên màn hình (đúng tỷ lệ
+viewBox/màn hình của bản đồ này), zoom bằng lăn chuột vẫn ra scale/translate đúng tâm.
+
+**Việc mở nếu vẫn còn báo giật sau CẬP NHẬT 3:** sếp từng báo "Use hardware acceleration"
+trong Chrome đang TẮT (ảnh chụp mục Settings→System) rồi tự bật lên nhưng CHƯA xác nhận đã
+khởi động lại trình duyệt để áp dụng (Chrome yêu cầu restart hẳn, không chỉ bật switch) — nếu
+tăng tốc phần cứng thực sự tắt từ đầu, WebGL/canvas/SVG-compositor đều phải chạy bằng renderer
+phần mềm (rất chậm), có thể là 1 phần nguyên nhân độc lập với các bug code đã vá — cần hỏi lại
+kết quả sau restart ở phiên sau nếu sếp chưa phản hồi.
 
 ## Hiệu năng quả cầu 3D
 
