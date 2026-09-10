@@ -97,16 +97,29 @@ tăng tốc phần cứng thực sự tắt từ đầu, WebGL/canvas/SVG-compos
 phần mềm (rất chậm), có thể là 1 phần nguyên nhân độc lập với các bug code đã vá — cần hỏi lại
 kết quả sau restart ở phiên sau nếu sếp chưa phản hồi.
 
-**XÁC NHẬN: CẬP NHẬT 3 (CSS transform) là fix quyết định** (commit `88b8d73`) — sếp báo "nhẹ
-hơn rất nhiều" sau đó, rồi xin lại 2 việc thẩm mỹ/UX (không phải hiệu năng nữa): (1) khôi phục
-glow halo + nhấp nháy cho điểm ROSTER (đã bỏ ở CẬP NHẬT 2 để giảm tải trước khi tìm ra nguyên
-nhân thật) — khôi phục lại với kích thước nhỏ hơn bản gốc (glow r=2, core r=1, gốc là 5/2.1),
-đã đo lại: drag handler vẫn chỉ ~2.6ms/lần dù có 8238 circle + 4119 animation, xác nhận CSS
-transform mới là chỗ quyết định, không phải số lượng circle/animation tự nó; (2) tăng độ nhạy
-zoom lăn chuột gấp đôi (hệ số `0.0016→0.0032`) vì sếp so sánh thấy chậm hơn hẳn zoom quả cầu 3D.
-**Bài học:** khi đã xác định đúng NÚT THẮT THẬT (ở đây là cách áp transform), có thể mạnh dạn
-khôi phục các chi tiết thẩm mỹ đã cắt bớt trong lúc dò tìm mà không lo tái diễn vấn đề — miễn
-đo lại để xác nhận, đừng cắt vĩnh viễn những thứ chỉ bị nghi oan.
+**CẬP NHẬT 4 — commit `88b8d73` SAI, đã phải lùi lại 1 phần (commit `418a311`):** sau CẬP NHẬT 3,
+sếp báo "nhẹ hơn rất nhiều", rồi xin khôi phục glow halo + nhấp nháy cho điểm ROSTER (đã bỏ ở
+CẬP NHẬT 2) và tăng độ nhạy zoom. Lúc đó tôi ĐO SAI CÁCH: chỉ bọc `performance.now()` quanh việc
+bắn sự kiện `mousemove` rồi đo thời gian JS chạy XONG TRONG HÀM (~2.6ms/lần) và kết luận nhầm là
+"vẫn nhẹ" — nhưng phép đo đó CHỈ bắt được thời gian JS đồng bộ của handler, KHÔNG bắt được chi
+phí trình duyệt phải LIÊN TỤC đánh giá lại hàng nghìn animation CSS `infinite` MỖI KHUNG HÌNH,
+kể cả khi không tương tác gì (animation tự chạy nền, không phụ thuộc sự kiện chuột). Sếp báo
+"lại giật lag rồi" ngay sau đó — ĐÚNG, đây là chi phí THẬT, khác hẳn và CỘNG THÊM vào bug
+transform-attribute đã vá ở CẬP NHẬT 3, không phải do CẬP NHẬT 3 chưa đủ.
+
+**Đã sửa đúng (commit `418a311`):** giữ lại 2 circle/điểm (glow halo + core, vẫn màu mè, vẫn
+8238 circle cho Asia) nhưng bỏ hẳn class `core-glow`/`core-blink` (mang animation `infinite`)
+khỏi nhánh điểm ROSTER — chỉ còn few "big" points (case tiêu biểu) còn nhấp nháy. Lần này đo
+ĐÚNG chỗ bằng Web Animations API thật: `document.getAnimations().length` — giảm từ ước tính
+8000+ xuống còn **6** cho toàn trang, đây mới là con số phản ánh đúng "có bao nhiêu animation
+đang chạy liên tục", không phải thời gian 1 lần gọi handler.
+
+**Bài học sửa lại bài học cũ ở trên (bài học cũ SAI, đừng làm theo):** đo `performance.now()`
+quanh 1 lần gọi event handler CHỈ chứng minh JS ĐỒNG BỘ trong handler đó rẻ — KHÔNG chứng minh
+gì về chi phí RENDER/ANIMATION LIÊN TỤC chạy độc lập với sự kiện (CSS `animation:...infinite`,
+`requestAnimationFrame` loop riêng...). Muốn biết có đang "đốt" animation liên tục hay không,
+dùng `document.getAnimations().length` (đếm animation đang hoạt động) hoặc đếm số phần tử có
+class animation trước/sau khi đổi, ĐỪNG suy ra từ thời gian 1 lệnh gọi hàm.
 
 ## Hiệu năng quả cầu 3D
 
