@@ -1265,13 +1265,17 @@ function hexToRgb(hex){
 /* Roster entries whose (country-level, jittered) coordinates fall inside a
    region's lat/lng box — lets the Asia/SEA/Vietnam panels show the same
    roster density as the globe, not just the 6 flagship cases. */
+// EXPERIMENT (sếp asked to try 2x the blinking-dot count as a stress test):
+// how many dots per country get the glow+blink animation, was 1.
+var BLINK_PER_COUNTRY = 2;
 function rosterPointsInBounds(bounds){
-  // One dot per COUNTRY (the first one encountered in ROSTER order, not
-  // ranked by anything - "hoành tráng nhất" is just whichever comes first)
-  // keeps the glow+blink animation; every other dot of that country is
-  // static. That's animated-element count = country count in view (tens,
-  // not thousands), which keeps the map feeling alive without reintroducing
-  // the perpetual-animation cost that caused CẬP NHẬT 4's regression.
+  // BLINK_PER_COUNTRY dots per COUNTRY (the first ones encountered in
+  // ROSTER order, not ranked by anything - "hoành tráng nhất" is just
+  // whichever comes first) keep the glow+blink animation; every other dot
+  // of that country is static. That's animated-element count = country
+  // count in view times BLINK_PER_COUNTRY (tens, not thousands), which
+  // keeps the map feeling alive without reintroducing the perpetual-
+  // animation cost that caused CẬP NHẬT 4's regression.
   var seenCountries = {};
   return ROSTER.filter(function(r){
     return r[4]!=null && r[5]!=null && r[4]>=bounds.latMin && r[4]<=bounds.latMax && r[5]>=bounds.lngMin && r[5]<=bounds.lngMax;
@@ -1284,8 +1288,9 @@ function rosterPointsInBounds(bounds){
     // read clearly even at r=1.
     var color = rtype==='university'?'#408CFF':rtype==='company'?'#00E0C6':rtype==='network'?'#BE5AFF':'#C8D2E6';
     var country = r[2] || '';
-    var blink = !seenCountries[country];
-    seenCountries[country] = true;
+    var seenCount = seenCountries[country] || 0;
+    var blink = seenCount < BLINK_PER_COUNTRY;
+    seenCountries[country] = seenCount + 1;
     return {lat:r[4], lng:r[5], label:r[0], showLabel:false, small:true, color:color, blink:blink};
   });
 }
@@ -1788,10 +1793,11 @@ function vnUnitsAsSmallPoints(){
   // never produces a Vietnam entry there) - without a blink flag of its own,
   // Vietnam was the one country with zero sparkle while every other country
   // got its one blinking dot from the CẬP NHẬT 5 change, which sếp noticed
-  // ("sao Việt Nam không thấy cái nào nhấp nháy?"). First unit in the array
-  // gets it, same "not ranked, just first" rule as the per-country pick.
+  // ("sao Việt Nam không thấy cái nào nhấp nháy?"). First BLINK_PER_COUNTRY
+  // units in the array get it, same "not ranked, just first" rule and same
+  // experimental multiplier as the per-country pick in rosterPointsInBounds().
   return spreadCluster(VN_UNITS).map(function(u, idx){
-    return {lat:u._lat, lng:u._lng, label:(LANG==='vi'?u.name:u.nameEn), showLabel:false, small:true, color:VN_TYPE_COLORS.university, blink:idx===0};
+    return {lat:u._lat, lng:u._lng, label:(LANG==='vi'?u.name:u.nameEn), showLabel:false, small:true, color:VN_TYPE_COLORS.university, blink:idx<BLINK_PER_COUNTRY};
   });
 }
 /* City-level coordinates for the HANISA/VNEI/VN_FUNDS entries — those datasets
