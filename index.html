@@ -2924,45 +2924,68 @@ function initGlobe(){
   };
   var texByType = {};
   Object.keys(TYPE_HEX).forEach(function(k){ texByType[k] = glowTexture(TYPE_HEX[k], true); });
-  // ROSTER is rendered as ONE THREE.Points cloud per type (4 draw calls total),
-  // not one THREE.Sprite per marker. With ROSTER in the tens of thousands, a
-  // Sprite-per-marker approach means tens of thousands of individual draw
-  // calls every frame regardless of how much material state is shared between
-  // them - THAT (not material count alone) is what made the globe stutter on
-  // open and while dragging as ROSTER grew past a few thousand rows. A single
-  // BufferGeometry per type collapses all of that type's markers into one
-  // draw call. The cost: no per-dot pulse phase (all dots of a type pulse in
-  // sync via that type's shared PointsMaterial) and hit-testing now maps a
-  // raycast hit's vertex `index` back to the roster row instead of reading
-  // `object.userData` directly (see pickHit() below) - at this marker
-  // density the individual pulse-phase was already imperceptible anyway.
+  // ROSTER is rendered as THREE.Points clouds, not one THREE.Sprite per
+  // marker. With ROSTER in the tens of thousands, a Sprite-per-marker
+  // approach means tens of thousands of individual draw calls every frame
+  // regardless of how much material state is shared between them - THAT (not
+  // material count alone) is what made the globe stutter on open and while
+  // dragging as ROSTER grew past a few thousand rows. A BufferGeometry
+  // collapses however many markers it holds into ONE draw call.
+  //
+  // A single geometry per type (4 draw calls total) works but has a visible
+  // downside: since a Points cloud's material can only carry ONE opacity/size
+  // value for every point in it, the whole type pulses in perfect unison -
+  // it reads as "blink on, blink off" instead of the scattered, independently
+  // twinkling look the roster layer is meant to have. Splitting each type
+  // into ROSTER_PULSE_BUCKETS sub-clouds (each with its own material and its
+  // own phase offset) gets that scattered look back cheaply: still only
+  // ~4 x ROSTER_PULSE_BUCKETS draw calls total (order of a hundred, not tens
+  // of thousands), while every point's dot is one of many independent
+  // phases instead of 1 of 4. Points are round-robin-assigned to buckets in
+  // ROSTER's own iteration order, not grouped by anything geographic, so two
+  // markers a mile apart in the source data (which often are ALSO close on
+  // the globe, since data was imported country/region-batch by batch) end up
+  // in different buckets and don't visibly blink together.
+  var ROSTER_PULSE_BUCKETS = 24;
   var rosterMatByType = {};
   Object.keys(TYPE_HEX).forEach(function(k){
-    rosterMatByType[k] = new THREE.PointsMaterial({
-      map: texByType[k], transparent:true, opacity:0.85, depthWrite:false,
-      sizeAttenuation:true, size:0.05, alphaTest:0.02
-    });
+    rosterMatByType[k] = [];
+    for(var b=0; b<ROSTER_PULSE_BUCKETS; b++){
+      rosterMatByType[k].push(new THREE.PointsMaterial({
+        map: texByType[k], transparent:true, opacity:0.85, depthWrite:false,
+        sizeAttenuation:true, size:0.05, alphaTest:0.02
+      }));
+    }
   });
   var rosterGroup = new THREE.Group();
   var rosterPointsList = [];
   var rosterByType = {};
-  Object.keys(TYPE_HEX).forEach(function(k){ rosterByType[k] = {positions:[], rows:[]}; });
+  Object.keys(TYPE_HEX).forEach(function(k){
+    rosterByType[k] = [];
+    for(var b=0; b<ROSTER_PULSE_BUCKETS; b++) rosterByType[k].push({positions:[], rows:[]});
+  });
+  var bucketCounters = {};
+  Object.keys(TYPE_HEX).forEach(function(k){ bucketCounters[k] = 0; });
   ROSTER.forEach(function(r){
     if(r[4]==null || r[5]==null) return;
     var rtype = classifyRosterType(r[0], r[1]);
-    var bucket = rosterByType[rtype];
+    var b = bucketCounters[rtype]++ % ROSTER_PULSE_BUCKETS;
+    var bucket = rosterByType[rtype][b];
     var v = latLngToVec3(r[4], r[5], R*1.015);
     bucket.positions.push(v.x, v.y, v.z);
     bucket.rows.push(r);
   });
   Object.keys(TYPE_HEX).forEach(function(rtype){
-    var bucket = rosterByType[rtype];
-    var geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(bucket.positions, 3));
-    var pts = new THREE.Points(geo, rosterMatByType[rtype]);
-    pts.userData = {rtype:rtype, rows:bucket.rows, baseSize:0.05};
-    rosterGroup.add(pts);
-    rosterPointsList.push(pts);
+    for(var b=0; b<ROSTER_PULSE_BUCKETS; b++){
+      var bucket = rosterByType[rtype][b];
+      if(!bucket.positions.length) continue;
+      var geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(bucket.positions, 3));
+      var pts = new THREE.Points(geo, rosterMatByType[rtype][b]);
+      pts.userData = {rtype:rtype, rows:bucket.rows, baseSize:0.05, phaseIndex:b};
+      rosterGroup.add(pts);
+      rosterPointsList.push(pts);
+    }
   });
   group.add(rosterGroup);
   window.__rosterGlobeGroup = rosterGroup;
@@ -3113,8 +3136,21 @@ function initGlobe(){
     camera.fov = Math.max(FOV_MIN, Math.min(FOV_MAX, camera.fov*factor));
     camera.updateProjectionMatrix();
   }
+  // A Points raycast checks every vertex in each of the 4 ROSTER point
+  // clouds (~19848 total) - measured at ~1ms per call. `mousemove` can fire
+  // far faster than that (60-100+/sec while the pointer is actively moving,
+  // more on a high-poll-rate mouse), so calling pickHit() straight from every
+  // event floods the main thread with these raycasts purely from moving the
+  // mouse over the globe, even without dragging to rotate it. Throttling to
+  // once per ~50ms (20/sec) is still instant-feeling for a hover tooltip but
+  // cuts that cost by 3-5x.
+  var lastHoverAt = 0;
+  var HOVER_THROTTLE_MS = 50;
   function onHover(e){
     if(dragging || !hoverEl) return;
+    var now = performance.now();
+    if(now - lastHoverAt < HOVER_THROTTLE_MS) return;
+    lastHoverAt = now;
     var rect = renderer.domElement.getBoundingClientRect();
     var ud = pickHit(
       ((e.clientX-rect.left)/rect.width)*2-1,
