@@ -121,6 +121,18 @@ gì về chi phí RENDER/ANIMATION LIÊN TỤC chạy độc lập với sự ki
 dùng `document.getAnimations().length` (đếm animation đang hoạt động) hoặc đếm số phần tử có
 class animation trước/sau khi đổi, ĐỪNG suy ra từ thời gian 1 lệnh gọi hàm.
 
+**CẬP NHẬT 5 (commit `a780a58`) — cân bằng được cả hiệu năng lẫn thẩm mỹ:** sếp xác nhận mượt
+hơn hẳn sau CẬP NHẬT 4 nhưng chê 2 điểm: (1) màu điểm ROSTER nhạt/"nhờ nhờ" — đang dùng bảng màu
+pastel dùng chung với badge/chip nơi khác (`VN_TYPE_COLORS`...), đã đổi riêng cho các điểm này
+sang đúng màu rực của quả cầu 3D (`TYPE_HEX`: `#408CFF`/`#00E0C6`/`#BE5AFF`/`#C8D2E6`); (2) nhớ
+hiệu ứng nhấp nháy — sếp tự đề xuất giải pháp hay: "mỗi quốc gia 1 ông nhấp nháy là ông hoành
+tráng nhất" thay vì tất cả hoặc không gì cả. Đã làm đúng vậy: `rosterPointsInBounds()` đánh dấu
+`blink:true` cho ĐÚNG 1 dòng ROSTER đầu tiên gặp mỗi quốc gia (không xếp hạng gì, chỉ là dòng
+đầu tiên theo thứ tự mảng), chỉ dòng đó được gắn class animation. Đo được: Asia còn 38 điểm
+nhấp nháy (bằng đúng số quốc gia trong khung, không phải 4119), tổng animation toàn trang 112
+(so với 8000+ gây giật ở CẬP NHẬT 4) — **đây là mức cân bằng tốt giữa "có sức sống" và "nhẹ",
+nên dùng làm mẫu cho các lần thêm hiệu ứng tương tự sau này khi có nhiều điểm dữ liệu.**
+
 ## Hiệu năng quả cầu 3D
 
 **Fix thật sự** (commit `f52528d`, 2026-09-10): mỗi loại ROSTER (university/company/network/
