@@ -224,7 +224,7 @@ giờ tô xám (`grayNonHighlight`), riêng Việt Nam (gồm Hoàng Sa/Trườn
 ROSTER theo quy ước không chứa Việt Nam — bất kỳ hàm mới nào lấy dữ liệu cho tab/panel
 Việt Nam PHẢI dùng `VN_UNITS`/mạng lưới riêng, không được quét ROSTER theo toạ độ.
 
-## Bản đồ zoom cụm Hà Nội / TP.HCM (commit `18c80dc` + `1f2c9a1`, 2026-09-10)
+## Bản đồ zoom cụm Hà Nội / TP.HCM (commit `18c80dc` + `206692b`, 2026-09-10)
 
 Sếp báo bản đồ Việt Nam ở mức zoom toàn quốc: 2 cụm Hà Nội/TP.HCM (~150 điểm dồn vào 1
 khung toạ độ nhỏ) chỉ hiện thành 1 quầng sáng mờ, không phân biệt được từng đơn vị. Đã
