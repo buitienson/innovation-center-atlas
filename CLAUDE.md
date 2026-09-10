@@ -16,6 +16,20 @@ tự sửa tay khi cần.
 **Artifact (bản xem/sửa nhanh):** https://claude.ai/code/artifact/175ea757-eca9-4a87-acc8-47981ab5b129
 **GitHub:** https://github.com/buitienson/innovation-center-atlas
 
+## Hiệu năng quả cầu 3D
+
+Từ commit `6747431` (2026-09-10), mỗi điểm ROSTER trên quả cầu 3D dùng CHUNG 1 trong 4
+`THREE.SpriteMaterial` theo loại (university/company/network/other) thay vì mỗi điểm tự tạo
+material riêng — khi ROSTER còn ~2-3 nghìn mục thì không đáng kể, nhưng ở quy mô ~20000 mục
+việc mỗi điểm có material riêng (dù trỏ cùng texture) khiến renderer phải chuyển trạng thái
+GPU hàng chục nghìn lần/khung hình, gây giật khi mở trang và khi kéo xoay quả cầu. Độ trong
+suốt (nhấp nháy) giờ chỉ tính theo loại (4 lần/khung hình) thay vì theo từng điểm; kích thước
+vẫn nhấp nháy riêng từng điểm (rẻ, không đổi trạng thái GPU). **Nếu ROSTER tiếp tục tăng
+mạnh (hướng tới 25000+) mà vẫn thấy giật, bước tối ưu tiếp theo là gộp toàn bộ điểm cùng loại
+thành 1 `THREE.Points` (point cloud) duy nhất thay vì hàng nghìn `THREE.Sprite` riêng lẻ** —
+chưa làm vì cần viết lại cơ chế click/hover (raycasting) theo kiểu khác, rủi ro cao hơn, để
+dành khi thật sự cần.
+
 ## Cấu trúc
 
 - `src/atlas.html` — **file nguồn để sửa**. Một fragment HTML/CSS/JS gộp (không có
