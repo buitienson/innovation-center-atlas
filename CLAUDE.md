@@ -224,6 +224,27 @@ giờ tô xám (`grayNonHighlight`), riêng Việt Nam (gồm Hoàng Sa/Trườn
 ROSTER theo quy ước không chứa Việt Nam — bất kỳ hàm mới nào lấy dữ liệu cho tab/panel
 Việt Nam PHẢI dùng `VN_UNITS`/mạng lưới riêng, không được quét ROSTER theo toạ độ.
 
+## Bản đồ zoom cụm Hà Nội / TP.HCM (commit `18c80dc`, 2026-09-10)
+
+Sếp báo bản đồ Việt Nam ở mức zoom toàn quốc: 2 cụm Hà Nội/TP.HCM (~150 điểm dồn vào 1
+khung toạ độ nhỏ) chỉ hiện thành 1 quầng sáng mờ, không phân biệt được từng đơn vị. Đã
+thêm 2 khung bản đồ MỚI (`#mapVNHN`, `#mapVNHCM`) ngay dưới bản đồ chính + chú thích —
+dùng ĐÚNG bộ điểm/độ giãn (`spreadCluster()`, `vnNetworkAsSmallPoints()`) đã có sẵn,
+chỉ đổi `bounds` sang đúng khung 2 ô highlight cũ (`{latMin:20.8,latMax:21.6,
+lngMin:105.0,lngMax:106.6}` Hà Nội, `{latMin:10.6,latMax:11.1,lngMin:106.4,lngMax:107.0}`
+TP.HCM) render trên khung canvas full-size như bản đồ chính — cùng 1 độ giãn (jitter) đó
+trải ra nhiều pixel hơn hẳn nên tách rời được. Đơn vị trường đại học (`VN_UNITS`, 7-8
+điểm/cụm) gắn nhãn tên cố định; điểm mạng lưới HANISA/VNEI/quỹ (hàng chục điểm/cụm) dùng
+lại hệ thống "hiện nhãn khi zoom sâu, né chồng lấn" có sẵn trong `buildCoordMap()` (bật
+`showLabel` thay vì `false` như bản đồ chính) + tooltip hover (`<title>`) luôn có sẵn.
+
+**Bug phát sinh + đã vá cùng lúc:** nhãn lưới toạ độ (`coord-label`) của `buildCoordMap()`
+in thẳng biến `la`/`lo` — bước lưới số nguyên (10°, 4°) trước giờ không lộ vấn đề, nhưng
+bước lẻ (0.1°/0.2°, dùng cho 2 khung mới) cộng dồn sai số dấu phẩy động qua `+= opts.step`
+(vd in ra `106.39999999999999°`). Đã sửa: làm tròn RIÊNG phần chữ hiển thị
+(`Math.round(la*1000)/1000`), không đụng `la` gốc (vẫn dùng để tính vị trí đường lưới) —
+áp dụng cho mọi bản đồ dùng `buildCoordMap()`, không riêng 2 khung mới.
+
 ## Quy tắc nội dung — nhắc lại vì đã bị vi phạm nhiều lần trong lúc dựng
 
 **Không đưa bình luận về quy trình/phương pháp thu thập dữ liệu lên trang công khai.**
