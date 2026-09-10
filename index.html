@@ -1516,18 +1516,20 @@ function buildCoordMap(svg, bounds, points, opts){
     // scattered "twinkling" rather than every dot pulsing in lockstep.
     var delay = ((pidx*37) % 240) / 100;
     if(p.small){
-      // Glow halo + blink restored (was briefly removed as a size-reduction
-      // measure while chasing the map's lag - the actual dominant cause
-      // turned out to be attachPanZoom() using the SVG `transform` ATTRIBUTE
-      // instead of a CSS transform, fixed separately; sếp confirmed the page
-      // is "much lighter" now with that fixed, then asked for the color/
-      // twinkle look back). Kept smaller than the pre-lag original (was
-      // glow 5/core 2.1) since thousands of these still overlap in dense
-      // clusters at this map scale.
+      // Glow halo brought back for color/depth (2 circles again, like the
+      // pre-lag original) but WITHOUT the `core-glow`/`core-blink` classes -
+      // those carry a perpetual `animation:...infinite` in CSS, and that
+      // ongoing per-frame animation evaluation across thousands of
+      // concurrently-animating elements turned out to be a real, standalone
+      // cost distinct from the pan/zoom transform-attribute bug fixed
+      // earlier - reintroducing it brought the lag straight back (confirmed
+      // by sếp) even though the transform fix itself is still working fine.
+      // Static color/opacity/radius give most of the "colorful" look without
+      // that ongoing cost; only the flagship "big" points (a handful) still
+      // blink continuously.
       var sizeMul = p.sizeMul || 1;
-      var glow = svgEl('circle',{class:'core-glow',cx:xy[0],cy:xy[1],r:2*sizeMul,fill:p.color,opacity:'0.28'});
-      var core = svgEl('circle',{class:'core core-blink',cx:xy[0],cy:xy[1],r:1*sizeMul,fill:p.color,opacity:'0.95'});
-      glow.style.animationDelay = core.style.animationDelay = delay+'s';
+      var glow = svgEl('circle',{class:'roster-glow',cx:xy[0],cy:xy[1],r:2*sizeMul,fill:p.color,opacity:'0.28'});
+      var core = svgEl('circle',{class:'core',cx:xy[0],cy:xy[1],r:1*sizeMul,fill:p.color,opacity:'0.95'});
       g.appendChild(glow); g.appendChild(core);
       var titleEl = svgEl('title',{}); titleEl.textContent = p.label; g.appendChild(titleEl);
       // showLabel:false (every ROSTER point passed into these maps sets this)
