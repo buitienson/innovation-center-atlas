@@ -36,6 +36,37 @@ mà không giới hạn số dòng (kiểu `rows.map(...).join('')`) đều sẽ
 ROSTER đủ lớn — nên rà toàn bộ chỗ nào có `ROSTER.map`/`ROSTER.forEach` sinh HTML trực tiếp,
 không chỉ chỗ đã biết.
 
+**CẬP NHẬT — lời khuyên trên CHƯA ĐỦ, đã bỏ sót 1 chỗ lớn hơn:** sau khi vá bảng ROSTER ở
+trên, sếp VẪN báo giật, lần này kèm phản hồi cụ thể "đốm sáng trên bản đồ 2D chồng lấn nhìn
+không ra" — hoá ra 3 **bản đồ 2D Asia/SEA/Việt Nam** (`buildCoordMap()`, gọi qua
+`rosterPointsInBounds(bounds)`) mỗi cái vẽ TỪNG mục ROSTER trong vùng thành 1 vòng tròn SVG:
+đo được **Asia 4119 điểm (8238 circle), SEA 1250 điểm (2500 circle), VN 313 điểm (626
+circle)**. Đây KHÔNG khớp mẫu tìm kiếm `ROSTER.map(...).join('')` ở trên (nó là
+`ROSTER.filter().map()` trả về mảng object đưa vào hàm vẽ SVG, không sinh chuỗi HTML trực
+tiếp) — bài học: khi rà "chỗ nào dùng ROSTER để render", đừng chỉ tìm theo MẪU CODE cụ thể đã
+biết, phải tìm theo Ý NGHĨA (bất kỳ hàm nào lặp qua ROSTER rồi tạo ra DOM/SVG node, bất kể
+cú pháp) — `grep` theo tên hàm gọi (`rosterPointsInBounds`, `rosterFiltered`, `ROSTER.filter`)
+đáng tin hơn `grep` theo cú pháp `.map(...).join(...)`.
+
+**Lỗi thật tìm được:** cả 3 bản đồ đặt `showLabel:false` cho mọi điểm ROSTER (đúng ý định:
+điểm nhỏ không cần nhãn chữ) nhưng nhánh vẽ "điểm nhỏ" (`p.small`) trong `buildCoordMap()`
+KHÔNG kiểm tra cờ này (nhánh vẽ "điểm lớn/case tiêu biểu" bên cạnh CÓ kiểm) — nên mỗi điểm vẫn
+bị tạo thêm 1 `<text>` VÀ 1 mục trong `pointLabelItems`, mảng này bị hàm `updateMapLabels()`
+quét lại **mỗi lần kéo/zoom bản đồ** với thuật toán tránh chồng nhãn gần O(n²) (so từng cặp
+nhãn đã đặt) — đây mới là nguyên nhân giật KHI TƯƠNG TÁC với bản đồ 2D, không phải quả cầu.
+Đã sửa: thêm đúng điều kiện `if(p.showLabel!==false)` vào nhánh điểm nhỏ (đúng như nhánh kia
+đã làm) — `pointLabelItems` giờ gần như rỗng cho các bản đồ này. Đồng thời giảm bán kính điểm
+nhỏ (glow 5→2.6, core 2.1→1.1) để đỡ chồng lấn khi có hàng nghìn điểm trong 1 khung SVG cố
+định.
+
+**Bài học tổng quát MỚI (quan trọng hơn bài học cũ ở trên):** khi 1 tính năng có "cờ tắt"
+(`showLabel:false`, tương tự `visible:false`...) được set nhất quán ở NƠI TẠO DỮ LIỆU nhưng
+lại có 2 nhánh code xử lý khác nhau cho cùng loại dữ liệu (ở đây: nhánh "case lớn" và nhánh
+"điểm nhỏ") — luôn nghi ngờ 1 trong 2 nhánh QUÊN kiểm tra cờ đó, đặc biệt nếu nhánh đó được
+viết sau hoặc thêm dữ liệu (ROSTER) vào sau khi code đã có sẵn cho mục đích khác (case tiêu
+biểu). Bug bất đối xứng kiểu này (2 nhánh giống nhau nhưng chỉ 1 nhánh đúng) dễ lọt qua vì mỗi
+nhánh nhìn "hợp lý" khi đọc riêng lẻ.
+
 ## Hiệu năng quả cầu 3D
 
 **Fix thật sự** (commit `f52528d`, 2026-09-10): mỗi loại ROSTER (university/company/network/
