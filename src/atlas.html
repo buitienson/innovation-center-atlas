@@ -1507,15 +1507,31 @@ function buildCoordMap(svg, bounds, points, opts){
     // scattered "twinkling" rather than every dot pulsing in lockstep.
     var delay = ((pidx*37) % 240) / 100;
     if(p.small){
+      // Smaller than before (was r=5/2.1) - with ROSTER now contributing
+      // thousands of "small" points to these regional maps (Asia alone has
+      // ~4100 in-bounds), the old radius packed them into an unreadable
+      // solid smear wherever points cluster (sếp flagged this directly).
       var sizeMul = p.sizeMul || 1;
-      var glow = svgEl('circle',{class:'core-glow',cx:xy[0],cy:xy[1],r:5*sizeMul,fill:p.color,opacity:'0.25'});
-      var core = svgEl('circle',{class:'core core-blink',cx:xy[0],cy:xy[1],r:2.1*sizeMul,fill:p.color,opacity:'0.95'});
+      var glow = svgEl('circle',{class:'core-glow',cx:xy[0],cy:xy[1],r:2.6*sizeMul,fill:p.color,opacity:'0.25'});
+      var core = svgEl('circle',{class:'core core-blink',cx:xy[0],cy:xy[1],r:1.1*sizeMul,fill:p.color,opacity:'0.95'});
       glow.style.animationDelay = core.style.animationDelay = delay+'s';
       g.appendChild(glow); g.appendChild(core);
       var titleEl = svgEl('title',{}); titleEl.textContent = p.label; g.appendChild(titleEl);
-      var plbl = svgEl('text',{class:'point-label small',x:xy[0]+3,y:xy[1]-3,fill:p.color}); plbl.textContent = p.label;
-      pointLabelsG.appendChild(plbl);
-      pointLabelItems.push({el:plbl, x:xy[0]+3, y:xy[1]-3});
+      // showLabel:false (every ROSTER point passed into these maps sets this)
+      // used to be silently ignored here - unlike the non-small branch below,
+      // which already respects it - so EVERY one of those thousands of roster
+      // points got its own <text> label element AND an entry in
+      // pointLabelItems, which updateMapLabels() below re-scans with an
+      // effectively O(n^2) overlap check on every pan/zoom tick. That's the
+      // actual dominant cost behind "giật lag" while dragging/zooming these
+      // 2D maps - confirmed live: pointLabelItems held ~4100/1250/310 items
+      // for Asia/SEA/VN respectively before this fix, all of it dead weight
+      // since showLabel was always false for these points anyway.
+      if(p.showLabel!==false){
+        var plbl = svgEl('text',{class:'point-label small',x:xy[0]+3,y:xy[1]-3,fill:p.color}); plbl.textContent = p.label;
+        pointLabelsG.appendChild(plbl);
+        pointLabelItems.push({el:plbl, x:xy[0]+3, y:xy[1]-3});
+      }
     } else {
       var glow2 = svgEl('circle',{class:'core-glow',cx:xy[0],cy:xy[1],r:10,fill:p.color,opacity:'0.22'});
       var core2 = svgEl('circle',{class:'core core-blink',cx:xy[0],cy:xy[1],r:3.6,fill:p.color});
