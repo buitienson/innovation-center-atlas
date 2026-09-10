@@ -2911,27 +2911,45 @@ function initGlobe(){
   };
   var texByType = {};
   Object.keys(TYPE_HEX).forEach(function(k){ texByType[k] = glowTexture(TYPE_HEX[k], true); });
-  // One shared SpriteMaterial per type (4 total), not one per marker - with
-  // ROSTER now in the tens of thousands, giving every dot its own material
-  // instance (even pointing at the same shared texture) forced the renderer
-  // to state-sort/switch tens of thousands of times per frame, which is what
-  // made the globe stutter on open and while dragging as ROSTER grew past a
-  // few thousand rows. Sharing the material means opacity can only be
-  // animated per-type (see animate() below), not per-dot, but at this marker
-  // density the individual pulse-phase was already imperceptible.
+  // ROSTER is rendered as ONE THREE.Points cloud per type (4 draw calls total),
+  // not one THREE.Sprite per marker. With ROSTER in the tens of thousands, a
+  // Sprite-per-marker approach means tens of thousands of individual draw
+  // calls every frame regardless of how much material state is shared between
+  // them - THAT (not material count alone) is what made the globe stutter on
+  // open and while dragging as ROSTER grew past a few thousand rows. A single
+  // BufferGeometry per type collapses all of that type's markers into one
+  // draw call. The cost: no per-dot pulse phase (all dots of a type pulse in
+  // sync via that type's shared PointsMaterial) and hit-testing now maps a
+  // raycast hit's vertex `index` back to the roster row instead of reading
+  // `object.userData` directly (see pickHit() below) - at this marker
+  // density the individual pulse-phase was already imperceptible anyway.
   var rosterMatByType = {};
   Object.keys(TYPE_HEX).forEach(function(k){
-    rosterMatByType[k] = new THREE.SpriteMaterial({map:texByType[k], transparent:true, opacity:0.85, depthWrite:false});
+    rosterMatByType[k] = new THREE.PointsMaterial({
+      map: texByType[k], transparent:true, opacity:0.85, depthWrite:false,
+      sizeAttenuation:true, size:0.05, alphaTest:0.02
+    });
   });
   var rosterGroup = new THREE.Group();
+  var rosterPointsList = [];
+  var rosterByType = {};
+  Object.keys(TYPE_HEX).forEach(function(k){ rosterByType[k] = {positions:[], rows:[]}; });
   ROSTER.forEach(function(r){
     if(r[4]==null || r[5]==null) return;
     var rtype = classifyRosterType(r[0], r[1]);
-    var spr = new THREE.Sprite(rosterMatByType[rtype]);
-    spr.position.copy(latLngToVec3(r[4], r[5], R*1.015));
-    spr.scale.set(0.044,0.044,1);
-    spr.userData = {roster:r, baseScale:0.044, sharedMat:true};
-    rosterGroup.add(spr); beacons.push(spr);
+    var bucket = rosterByType[rtype];
+    var v = latLngToVec3(r[4], r[5], R*1.015);
+    bucket.positions.push(v.x, v.y, v.z);
+    bucket.rows.push(r);
+  });
+  Object.keys(TYPE_HEX).forEach(function(rtype){
+    var bucket = rosterByType[rtype];
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(bucket.positions, 3));
+    var pts = new THREE.Points(geo, rosterMatByType[rtype]);
+    pts.userData = {rtype:rtype, rows:bucket.rows, baseSize:0.05};
+    rosterGroup.add(pts);
+    rosterPointsList.push(pts);
   });
   group.add(rosterGroup);
   window.__rosterGlobeGroup = rosterGroup;
@@ -2998,7 +3016,27 @@ function initGlobe(){
   window.__updateGlobeLabels = updateGlobeLabels;
   var raycaster = new THREE.Raycaster();
   raycaster.params.Sprite = {threshold: 0.02};
+  // World-space distance (not the Sprite threshold's normalized units) a ray
+  // may pass from a ROSTER point cloud vertex and still count as a hit.
+  raycaster.params.Points = {threshold: 0.03};
   var pointer = new THREE.Vector2();
+  // Single hit-test shared by hover and click: checks the few "important"
+  // beacons (cases/Vietnam marker, still individual Sprites) and the 4 ROSTER
+  // point clouds together, letting Three.js pick whichever is actually
+  // closest along the ray. A Points hit only gives a vertex `index`, so it's
+  // mapped back to the source roster row via that point cloud's own
+  // userData.rows (built in the same order as its position buffer).
+  function pickHit(px, py){
+    pointer.x = px; pointer.y = py;
+    raycaster.setFromCamera(pointer, camera);
+    var hits = raycaster.intersectObjects(beacons.concat(rosterPointsList));
+    if(!hits.length) return null;
+    var hit = hits[0];
+    var ud = hit.object.userData;
+    if(ud && ud.rows) return {roster: ud.rows[hit.index]};
+    return ud || null;
+  }
+  window.__pickHit = pickHit;
   var dragging=false, lastX=0, lastY=0, velX=0, velY=0, moved=0;
   var popoverActive=false; // pause auto-rotate while a beacon's info is open
   var pinching=false, pinchStartDist=0, pinchStartFov=42;
@@ -3044,18 +3082,13 @@ function initGlobe(){
     if(moved < 6){
       var rect = renderer.domElement.getBoundingClientRect();
       var p = (e.changedTouches ? e.changedTouches[0] : e);
-      pointer.x = ((p.clientX-rect.left)/rect.width)*2-1;
-      pointer.y = -((p.clientY-rect.top)/rect.height)*2+1;
-      raycaster.setFromCamera(pointer, camera);
-      var hits = raycaster.intersectObjects(beacons);
-      if(hits.length){
-        var ud = hits[0].object.userData;
-        if(ud.case){ showGlobePopoverFor(ud.case); popoverActive=true; }
-        else if(ud.roster){ showGlobePopoverForRoster(ud.roster); popoverActive=true; }
-        else { globePopEl.classList.remove('show'); popoverActive=false; }
-      } else {
-        globePopEl.classList.remove('show'); popoverActive=false;
-      }
+      var ud = pickHit(
+        ((p.clientX-rect.left)/rect.width)*2-1,
+        -((p.clientY-rect.top)/rect.height)*2+1
+      );
+      if(ud && ud.case){ showGlobePopoverFor(ud.case); popoverActive=true; }
+      else if(ud && ud.roster){ showGlobePopoverForRoster(ud.roster); popoverActive=true; }
+      else { globePopEl.classList.remove('show'); popoverActive=false; }
     }
   }
   function onCancel(){ dragging = false; pinching = false; }
@@ -3070,12 +3103,11 @@ function initGlobe(){
   function onHover(e){
     if(dragging || !hoverEl) return;
     var rect = renderer.domElement.getBoundingClientRect();
-    pointer.x = ((e.clientX-rect.left)/rect.width)*2-1;
-    pointer.y = -((e.clientY-rect.top)/rect.height)*2+1;
-    raycaster.setFromCamera(pointer, camera);
-    var hits = raycaster.intersectObjects(beacons);
-    if(hits.length){
-      var ud = hits[0].object.userData;
+    var ud = pickHit(
+      ((e.clientX-rect.left)/rect.width)*2-1,
+      -((e.clientY-rect.top)/rect.height)*2+1
+    );
+    if(ud){
       var flag = '', label = null;
       if(ud.case){ flag = countryFlag(ud.case.country.en); label = ud.case.name.en || ud.case.name.vi; }
       else if(ud.roster){ flag = countryFlag(ud.roster[2]); label = ud.roster[0]; }
@@ -3119,31 +3151,29 @@ function initGlobe(){
       if(!dragging && !pinching && !popoverActive && !reduceMotion) group.rotation.y += 0.048 * delta;
       var t2 = elapsed;
       if(!reduceMotion){
+        // The few "important" beacons (flagship cases + the Vietnam marker)
+        // are still individual Sprites, each pulsing size AND brightness with
+        // its own phase - cheap at this small count.
         beacons.forEach(function(b,i){
           var base = b.userData.baseScale || 0.10;
-          // Every beacon — flagship cases and the roster's hundreds of dots alike —
-          // pulses in size, so the globe reads as an instrument full of active
-          // points. Brightness (material.opacity) is per-OBJECT only for the
-          // few "important" beacons (cases/Vietnam marker), each with its own
-          // material; ROSTER dots share one material per type (see marker
-          // creation above), so their opacity is animated once per type below
-          // instead of once per dot - setting it here too would just mean the
-          // last dot of each type in this loop wins, for no benefit at 20k+ scale.
           var wave = Math.sin(t2*2.6 + i*0.9);
           var s = base * (1 + wave*0.38);
           b.scale.set(s,s,1);
-          if(!b.userData.sharedMat) b.material.opacity = 0.6 + wave*0.4;
+          b.material.opacity = 0.6 + wave*0.4;
         });
-        var typeKeys = Object.keys(rosterMatByType);
-        for(var ti=0; ti<typeKeys.length; ti++){
-          var tWave = Math.sin(t2*2.6 + ti*1.7);
-          rosterMatByType[typeKeys[ti]].opacity = 0.6 + tWave*0.4;
-        }
+        // ROSTER's tens of thousands of dots are 4 THREE.Points clouds (one
+        // per type), so their pulse is animated once per type (4 sets/frame)
+        // via the shared PointsMaterial, not once per dot.
+        rosterPointsList.forEach(function(pts, ti){
+          var wave = Math.sin(t2*2.6 + ti*1.7);
+          pts.material.size = pts.userData.baseSize * (1 + wave*0.38);
+          pts.material.opacity = 0.6 + wave*0.4;
+        });
       }
       renderer.render(scene, camera);
       if(__frameCount%2===0) updateGlobeLabels();
       __frameCount++;
-      window.__globeDebug = {frames:__frameCount, w:w, h:h, beaconCount:beacons.length, fov:camera.fov};
+      window.__globeDebug = {frames:__frameCount, w:w, h:h, beaconCount:beacons.length, rosterPointCount:ROSTER.length, drawCalls:renderer.info.render.calls, fov:camera.fov};
     } catch(e){
       window.__globeError = e.message + ' | ' + e.stack;
       console.error('Globe render error:', e);
