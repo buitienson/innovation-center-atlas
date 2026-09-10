@@ -97,6 +97,17 @@ tăng tốc phần cứng thực sự tắt từ đầu, WebGL/canvas/SVG-compos
 phần mềm (rất chậm), có thể là 1 phần nguyên nhân độc lập với các bug code đã vá — cần hỏi lại
 kết quả sau restart ở phiên sau nếu sếp chưa phản hồi.
 
+**XÁC NHẬN: CẬP NHẬT 3 (CSS transform) là fix quyết định** (commit `88b8d73`) — sếp báo "nhẹ
+hơn rất nhiều" sau đó, rồi xin lại 2 việc thẩm mỹ/UX (không phải hiệu năng nữa): (1) khôi phục
+glow halo + nhấp nháy cho điểm ROSTER (đã bỏ ở CẬP NHẬT 2 để giảm tải trước khi tìm ra nguyên
+nhân thật) — khôi phục lại với kích thước nhỏ hơn bản gốc (glow r=2, core r=1, gốc là 5/2.1),
+đã đo lại: drag handler vẫn chỉ ~2.6ms/lần dù có 8238 circle + 4119 animation, xác nhận CSS
+transform mới là chỗ quyết định, không phải số lượng circle/animation tự nó; (2) tăng độ nhạy
+zoom lăn chuột gấp đôi (hệ số `0.0016→0.0032`) vì sếp so sánh thấy chậm hơn hẳn zoom quả cầu 3D.
+**Bài học:** khi đã xác định đúng NÚT THẮT THẬT (ở đây là cách áp transform), có thể mạnh dạn
+khôi phục các chi tiết thẩm mỹ đã cắt bớt trong lúc dò tìm mà không lo tái diễn vấn đề — miễn
+đo lại để xác nhận, đừng cắt vĩnh viễn những thứ chỉ bị nghi oan.
+
 ## Hiệu năng quả cầu 3D
 
 **Fix thật sự** (commit `f52528d`, 2026-09-10): mỗi loại ROSTER (university/company/network/
