@@ -1761,9 +1761,17 @@ function renderCoordMaps(){
   // Vietnam: technical-sketch coastline + Hoàng Sa/Trường Sa + 10 points (host + 9 units), 2 clusters
   var mapVNsvg = document.getElementById('mapVN');
   var VN_W=430, VN_H=442;
+  // No rosterPointsInBounds(VN_BOUNDS) here (unlike the Asia/SEA maps) - this
+  // panel is Vietnam-only (sếp: "tab này chỉ nói về VN cơ mà"), and since
+  // ROSTER excludes Vietnam by convention, every dot that call would add is
+  // a stray neighbor (China/Laos/Cambodia/Thailand) caught by the loose
+  // lat/lng box, not anything Vietnam-relevant - the same stray data the
+  // stat-tile fix above already stopped counting, just also visible as dots
+  // until now. Vietnam's own 149 dots (VN_UNITS + HANISA/VNEI/funds) are
+  // unaffected.
   var vnPoints = spreadCluster(VN_UNITS).map(function(u){
     return {lat:u._lat,lng:u._lng,label:'', showLabel:false, color: u.host?'var(--screen-accent)':(u.st==='full'?'var(--screen-vn)':'var(--screen-pending)')};
-  }).concat(rosterPointsInBounds(VN_BOUNDS)).concat(vnNetworkAsSmallPoints());
+  }).concat(vnNetworkAsSmallPoints());
   var vnMap = buildCoordMap(mapVNsvg, VN_BOUNDS, vnPoints, {step:4, w:VN_W, h:VN_H, land:COUNTRIES, grayNonHighlight:true, boxes:[
     {latMin:20.8,latMax:21.6,lngMin:105.0,lngMax:106.6,label:(LANG==='vi'?'Cụm Hà Nội':'Hanoi cluster'),color:'var(--screen-accent-dim)'},
     {latMin:10.6,latMax:11.1,lngMin:106.4,lngMax:107.0,label:(LANG==='vi'?'Cụm TP.HCM':'HCMC cluster'),color:'var(--screen-vn-dim)'}
