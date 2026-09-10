@@ -1783,8 +1783,15 @@ function spreadCluster(units){
    roster (out of its bulk-search scope), so without this it shows as a red
    outline with nothing inside it, unlike every other highlighted country. */
 function vnUnitsAsSmallPoints(){
-  return spreadCluster(VN_UNITS).map(function(u){
-    return {lat:u._lat, lng:u._lng, label:(LANG==='vi'?u.name:u.nameEn), showLabel:false, small:true, color:VN_TYPE_COLORS.university};
+  // On the Asia/SEA maps these VN_UNITS points are what represents Vietnam
+  // (ROSTER itself excludes Vietnam by convention, so rosterPointsInBounds()
+  // never produces a Vietnam entry there) - without a blink flag of its own,
+  // Vietnam was the one country with zero sparkle while every other country
+  // got its one blinking dot from the CẬP NHẬT 5 change, which sếp noticed
+  // ("sao Việt Nam không thấy cái nào nhấp nháy?"). First unit in the array
+  // gets it, same "not ranked, just first" rule as the per-country pick.
+  return spreadCluster(VN_UNITS).map(function(u, idx){
+    return {lat:u._lat, lng:u._lng, label:(LANG==='vi'?u.name:u.nameEn), showLabel:false, small:true, color:VN_TYPE_COLORS.university, blink:idx===0};
   });
 }
 /* City-level coordinates for the HANISA/VNEI/VN_FUNDS entries — those datasets
