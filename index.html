@@ -1550,7 +1550,14 @@ function buildCoordMap(svg, bounds, points, opts){
       var sizeMul = p.sizeMul || 1;
       var glowCls = p.blink ? 'roster-glow core-glow' : 'roster-glow';
       var coreCls = p.blink ? 'core core-blink' : 'core';
-      var glow = svgEl('circle',{class:glowCls,cx:xy[0],cy:xy[1],r:2*sizeMul,fill:p.color,opacity:'0.28'});
+      // Blinking dots get a noticeably bigger, brighter halo than static
+      // ones (was the same r=2/opacity .28 for both) - sếp: even at 1000+
+      // blinking, the pulse was too subtle to actually notice by eye. The
+      // animation still scales this up to ~1.7x at its peak (dotGlowPulse),
+      // so a bigger/brighter resting halo makes that peak much more visible.
+      var glowR = (p.blink ? 5 : 2) * sizeMul;
+      var glowOp = p.blink ? '0.45' : '0.28';
+      var glow = svgEl('circle',{class:glowCls,cx:xy[0],cy:xy[1],r:glowR,fill:p.color,opacity:glowOp});
       var core = svgEl('circle',{class:coreCls,cx:xy[0],cy:xy[1],r:1*sizeMul,fill:p.color,opacity:'0.95'});
       if(p.blink) glow.style.animationDelay = core.style.animationDelay = delay+'s';
       g.appendChild(glow); g.appendChild(core);
