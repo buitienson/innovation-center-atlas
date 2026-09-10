@@ -250,7 +250,119 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-10 (checkpoint 49 — **NHIỆM VỤ "TÌM NGUỒN LỚN HOÀN TOÀN MỚI": KHÔNG THÀNH
+**Lần cuối:** 2026-09-10 (checkpoint 50 — **Wikipedia "List of..." (science/research parks +
+incubators), kỹ thuật MỚI: hop qua Wikidata P856 thay vì cào từng trang tổ chức (+67)**) — còn
+thiếu ~10035 lúc cuối phiên.
+
+**⚠️ Lưu ý quan trọng đầu phiên — phiên trước (agent trước checkpoint này) đã BẮT ĐẦU đúng hướng
+Wikipedia "List of..." nhưng DỪNG GIỮA CHỪNG, để lại `index.html`/`src/atlas.html` với thay đổi
+CHƯA COMMIT (roster +42, chưa qua đủ bước xác minh) nằm sẵn trong working tree khi phiên này bắt
+đầu — phát hiện qua `git status` NGAY TRƯỚC bước ghi cuối cùng (không phải đầu phiên, vì file chỉ
+bị sửa lúc merge). Đã `git stash push -u` (không xoá hẳn) để giữ lại phòng trường hợp cần, rồi làm
+lại HOÀN TOÀN từ baseline sạch 19898 theo đúng chỉ dẫn "bắt đầu từ đầu". Bài học cho lượt sau:
+**LUÔN `git status` kiểm working tree NGAY khi bắt đầu phiên, không chỉ trước bước ghi cuối** — nếu
+phiên trước để lại thay đổi chưa commit, phải xử lý (stash) trước khi bắt đầu bất kỳ bước nào khác
+để tránh lẫn dữ liệu cũ chưa xác minh vào `len(load_roster(...))` baseline.
+
+**Nguồn dùng — Wikipedia "List of..." (science/tech park + incubator), giới hạn 3 trang cụ thể
+ngay từ đầu để tránh lặp lỗi "crawl không giới hạn" của phiên trước:** `List of research parks`
+(trang toàn cầu, theo châu lục/quốc gia, pageid 5721896), `List of science parks in the United
+Kingdom` (pageid 8694089), `List of startup incubators in the United States` (pageid 80090488).
+Cân nhắc thêm `List of tech parks in Chennai` nhưng LOẠI vì đó là các toà nhà văn phòng CNTT cho
+thuê (tenant Infosys/Cisco/Wipro...), sai phạm vi TTO/vườn ươm/khu KH&CN.
+
+**Vấn đề gặp: 2 trang đều chỉ là danh sách tên có wikilink, KHÔNG có cột URL trực tiếp** (khác hẳn
+CORDIS/ROR có `organizationURL`/`homepage_url` sẵn trong dữ liệu). **Kỹ thuật MỚI (chưa từng dùng
+qua 49 checkpoint trước) — "hop" qua Wikidata thay vì cào từng trang tổ chức riêng lẻ:** (1) trích
+535 mục thô từ wikitext 3 trang (regex bullet-list/wikitable, giữ ngữ cảnh quốc gia theo heading
+`==`/`===`); (2) với mỗi mục có wikilink, `action=query&prop=pageprops&redirects=1` (batch 50 tiêu
+đề/lần) lấy `wikibase_item` (QID); (3) `wbgetentities` trên `www.wikidata.org` (batch 50 QID/lần)
+lấy `P856` (official website — nguồn CHÍNH), `P31` (instance-of, dùng để LỌC — xem dưới), `P625`
+(toạ độ thật nếu có); (4) với mục không có QID/không có P856, dùng URL trực tiếp trong thẻ `<ref>`
+của chính bullet đó nếu KHÔNG phải domain báo chí (loại các URL kiểu `timesofindia.indiatimes.com`,
+`newindianexpress.com`... — đây là trích dẫn nguồn tin, không phải website tổ chức, dù `check_url()`
+sẽ báo "sống" vì trang báo có thật). 430 tiêu đề duy nhất → 271 khớp QID → 187 có `P856`; cộng 101
+URL trực tiếp từ `<ref>` (sau lọc báo chí) → 289 ứng viên có URL.
+
+**Lỗi parser tự phát hiện và sửa (quan trọng, người review sau nên biết):** bullet dạng "Tên tổ
+chức [[Địa danh]]" (không có dấu gạch ngang phân cách) bị parser đời đầu lấy NHẦM link địa danh làm
+tên tổ chức (vd `*Electropreneur Park [[Bhubaneswar]]` → sai thành tên "Bhubaneswar") — đã sửa quy
+tắc: chỉ coi wikilink là tên tổ chức khi bullet BẮT ĐẦU bằng `[[`, ngược lại tên là đoạn text thuần
+trước link/dấu gạch đầu tiên.
+
+**Lọc theo `P31` (instance-of) — phát hiện MỚI, quan trọng cho các lượt Wikidata sau:** nhiều mục
+Wikidata là ĐỊA DANH (thành phố/quận/khu công nghiệp) chứ không phải TỔ CHỨC — `P856` của chúng là
+trang CHÍNH QUYỀN ĐỊA PHƯƠNG, không phải TTO/vườn ươm nào (ca thật bắt được: "Bhubaneswar"→
+`bmc.gov.in`, "Tampere"/"Ankara"/"Venezia"/"Maastricht"/"Oss"→cổng thông tin thành phố). Xây bộ lọc
+`PLACE_TYPES` (city/town/municipality/neighborhood/building/industrial zone...) + `UNIVERSITY_TYPES`
+(loại cả trường đại học NGUYÊN VẸN, cùng logic với "HES" của CORDIS checkpoint 45 — ROSTER cần đơn
+vị cụ thể, không phải nguyên trường) + `VC_TYPES` (quỹ đầu tư mạo hiểm, sai hẳn loại hình) → loại 37
+ứng viên. **Vẫn còn lọt lưới vài ca do QID mang kiểu địa danh đặc thù quốc gia không có trong bộ lọc
+chung** (`Cimahi`/`Solo` Indonesia, `Changwon Industrial Park`/`Kista Science City` Hàn/Thuỵ Điển,
+`Villeneuve d'Ascq` Pháp) — phải LOẠI TAY sau khi rà mắt toàn bộ danh sách cuối; bài học: bộ lọc
+`PLACE_TYPES` hiện tại CHƯA đủ bao quát các QID kiểu "commune"/"city in Indonesia"/... theo từng
+nước, lượt sau nếu dùng lại kỹ thuật Wikidata nên bổ sung dần.
+
+**Dọn tên + loại thêm:** dọn cú pháp external-link sót lại `[url Tên]`/dấu ngoặc/dấu phẩy thừa từ
+parser (không sửa được hết bằng regex chung, phải tay từng ca hiếm); loại thêm tay: "Vivint" (công
+ty an ninh nhà ở, rõ ràng khớp nhầm Wikidata), "Enterprise Development Center"/"Pohang Research
+Centre" (URL trỏ về TRANG CHỦ NGUYÊN TRƯỜNG ĐẠI HỌC — njit.edu/postech.edu — quá rộng), "Metrotech
+Center" (Business Improvement District bất động sản, không phải đơn vị R&D/CGCN), "Research Forest
+(The Woodlands)" (site bất động sản chung chung), "Wallops Research Park" (trỏ về trang CHÍNH QUYỀN
+QUẬN Accomack County, Virginia). → còn 129 ứng viên sạch.
+
+**Lọc trùng ROSTER** (base_domain + normalize_name, 19898 mục): loại 111 trùng domain + 5 trùng tên
+→ 173 (trước lọc P31) → sau lọc P31 + dọn tay: 129 ứng viên cuối cùng.
+
+**`check_url()` toàn bộ 129** (`ThreadPoolExecutor` 16 luồng): chỉ **60 sống ngay (47%)** — tỉ lệ
+thấp vì nhiều tổ chức trong các trang "List of..." (đặc biệt trang toàn cầu, có mục từ 2010s) đã đổi
+domain/ngừng hoạt động. **21 ca bị `check_url()` gắn cờ "cross-domain redirect" — xác minh TAY TỪNG
+CA bằng cách đọc `<title>`/nội dung trang đích thật** (không tự động tin, đúng thiết kế của hàm):
+**8/21 xác nhận đúng tổ chức gốc đổi domain** — Kansai Science City→`kri.or.jp` (tên tổ chức khớp
+tiếng Nhật "Tổ chức xúc tiến Kansai Science City"), Scion DTU→`dtusciencepark.dk` (đổi tên "DTU
+Science Park"), INCUBA Science Park→`incuba.dk`, Innovation Campus Lemgo→`icl-owl.de`, Cartuja93→
+`sevillatechpark.es` (đổi tên "Sevilla TechPark"), Erzelli High-Tech Park→`erzelli-pst.it` (tên
+tiếng Ý khớp "Parco Scientifico e Tecnologico di Genova Erzelli"), BioCity Nottingham→
+`thepioneergroup.com/locations/biocity-nottingham/` (cùng tập đoàn vận hành với Kent Science Park
+đã sống sẵn trong batch), Catalyst→`wearecatalyst.org`. **13/21 LOẠI** vì không xác minh được đúng
+tổ chức: Life Science Hub→`lodhagroup.com` (site tập đoàn mẹ bất động sản chung chung, không phải
+trang riêng), Paris-Saclay→`welcometoparissaclay.com` (title chung chung "nuxt-headless", không xác
+nhận được thương hiệu), Technopolis Group→`technopolisglobal.com` (nội dung mang dấu hiệu trang lỗi
+404), PCiTAL→`hoteles-andalucia.com` (domain rõ ràng bị chiếm dụng cho trang khách sạn), Medical
+City at Lake Nona→`lakenona.com` (site cộng đồng dân cư chung, không phải riêng Medical City),
+Research Park at Florida Atlantic University→`researchparkfau.com` (bị Cloudflare chặn, không xác
+minh được), Rensselaer Technology Park→`iriens.com` (trang trống, không xác minh được), BioSquare at
+Boston University→`bu.edu` (trang chủ nguyên đại học, quá rộng), và 5 ca khác cùng loại lý do không
+xác minh được. **1 ca đặc biệt phát hiện qua rà tay sau khi `check_url()` đã báo "sống":**
+"Jagiellonian Center of Innovation" có `P856`/URL trỏ tới MỘT BÀI BÁO trên `genengnews.com` (báo
+công nghệ sinh học), không phải trang chủ tổ chức — `check_url()` không thể tự phát hiện loại lỗi
+này (trang báo là nội dung hợp lệ, chỉ SAI về BẢN CHẤT không phải website tổ chức) — loại tay. →
+**67 ứng viên cuối cùng, 0 Việt Nam** (không có ứng viên VN nào lọt tới bước cuối).
+
+**Gán toạ độ:** ưu tiên `P625` (toạ độ thật từ Wikidata) khi có — 21/67; còn lại dùng centroid quốc
+gia lặp nhiều nhất sẵn có trong ROSTER (theo đúng kỹ thuật CORDIS FP7 checkpoint 46) — 46/67.
+
+**Kết quả merge:** phát hiện `git status` có thay đổi CHƯA COMMIT từ phiên trước (xem cảnh báo đầu
+mục) → `git stash push -u` rồi xác nhận lại `len(load_roster(...))` = 19898 sạch trước khi ghi.
+`ROSTER`: 19898 → **19965** (+67). Đơn vị trên bản đồ: 19907 → **19974** (+67, giữ nguyên chênh
+lệch +9). Kiểm: `node --check` sạch (script inline 3,420,576 ký tự), thẻ `div`/`section` cân bằng
+(107/107, 6/6). Mở `index.html` qua HTTP server cục bộ (`static-server`), đọc qua Browser pane: đúng
+"19974 đơn vị được lập bản đồ" / "19965 trong danh mục mở rộng" / "12 đơn vị tại Việt Nam" (không
+đổi) / "9 case phân tích chuyên sâu" (không đổi). Commit `67ad372` và `git push origin main` lên
+live.
+
+**Còn thiếu ~10035 để đạt 30000.** **Việc mở cho lượt sau:** (1) kỹ thuật "hop qua Wikidata P856"
+CÓ THỂ áp dụng lại cho các trang Wikipedia "List of..." KHÁC chưa thử (vd tìm thêm theo từ khoá
+"fab lab"/"makerspace"/"cluster"/"living lab" hoặc theo khu vực địa lý khác — Đông Nam Á, Mỹ Latinh,
+Trung Đông chưa có trang "List of..." riêng được kiểm qua lượt này); (2) nếu dùng lại kỹ thuật này,
+BỔ SUNG bộ lọc `PLACE_TYPES` với các QID kiểu địa danh đặc thù quốc gia (xem mục "lọt lưới" ở trên)
+thay vì rà tay từng ca; (3) InBIA (checkpoint 49, mục 7) — vẫn mở, chưa làm; (4) ECCP cluster
+directory (checkpoint 49, mục 4) — vẫn mở, kỹ thuật truy cập chưa rõ; (5) **vẫn cần nguồn lớn hoàn
+toàn mới khác** — tốc độ ~22-67 mục/checkpoint gần đây quá chậm so với khoảng cách còn lại 10035;
+cân nhắc báo cáo lại với sếp về tính khả thi thời gian của mốc 30000 nếu tốc độ này tiếp diễn.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 49 — **NHIỆM VỤ "TÌM NGUỒN LỚN HOÀN TOÀN MỚI": KHÔNG THÀNH
 CÔNG — mọi ứng viên lớn đều bị chặn/hijack/gate; chỉ cứu được 1 nguồn nhỏ-sạch chưa từng thử
 (Tech-Access Canada, +50)**) — còn thiếu ~10102 lúc cuối phiên.
 
