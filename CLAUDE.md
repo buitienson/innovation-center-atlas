@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20006 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20013 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -283,7 +283,73 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-10 (checkpoint 53 — **`List of Biomakerspaces in the United States`
+**Lần cuối:** 2026-09-10 (checkpoint 54 — **Wikipedia tiếng Đức `Kategorie:Technologiepark` + 2
+sub-cat quốc gia (Deutschland/Österreich), kỹ thuật Wikidata P856-hop quen thuộc, HƯỚNG MỞ đã ghi
+từ checkpoint 53 ("dewiki/frwiki/jawiki chưa từng thử") — nguồn nhỏ (50 trang), sau lọc kiểu-địa-danh
++ trùng ROSTER chỉ còn 7 mục thật sự mới (+7)**) — còn thiếu ~9987 lúc cuối phiên.
+
+**Bước 0 — dò category tiếng Đức:** `action=query&list=allcategories&acprefix=...` xác nhận
+`Kategorie:Gründerzentrum`/`Innovationszentrum`/`Inkubator` KHÔNG tồn tại trên dewiki (0 kết quả) —
+chỉ có `Kategorie:Technologiepark` (20 trang cấp gốc, gồm cả tên vùng/thành phố kiểu "Silicon Х" lẫn
+tổ chức thật) + 2 sub-cat quốc gia `Technologiepark in Deutschland` (22 trang) và `...in Österreich`
+(8 trang) — tổng 50 trang duy nhất. `Kategorie:Wissenschaftspark` chỉ có 1 sub-cat rỗng nội dung
+(`Wissenschaftspark Leipzig`, không dùng). Bài `Liste der Technologiezentren` (tìm thấy qua
+`list=search`) hoá ra là danh sách TÊN VÙNG ("Silicon Valley", "IT-Cluster Rhein-Main-Neckar"...)
+kèm số liệu kinh tế vùng, KHÔNG phải danh bạ tổ chức có URL — loại ngay, không dùng.
+
+**Kỹ thuật P856-hop (giống checkpoint 50-53):** `pageprops&redirects=1` lấy `wikibase_item` cho cả
+50/50 trang (100%, không có trang nào thiếu QID) → `wbgetentities` lấy `P856`/`P31`/`P625` — 27/50
+có website. Lọc theo `P31`: loại 3 mục rõ ràng là ĐỊA DANH/khu quy hoạch chứ không phải tổ chức —
+`Sophia Antipolis` (Q486972 human settlement — xã/thị trấn ở Pháp), `Neom` (Q1074523 planned
+community — siêu dự án đô thị Ả Rập Xê Út), `Technopolis (Gussew)` (Q1350536 naukograd — thành phố
+khoa học Nga, cùng loại lỗi "địa danh lẫn vào" đã gặp nhiều lần từ checkpoint 32 trở đi, khác kiểu
+"human settlement"/"planned community"/"naukograd" chưa từng có trong bộ lọc `PLACE_TYPES` cũ nên
+phải lọc tay theo QID cụ thể lần này).
+
+**Lọc trùng ROSTER** (base_domain + normalize_name, baseline 20006): loại 16/24 mục còn lại — tỉ lệ
+trùng RẤT CAO (67%), đúng dự đoán vì Đức là nước ROSTER đã khai thác kỹ nhất qua nhiều checkpoint
+(hackerspace OSM, `office=research`, Wikidata `research institute`...) — các case tiêu biểu (WISTA/
+Adlershof, Station F, MaRS, Paris-Saclay đã có qua tên khác, EUREF, Lakeside Science & Technology
+Park, Forschungszentrum Seibersdorf...) đều đã có sẵn trong ROSTER từ trước, kể cả 1 case trùng TÊN
+nhưng khác domain (Paris-Saclay — giữ nguyên bản đã xác minh kỹ ở checkpoint 50-51, không ghi đè).
+Còn **7 ứng viên**.
+
+**`check_url()` + xác minh tay 2 ca cross-domain redirect** (đọc `<title>` trang đích thật, đúng kỷ
+luật đã có từ checkpoint 43): `RailCampus OWL` (`railcampus-owl.info`→`railcampus-owl.de`) — xác
+nhận `<title>` đúng "RailCampus OWL", giữ URL domain mới; `Techcenter Linz Winterhafen`
+(`techcenter.at`→`techharbor.at`) — `<title>` "TECH HARBOR - NEUE WERFT & TECHCENTER" xác nhận CHÍNH
+tổ chức đó đổi thương hiệu (chữ "TECHCENTER" vẫn còn trong title mới) — đổi tên thành "Tech Harbor
+(Techcenter Linz Winterhafen)" để vẫn tra được theo tên cũ. 5 mục còn lại (`Gav-Yam Negev Advanced
+Technologies Park`, `Aerospace Valley`, `Toulouse Aerospace`, `Ludwig Bölkow Campus`, `Aérocentre`)
+sống thẳng không redirect — đọc `<title>` xác nhận cả 5 đúng tổ chức: `Aerospace Valley`/`Aérocentre`
+là 2 "pôle de compétitivité" (hiệp hội cụm ngành hàng không thật của Pháp, có nhân sự/hội viên, cùng
+loại "cluster" đã chấp nhận từ checkpoint 41), `Toulouse Aerospace` là đơn vị quản lý/phát triển khu
+kinh doanh hàng không Toulouse (P31 "ecodistrict"+"campus"+"research center" — cùng loại khu phát
+triển như Paris-Saclay đã chấp nhận, không phải trang bất động sản đơn thuần).
+
+**Gán toạ độ:** 5/7 có `P625` thật từ Wikidata; 2 mục thiếu (`RailCampus OWL`, `Tech Harbor`) tra tay
+qua nội dung trang chủ (RailCampus OWL tự ghi rõ "in Minden" nhiều lần trong text; Tech Harbor ở
+Linz, Áo — khớp tên gốc "Linz Winterhafen") → toạ độ thành phố thật (Minden 52.2897/8.9151, Linz
+48.3069/14.2858).
+
+**Kết quả merge:** `ROSTER`: 20006 → **20013** (+7). Đơn vị trên bản đồ: 20015 → **20022** (+7, giữ
+nguyên chênh lệch +9). Kiểm trước khi ghi: `git status`/`git log` sạch. Kiểm sau ghi: `node --check`
+sạch, thẻ `div`/`section` cân bằng (111/111, 6/6), mở qua HTTP server cục bộ (Browser pane) đọc đúng
+"20022 đơn vị được lập bản đồ" / "20013 trong danh mục mở rộng" / "12 đơn vị tại Việt Nam" (không
+đổi) / "9 case phân tích chuyên sâu" (không đổi), console sạch (chỉ favicon 404 có sẵn từ trước).
+Commit `e2f9f52` (gộp cùng phần bản đồ zoom HN/HCM ở mục riêng phía trên), `git push origin main`.
+
+**Còn thiếu ~9987 để đạt 30000.** **Việc mở cho lượt sau:** (1) dewiki `Kategorie:Technologiepark`
+coi như đã khai thác hết (chỉ 50 trang, không có category quốc gia nào khác ngoài Deutschland/
+Österreich); (2) **frwiki/jawiki vẫn CHƯA THỬ** (đúng gợi ý để lại từ checkpoint 53) — thử
+`Catégorie:Technopôle`/`Catégorie:Pépinière d'entreprises` (Pháp) và tương đương tiếng Nhật trước
+khi mở rộng sang ngôn ngữ khác; (3) InBIA (checkpoint 49) vẫn mở, chưa làm, nguồn LỚN nhất từng tìm
+được nhưng bị gate sau đăng nhập; (4) tốc độ 7 mục/checkpoint (cả 2 checkpoint liên tiếp 53-54 đều
++7, từ 2 nguồn khác hẳn nhau) xác nhận các nguồn Wikipedia nhỏ đã vào giai đoạn "quả treo rất thấp",
+cần tiếp tục nhắc sếp về khoảng cách 9987 so với tốc độ này.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 53 — **`List of Biomakerspaces in the United States`
 (Wikidata Q140001361, việc mở để lại từ checkpoint 52) qua kỹ thuật Wikidata P856-hop quen thuộc —
 nguồn RẤT NHỎ (chỉ 16 mục "Active"), sau lọc trùng ROSTER + xác minh tay chỉ còn 7 mục thật sự mới
 (+7)**) — còn thiếu ~9994 lúc cuối phiên.
