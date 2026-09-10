@@ -250,7 +250,118 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-10 (checkpoint 51 — **loại hẳn ECCP (Cloudflare bot-check) + loại OpenAlex
+**Lần cuối:** 2026-09-10 (checkpoint 52 — **Wikipedia `Category:Coworking space providers` +
+`Category:Hackerspaces` (+2 sub-cat) + `Category:Fab labs`, cùng kỹ thuật Wikidata P856-hop, nhưng
+đợt này lộ RÕ tầm quan trọng của bước rà tay nội dung sau `check_url()` — 8/15 ứng viên "OK" tự
+động hoá vẫn là false positive khi đọc tay (+7 thật)**) — còn thiếu ~10001 lúc cuối phiên.
+
+**Bước 0 — kiểm tra category rỗng/đổi tên mà checkpoint 51 nghi ngờ:** `Category:Coworking spaces`,
+`Category:Makerspaces`, `Category:Living labs`, `Category:Research parks`, `Category:Startup
+accelerators by country`, `Category:Technology parks`, `Category:Innovation hub/district`,
+`Category:Startup incubator` — **TẤT CẢ đều 0 thành viên** (`action=query&list=categorymembers`
+trả rỗng) dù `action=query&list=allcategories` liệt kê chúng tồn tại (category có tên nhưng không
+còn trang nào gán — có thể do đổi hướng/gộp vào category khác, không phải lỗi truy vấn). Dò lại
+qua `list=allcategories&acprefix=` tìm được TÊN THẬT đang dùng: `Category:Makerspaces` (viết hoa
+khác) → vẫn 0; `Category:Coworking space providers` (25 trang, có thật); `Category:Business
+incubators by country` (17 sub-cat quốc gia — đã dùng ở checkpoint 51 nên bỏ qua); `Category:Fab
+labs` (chỉ 4 trang); `Category:Hackerspace`/`Hackerspaces` (61 trang + 2 sub-cat: `Hackerspaces in
+the San Francisco Bay Area`, `Public laboratories`). **Kết luận: nhóm "Coworking spaces/Makerspaces/
+Living labs/Research parks/Startup accelerators by country" của checkpoint 51 XÁC NHẬN không tồn
+tại dưới tên đó trên Wikipedia hiện tại — đừng thử lại các tên chính xác này nữa** (khác hẳn nghi
+ngờ ban đầu "có thể đổi tên" — đã tìm tên thay thế và dùng rồi).
+
+**Nguồn dùng — category-crawl 1 tầng (không "by country" vì các category này không có sub-cat theo
+quốc gia):** `Category:Coworking space providers` + `Category:Hackerspaces` + 2 sub-cat của nó +
+`Category:Fab labs` → 92 trang duy nhất (namespace bài viết, đã loại `Category:WeWork` sub-cat vì
+toàn bài về công ty/sách/series truyền hình không phải địa điểm). Cùng kỹ thuật Wikidata P856-hop
+(`pageprops→wikibase_item` rồi `wbgetentities` lấy `P856`/`P31`/`P625`) như checkpoint 50/51: 91/92
+resolve QID, 54/91 có `P856`.
+
+**Lọc `P31` bằng tay từng dòng (không đủ mẫu số lớn để xây allowlist tự động như checkpoint 51):**
+đọc nhãn `P31` của cả 91 QID (tra `wbgetentities` cho các ID instance-of xuất hiện) → loại theo
+nhóm rõ ràng sai phạm vi: bảo tàng (`Computer History Museum Slovenia`, `Eli Whitney Museum`), thư
+viện công cộng (`Chattanooga Public Library`), nhà ga xe lửa (`Fürstenberg (Havel) station` — wikilink
+khớp nhầm QID), toà nhà địa chỉ cụ thể không phải tổ chức (`Ubica`→QID thực ra là "Ganzenmarkt 24-26,
+Utrecht"), công ty holding bất động sản văn phòng đa quốc gia quá rộng (`International Workplace
+Group/IWG plc` — công ty mẹ niêm yết của Regus/Spaces, không phải 1 địa điểm cụ thể), dự án phần
+mềm/giáo dục không phải không gian vật lý (`Turtlestitch`), trung tâm nghệ thuật thuần tuý dù có
+hackerspace phụ (`AS220` — bảo tàng/trung tâm nghệ thuật cộng đồng là chính; `Eyebeam` — nghệ thuật+
+công nghệ nhưng cốt lõi là art residency; `De WAR` — trung tâm nghệ thuật+citizen science, fab lab
+chỉ là 1 phần). Sau lọc P31 + rà tay: 44 ứng viên có `P856` hợp phạm vi.
+
+**Lọc trùng ROSTER (`base_domain`+`normalize_name`):** 23/44 đã trùng — tỉ lệ trùng CAO (52%),
+xác nhận ROSTER đã có 1 đợt hackerspace/makerspace quy mô lớn từ trước (khớp với "OSM (cạn hoàn
+toàn)" trong danh sách nguồn đã loại — OSM `amenity=hackerspace` rõ ràng đã quét qua phần lớn các
+hackerspace nổi tiếng này ở checkpoint cũ hơn dùng chung nguồn Wikipedia/OSM). Còn **15 ứng viên
+sạch**.
+
+**`check_url()` 15 ứng viên:** 10 "OK" ngay, 2 lỗi mạng thử lại `timeout=30` cứu được 1
+(`Boston Open Science Laboratory`), 3 bị từ chối rõ ràng (`Jaaga`→domain for sale, `Port City
+Makerspace`→403 xác nhận qua `curl` riêng là chặn bot không phải lỗi tạm, `Ucommune`→`curl` xác nhận
+DNS không resolve được, domain chết thật). Còn 11 "OK".
+
+**PHÁT HIỆN QUAN TRỌNG — đọc tay nội dung 11 ca "OK" lộ RA 4 ca `check_url()` KHÔNG bắt được (bài
+học mới, bổ sung cho danh sách "false positive" đã biết từ checkpoint 43-51):**
+1. `ASCII` (a.scii.nl) — trang có 200 OK, đủ dài, không khớp `PARKING_PAGE_SIGNS`, nhưng nội dung
+   thật là **"RIP 1999–2006"** — trang tưởng niệm tổ chức đã GIẢI THỂ 18 năm trước, không phải
+   trang chủ đang hoạt động.
+2. `The Network Hub` (thenetworkhub.ca) — 200 OK, đủ dài text, nhưng nội dung là **trang mặc định
+   "Welcome to nginx!"** — domain còn trỏ DNS nhưng chưa từng được cấu hình web server thật (khác
+   "parking-for-sale" nên không khớp `PARKING_PAGE_SIGNS`, cũng khác "thin page" vì text đủ dài).
+3. `Omni Commons` (omnicommons.org) — 200 OK, nội dung dài, đọc kỹ mới thấy văn phong QUÁ KHỨ: "...
+   was a project to steward a building ... finally sold it in [năm]" — tổ chức đã BÁN TOÀ NHÀ, ngừng
+   hoạt động, trang chỉ còn lưu lại như trang lưu trữ.
+4. `Boston Open Science Laboratory` (bosslab.org) — nghiêm trọng nhất: domain đã bị **CHIẾM DỤNG
+   (hijack) cho trang cờ bạc trực tuyến tiếng Indonesia** ("Situs Judi Online Terpercaya di Indonesia")
+   — vượt qua `check_url()` vì nội dung ĐỦ DÀI (không "thin"), KHÔNG khớp bất kỳ `PARKING_PAGE_SIGNS`
+   nào (đây là trang cờ bạc thật đang hoạt động, không phải trang "domain for sale"), và KHÔNG
+   redirect cross-domain (domain gốc vẫn trả 200 trực tiếp, chỉ nội dung bên trong đã bị thay hoàn
+   toàn). **Bài học quan trọng nhất phiên này: `check_url()` chỉ đảm bảo "có nội dung thật, không
+   phải trang ký sinh/tên miền rao bán" — KHÔNG đảm bảo nội dung đó vẫn là ĐÚNG TỔ CHỨC GỐC. Domain
+   hijack cho mục đích khác (cờ bạc, spam SEO...) là một lớp false-positive HOÀN TOÀN KHÁC "parking
+   page"/"cross-domain redirect" đã biết — không có tín hiệu tự động nào bắt được ngoài đọc tay và
+   nhận ra nội dung không liên quan gì đến tên tổ chức.** Từ nay các batch nhỏ (≤20 ứng viên) nên
+   LUÔN đọc tay ít nhất tiêu đề/đoạn mở đầu thật của trang, không chỉ tin `check_url()` "ok".
+
+**Còn 7 ứng viên xác nhận đúng qua đọc tay** (tiêu đề/nội dung khớp rõ tên tổ chức): `Betahaus`
+(Berlin, coworking — trùng khớp "betahaus Berlin | Coworking, Offices, Event Spaces"), `Civic Hall`
+(New York, coworking/civic tech), `Hera Hub` (Mỹ, coworking nữ doanh nhân), `Industrious` (Mỹ,
+chuỗi coworking — khớp "Coworking & Private Office Space | Industrious"), `Open Works`
+(Baltimore — dùng URL đổi hướng cùng gốc `openworksbmore.org` thay vì `.com` gốc vì `.com` 404,
+`.org` xác nhận sống + khớp "Open Works | Make Space for All"), `SketchPad` (Chicago, makerspace),
+`The Office Pass` (Ấn Độ, coworking — khớp chính xác `schema.org Organization name "The Office
+Pass"`).
+
+**Gán toạ độ:** `Betahaus`/`Civic Hall` có `P625` thật (Berlin, New York). 5 ca còn lại KHÔNG có
+`P625` lẫn `action=query&prop=coordinates` (kiểm riêng, cả 2 nguồn đều rỗng) → dùng **centroid tính
+bằng trung bình cộng toạ độ các mục ROSTER hiện có cùng quốc gia** (không phải bbox quốc gia — tránh
+đúng lỗi Mỹ/Alaska của checkpoint 51) — 4/5 ca (`Hera Hub`/`Industrious`/`Open Works`/`SketchPad`)
+đều Mỹ nên trùng đúng 1 điểm centroid Mỹ (~38.81, -94.68, vùng Kansas — không phải toạ độ thật của
+San Diego/NYC/Baltimore/Chicago nhưng đúng quy ước "centroid quốc gia" đã chốt).
+
+**Kết quả merge:** `ROSTER`: 19992 → **19999** (+7). Đơn vị trên bản đồ: 20001 → **20008** (+7,
+giữ nguyên chênh lệch +9 case phân tích chuyên sâu). Kiểm trước khi ghi: `git status`/`git log`
+sạch, không có phiên khác chạy song song lần này (khác checkpoint 51). Kiểm sau ghi: `node --check`
+sạch, thẻ `div`/`section` cân bằng (107/107, 6/6), mở qua HTTP server cục bộ đọc đúng "20008 đơn vị
+được lập bản đồ" / "19999 trong danh mục mở rộng". Commit `8f17d77`, `git push origin main` — xác
+nhận fast-forward `667a27d..8f17d77`.
+
+**Còn thiếu ~10001 để đạt 30000.** **Việc mở cho lượt sau:** (1) `List of Biomakerspaces in the
+United States` (Wikidata `Q140001361`, bài "List of..." curated MỚI tìm thấy lượt này, CHƯA cào nội
+dung — chỉ mới thấy trong kết quả tìm kiếm, chưa trích bullet list) — đáng thử bằng đúng kỹ thuật
+hop-P856 đã dùng; (2) InBIA (checkpoint 49, mục 7) — vẫn mở, chưa làm, nguồn LỚN nhất từng tìm được
+nhưng bị gate sau đăng nhập; (3) ECCP/StartupBlink — LOẠI HẲN (Cloudflare), đừng thử lại; (4)
+OpenAlex — LOẠI (quá mỏng); (5) nhóm category rỗng đã xác nhận KHÔNG TỒN TẠI (xem Bước 0 trên) —
+đừng thử lại các tên chính xác đó; (6) **bài học `check_url()` không bắt được domain-hijack (mục
+"Phát hiện quan trọng" trên) áp dụng cho MỌI batch tương lai, không chỉ batch này** — luôn dành thời
+gian đọc tay nội dung thật trước khi merge, kể cả khi `check_url()` báo "ok"; (7) tốc độ 7-94/
+checkpoint (rất dao động theo độ "cạn" của nguồn) — khoảng cách 10001 vẫn rất lớn, nguồn Wikipedia
+category/list gần như đã cạn (hầu hết category liên quan đã thử qua 3 checkpoint 50-52), **cần cân
+nhắc nghiêm túc báo cáo lại với sếp về nguồn hoàn toàn mới** (danh sách đã loại qua 52 checkpoint đã
+rất dài — xem đầu mục này) hoặc điều chỉnh kỳ vọng tốc độ đạt mốc 30000.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 51 — **loại hẳn ECCP (Cloudflare bot-check) + loại OpenAlex
 (quá mỏng) + Wikipedia `Category:Science parks`/`Category:Business incubators` theo ~65 quốc gia,
 kỹ thuật category-crawl MỚI (khác "List of..." của checkpoint 50) (+27, sau khi tự phát hiện và xử
 lý race điều kiện với checkpoint 50 đang chạy song song)**) — còn thiếu ~10008 lúc cuối phiên.
