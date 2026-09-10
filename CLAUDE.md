@@ -36,7 +36,22 @@ mà không giới hạn số dòng (kiểu `rows.map(...).join('')`) đều sẽ
 ROSTER đủ lớn — nên rà toàn bộ chỗ nào có `ROSTER.map`/`ROSTER.forEach` sinh HTML trực tiếp,
 không chỉ chỗ đã biết.
 
-**CẬP NHẬT — lời khuyên trên CHƯA ĐỦ, đã bỏ sót 1 chỗ lớn hơn:** sau khi vá bảng ROSTER ở
+**CẬP NHẬT 2 (commit `0903164`):** sau khi vá bug `showLabel` ở dưới, sếp vẫn thấy nặng và yêu
+cầu thẳng "tắt hiệu ứng, giảm độ lớn điểm sáng cho đỡ nặng" — mỗi điểm ROSTER nhỏ trên bản đồ
+2D trước đó vẽ 2 circle (glow halo + core) và circle core chạy animation CSS `infinite` vĩnh
+viễn — với hàng nghìn điểm/bản đồ, đó là hàng nghìn animation SVG chạy đồng thời liên tục,
+tốn chi phí style/paint riêng, KHÁC với bug O(n²) label đã vá (2 vấn đề cộng dồn, không phải 1).
+Đã sửa: mỗi điểm ROSTER giờ chỉ còn 1 circle tĩnh (r=0.9), không animation — chỉ các điểm case
+tiêu biểu (vài chục, không phải hàng nghìn) còn giữ hiệu ứng glow+nhấp nháy. Đo được: circle
+Asia giảm từ 8238 xuống 4121, tổng DOM node 32335→26668.
+
+**Việc mở nếu vẫn còn báo giật sau tất cả các bước trên:** đã nghi ngờ và xác nhận 1 phần —
+sếp báo "Use hardware acceleration" trong Chrome đang TẮT (ảnh chụp mục Settings→System) rồi tự
+bật lên nhưng CHƯA khởi động lại trình duyệt để áp dụng (Chrome yêu cầu restart hẳn, không chỉ
+bật switch) — nếu tăng tốc phần cứng thực sự tắt trước đó, WebGL/canvas phải chạy bằng renderer
+phần mềm (rất chậm), khớp đúng kiểu "giật khắp nơi, ngay khi mở, không riêng chỗ nào" mà sếp mô
+tả — CHƯA có kết quả sau khi restart tính đến lúc ghi chú này, cần theo dõi tiếp ở phiên sau nếu
+sếp chưa phản hồi. sau khi vá bảng ROSTER ở
 trên, sếp VẪN báo giật, lần này kèm phản hồi cụ thể "đốm sáng trên bản đồ 2D chồng lấn nhìn
 không ra" — hoá ra 3 **bản đồ 2D Asia/SEA/Việt Nam** (`buildCoordMap()`, gọi qua
 `rosterPointsInBounds(bounds)`) mỗi cái vẽ TỪNG mục ROSTER trong vùng thành 1 vòng tròn SVG:
