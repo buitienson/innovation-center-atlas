@@ -250,7 +250,123 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-10 (checkpoint 50 — **Wikipedia "List of..." (science/research parks +
+**Lần cuối:** 2026-09-10 (checkpoint 51 — **loại hẳn ECCP (Cloudflare bot-check) + loại OpenAlex
+(quá mỏng) + Wikipedia `Category:Science parks`/`Category:Business incubators` theo ~65 quốc gia,
+kỹ thuật category-crawl MỚI (khác "List of..." của checkpoint 50) (+27, sau khi tự phát hiện và xử
+lý race điều kiện với checkpoint 50 đang chạy song song)**) — còn thiếu ~10008 lúc cuối phiên.
+
+**Bước 1 — thử lại việc mở của checkpoint 49 (ECCP), theo đúng ưu tiên được giao:** mở
+`clustercollaboration.eu/partners` qua Browser pane thật (không phải `curl`) — trang hiện thẳng màn
+hình Cloudflare **"Performing security verification" / "Verify you are human"** (bot-check, không
+phải lỗi tạm thời). Theo quy tắc an toàn (không được bấm/vượt CAPTCHA hay bot-detection), DỪNG ngay,
+không thử thêm kỹ thuật né tránh nào. **Kết luận: LOẠI HẲN ECCP** — chuyển từ "chưa loại hẳn, đáng dò
+kỹ hơn" (checkpoint 49) sang loại dứt điểm, cùng nhóm với StartupBlink (cũng Cloudflare chặn cứng).
+
+**Bước 2 — kiểm mẫu OpenAlex (`api.openalex.org/institutions`) theo đúng gợi ý được giao:** query
+`search=` cho các từ khoá phạm vi ROSTER — "science park" 34 kết quả, "incubator" 12, "technology
+transfer" 29, "innovation center" 99 (nhiều nhiễu, không phải center thật), "business incubator" 6,
+"accelerator" 35, "technopark" 5, "research park" 14 — **cùng bậc độ lớn với ROR đã cạn ở checkpoint
+48** (dự đoán đúng trong bối cảnh giao việc: OpenAlex + ROR dùng chung ID nên trùng nhiều, phạm vi
+không đủ rộng hơn đáng kể). **Kết luận: LOẠI OpenAlex** — không đáng đầu tư tải hàng loạt.
+
+**Bước 3 — nguồn chính dùng được: Wikipedia, nhưng kỹ thuật category-crawl thay vì "List of..."
+curated:** checkpoint 50 (đang chạy song song) đã khai thác 3 trang "List of..." cụ thể; lượt này
+thử thêm 1 trang "List of..." nữa (`List of technology centers`, pageid 7697949, chưa được
+checkpoint 50 dùng) VÀ một hướng hoàn toàn khác — **`Category:Science parks` → `Category:Science
+parks by country` → 42 sub-category theo quốc gia**, cùng **`Category:Business incubators` +
+`Category:Business incubators by country` → ~25 sub-category** — dùng
+`action=query&list=categorymembers` (MediaWiki API) đệ quy 2 tầng (root → "by country" → từng
+quốc gia), KHÔNG đệ quy sâu hơn (thử `Category:Business parks` ở tầng sâu hơn từng gây nổ số lượng
+vì có hàng trăm sub-category theo quận/hạt ở Anh — bỏ hẳn category này; `Category:Technology transfer`
+cũng bỏ vì toàn chủ đề chính sách như "Bayh-Dole Act" chứ không phải danh sách tổ chức). Kết quả: 67
+category/sub-category, **391 trang duy nhất** (khác hẳn tập của checkpoint 50 dù cùng chủ đề, vì
+category bao phủ nhiều tổ chức KHÔNG nằm trong các bài "List of..." curated).
+
+**Kỹ thuật xử lý giống checkpoint 50 (hop qua Wikidata P856 + lọc P31)** nhưng bổ sung: xây
+`KEEP_TYPES` allowlist tường minh (science/technology/business park, business/startup incubator,
+innovation hub/district, industrial park/zone, accelerator...) thay vì chỉ loại theo `PLACE_TYPES`
+— vì phần lớn category-crawl candidate CÓ `P31` (khác nhiều trang "List of..." không có bài riêng),
+nên lọc theo allowlist chặt hơn khả thi. Bucket "unclear" (P31 mơ hồ như "business"/"organization"
+chung chung — 72 mục) và "no_type" (không có `P31` — 6 mục) được **rà tay từng dòng** (đọc tên +
+website), loại các case rõ ràng sai phạm vi: công ty tư nhân không phải TTO/vườn ươm (Fin/Intercom,
+Gengo, Canva, Innovaccer, RidePal, Simple/neobank, Credit Karma, Rakuten Viki, Aleph Farms, Doorman,
+Zeroth.ai/Animoca Brands — các trang mồ côi "Y Combinator-backed startups"/"500 Startups companies"
+lẫn vào qua category cha "Startup accelerators"), phòng thí nghiệm hạt nhân/quốc phòng nhạy cảm
+(Bettis Atomic Power Laboratory — Hải quân Mỹ), NGO/chương trình không phải trung tâm vật lý (K-Startup
+Grand Challenge, Enabling Women of Kamand, Yeni Fikir, Climate Action Africa), link lạc trang xây
+dựng/toà nhà (Main campus of Georgia Tech→Brown Hall dorm). **1 ca tự phát hiện lỗi bộ lọc `KEEP_TYPES`:**
+"Shenzhen" (thành phố, `P31` gồm cả "special economic zone" nên lọt qua allowlist dù rõ ràng là địa
+danh, không phải tổ chức) — loại tay, bài học: `KEEP_TYPES` cần kết hợp kiểm tra "không đồng thời là
+địa danh" chứ không chỉ khớp 1 nhãn dương tính.
+
+**`check_url()` + xác minh tay redirect cross-domain (cùng kỷ luật checkpoint 49/50, đọc nội dung
+trang đích thật, không tự tin theo mặc định):** trong số cross-domain redirect, xác nhận qua
+`<title>`/`og:title`/từ khoá trong HTML **8 ca đổi domain thật**: Erzelli Campus→`erzelli-pst.it`,
+Dubai Internet City→`dic.ae`, Catalyst (Inc)→`wearecatalyst.org`, Bio City Leipzig→`biocity-campus.com`
+(xác nhận có "Leipzig" trong trang), Liège Science Park→`liegesciencepark.net`, University of the
+Virgin Islands Research and Technology Park→`uvirtpark.net` (title khớp chính xác), **Paris-Saclay→
+`welcometoparissaclay.com`** (đây là ca checkpoint 50 đã LOẠI vì `<title>` chung chung "nuxt-headless"
+không xác nhận được thương hiệu — lượt này đào sâu thêm, đọc `og:title`/`og:site_name` server-side-
+rendered = chính xác "Paris-Saclay", nên XÁC NHẬN LẠI và GIỮ; bài học: khi `<title>` của app JS
+(Nuxt/Next...) chung chung, kiểm thêm thẻ `og:title`/`og:site_name` trước khi loại hẳn, vì các thẻ
+đó thường được SSR dù nội dung thân trang không tải qua `curl`), INCUBA Science Park→`incuba.dk`
+(về sau bị loại ở bước dedup-lại vì đã trùng ROSTER — xem dưới). **3 ca redirect về trang chủ tổ
+chức MẸ chung chung (cùng logic "bcbtac"/checkpoint 49) → loại:** DMZ→`torontomu.ca` (trang chủ
+Toronto Metropolitan University, không phải trang riêng DMZ), Cebu IT Park→`ayalaland.com` (trang
+chủ tập đoàn bất động sản Ayala Land), BioCity Nottingham→`thepioneergroup.com` (bị chặn Cloudflare
+"Attention Required", không xác minh được nội dung — không đoán). **1 ca xác nhận domain chết thật**
+(không phải lỗi tạm thời): Ghent Bio-Energy Valley (`gbev.org`) → trang "domain may be for sale"
+qua GoDaddy/`abovedomains.com` — loại. **URLError/TimeoutError hàng loạt (≈30 ca) được thử lại
+`timeout=30` (gấp đôi) rồi xác minh thêm bằng `curl` DNS trực tiếp** — đa số là lỗi DNS thật
+(`curl` exit 6 "Couldn't resolve host", vd `zjsfq.gov.cn`, `atp.com.au`, `symbion.science`) hoặc bị
+chặn/timeout nhất quán (`kacst.gov.sa` treo đủ 15s) — không phải sự cố mạng phía máy này (các domain
+khác cùng lượt vẫn tải bình thường) → loại thật, không cứu được.
+
+**Phát hiện race điều kiện với checkpoint 50 đang chạy song song (khác hẳn kịch bản "phiên trước bỏ
+dở" của checkpoint 50):** xác nhận `git status`/`len(load_roster(...))` = 19898 sạch trước khi ghi
+lần 1 (đúng quy trình) → build xong → kiểm lại thấy `git status`/kích thước file lệch bất thường →
+phát hiện MỘT PHIÊN KHÁC đang ghi/commit SONG SONG thời gian thực (không phải file cũ bỏ lại, mà
+đang biến đổi ngay trong lúc phiên này xử lý — từ 19898 → (phiên kia ghi) → 19965, tương ứng commit
+`67ad372`, +67). Xử lý: **KHÔNG hoảng, không ép ghi đè** — gọi lại `load_roster()` lần nữa ngay
+trước khi ghi thật (ra đúng 19965), chạy lại toàn bộ bước lọc trùng ROSTER (base_domain +
+normalize_name) trên 42 ứng viên đã chuẩn bị theo baseline 19965 mới nhất → phát hiện **15/42 đã
+trùng với chính batch của checkpoint 50** (cùng nguồn Wikipedia/Wikidata nên trùng nhiều — vd
+Virginia Tech Corporate Research Center, Advanced Technology Development Center, Entrepreneurs
+Roundtable Accelerator, Catalyst, BioCity Nottingham) → còn **27 ứng viên thật sự mới** → ghi, build,
+kiểm, **commit + push NGAY LẬP TỨC** (tối thiểu hoá khoảng hở cho lần ghi đè kế tiếp) trước khi làm
+các bước phụ. **Gán toạ độ:** ưu tiên `P625` khi có; 2 ca fallback qua "centroid quốc gia" của một
+script kế thừa từ scratch của phiên trước bị lỗi (bbox-center của Mỹ tính sai vì lãnh thổ không liền
+mạch — Alaska/đảo — ra toạ độ 45.19/0.79 thuộc nước Pháp!) đã phát hiện và sửa tay bằng toạ độ thành
+phố thật (QB3→Berkeley CA, North Carolina Research Campus→Kannapolis NC) trước khi ghi — bài học nếu
+dùng lại kỹ thuật "centroid theo bbox quốc gia" (khác cách CORDIS FP7 checkpoint 46 dùng centroid có
+sẵn trong ROSTER): kiểm tra riêng nước Mỹ/Nga/Pháp (có lãnh thổ hải ngoại xa) trước khi tin bbox-center.
+
+**Kết quả merge:** `ROSTER`: 19965 → **19992** (+27, baseline 19965 đã gồm +67 của checkpoint 50
+chạy song song — tổng 2 phiên: 19898 → 19992, +94). Đơn vị trên bản đồ: 19974 → **20001** (+27, giữ
+nguyên chênh lệch +9). Kiểm: `node --check` sạch, thẻ `div`/`section` cân bằng (107/107, 6/6). Mở
+`index.html` qua HTTP server cục bộ (`static-server`), đọc qua Browser pane: đúng "20001 đơn vị được
+lập bản đồ" / "19992 trong danh mục mở rộng" / "12 đơn vị tại Việt Nam" (không đổi) / "9 case phân
+tích chuyên sâu" (không đổi). Commit `47ac10b` và `git push origin main` lên live — xác nhận
+fast-forward `67ad372..47ac10b`.
+
+**Còn thiếu ~10008 để đạt 30000.** **Việc mở cho lượt sau:** (1) ECCP + StartupBlink nay đã LOẠI HẲN
+cả hai (Cloudflare) — đừng thử lại trừ khi có cách hợp lệ khác để vượt bot-check (không có trong
+phạm vi công cụ hiện tại); (2) OpenAlex đã LOẠI (quá mỏng, trùng ROR); (3) Wikipedia category-crawl
+CÒN MỞ RỘNG ĐƯỢC — các `Category:` khác chưa thử: `Category:Coworking spaces`, `Category:Startup
+accelerators by country` (mới thấy `Category:Startup accelerators` phẳng, chưa kiểm có sub-category
+theo nước không), `Category:Makerspaces`, `Category:Living labs`, `Category:Research parks` (kiểm
+thấy trống ở lượt này — có thể đổi tên hoặc gộp vào "Science parks", cần kiểm lại); nếu dùng lại,
+GIỮ NGUYÊN kỷ luật đệ quy tối đa 2 tầng (category quốc gia), KHÔNG đệ quy sâu hơn (đã gây nổ số lượng
+với "Business parks" ở lượt này); (4) `List of technology centers` (pageid 7697949) đã dùng ở lượt
+này nhưng CHƯA rà hết "unclear"/"no_type" bucket của riêng trang đó theo cùng độ sâu category-crawl —
+có thể còn sót vài ca; (5) InBIA (checkpoint 49, mục 7) — vẫn mở, chưa làm; (6) **RỦI RO RACE ĐIỀU
+KIỆN đã XÁC NHẬN LÀ CÓ THẬT** (không chỉ giả thuyết) — lượt sau LUÔN kiểm `git log`/`git status` cả
+lúc BẮT ĐẦU lẫn NGAY TRƯỚC MỖI bước ghi, và commit+push NGAY sau khi ghi/build/kiểm xong, không trì
+hoãn; (7) tốc độ 27-94 mục/checkpoint (tuỳ tính gộp 2 phiên) vẫn quá chậm so với khoảng cách 10008 —
+cân nhắc báo cáo lại với sếp.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 50 — **Wikipedia "List of..." (science/research parks +
 incubators), kỹ thuật MỚI: hop qua Wikidata P856 thay vì cào từng trang tổ chức (+67)**) — còn
 thiếu ~10035 lúc cuối phiên.
 
