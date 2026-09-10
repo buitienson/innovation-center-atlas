@@ -18,17 +18,24 @@ tự sửa tay khi cần.
 
 ## Hiệu năng quả cầu 3D
 
-Từ commit `6747431` (2026-09-10), mỗi điểm ROSTER trên quả cầu 3D dùng CHUNG 1 trong 4
-`THREE.SpriteMaterial` theo loại (university/company/network/other) thay vì mỗi điểm tự tạo
-material riêng — khi ROSTER còn ~2-3 nghìn mục thì không đáng kể, nhưng ở quy mô ~20000 mục
-việc mỗi điểm có material riêng (dù trỏ cùng texture) khiến renderer phải chuyển trạng thái
-GPU hàng chục nghìn lần/khung hình, gây giật khi mở trang và khi kéo xoay quả cầu. Độ trong
-suốt (nhấp nháy) giờ chỉ tính theo loại (4 lần/khung hình) thay vì theo từng điểm; kích thước
-vẫn nhấp nháy riêng từng điểm (rẻ, không đổi trạng thái GPU). **Nếu ROSTER tiếp tục tăng
-mạnh (hướng tới 25000+) mà vẫn thấy giật, bước tối ưu tiếp theo là gộp toàn bộ điểm cùng loại
-thành 1 `THREE.Points` (point cloud) duy nhất thay vì hàng nghìn `THREE.Sprite` riêng lẻ** —
-chưa làm vì cần viết lại cơ chế click/hover (raycasting) theo kiểu khác, rủi ro cao hơn, để
-dành khi thật sự cần.
+**Fix thật sự** (commit `f52528d`, 2026-09-10): mỗi loại ROSTER (university/company/network/
+other) giờ là **1 `THREE.Points` (point cloud) duy nhất** dựng từ 1 `BufferGeometry`, thay vì
+mỗi điểm 1 `THREE.Sprite` riêng — ở quy mô ~20000 điểm, mỗi Sprite là 1 draw call GPU riêng dù
+material có dùng chung hay không, nên đây mới là nút thắt thật (không phải số material). Đã đo
+trực tiếp trong trình duyệt qua `renderer.info.render.calls`: từ ước tính ~19850+ giảm còn
+**16** cho toàn cảnh. Bắt click/hover (raycasting) giờ dùng hàm dùng chung `pickHit()` — hit
+vào Points chỉ trả về `index` đỉnh, phải tra ngược qua `userData.rows` của point cloud đó (mảng
+song song với buffer vị trí) để lấy đúng dòng ROSTER; đã kiểm chứng qua console (`window.
+__pickHit(x,y)`, x/y là NDC -1..1) trả đúng tổ chức thật. Nhấp nháy (opacity/size) giờ tính
+theo LOẠI (4 lần/khung hình) vì material dùng chung cho cả point cloud — các case tiêu biểu +
+điểm Việt Nam (chỉ ~10 điểm, vẫn là Sprite riêng) vẫn nhấp nháy độc lập từng điểm như cũ.
+
+**Bản fix đầu (commit `6747431`, chỉ gộp material dùng chung theo loại) KHÔNG đủ** — sếp xác
+nhận vẫn giật sau khi lên bản đó, vì gộp material chỉ giảm số lần chuyển trạng thái GPU giữa
+các draw call, không giảm SỐ LƯỢNG draw call (vẫn ~20000). Bài học: khi thấy hàng chục nghìn
+`THREE.Sprite`/`THREE.Mesh` riêng lẻ gây giật, luôn nghĩ tới gộp draw call (Points/InstancedMesh)
+trước, đừng dừng ở việc gộp material — 2 việc khác nhau, chỉ gộp material không giải quyết
+đúng gốc rễ.
 
 ## Cấu trúc
 
