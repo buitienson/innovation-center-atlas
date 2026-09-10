@@ -250,7 +250,104 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-10 (checkpoint 48 — **ROR (Research Organization Registry) — NGUỒN LỚN
+**Lần cuối:** 2026-09-10 (checkpoint 49 — **NHIỆM VỤ "TÌM NGUỒN LỚN HOÀN TOÀN MỚI": KHÔNG THÀNH
+CÔNG — mọi ứng viên lớn đều bị chặn/hijack/gate; chỉ cứu được 1 nguồn nhỏ-sạch chưa từng thử
+(Tech-Access Canada, +50)**) — còn thiếu ~10102 lúc cuối phiên.
+
+**Nhiệm vụ chính lượt này — theo đúng yêu cầu của sếp: nghiên cứu sâu tìm 1-2 nguồn quy mô LỚN
+(cỡ CORDIS/Wikidata/OSM) hoàn toàn mới, chưa từng thử qua 48 checkpoint trước.** Kết quả: **KHÔNG
+tìm được nguồn lớn khả thi** — liệt kê đầy đủ các hướng đã thử và lý do loại:
+
+1. **WIPO "Technology Transfer Organizations" (`wipo.int/en/web/technology-transfer/organizations`)**
+   — chỉ là trang thông tin chung (FAQ, human-capital, 1 case study Hashemite University), KHÔNG
+   phải danh bạ — chỉ có 1 link tổ chức thật (`ntpark.rs`) trong toàn trang. Loại vì quá nhỏ.
+2. **StartupBlink (`startupblink.com/accelerators`)** — trang chủ database gợi ý ">120000 startup,
+   100 quốc gia" nhưng bị **Cloudflare chặn cứng** ("Sorry, you have been blocked") ngay từ request
+   đầu tiên qua `curl` — không tiếp cận được mà không có kỹ thuật vượt chặn (không làm, ngoài phạm
+   vi công cụ cho phép).
+3. **World Technopolis Association (`wtanet.org`)** — domain đã **bị đổi chủ/hijack**: tải về là
+   trang "East Asia Research" (tổ chức hội thảo học thuật SEO), không liên quan WTA gốc — ca
+   domain-squatting mới, khác các ca đã ghi nhận trước (incel.cz checkpoint 48, Ramot.com). Nếu WTA
+   thật đã chuyển domain khác thì lượt sau cần `WebSearch` định vị lại trước khi thử tiếp.
+4. **European Cluster Collaboration Platform / ECCP (`clustercollaboration.eu`)** — có vẻ lớn (hàng
+   nghìn "cluster organisation" châu Âu) nhưng là site Drupal điều khiển bằng AJAX/Views, không tìm
+   ra endpoint API công khai qua vài lần dò nhanh (`/jsonapi` bị redirect 308 vòng, trang
+   "find-clusters-partners" dùng form POST ẩn). Cần đầu tư sâu hơn (reverse-engineer Views AJAX
+   hoặc điều khiển qua Browser pane từng trang) — CHƯA LOẠI HẲN, để mở cho lượt sau nếu có thời
+   gian, nhưng cũng cần cân nhắc "cluster công nghiệp" có đúng phạm vi TTO/vườn ươm/khu KH&CN hay
+   không trước khi đầu tư.
+5. **GALI — Global Accelerator Learning Initiative (`galidata.org`)** — đây là dữ liệu khảo sát học
+   thuật về HIỆU QUẢ chương trình accelerator (tổng hợp/aggregate), không phải danh bạ tên tổ chức
+   kèm website — loại vì không đúng định dạng cần.
+6. **OSM Overpass — quét theo TÊN (name~regex) thay vì theo tag chính, kỹ thuật CHƯA từng thử** (
+   khác hẳn cách tiếp cận `amenity=university/college/research_institute` cũ): `nwr["name"~"Science
+   Park"]` v.v. Kết quả: **RẤT MỎNG** khi lọc thêm điều kiện có tag `website`/`contact:website` —
+   "science park" chỉ 45/1027 phần tử có website, "business incubator" chỉ ~7. Quan trọng hơn: các
+   truy vấn gộp nhiều pattern liên tục bị **504 timeout** hoặc **429 rate-limited** trên Overpass
+   API công khai (server quá tải khi quét full-text tên) — kết luận: hướng name-regex vừa mỏng vừa
+   không ổn định để khai thác quy mô lớn, KHÔNG đáng đầu tư thêm.
+7. **InBIA — International Business Innovation Association (`inbia.org/inbia-members/`)** — ứng
+   viên **lớn nhất và đáng tiếc nhất**: hiệp hội có công bố ">2000 thành viên, hơn 60 quốc gia"
+   (chính xác đúng loại vườn ươm/accelerator ROSTER cần). Có danh sách tên qua API nội bộ
+   `POST /members/directory-customer-list` (đọc được qua Browser pane network tab), nhưng
+   **trường website/liên hệ bị KHOÁ sau đăng nhập** — xác nhận tay trên 1 hồ sơ thật (Ohio
+   University Innovation Center): trang chỉ hiện "Contact information may be available to logged
+   in members." — không có URL công khai nào cả. Không thể khai thác hàng loạt nếu không tạo tài
+   khoản (bị cấm theo quy tắc an toàn). **Để mở cho lượt sau:** có thể tra riêng từng tên qua
+   `WebSearch` để tìm website thật (giống kỹ thuật Na Uy SIVA checkpoint 47) nhưng đây là việc làm
+   tay từng dòng, không phải "nguồn lớn nhanh" — cân nhắc kỹ trước khi đầu tư nhiều lượt vào ~2000
+   tên.
+
+**Vì không có nguồn lớn nào khả thi, tận dụng phát hiện phụ: Tech-Access Canada — nguồn nhỏ nhưng
+sạch, hoàn toàn chưa thử (Canada trước giờ mới chỉ đụng tới NRC IRAP — bị loại vì là chương trình
+tài trợ, không phải TTO).** `tech-access.ca` là hiệp hội quốc gia của **64 Technology Access Centres
+(TAC)** — trung tâm R&D ứng dụng/chuyển giao công nghệ gắn với các college/cégep Canada, được
+NSERC tài trợ — đúng phạm vi TTO của ROSTER. Danh bạ thật (`meetthetacs.ca/Member/Index`), server-
+render HTML thường, KHÔNG cần đăng nhập.
+
+**Kỹ thuật:** cào 64 trang hồ sơ `meetthetacs.ca/member/details/{slug}` (tên từ `figcaption` +
+`<h3>` ở trang index, website từ `id="tac-contact-website"`, địa chỉ để suy toạ độ thành phố). 4/64
+không có website (crvi, dtl, rail, rcdtac) → loại. **Lọc trùng ROSTER** (base-domain + tên chuẩn
+hoá, 19848 mục): 3 trùng domain (`bfps`/`tacsm` cùng `nait.ca` với 1 mục NAIT đã có sẵn;
+`biopterre.com` đã có sẵn) → **57 ứng viên**. `check_url()` 57: 44 sống ngay; thử lại timeout dài
+hơn cứu thêm 1 (`biolab`, lỗi mạng tạm thời). **6 ca chuyển-domain đáng ngờ được xác minh tay từng
+ca** (đọc nội dung trang đích qua `curl`, không đoán): 5/6 xác nhận đúng là tổ chức gốc đổi domain
+— `aihub`→`theaihub.ca` (nội dung nhắc "Durham"/"AI Hub"), `c2t3`→`c2t3.net` (title "Accueil -
+C2T3"), `cetab`→`cetab.bio` (title "CETAB+"), `cta`→`aerocta.ca` (title "Centre technologique en
+aérospatiale" = đúng Aerospace Technology Access Centre), `tbt`→`transbio.tech` (title
+"TransBIOTech") → **cập nhật URL sang domain mới cho cả 5**; 1/6 (`bcbtac`) redirect về trang chủ
+chung của trường (`okanagancollege.ca`), KHÔNG phải domain riêng của TAC → loại. 6 ca lỗi mạng còn
+lại xác minh KHÔNG phải tạm thời (403/404/unreachable qua cả `curl` UA thường lẫn UA trình duyệt
+đầy đủ): `agrinova.qc.ca` (403, dùng chung cho 2 TAC `agrinova-b`/`agrinova-pl`), `cim-tac` trang
+đích 404, `cteau.com` không kết nối, `georgebrown.ca/first` 403, `merinov.ca` không kết nối → loại
+theo đúng nguyên tắc không đoán khi 403/không xác minh được nội dung thật.
+
+**Gán toạ độ:** toạ độ THÀNH PHỐ THẬT (không phải centroid quốc gia) cho từng TAC theo địa chỉ trụ
+sở thật lấy từ trang hồ sơ (39 thành phố khác nhau khắp Canada — Longueuil, Alma, Oshawa, Surrey,
+Winnipeg, Trois-Rivières, Québec, Toronto, Calgary, Edmonton...). **50 mục mới, 0 Việt Nam.**
+
+**Kết quả merge:** xác nhận `git status` sạch (trừ thư mục `.claude/` chưa track, không liên quan)
++ `len(load_roster(...))` = 19848 đúng ngay trước khi ghi. `ROSTER`: 19848 → **19898** (+50). Đơn
+vị trên bản đồ: 19857 → **19907** (+50, giữ nguyên chênh lệch +9). Kiểm: `node --check` sạch, thẻ
+`div`/`section` cân bằng (107/107, 6/6). Mở `index.html` qua HTTP server cục bộ (`static-server`),
+đọc qua Browser pane: đúng "19907 đơn vị được lập bản đồ" / "19898 trong danh mục mở rộng" / "12
+đơn vị tại Việt Nam" (không đổi) / "9 case phân tích chuyên sâu" (không đổi). Commit và
+`git push origin main` lên live (xem hash ở cuối báo cáo phiên).
+
+**Còn thiếu ~10102 để đạt 30000.** **Việc mở cho lượt sau:** (1) InBIA (mục 7 ở trên) — nguồn LỚN
+nhất tìm được lượt này nhưng bị gate sau đăng nhập, cần tra tay từng tên qua `WebSearch` (chậm,
+không phải "nguồn lớn nhanh" nhưng đáng làm dần); (2) ECCP cluster-organisation directory (mục 4) —
+kỹ thuật truy cập CHƯA rõ, cần đầu tư sâu hơn hoặc Browser pane điều khiển tay, và cần chốt trước
+xem "cluster công nghiệp" có tính là đúng phạm vi TTO/vườn ươm/khu KH&CN không; (3) WTA/wtanet.org
+đã bị hijack — nếu tổ chức thật còn tồn tại ở domain khác, `WebSearch` định vị lại; (4) StartupBlink
+bị Cloudflare chặn cứng, không thử lại trừ khi có cách khác; (5) OSM name-regex (mục 6) xác nhận
+CẠN + KHÔNG ỔN ĐỊNH, đừng lặp lại; (6) **vẫn cần tìm nguồn lớn hoàn toàn mới khác** — khoảng cách
+10102 quá lớn so với tốc độ ~22-50 mục/checkpoint gần đây, các nguồn nhỏ lẻ không đủ; cân nhắc
+hướng hoàn toàn khác (registry chính phủ quốc gia chưa từng thử: Úc, Nam Phi, UAE, Israel...) hoặc
+chấp nhận tốc độ chậm và báo cáo lại với sếp về tính khả thi của mốc 30000.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 48 — **ROR (Research Organization Registry) — NGUỒN LỚN
 NHƯNG CHỦ YẾU NGOÀI PHẠM VI: TỪ >134000 TỔ CHỨC CHỈ LỌC RA 22 MỤC MỚI THẬT SỰ**) — còn thiếu ~5152
 lúc cuối phiên.
 
