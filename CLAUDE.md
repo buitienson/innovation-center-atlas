@@ -345,7 +345,7 @@ fallback), Tecnopuc (qua wikitext fallback). 0 Việt Nam. **Toạ độ:** tra 
 
 **Kết quả merge:** `ROSTER`: 20045 → **20052** (+7). Đơn vị trên bản đồ: 20054 → **20061** (+7, giữ
 nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane
-đọc đúng "20061 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+đọc đúng "20061 đơn vị được lập bản đồ", console sạch. Commit `2f38349`, `git push origin main`.
 
 **Còn thiếu ~9948.** **Việc mở:** (1) category Tây Ban Nha/Bồ Đào Nha (ngoài Brazil) coi như đã
 khai thác hết cho lượt này; (2) **Brazil đã bão hoà** (75% trùng ROSTER) — không đáng đào sâu thêm
