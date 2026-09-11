@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20045 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20052 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,66 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 56 — **Sếp yêu cầu chủ động, không dừng hỏi lại — tiếp tục ngay
+**Lần cuối:** 2026-09-11 (checkpoint 57 — **Wikipedia tiếng Tây Ban Nha `Categoría:Parques
+tecnológicos` (+ sub-cat España/Uruguay) + `Incubadoras de empresas`, VÀ tiếng Bồ Đào Nha `Categoria:
+Parques tecnológicos` (+ sub-cat Brasil) + `Incubadoras`/`Aceleradoras de negócios` — 2 nguồn ngôn
+ngữ mới trong 1 checkpoint theo đúng tinh thần "tự động, không dừng" — sau lọc + xác minh (tỉ lệ
+trùng ROSTER RẤT CAO ở batch Brazil, 6/8 mục có website đã có sẵn — xác nhận Brazil đã được rà khá kỹ
+qua các checkpoint OSM/Wikidata trước) còn **7 mục thật sự mới (+3 Tây Ban Nha, +4 Brazil)**) — còn
+thiếu ~9948 lúc cuối phiên.
+
+**Tây Ban Nha:** `Categoría:Parques tecnológicos` (7 trang gốc) + sub-cat `...de España` (20 trang,
+gồm cả sub-cat con `...de Castilla-La Mancha` 5 trang) + `...de Uruguay` (1 trang) +
+`Categoría:Incubadoras de empresas` (5 trang, 2 trang khái niệm chung bỏ qua). 33 trang → 33/33 có
+QID → 17/33 có `P856` → sau lọc trùng ROSTER (7/17 đã có sẵn — Málaga TechPark, Parque Científico
+Valencia, Parque Tecnológico Sumqayit, Parque Científico y Tecnológico Vizcaya, Parque Científico y
+Tecnológico Cantabria, Parque Científico Alicante, Parque Científico y Tecnológico UPM) → 10 ứng
+viên → `check_url()` chỉ **3 sống** (6 chết thật kể cả sau retry timeout 25s, gồm cả `zonamerica.com`
+— khu thương mại tự do lớn ở Uruguay, tiếc vì mất 1 nguồn tốt; và loại 1 mục IASP tự giới thiệu chính
+mình `iasp.ws` — hiệp hội đã dùng làm NGUỒN ở checkpoint 21, không tính bản thân hiệp hội là 1 "đơn
+vị" trong ROSTER, tránh lẫn nguồn với dữ liệu). Giữ: `Parque Científico y Tecnológico de
+Castilla-La Mancha`, `CDTUC` (Cantabria), `Parque Tecnológico y Logístico de Vigo`.
+
+**Bồ Đào Nha:** `Categoria:Parques tecnológicos` (4 trang gốc + 10 sub-cat quốc gia) + sub-cat
+`...do Brasil` (20 trang — lớn nhất) + `Categoria:Incubadoras` (dùng vài mục lẻ) +
+`Categoria:Aceleradoras de negócios` (4 trang). 26 trang → 25/26 có QID → chỉ **8/25 có `P856`**
+(tỉ lệ thấp hơn hẳn các ngôn ngữ khác — nhiều bài tiếng Bồ về công viên công nghệ Brazil không điền
+sẵn website trong Wikidata) → sau lọc trùng ROSTER: **6/8 ĐÃ CÓ SẴN** (Ciberporto Hong Kong, Parque
+Tecnológico Ribeirão Preto, IPT São Paulo, Fundação Parque Tecnológico da Paraíba, CESAR Recife,
+Parque Tecnológico da Bahia — xác nhận Brazil đã rà khá kỹ từ trước) → chỉ 2 ứng viên qua P856.
+
+**Kỹ thuật bổ sung MỚI cho lượt sau — fallback đọc wikitext khi thiếu `P856`:** thử cào wikitext
+17 trang còn thiếu website (regex tìm `|site=`/`|url=` trong infobox, hoặc link ngoài đầu tiên
+không phải wikipedia/archive) — đa số ra LINK BÁO CHÍ/TRÍCH DẪN chứ không phải trang chủ tổ chức
+(rác), chỉ lọc tay được **4 link thật đáng tin**: `Tecnopuc` (`tecnopuc.pucrs.br` — cần User-Agent
+trình duyệt thật vì Cloudflare chặn `curl` mặc định, giống bài học checkpoint 36), `Parque de
+Ciência e Tecnologia do Guamá` (`pctguama.org.br`, xác nhận `<title>`"PCT Guamá"), loại 2 ca còn lại
+sau xác minh (`Parque Tecnológico Univap`→404 chết thật, `Parque Tecnológico de Sorocaba`→trang
+"UOL HOST - Avisos" tức trang NHÀ CUNG CẤP HOSTING báo domain hết hạn/treo, KHÔNG phải trang thật —
+thêm 1 ca false-positive kiểu mới cho danh sách đã biết). **Bài học: regex wikitext tìm URL không
+đáng tin bằng `P856` có sẵn — tỉ lệ nhiễu cao (đa số link báo chí), chỉ nên dùng làm nguồn BỔ SUNG
+cho vài trang đáng ngờ nhất (tên tổ chức nổi tiếng, không phải quét hàng loạt).**
+
+**Kết quả cuối: 7 mục** — Tây Ban Nha (3): Parque Científico y Tecnológico de Castilla-La Mancha,
+CDTUC, Parque Tecnológico y Logístico de Vigo. Brazil (4): Parque Tecnológico de Belo Horizonte
+(BHTEC, qua P856), Porto Digital (qua P856), Parque de Ciência e Tecnologia do Guamá (qua wikitext
+fallback), Tecnopuc (qua wikitext fallback). 0 Việt Nam. **Toạ độ:** tra tay theo địa danh trong tên
+(Albacete/Santander/Vigo cho Tây Ban Nha; Belo Horizonte/Recife/Belém/Porto Alegre cho Brazil).
+
+**Kết quả merge:** `ROSTER`: 20045 → **20052** (+7). Đơn vị trên bản đồ: 20054 → **20061** (+7, giữ
+nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane
+đọc đúng "20061 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+
+**Còn thiếu ~9948.** **Việc mở:** (1) category Tây Ban Nha/Bồ Đào Nha (ngoài Brazil) coi như đã
+khai thác hết cho lượt này; (2) **Brazil đã bão hoà** (75% trùng ROSTER) — không đáng đào sâu thêm
+qua Wikipedia, cần nguồn khác nếu muốn mở rộng Brazil (đăng ký ANPROTEC đã dùng ở checkpoint 18,
+có thể còn sót); (3) kỹ thuật wikitext-fallback mới dùng được nhưng nhiễu cao — chỉ dùng cho
+trang có tên tổ chức khả nghi rõ ràng, không quét hàng loạt; (4) `zonamerica.com` (Uruguay) và
+`iasp.ws` (hiệp hội, không phải đơn vị) bị loại — không thử lại; (5) tiếp tục theo hướng ngôn ngữ
+khác (Nhật/Nga/Trung/Hàn) hoặc quay về tìm nguồn lớn hoàn toàn mới (InBIA).
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 56 — **Sếp yêu cầu chủ động, không dừng hỏi lại — tiếp tục ngay
 2 category còn mở từ checkpoint 55: Wikipedia tiếng Ý `Categoria:Parchi scientifici tecnologici` +
 tiếng Pháp `Catégorie:Pôle de compétitivité en France` (+ sub-cat Auvergne-Rhône-Alpes) — 33 trang,
 sau lọc trùng + xác minh tay (phát hiện thêm 1 domain bị chiếm dụng khác `up-tex.fr`, 1 ca sáp nhập
