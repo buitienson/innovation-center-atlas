@@ -345,6 +345,7 @@ thật (Switzerland), không gán nhầm France.
 **Kết quả merge:** `ROSTER`: 20237 → **20274** (+37). Đơn vị trên bản đồ: 20246 → **20283** (+37,
 giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
 pane đọc đúng "20283 đơn vị được lập bản đồ" / "20274 trong danh mục mở rộng", console sạch.
+Commit `f506437`, `git push origin main`.
 
 **Còn thiếu ~9726.** **Việc mở, bài học chiến lược cho lượt sau:** (1) tiếp tục hướng "hiệp hội
 quốc gia tương tự BVIZ/UKSPA/Retis" — còn Ý/Tây Ban Nha/Mỹ/Brazil/Nhật/Hàn chưa thử; (2) kỹ thuật
