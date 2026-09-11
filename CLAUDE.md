@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20064 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20067 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,54 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 59 — **Wikipedia tiếng Trung `Category:国家级高新技术产业开发区`
+**Lần cuối:** 2026-09-11 (checkpoint 60 — **3 việc song song: (1) fallback wikitext cho ~94 khu công
+nghệ cao TQ còn thiếu `P856` (việc mở checkpoint 59) — CHỈ CỨU ĐƯỢC 2/94 vì bị Wikipedia RATE-LIMIT
+(429) suốt lượt gọi hàng loạt, không phải do thiếu trường thực sự; (2) Wikipedia tiếng Hàn
+`분류:테크노파크` (mạng lưới TechnoPark 17 tỉnh) — xác nhận LẠI 3 tỉnh Daegu/Gwangju/Gyeonggi Daejin
+VẪN chặn mạng y hệt các checkpoint 44/47 trước, 0 mục mới; (3) Wikipedia tiếng Ba Lan `Kategoria:
+Parki technologiczne/naukowe/przemysłowe w Polsce` — sau lọc + xác minh chỉ **+1 mục thật**. **Tổng
+checkpoint này: +3** — còn thiếu ~9924 lúc cuối phiên.
+
+**Bài học kỹ thuật quan trọng — Wikipedia RATE-LIMIT 429 khi gọi hàng loạt liên tục, khác hẳn lỗi
+"trang không có trường":** script đầu tiên gọi 94 trang `action=parse&prop=wikitext` liên tiếp chỉ
+cách nhau ~1 giây (kèm 3 lần retry/2s khi lỗi) → hầu hết bị 429 "Too Many Requests" và SAU 3 LẦN
+RETRY VẪN THẤT BẠI, hàm trả về `None` — kết quả bị hiểu nhầm là "trang không có trường `web=`" dù
+xác nhận tay 1 trang (`南昌高新技术产业开发区`) THỰC SỰ CÓ trường này trong infobox. Chạy lại với
+retry backoff dài hơn (4-13s) + nghỉ 1.2s/request chỉ cứu thêm được 2/89 — vẫn bị 429 áp đảo. **Kết
+luận: batch gọi liên tục >~50 request tới cùng 1 Wikipedia site trong thời gian ngắn CẦN nghỉ dài
+hơn nhiều (multi-giây/request) hoặc chia nhỏ thành nhiều lượt cách xa nhau, KHÔNG chỉ tăng số lần
+retry — retry dồn dập vào đúng lúc đang bị limit không giúp gì.** Việc mở: 92/94 trang TQ còn lại
+CHƯA THỬ LẠI đúng cách (giãn cách đủ dài) — tiềm năng vẫn còn nguyên, chỉ là kỹ thuật gọi API sai.
+
+**Hàn Quốc — xác nhận lại (không phải mở mới):** `분류:테크노파크` liệt kê đủ 17 TechnoPark (khớp
+đúng mạng lưới ROSTER đã có 11+Pohang từ checkpoint 44) — 14/17 đã có sẵn qua domain, 3 còn thiếu
+(Gyeonggi Daejin `gdtp.or.kr`, Gwangju `gjtp.or.kr`, Daegu `ttp.org`) qua Wikidata P856 hop vẫn
+`HTTPError`/`URLError` giống hệt kết quả checkpoint 44 (403)/47 (navigation denied) — XÁC NHẬN chặn
+thật, ổn định qua nhiều tháng, không phải lỗi tạm thời. Đừng thử lại 3 domain này nữa trừ khi đổi
+hẳn vị trí mạng.
+
+**Ba Lan:** `Kategoria:Parki technologiczne/naukowe/przemysłowe w Polsce` — 35 trang → 15/35 có
+`P856` → 8 ứng viên sau lọc trùng → `check_url()` chỉ 2 sống thẳng, và cả 2 ĐỀU BỊ LOẠI sau xác
+minh tay: "Park Przemysłowy w Solcu Kujawskim" — `<title>` xác nhận là trang PROFILE của **Polska
+Agencja Inwestycji i Handlu (PAIH, cơ quan xúc tiến đầu tư quốc gia)**, không phải trang riêng của
+khu công nghiệp — loại theo đúng nguyên tắc "không lấy cổng thông tin/trang mô tả của bên thứ ba,
+chỉ lấy trang CHÍNH CHỦ". 2 ca cross-domain redirect (`opnt.pl`→`aftermarket.pl` 403,
+`pppt.pl`→`orlen.pl` rỗng) không xác minh được, loại. **Chỉ giữ 1: Lubuski Park
+Przemysłowo-Technologiczny** (`lppt.pl`, xác nhận `<title>` đúng tên).
+
+**Kết quả merge:** `ROSTER`: 20064 → **20067** (+3: Lubuski PL, Baoding TQ, Đông Quản Tùng Sơn Hồ
+TQ). Đơn vị trên bản đồ: 20073 → **20076** (+3, giữ nguyên chênh lệch +9). Kiểm sau ghi: `node
+--check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane đọc đúng "20076 đơn vị được lập bản đồ",
+console sạch. Commit (xem `git log`), push.
+
+**Còn thiếu ~9924.** **Việc mở ưu tiên cao nhất cho lượt sau:** (1) **92/94 trang Trung Quốc còn
+lại trong `Category:国家级高新技术产业开发区` CHƯA thử đúng cách** — chạy lại wikitext-fallback với
+giãn cách ≥3-5 giây/request (hoặc chia làm 3-4 đợt cách nhau vài phút), tiềm năng có thể thêm hàng
+chục mục nữa vì đây là category LỚN NHẤT tìm được gần đây; (2) Ba Lan/Hàn Quốc coi như đã khai thác
+hết cho lượt này; (3) tiếp tục ngôn ngữ khác (Thổ Nhĩ Kỳ, Hà Lan, Séc, Hungary) hoặc quay về InBIA.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 59 — **Wikipedia tiếng Trung `Category:国家级高新技术产业开发区`
 (danh sách ~100 Khu phát triển công nghiệp công nghệ cao cấp quốc gia Trung Quốc — ĐÚNG hệ thống
 mà `chinatorch.gov.cn` (China Torch) đã bị chặn mạng suốt nhiều checkpoint từ rất sớm, nay vòng qua
 được bằng Wikipedia làm trung gian!) + `Category:企业孵化器`/`Category:种子加速器` — sau lọc + xác
