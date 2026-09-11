@@ -331,6 +331,7 @@ dùng Tokyo vì không xác định được thành phố cụ thể). 0 Việt 
 **Kết quả merge:** `ROSTER`: 20314 → **20322** (+8). Đơn vị trên bản đồ: 20323 → **20331** (+8, giữ
 nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane
 đọc đúng "20331 đơn vị được lập bản đồ" / "20322 trong danh mục mở rộng", console sạch.
+Commit `ef744bf`, `git push origin main`.
 
 **Còn thiếu ~9678.** **Việc mở cho lượt sau:** (1) Hàn Quốc — mạng lưới TechnoPark đã dùng 1 phần từ
 checkpoint 44, còn 3 domain Daegu/Gwangju/Gyeonggi Daejin từng bị chặn mạng nhất quán qua nhiều
