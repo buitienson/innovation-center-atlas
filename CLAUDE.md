@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20081 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20082 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,60 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 64 — **2 nguồn: (1) Trung Quốc — hệ zone thứ 3 `Category:
+**Lần cuối:** 2026-09-11 (checkpoint 65 — **Quét rộng category tiếng Anh: Nigeria/Malaysia/Pakistan
+riêng lẻ (0 mục mới) + `Category:Science parks`/`Category:Business incubators` gốc toàn cầu (đã
+trùng gần hết vì cùng lớp Wikidata `science park`/`business incubator` đã khai thác triệt để từ
+checkpoint 39-43) + **`Category:Science parks by country`** (cây 42 quốc gia — kiểm 11 nước ít được
+phủ: Ai Cập/Morocco/Nepal/Bắc Macedonia/Philippines/Qatar/Ả Rập Xê Út/Nam Phi/Thái Lan/UAE, gần như
+toàn bộ ĐÃ CÓ SẴN trong ROSTER) — **chỉ +1 mục thật sau rất nhiều lượt tìm** (NanKang Biotech
+Incubation Center, Đài Loan) — còn thiếu ~9909 lúc cuối phiên. **Đây là checkpoint có tỉ lệ
+công/kết-quả THẤP NHẤT từ đầu chuỗi 56-65, xác nhận rõ ràng: category tiếng Anh cho chủ đề
+"science park"/"business incubator"/"technology park" ĐÃ BÃO HOÀ qua các đợt Wikidata bulk-pull
+trước đây — không đáng tiếp tục đào theo hướng "tìm category tiếng Anh mới".**
+
+**Chi tiết các nhánh đã thử (để lượt sau khỏi lặp lại):**
+- Nigeria (`Business incubators of Nigeria`, 3 trang): Co-Creation Hub đã có sẵn, SME100
+  Africa/YouWin! không có `P856` → 0.
+- Malaysia (`Science parks in Malaysia`, 2 trang): Cyberjaya chết mạng, Technology Park Malaysia
+  không có `P856` → 0.
+- Pakistan (`Special economic zones of Pakistan` + `Industrial parks in Karachi`, 10 trang): TOÀN
+  BỘ không có `P856` — kiểm tay 1 trang mẫu (`Rashakai Special Economic Zone`) xác nhận infobox
+  `{{Infobox organization}}` chuẩn CÓ tham số `website` nhưng KHÔNG được điền (khác Thổ Nhĩ Kỳ
+  checkpoint 61 — hạ tầng infobox giống nhau nhưng dữ liệu thực tế khác biệt theo cộng đồng biên
+  tập từng nước) → 0, không đáng chạy wikitext-fallback vì trường thực sự trống, không phải lỗi.
+- `Category:Science parks`/`Category:Business incubators` gốc toàn cầu (~50 trang): toàn bộ tên
+  nổi tiếng (Y Combinator, Station F, Hub71, AstroLabs, Gaza Sky Geeks, Ruta N, Wayra...) ĐÃ CÓ
+  SẴN — xác nhận các lớp Wikidata cơ bản đã cạn từ lâu. Vài tên "mới nghe" (Campus TEC Guatemala,
+  Knowledge Oasis Muscat, Centre for Entrepreneurship Opportunities and Learning, Banting and Best
+  Centre, District 3 Innovation Centre, NaiLab, Meltwater/MEST Ghana, Hatch Sri Lanka, Technology
+  Hub Mexico) đều thiếu `P856` hoặc domain đã hết hạn (`meltwater.org` giờ là trang đỗ tên miền
+  GoDaddy — tổ chức MEST Ghana có vẻ đã đổi tên/miền, không xác minh lại được lượt này).
+- `Category:Science parks by country`, 11 nước kiểm: Ai Cập (GrEEK Campus, Smart Village — cả 2
+  đã có sẵn), Morocco/Nepal/Nam Phi (Technopark Morocco/IT Park Nepal/Technopark Stellenbosch —
+  thiếu `P856`), Bắc Macedonia (SEEUTechPark — đã có sẵn dưới tên khác), Philippines (Cebu IT Park
+  — đã LOẠI từ checkpoint 51 vì trang bất động sản Ayala Land, không thử lại; Light Industry and
+  Science Park — thiếu `P856`; sub-cat Metro Manila hoá ra toàn TRUNG TÂM THƯƠNG MẠI/khu dân cư
+  Manila — Eastwood City/Eton Centris/Riverbanks Center — KHÔNG kiểm vì rõ ràng sai phạm vi), Qatar/
+  Ả Rập Xê Út/UAE (Qatar S&T Park/Digital City Riyadh/Riyadh Valley/Dubai Internet City/Dubai
+  Science Park — đều đã có sẵn từ checkpoint 43/51), Thái Lan (Thailand Science Park — đã có sẵn).
+
+**Kết quả merge:** `ROSTER`: 20081 → **20082** (+1). Đơn vị trên bản đồ: 20090 → **20091** (+1,
+giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
+pane đọc đúng "20091 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+
+**Còn thiếu ~9909.** **Việc mở, đánh giá thực tế sau 10 checkpoint liên tiếp (56-65):** tốc độ đã
+giảm mạnh từ +20 (checkpoint 55) xuống +1 (checkpoint 65) — **category Wikipedia theo chủ đề
+"science park"/"incubator"/"technology park" ở MỌI ngôn ngữ đã thử (11 ngôn ngữ: Đức/Pháp/Ý/Tây
+Ban Nha/Bồ Đào Nha/Nga/Trung/Thổ/Indonesia/Ả Rập/Bắc Âu + tiếng Anh theo quốc gia) đang tiệm cận
+bão hoà**. Khoảng cách còn lại (~9909) so với tốc độ hiện tại (trung bình ~5-6/checkpoint qua 10
+lượt gần đây) là RẤT LỚN — cần 1 trong 2 hướng hoàn toàn khác để tiếp tục hiệu quả: (1) **InBIA**
+(~2000 hội viên, gate sau đăng nhập — checkpoint 49 đã thử và bỏ, có thể cần tra tay từng tên qua
+WebSearch, việc CHẬM nhưng KHỐI LƯỢNG LỚN); (2) **quay lại hướng "đăng ký chính phủ có cột
+website"** cho các nước lớn CHƯA thử qua hướng này (Nhật Bản/Hàn Quốc/Đức liên bang/Brazil cấp
+bang) thay vì tiếp tục Wikipedia.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 64 — **2 nguồn: (1) Trung Quốc — hệ zone thứ 3 `Category:
 国家级新区` (Khu mới cấp quốc gia, 19 khu quy mô thành phố như Phố Đông Thượng Hải/Tân Giang Bắc
 Trùng Khánh) + `Category:综合保税区` (khu bảo thuế tổng hợp) — đa số khu "quốc gia" nổi tiếng
 (Hùng An/Phố Đông/Tân Giang/Tân Bân Hải...) đều KHÔNG kết nối được (khác hẳn các khu nhỏ hơn ở
