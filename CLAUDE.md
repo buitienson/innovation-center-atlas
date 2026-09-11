@@ -345,7 +345,7 @@ khoá này, có thể cần tìm nguồn tiếng Nhật ngoài Wikipedia nếu m
 
 **Kết quả merge:** `ROSTER`: 20052 → **20056** (+4). Đơn vị trên bản đồ: 20061 → **20065** (+4, giữ
 nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane
-đọc đúng "20065 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+đọc đúng "20065 đơn vị được lập bản đồ", console sạch. Commit `86369dd`, `git push origin main`.
 
 **Còn thiếu ~9935.** **Việc mở:** (1) category tiếng Nga còn ít trang chưa xử lý (Иран/Великобритания
 rỗng, có thể do đổi tên category — chưa dò kỹ); (2) Nhật Bản cần nguồn NGOÀI Wikipedia category (có
