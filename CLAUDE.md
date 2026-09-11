@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20070 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20072 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,50 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 61 — **Wikipedia tiếng Thổ Nhĩ Kỳ `Kategori:Türkiye'deki
+**Lần cuối:** 2026-09-11 (checkpoint 62 — **Quét nhanh nhiều ngôn ngữ nhỏ trong 1 lượt: Indonesia
+(`Kategori:Taman sains`), Ả Rập (`تصنيف:حاضنة أعمال` + sub-cat Tunisia/Ả Rập Xê Út), Hebrew (0 kết
+quả — chỉ khớp nhầm "Jurassic Park"), Thụy Điển/Đan Mạch/Phần Lan/Na Uy — hầu hết category RẤT NHỎ
+hoặc gần như trùng hết với ROSTER hiện có (nhiều tên nổi tiếng đã có từ trước qua các checkpoint
+Wikidata research-institute/OSM). **Chỉ Phần Lan + Ai Cập cho ra +2 mục thật** — còn thiếu ~9919
+lúc cuối phiên.
+
+**Danh sách ngôn ngữ đã thử VÀ KẾT LUẬN, để lượt sau khỏi lặp lại:**
+- **Indonesia** (`Kategori:Taman sains menurut negara` + root, 4 trang) — Bandung Techno Park,
+  Taman Teknologi Malaysia đều đã trùng ROSTER hoặc không có `P856`/wikitext (chỉ ra được link Google
+  Books, không phải trang chính chủ) → **0 mục mới, coi như cạn**.
+- **Ả Rập** (`تصنيف:حاضنة أعمال` + sub-cat Tunisia/Ả Rập Xê Út, 12 trang) — Gaza Sky Geeks/Hub71/
+  AstroLabs đều ĐÃ CÓ SẴN trong ROSTER (xác nhận các tổ chức ĐMST Trung Đông nổi tiếng đã được phủ
+  khá kỹ từ trước); "محضنة قرطاج للابتكار" (Carthage Innovation, Tunisia) chỉ ra được link
+  web.archive.org (trích dẫn, không phải trang chính chủ) → **0 mục mới, coi như cạn**.
+- **Hebrew** — không tìm được category phù hợp nào (giống tình trạng Nhật Bản checkpoint 58, Thái/
+  Hy Lạp/Hà Lan/Séc checkpoint này) — **KHÔNG CÓ cấu trúc category cho chủ đề này trên hewiki**.
+- **Thụy Điển/Séc/Hà Lan** — 0 category tồn tại dưới các từ khoá đã thử.
+- **Đan Mạch** (`Kategori:Erhvervsparker`) — category RỖNG (0 thành viên).
+- **Phần Lan** (`Luokka:Tiedepuistot`, 14 trang) — đa số đã trùng ROSTER (Hermia, Paris-Saclay,
+  Turun Tiedepuisto/Turku Science Park qua domain `turkusciencepark.com` đã có từ checkpoint 56) —
+  **giữ 1: Teknologiapuisto Noheva** (Varkaus, Phần Lan — xác nhận `<title>` khớp tên).
+- **Na Uy** (`Kategori:Forskningsparker`, 5 trang) — Forskningsparken i Oslo đã trùng ROSTER; các
+  trang khác (Forskningsbyen, Svalbard Forskningspark, Høyteknologisenteret, Forskningsparken
+  Zakynthos) đều thiếu `P856` → **0 mục mới**. Trong batch này tình cờ bắt được "Smart Village"
+  (Ai Cập, Q1231558 — khu công nghệ/kinh doanh nổi tiếng gần Cairo, 6th of October City) qua liên
+  kết chéo từ trang Phần Lan — xác nhận `<title>` "Home - Smart Village - SVC" → **giữ 1**.
+
+**Kết quả merge:** `ROSTER`: 20070 → **20072** (+2: Teknologiapuisto Noheva, Smart Village). Đơn vị
+trên bản đồ: 20079 → **20081** (+2, giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch,
+thẻ cân bằng (111/111, 6/6), Browser pane đọc đúng "20081 đơn vị được lập bản đồ", console sạch.
+Commit (xem `git log`), push.
+
+**Còn thiếu ~9919.** **Việc mở:** (1) **các category Wikipedia ngôn ngữ nhỏ/vừa (Indonesia, Ả Rập,
+Hebrew, Thuỵ Điển, Đan Mạch, Séc, Hà Lan, Phần Lan, Na Uy) coi như đã khai thác/xác nhận cạn qua
+checkpoint 55-62** — 11 ngôn ngữ đã thử tổng cộng (Đức/Pháp/Ý/Tây Ban Nha/Bồ Đào Nha/Nga/Trung/Thổ/
+Indonesia/Ả Rập/Bắc Âu), hầu hết đã cạn hoặc gần cạn; (2) hướng còn mở lớn nhất vẫn là **87 trang
+Trung Quốc bị rate-limit** (đợi lâu hơn/đổi kỹ thuật gọi API) và **InBIA** (~2000 hội viên, gate sau
+đăng nhập); (3) nên cân nhắc chuyển hẳn sang hướng KHÁC HẲN Wikipedia (đăng ký chính phủ, hiệp hội
+khu vực) vì tốc độ mỗi checkpoint ngôn ngữ nhỏ đang giảm xuống 2-3 mục, không còn hiệu quả như batch
+lớn (Pháp +20, Trung +8) — báo cáo lại thực tế này nếu sếp hỏi tiến độ.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 61 — **Wikipedia tiếng Thổ Nhĩ Kỳ `Kategori:Türkiye'deki
 bilimparkları` (danh mục teknokent/bilim parkı) + retry lần 2 wikitext-fallback TQ (giãn cách 3.5s/
 request, CHẠY NỀN qua Monitor) — Thổ Nhĩ Kỳ cho **+3 mục thật**, nhưng retry TQ **VẪN 0 mục mới**
 (xác nhận đây KHÔNG phải vấn đề tốc độ gọi mà là chặn theo IP/phiên dài hạn, xem chi tiết dưới) —
