@@ -340,7 +340,7 @@ trang liên hệ, không phải trụ sở chính thức riêng nên độ tin c
 
 **Kết quả merge:** `ROSTER`: 20033 → **20045** (+12). Đơn vị trên bản đồ: 20042 → **20054** (+12,
 giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
-pane đọc đúng "20054 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+pane đọc đúng "20054 đơn vị được lập bản đồ", console sạch. Commit `d35a584`, `git push origin main`.
 
 **Còn thiếu ~9955.** **Việc mở:** (1) category Ý/Pháp liên quan coi như cạn cho lượt này; (2)
 jawiki/es.wikipedia.org/pt.wikipedia.org đã thử `list=search` với cú pháp OR nhưng công cụ tìm kiếm
