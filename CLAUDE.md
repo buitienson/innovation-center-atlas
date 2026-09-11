@@ -328,7 +328,7 @@ lúc cuối phiên.
 **Kết quả merge:** `ROSTER`: 20070 → **20072** (+2: Teknologiapuisto Noheva, Smart Village). Đơn vị
 trên bản đồ: 20079 → **20081** (+2, giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch,
 thẻ cân bằng (111/111, 6/6), Browser pane đọc đúng "20081 đơn vị được lập bản đồ", console sạch.
-Commit (xem `git log`), push.
+Commit `9608472`, `git push origin main`.
 
 **Còn thiếu ~9919.** **Việc mở:** (1) **các category Wikipedia ngôn ngữ nhỏ/vừa (Indonesia, Ả Rập,
 Hebrew, Thuỵ Điển, Đan Mạch, Séc, Hà Lan, Phần Lan, Na Uy) coi như đã khai thác/xác nhận cạn qua
