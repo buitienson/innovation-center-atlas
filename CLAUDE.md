@@ -336,7 +336,7 @@ trước đây — không đáng tiếp tục đào theo hướng "tìm category
 
 **Kết quả merge:** `ROSTER`: 20081 → **20082** (+1). Đơn vị trên bản đồ: 20090 → **20091** (+1,
 giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
-pane đọc đúng "20091 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+pane đọc đúng "20091 đơn vị được lập bản đồ", console sạch. Commit `089cf39`, `git push origin main`.
 
 **Còn thiếu ~9909.** **Việc mở, đánh giá thực tế sau 10 checkpoint liên tiếp (56-65):** tốc độ đã
 giảm mạnh từ +20 (checkpoint 55) xuống +1 (checkpoint 65) — **category Wikipedia theo chủ đề
