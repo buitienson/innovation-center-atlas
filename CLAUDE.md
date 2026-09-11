@@ -356,6 +356,7 @@ thật ghi trong tên hoặc xác nhận qua nội dung trang (dùng 1 agent ph�
 **Kết quả merge:** `ROSTER`: 20172 → **20237** (+65). Đơn vị trên bản đồ: 20181 → **20246** (+65,
 giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
 pane đọc đúng "20246 đơn vị được lập bản đồ" / "20237 trong danh mục mở rộng", console sạch.
+Commit `f247469`, `git push origin main`.
 
 **Còn thiếu ~9754.** **Việc mở, bài học chiến lược cho lượt sau:** (1) hướng "hiệp hội quốc gia
 tương tự BVIZ/UKSPA" tiếp tục hiệu quả — còn Pháp/Ý/Tây Ban Nha/Mỹ/Brazil/Nhật/Hàn chưa thử; (2)
