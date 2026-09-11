@@ -377,8 +377,8 @@ de compétitivité...") trước khi gán Bordeaux (thủ phủ vùng, không c�
 **Kết quả merge:** `ROSTER`: 20013 → **20033** (+20). Đơn vị trên bản đồ: 20022 → **20042** (+20,
 giữ nguyên chênh lệch +9). Kiểm trước khi ghi: `git status`/`git log` sạch. Kiểm sau ghi: `node
 --check` sạch, thẻ `div`/`section` cân bằng (111/111, 6/6), mở qua HTTP server cục bộ (Browser pane)
-đọc đúng "20042 đơn vị được lập bản đồ" / "20033 trong danh mục mở rộng", console sạch. Commit (xem
-hash ở `git log`), `git push origin main`.
+đọc đúng "20042 đơn vị được lập bản đồ" / "20033 trong danh mục mở rộng", console sạch. Commit
+`179a620`, `git push origin main`.
 
 **Còn thiếu ~9967 để đạt 30000.** **Việc mở cho lượt sau:** (1) frwiki `Catégorie:Technopole` coi
 như đã khai thác hết (đã crawl đủ 2 tầng root + 4 sub-cat quốc gia + `Pépinière d'entreprises`); (2)
