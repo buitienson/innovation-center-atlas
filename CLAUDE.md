@@ -334,6 +334,7 @@ vị vận hành thật (không phải cổng thông tin thứ ba). 0 Việt Nam
 **Kết quả merge:** `ROSTER`: 20274 → **20284** (+10). Đơn vị trên bản đồ: 20283 → **20293** (+10,
 giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
 pane đọc đúng "20293 đơn vị được lập bản đồ" / "20284 trong danh mục mở rộng", console sạch.
+Commit `b0d1eb2`, `git push origin main`.
 
 **Còn thiếu ~9716.** **Việc mở, bài học chiến lược cho lượt sau:** (1) APTE/Tây Ban Nha coi như đã
 khai thác gần hết (53 Socio, 28 đã có sẵn, 15 chết/không xác minh được, chỉ 10 mới) — đừng quay lại
