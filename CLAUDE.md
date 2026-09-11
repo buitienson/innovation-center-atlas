@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20082 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20172 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,71 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 65 — **Quét rộng category tiếng Anh: Nigeria/Malaysia/Pakistan
+**Lần cuối:** 2026-09-11 (checkpoint 66 — **ĐỘT PHÁ sau 10 checkpoint sụt giảm: tìm ra và khai thác
+đúng hiệp hội Đức đã ghi từ checkpoint 54 ("Bundesverband Deutscher Innovations-, Technologie- und
+Gründerzentren e.V." / BVIZ) — domain cũ `innovation.de` đã CHẾT (410 Gone), nhưng tổ chức còn sống
+dưới tên miền mới `innovationszentren.de` (tìm ra qua WebSearch, không phải Wikipedia) — trang danh
+bạ hội viên liệt kê **150 khu công nghệ/vườn ươm Đức TRÊN CÙNG 1 TRANG** (không phân trang), có sẵn
+tên + địa chỉ + URL cho từng khu → sau lọc trùng + `check_url()` + xác minh tay + tra WebSearch cho
+~7 ca chưa rõ thành phố còn **+90 mục thật** — checkpoint LỚN NHẤT kể từ checkpoint 55 (+20), đảo
+ngược hẳn xu hướng giảm dần của 10 checkpoint trước** — còn thiếu ~9819 lúc cuối phiên.
+
+**Bài học chiến lược quan trọng nhất phiên này:** sau khi category Wikipedia theo chủ đề bão hoà
+(checkpoint 65 chỉ +1), ĐÚNG hướng đi tiếp không phải "tìm category Wikipedia ngôn ngữ khác" mà là
+**quay lại hẳn các hiệp hội/liên đoàn ngành đã BIẾT TÊN nhưng CHƯA XÁC ĐỊNH ĐƯỢC URL SỐNG** — CLAUDE.md
+đã ghi tên "Bundesverband Deutscher Innovations-, Technologie- und Gründerzentren e.V." từ checkpoint
+54 (lộ ra khi tìm kiếm Wikipedia tiếng Đức) nhưng lúc đó không theo tới cùng vì bận việc khác. Domain
+đoán theo tên miền hiển nhiên (`innovation.de`) đã chết — phải dùng `WebSearch` để tìm tên miền THẬT
+hiện tại, kỹ thuật khác hẳn P856-hop/category-crawl đã dùng suốt checkpoint 54-65.
+
+**Kỹ thuật trích xuất — HTML card-list, không cần phân trang:** trang
+`innovationszentren.de/mitglieder-zentren/mitglieder-zentren/` (185KB HTML) liệt kê TOÀN BỘ 150 hội
+viên trong các thẻ `<div class="card">...<h3>Tên</h3>...<a href="URL">Website</a>...</div>` LIÊN
+TỤC trên 1 trang — parse bằng regex tách theo `<div class="card">`, lấy `<h3>` và link "Website" —
+đơn giản hơn hẳn kỹ thuật P856-hop (không cần qua Wikidata). **Bài học: khi tìm được đúng hiệp hội/
+liên đoàn ngành, LUÔN thử tải thẳng trang danh bạ hội viên bằng `curl`/`urllib` trước (đọc cấu trúc
+HTML thật) thay vì mặc định nghĩ cần WebFetch/AI tóm tắt — nhanh và đầy đủ hơn nhiều lần.**
+
+**Xử lý cụm domain-dùng-chung phát hiện MỚI:** 5 mục (`B1st Software-Factory Dortmund`,
+`BioMedizinZentrumDortmund`, `e-port-dortmund`, `MST.factory dortmund`, `Zentrum für
+Produktionstechnologie Dortmund`) đều redirect về CÙNG 1 domain `tzdo.de` — xác nhận qua đọc
+`<title>` 1 ca ("B1st Software Factory Dortmund - **TechnologieZentrumDortmund**") — đây là 5
+THƯƠNG HIỆU CON của 1 tổ chức duy nhất (TechnologieZentrumDortmund, đã có trong danh sách 90 mục
+dưới tên riêng) — loại cả 5, không phải trùng ROSTER cũ mà là trùng NỘI BỘ chính batch này, bài học:
+khi nhiều tên khác nhau trong CÙNG 1 batch redirect về CÙNG 1 domain, chỉ giữ 1 (ưu tiên tên xuất
+hiện trực tiếp/không redirect nếu có).
+
+**Phát hiện lỗ hổng `check_url()` LOẠI MỚI, phải quét thủ công bằng script riêng:** thay vì chỉ tin
+`check_url()`, chạy thêm 1 script tải `<title>` tất cả 93 ứng viên và quét cờ đỏ ("apache2"/"it
+works"/"default page"/"404"/...) — bắt được thêm 3 ca `check_url()` bỏ lọt: `IWG Innovationszentrum
+Wiesenbusch` VÀ `Life Science Center Düsseldorf` đều là **"Apache2 Debian Default Page: It works"**
+(máy chủ CHƯA TỪNG được cấu hình, cùng loại `alsace-biovalley.com` checkpoint 55 nhưng đây là bản
+Apache/Debian khác "Web Server's Default Page" Windows/IIS đã gặp) — loại cả 2; `HALLE 96` link cụ
+thể 404, thử domain gốc ra trang CHUNG của cơ quan xúc tiến kinh tế vùng Hannover (không phải trang
+riêng HALLE 96) — loại theo nguyên tắc không lấy cổng thông tin bên thứ ba.
+
+**7 ca thiếu thông tin thành phố tra qua `WebSearch` (không phải wikitext/Wikidata):** Kompetenzzentrum
+Bio-Security (Bönen), SEE:LAB (Teltow), TIGZ (Ginsheim-Gustavsburg), co:bios Innovation
+(Hennigsdorf), WINN (Wolfertschwenden), ITZ+ (Biberach an der Riß) — mỗi lần tra xác nhận tên tổ
+chức + địa chỉ khớp đúng trước khi gán toạ độ, không đoán theo tên miền.
+
+**Kết quả merge:** `ROSTER`: 20082 → **20172** (+90). Đơn vị trên bản đồ: 20091 → **20181** (+90,
+giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
+pane đọc đúng "20181 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+
+**Còn thiếu ~9819.** **Việc mở, bài học chiến lược cho lượt sau:** (1) **hướng "hiệp hội/liên đoàn
+ngành đã biết tên nhưng chưa xác nhận domain sống" đáng đào sâu tiếp** — CLAUDE.md có nhiều tên hiệp
+hội khác đã nhắc qua nhưng chưa theo tới cùng qua các checkpoint (vd RedOTRI Tây Ban Nha đã xác nhận
+chết ở checkpoint 20, nhưng có thể còn hiệp hội khác ở Pháp/Ý/Anh/Mỹ tương tự BVIZ chưa thử); (2)
+BVIZ còn 150 hội viên "chính thức" nhưng có thể còn NHIỀU HƠN 350 trung tâm theo tuyên bố của hiệp
+hội (chỉ 154 được liệt kê chi tiết) — có `Landesverbände` (liên đoàn cấp bang) riêng ở
+`innovationszentren.de/mitglieder-zentren/landesverbaende/` CHƯA khai thác, có thể có thêm hội viên
+gián tiếp; (3) áp dụng bài học "tìm hiệp hội bằng WebSearch trước khi bỏ cuộc vì domain cũ chết"
+cho MỌI tên tổ chức đã ghi nhận "domain chết" ở các checkpoint 1-53 trước đây — rất có thể một số đã
+chuyển domain mới mà chưa ai kiểm tra lại.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 65 — **Quét rộng category tiếng Anh: Nigeria/Malaysia/Pakistan
 riêng lẻ (0 mục mới) + `Category:Science parks`/`Category:Business incubators` gốc toàn cầu (đã
 trùng gần hết vì cùng lớp Wikidata `science park`/`business incubator` đã khai thác triệt để từ
 checkpoint 39-43) + **`Category:Science parks by country`** (cây 42 quốc gia — kiểm 11 nước ít được
