@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20013 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20033 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,105 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-10 (checkpoint 54 — **Wikipedia tiếng Đức `Kategorie:Technologiepark` + 2
+**Lần cuối:** 2026-09-11 (checkpoint 55 — **Wikipedia tiếng Pháp `Catégorie:Technopole` (+ 4 sub-cat
+quốc gia France/Belgique/Canada/États-Unis) + `Catégorie:Pépinière d'entreprises`, kỹ thuật Wikidata
+P856-hop quen thuộc, HƯỚNG MỞ đã ghi từ checkpoint 54 — nguồn vừa (75 trang), sau lọc + xác minh tay
+kỹ hơn hẳn (phát hiện 1 domain bị chiếm dụng bán casino, 1 trang server mặc định chết, 1 trang rỗng)
+còn **20 mục thật sự mới (+20)**, batch lớn nhất kể từ checkpoint 53**) — còn thiếu ~9967 lúc cuối
+phiên.
+
+**Bước 0 — dò category tiếng Pháp:** `Catégorie:Technopôle`/`Incubateur d'entreprises`/`Parc
+scientifique`/`Parc technologique` (có dấu, viết đúng chính tả) đều KHÔNG tồn tại trên frwiki dạng
+category — chỉ có `Catégorie:Technopole` (không dấu trên "o") + `Catégorie:Pépinière d'entreprises`
+(6 trang, nhỏ). `Catégorie:Technopole` gốc có 4 sub-cat quốc gia: France (44 trang), Belgique (4),
+Canada (3), États-Unis (6, hầu hết là TÊN VÙNG "Silicon Alley/Forest/Prairie" không phải tổ chức —
+chỉ giữ `Research Triangle Park`) — Vietnam sub-cat bỏ qua theo quy ước. 1 sub-cat khác
+(`Technopole de La Réunion`) hoá ra là danh sách CÔNG TY ĐẶT TRỤ SỞ tại khu công nghệ đó (đài truyền
+hình, hãng phim...) — sai khuôn dữ liệu, không dùng, giống kiểu "Entreprise ayant son siège... par
+technopole" cũng gặp trong cùng cây category.
+
+**Bẫy mã hoá ký tự — 3 tên bị đọc sai dấu khi lấy từ JSON `categorymembers` qua nhiều lớp
+copy/paste:** "Sème City" (đúng: "Sèmè City", 2 dấu huyền) và "Parc d'activités de Courtaboeuf"
+(đúng: "Courtabœuf", ligature œ) bị gõ sai 1 ký tự khi chép tay từ kết quả JSON hiển thị trên
+terminal — `action=query&titles=...` trả "missing" vì tên không khớp. **Sửa bằng cách tra lại theo
+`pageids` thay vì `titles`** (API trả đúng tên gốc không qua tay người chép) — đây là kỹ thuật đáng
+dùng khi nghi ngờ tên có dấu bị lệch: tra bằng ID số, không tra lại bằng chuỗi tên đã gõ tay.
+
+**Kỹ thuật P856-hop (giống checkpoint 50-54):** 75 trang → 75/75 có QID (100%) → 46/75 có `P856`.
+Lọc theo `P31` thấy nhiều kiểu lẫn lộn hơn hẳn đợt tiếng Đức: loại 3 mục rõ ràng sai phạm vi —
+`Sakiet Ezzit` (Q41067667 "municipality of Tunisia" — thị trấn, không phải tổ chức), `Sèmè City`
+(Q170584 "project" — bản thân dự án đô thị, KHÁC với "Agence de développement de Sèmè City" (Q31728
+"public administration") là cơ quan quản lý thật — 2 trang riêng biệt cho cùng 1 khu, chỉ giữ agency
+nếu chưa trùng), `La Doua` (Q123705 "neighborhood" — khu đại học Lyon, và URL chỉ là 1 trang con
+của chính site Université Lyon 1, không phải site riêng). **Không loại theo P31 "neighborhood" một
+cách máy móc** — `Temis`/`Technopolis de Rabat` cũng mang tag này nhưng có website RIÊNG mô tả rõ
+ràng là tổ chức quản lý khu công nghệ thật (không phải trang thành phố/cổng thông tin chung) → giữ,
+xác minh qua đọc nội dung thay vì chỉ tin nhãn P31.
+
+**Lọc trùng ROSTER** (baseline 20013): loại 12/42 (sau loại P31) trùng domain/tên — trong đó phát
+hiện thú vị: "Agence de développement de Sèmè City" (`semecity.bj`) ĐÃ CÓ SẴN trong ROSTER từ đợt
+Châu Phi (`africatechschools.com`) trước đây dưới tên khác — xác nhận đúng, không phải trùng giả.
+Còn **30 ứng viên**.
+
+**`check_url()` + rà tay SÂU HƠN HẲN các lượt trước — phát hiện 3 LOẠI false-positive MỚI mà
+`check_url()` không bắt được (bổ sung cho danh sách lỗ hổng đã biết từ checkpoint 33/43/50):**
+1. **Domain bị chiếm dụng bán casino trực tuyến** — `neode.ch` (Thuỵ Sĩ) trả 200 OK, nội dung đủ dài
+   ("Ausländische Online Casinos Schweiz 2026"...) nhưng ĐÂY LÀ TRANG QUẢNG CÁO CASINO tiếng Đức,
+   không liên quan gì tới tổ chức Neode gốc — CÙNG LOẠI lỗ hổng đã ghi ở checkpoint 50 (Boston Open
+   Science Laboratory bị chiếm dụng bán cờ bạc Indonesia) nhưng lần này ở miền `.ch` — xác nhận đây
+   không phải ca hiếm, cần luôn đọc tay tiêu đề/nội dung thật, không tin `check_url()` "ok" một mình.
+2. **Trang "Web Server's Default Page"** — `alsace-biovalley.com` (BioValley France) trả 200 OK với
+   đủ text (trang mặc định Apache/nginx có nhiều chữ hướng dẫn cấu hình) nên vượt qua kiểm tra độ dài
+   của `check_url()`, nhưng đây là SERVER CHƯA TỪNG ĐƯỢC CẤU HÌNH — không phải trang thật đang hoạt
+   động (khác "The Network Hub" nginx-mặc-định đã gặp ở checkpoint 50, cùng loại lỗi, domain khác).
+3. **Trang rỗng hoàn toàn kể cả sau khi JS chạy** — `polemaud.com` (Pôle de compétitivité MATIKEM)
+   trả 200 OK nhưng `curl` lẫn Browser pane thật (đợi JS chạy xong) đều cho `<title>` và nội dung
+   RỖNG — không phải lỗi mạng, trang thực sự không render gì cả (có thể lỗi cấu hình SPA phía họ).
+
+**2 ca cross-domain redirect xác minh tay THÀNH CÔNG (đổi thương hiệu, giữ + đổi tên):** `Rennes
+Atalante` (`rennes-atalante.fr`→`lepoool.tech`) — nội dung xác nhận "Le Poool x La French Tech
+Rennes St-Malo, la communauté de l'innovation et de l'entrepreneuriat" — cùng thành phố, cùng sứ
+mệnh, đổi tên thành "Le Poool (ex-Rennes Atalante)"; `Archamps Technopole`
+(`archamps-technopole.com`→`archparc.fr`) — nội dung xác nhận rõ ràng "180 entreprises... 2137
+personnes... annuaire d'entreprises... gouvernance" cho ĐÚNG khu công nghệ đó gần Genève, đổi tên
+thành "ArchParc (ex-Archamps Technopole)". **1 ca cross-domain KHÔNG xác minh được, LOẠI:**
+`Industries et Agro-Ressources` (`iar-pole.com`→`bioeconomyforchange.eu`) — trang đích nói về
+"bioéconomie" hợp chủ đề nhưng tìm không ra chữ "IAR" hay tên cũ nào trong nội dung để xác nhận
+CHÍNH tổ chức đó đổi tên (khác 2 ca trên có bằng chứng rõ) — theo đúng kỷ luật "không xác minh được
+thì loại", không dùng suy đoán ngoài trang.
+
+**Kết quả cuối: 20 mục giữ lại** (30 ứng viên − 5 chết thật [El Ghazala/Végépolys Valley/Quartier de
+l'innovation de Montréal/Cancer-Bio-Santé/Technopolis de Rabat] − 3 false-positive mới phát hiện
+[Neode/BioValley France/MATIKEM] − 1 redirect không xác minh được [Industries et Agro-Ressources] −
+1 loại theo P31 project [Sèmè City, agency giữ nhưng đã trùng ROSTER]). Toàn bộ Pháp/Thuỵ Sĩ, 0 Việt
+Nam. **Gán toạ độ:** 12/20 có `P625` thật; 8 còn lại tra tay theo địa chỉ thật ghi trên trang (Lyon,
+Évry, Chartres, Archamps, Saint-Beauzire, Plouzané/Brest, Angers, Paris) — xác nhận riêng `Biopôle`
+qua nội dung trang ("large life sciences campus in Lausanne, Switzerland") trước khi gán toạ độ
+Lausanne, và `Cluster NAOS` qua `og:description` ("Nouvelle-Aquitaine Open Source (NAOS) est un pôle
+de compétitivité...") trước khi gán Bordeaux (thủ phủ vùng, không có địa chỉ cụ thể hơn trên trang).
+
+**Kết quả merge:** `ROSTER`: 20013 → **20033** (+20). Đơn vị trên bản đồ: 20022 → **20042** (+20,
+giữ nguyên chênh lệch +9). Kiểm trước khi ghi: `git status`/`git log` sạch. Kiểm sau ghi: `node
+--check` sạch, thẻ `div`/`section` cân bằng (111/111, 6/6), mở qua HTTP server cục bộ (Browser pane)
+đọc đúng "20042 đơn vị được lập bản đồ" / "20033 trong danh mục mở rộng", console sạch. Commit (xem
+hash ở `git log`), `git push origin main`.
+
+**Còn thiếu ~9967 để đạt 30000.** **Việc mở cho lượt sau:** (1) frwiki `Catégorie:Technopole` coi
+như đã khai thác hết (đã crawl đủ 2 tầng root + 4 sub-cat quốc gia + `Pépinière d'entreprises`); (2)
+**jawiki (tiếng Nhật) vẫn CHƯA THỬ** — thử tìm category tương đương ("サイエンスパーク"/"リサーチパー
+ク"/"インキュベーション施設") trước khi mở rộng sang ngôn ngữ khác nữa; (3) **kỹ thuật rà tay lượt
+này phát hiện 3 loại false-positive MỚI mà `check_url()` chưa bắt được** (domain chiếm dụng bán
+casino ở miền `.ch`, trang "Web Server's Default Page", trang JS rỗng hoàn toàn) — cân nhắc thêm bước
+kiểm `<title>` không rỗng + không chứa cụm "Default Page"/"Apache2 Ubuntu Default" vào `check_url()`
+dùng chung, đỡ phải rà tay lại từng batch; (4) InBIA (checkpoint 49) vẫn mở, nguồn LỚN nhất từng tìm
+được nhưng bị gate sau đăng nhập; (5) tốc độ 20 mục/checkpoint (frwiki) so với 7 mục/checkpoint
+(dewiki) xác nhận Pháp có nhiều tổ chức "technopole/pôle de compétitivité" hơn Đức trong phạm vi
+ROSTER — có thể còn dư địa nếu mở rộng sang các Catégorie liên quan khác (`Catégorie:Cluster
+d'entreprises`, `Catégorie:Pôle de compétitivité` — CHƯA kiểm tồn tại hay chưa) trước khi chuyển hẳn
+sang ngôn ngữ khác.
+
+---
+**Lần trước:** 2026-09-10 (checkpoint 54 — **Wikipedia tiếng Đức `Kategorie:Technologiepark` + 2
 sub-cat quốc gia (Deutschland/Österreich), kỹ thuật Wikidata P856-hop quen thuộc, HƯỚNG MỞ đã ghi
 từ checkpoint 53 ("dewiki/frwiki/jawiki chưa từng thử") — nguồn nhỏ (50 trang), sau lọc kiểu-địa-danh
 + trùng ROSTER chỉ còn 7 mục thật sự mới (+7)**) — còn thiếu ~9987 lúc cuối phiên.
