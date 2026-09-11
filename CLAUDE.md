@@ -338,7 +338,7 @@ xác). 0 Việt Nam.
 **Kết quả merge:** `ROSTER`: 20078 → **20081** (+3: Tianjin Dongjiang, SEEPZ, Cochin SEZ). Đơn vị
 trên bản đồ: 20087 → **20090** (+3, giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch,
 thẻ cân bằng (111/111, 6/6), Browser pane đọc đúng "20090 đơn vị được lập bản đồ", console sạch.
-Commit (xem `git log`), push.
+Commit `34835d3`, `git push origin main`.
 
 **Còn thiếu ~9910.** **Việc mở:** (1) Trung Quốc coi như đã khai thác 3/3 hệ zone lớn tìm được
 (cao/kinh tế-kỹ thuật/tân khu+bảo thuế) — các khu cấp thành phố/tỉnh lớn (Phố Đông, Hùng An...)
