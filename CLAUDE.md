@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20284 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20314 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,75 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 69 — **Hiệp hội thứ 4: APTE (Asociación de Parques Científicos y
+**Lần cuối:** 2026-09-11 (checkpoint 70 — **Hiệp hội thứ 5: AURP (Association of University Research
+Parks, Mỹ + Canada) — trang danh bạ `aurp.org/members/our-members/` không lộ bảng tĩnh (chỉ có bản
+đồ Google Maps), nhưng dữ liệu ĐÃ NHÚNG SẴN dạng biến JS toàn cục `window.locations` (113 mục, có
+sẵn tên+website+địa chỉ+toạ độ CHÍNH XÁC — không cần geocode) — đọc thẳng qua `javascript_tool`, đơn
+giản hơn cả kỹ thuật Fiber của Retis. Sau lọc nhà cung cấp/tư vấn + trường đại học trần + trùng
+ROSTER + `check_url()` + xác minh tiêu đề trang cho các ca tên-website LỆCH NHAU (lỗi dữ liệu gốc
+của chính AURP) — **+30 mục thật** — còn thiếu ~9686 lúc cuối phiên.
+
+**Phát hiện lỗi dữ liệu NGUỒN (không phải lỗi của mình) — nhiều dòng trong `window.locations` có
+TÊN và WEBSITE hoàn toàn không khớp nhau:** ít nhất 5 dòng mang tên "Nexus234 Innovation District"
+nhưng trỏ tới 5 website hoàn toàn khác nhau (ASU Research Park, Nexus234 THẬT ở Virginia, NIIMBL ở
+Delaware, University of Iowa Research Park, University of Santo Tomas Philippines!) — rõ ràng CMS
+của AURP có lỗi khi một record mẫu bị copy nhầm tên sang nhiều dòng khác mà quên sửa. Tương tự
+"Ohio Discovery Corridor" lặp lại 4 lần với 4 website khác hẳn nhau (InterTech Science Park
+Louisiana, HOK — công ty kiến trúc, Port San Antonio, JobsOhio — cổng xúc tiến đầu tư CẤP BANG),
+"Research Triangle Park"/"Perkins&Will"/"Stantec" cũng lặp tên nhầm. **Xử lý: KHÔNG tin trường
+`name`, luôn đọc `<title>` trang thật của từng `website` để xác định tên ĐÚNG** — cứu lại được các
+dòng có website thật hợp lệ (NIIMBL, InterTech Science Park, Port San Antonio, Nexus234 thật) và
+loại các dòng website là công ty/cổng thông tin sai phạm vi (HOK kiến trúc, JobsOhio cổng bang,
+University of Santo Tomas Philippines — hoàn toàn không liên quan).
+
+**Lọc trước khi kiểm sống — 2 lớp mới:** (1) danh sách LOẠI NHÀ CUNG CẤP/TƯ VẤN (`Stantec`,
+`Perkins&Will`, `JACOBS`, `ARUP`, `Brandywine Realty Trust`, `Collaborative Real Estate`, `WEXFORD
+Science + Technology` — các công ty kiến trúc/kỹ thuật/bất động sản là hội viên tài trợ của AURP,
+không phải bản thân 1 khu nghiên cứu — cùng nguyên tắc loại "Kadans Science Partners" ở UKSPA); (2)
+danh sách domain TRANG CHỦ TRƯỜNG ĐẠI HỌC TRẦN (`tulane.edu`, `louisville.edu`, `nd.edu`, `wpi.edu`,
+`uvu.edu`... — url không trỏ tới trang cụ thể của 1 công viên/trung tâm CGCN mà là trang chủ CHUNG
+của cả trường, đúng nguyên tắc đã áp dụng cho CORDIS HES/Startup India) — loại 33/113 dòng qua 2 lớp
+này trước khi tốn công kiểm sống.
+
+**Kết quả:** 113 → 80 (sau lọc 2 lớp trên) → 50 (sau lọc trùng ROSTER, 30 trùng — Mỹ đã được rà khá
+kỹ qua Wikidata/CORDIS/ROR các checkpoint trước) → `check_url()` giữ 31 "ok" → xác minh `<title>`
+loại thêm 5 (Cleantech Commons Trent Univ → title chỉ là trang chủ Trent University chung, không
+riêng "Cleantech Commons"; Biomedical Research Park ULM → title "Monroe Chamber of Commerce", cổng
+thông tin phòng thương mại chung; "Ohio Discovery Corridor"/HOK → công ty kiến trúc; "Ohio Discovery
+Corridor"/JobsOhio → cổng xúc tiến đầu tư cấp bang; Tri-Centennial Innovation Park → title "Institute
+for Economic Development" không nhắc "Tri-Centennial", không xác nhận được) + retry/xác minh thêm
+cứu lại 4 ca ban đầu "chết"/cross-domain (Research Park at FAU — `researchparkfau.com`, từng bị
+Cloudflare chặn ở checkpoint 43, LẦN NÀY đọc được title khớp đúng, xác nhận sống lại; Saint-Hyacinthe
+Technopole — Québec, title khớp; USA Tech Park — Univ. of South Alabama; The Accelerator — USM
+Innovation Park, cần bỏ qua lỗi SSL chain bằng context không xác minh) → **30 mục cuối cùng**.
+
+**Đổi tên theo `<title>` xác nhận cho các ca tên gốc AURP sai/mơ hồ:** "Nexus234 Innovation
+District" (niimbl.org) → "NIIMBL (National Institute for Innovation in Manufacturing
+Biopharmaceuticals)"; "Ohio Discovery Corridor" (brfla.org) → "InterTech Science Park (BRF)"; "Ohio
+Discovery Corridor" (portsanantonio.us) → "Port San Antonio"; "New East Baltimore Community
+Association, Inc." → "Science and Technology Park at Johns Hopkins (Eager Park)"; "GO Topeka Link
+Innovation Labs" → "Link Innovation Labs (GO Topeka)"; "NDeavor Barry D. Batcheller Tech Park" →
+"NDeavor Tech Park"; "Texas A&M University-Central Texas" → "Forge Research Park (Texas A&M-Central
+Texas)". 28 Mỹ + 2 Canada (Calgary Properties Group, Saint-Hyacinthe Technopole), 0 Việt Nam. Toạ độ
+dùng THẲNG lat/lng CHÍNH XÁC có sẵn trong `window.locations` — không cần centroid/tra tay.
+
+**Kết quả merge:** `ROSTER`: 20284 → **20314** (+30). Đơn vị trên bản đồ: 20293 → **20323** (+30,
+giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
+pane đọc đúng "20323 đơn vị được lập bản đồ" / "20314 trong danh mục mở rộng", console sạch.
+
+**Còn thiếu ~9686.** **Việc mở, bài học chiến lược cho lượt sau:** (1) tiếp tục hướng "hiệp hội quốc
+gia tương tự" cho Brazil/Nhật/Hàn; (2) kỹ thuật "đọc biến JS toàn cục nhúng sẵn qua `javascript_tool`"
+đơn giản hơn cả Fiber tree — luôn thử `window.<tên hợp lý>`/`Object.keys(window)` lọc theo tên gợi ý
+trước khi nghĩ tới kỹ thuật phức tạp hơn; (3) **bài học quan trọng: khi 1 nguồn tự nhận dữ liệu có
+`name`+`website` riêng biệt, ĐỪNG tin `name` mù quáng — luôn đối chiếu `<title>` trang `website` thật
+trước khi merge, đặc biệt nếu phát hiện CÙNG 1 tên lặp lại nhiều dòng với website khác nhau (dấu hiệu
+lỗi copy-paste trong CMS nguồn)**, đây là loại lỗi MỚI khác hẳn các loại false-positive đã biết
+(parking page, cross-domain redirect, domain hijack) — áp dụng cho mọi nguồn "danh bạ nhúng sẵn"
+tương tự ở các nước khác; (4) AURP/InBIA (Mỹ) coi như đã khai thác hết nguồn công khai — InBIA vẫn
+gate sau đăng nhập, không thử lại.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 69 — **Hiệp hội thứ 4: APTE (Asociación de Parques Científicos y
 Tecnológicos de España) — domain sống `apte.org`, danh bạ 61 hội viên qua WordPress REST API
 (`wp-json/wp/v2/miembro`), lọc taxonomy `tipo-de-miembro=Socio` (53/61, loại "Afiliado"/"Colaborador"
 — hội viên liên kết/nhà tài trợ, không phải khu công nghệ thật) — Tây Ban Nha đã được rà RẤT KỸ qua
