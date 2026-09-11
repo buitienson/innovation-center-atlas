@@ -331,8 +331,8 @@ phiên) hoặc đổi hẳn kỹ thuật (vd `action=query&prop=revisions&rvprop
 
 **Kết quả merge:** `ROSTER`: 20067 → **20070** (+3, toàn Thổ Nhĩ Kỳ). Đơn vị trên bản đồ: 20076 →
 **20079** (+3, giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111,
-6/6), Browser pane đọc đúng "20079 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`),
-push.
+6/6), Browser pane đọc đúng "20079 đơn vị được lập bản đồ", console sạch. Commit `d76b210`,
+`git push origin main`.
 
 **Còn thiếu ~9921.** **Việc mở:** (1) 87 trang TQ còn lại — ĐỪNG thử lại ngay trong cùng phiên/IP
 này, để cách xa hoặc đổi kỹ thuật gọi API; (2) Thổ Nhĩ Kỳ coi như đã khai thác hết (chỉ 9 trang
