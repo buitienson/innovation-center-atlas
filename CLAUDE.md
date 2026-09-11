@@ -335,7 +335,7 @@ Przemysłowo-Technologiczny** (`lppt.pl`, xác nhận `<title>` đúng tên).
 **Kết quả merge:** `ROSTER`: 20064 → **20067** (+3: Lubuski PL, Baoding TQ, Đông Quản Tùng Sơn Hồ
 TQ). Đơn vị trên bản đồ: 20073 → **20076** (+3, giữ nguyên chênh lệch +9). Kiểm sau ghi: `node
 --check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane đọc đúng "20076 đơn vị được lập bản đồ",
-console sạch. Commit (xem `git log`), push.
+console sạch. Commit `cae2725`, `git push origin main`.
 
 **Còn thiếu ~9924.** **Việc mở ưu tiên cao nhất cho lượt sau:** (1) **92/94 trang Trung Quốc còn
 lại trong `Category:国家级高新技术产业开发区` CHƯA thử đúng cách** — chạy lại wikitext-fallback với
