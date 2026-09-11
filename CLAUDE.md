@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20067 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20070 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,50 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 60 — **3 việc song song: (1) fallback wikitext cho ~94 khu công
+**Lần cuối:** 2026-09-11 (checkpoint 61 — **Wikipedia tiếng Thổ Nhĩ Kỳ `Kategori:Türkiye'deki
+bilimparkları` (danh mục teknokent/bilim parkı) + retry lần 2 wikitext-fallback TQ (giãn cách 3.5s/
+request, CHẠY NỀN qua Monitor) — Thổ Nhĩ Kỳ cho **+3 mục thật**, nhưng retry TQ **VẪN 0 mục mới**
+(xác nhận đây KHÔNG phải vấn đề tốc độ gọi mà là chặn theo IP/phiên dài hạn, xem chi tiết dưới) —
+tổng checkpoint này **+3** — còn thiếu ~9921 lúc cuối phiên.
+
+**Thổ Nhĩ Kỳ:** `Kategori:Teknokentler` + `Kategori:Türkiye'deki bilimparkları` (9 trang) → 9/9 có
+QID → chỉ 2/9 có `P856` (1 trùng ROSTER: Bilişim Vadisi) → **wikitext-fallback cho 7 trang còn lại
+THÀNH CÔNG HOÀN TOÀN (7/7 tìm ra URL)** vì infobox tiếng Thổ dùng field `web sitesi` — khác hẳn tình
+trạng thất bại của batch Trung Quốc (xem dưới), xác nhận: **wikitext-fallback tự nó là kỹ thuật
+TỐT, vấn đề batch TQ nằm ở tốc độ gọi/số lượng, không phải ở bản chất kỹthuật**. Sau lọc trùng + rà
+tay: `ODTÜ Teknokent`/`Arı Teknokent` đã trùng ROSTER; `Sütçülük Bilim Parkı` (nghe tên tưởng Thổ
+Nhĩ Kỳ nhưng domain `.org.pk` — PAKISTAN, không phải Thổ) — `check_url()` báo "ok" nhưng `<title>`
+thật là **"1Win Pakistan: Betting, Casino & Sports"** — DOMAIN BỊ CHIẾM DỤNG CHO CỜ BẠC, cùng loại
+lỗ hổng đã gặp nhiều lần (`neode.ch` checkpoint 55, `up-tex.fr` checkpoint 56) — loại; `Manisa
+Teknokent` trang rỗng không đọc được `<title>` kể cả với User-Agent trình duyệt thật, không xác
+minh được — loại. **Giữ 3:** `Hacettepe Teknokent` (dùng domain gốc thay vì đường dẫn `/tr/` sâu vì
+`check_url()` timeout trên URL có path — domain gốc `hacettepeteknokent.com.tr` xác nhận `<title>`
+"Hacettepe Teknokent A.Ş."), `Balıkesir Teknokent`, `Bilkent Cyberpark`.
+
+**Trung Quốc — retry lần 2 CŨNG THẤT BẠI, kết luận khác hẳn checkpoint 60:** chạy lại 87 trang còn
+thiếu `P856`/wikitext, lần này giãn cách 3.5 giây/request + backoff 15s riêng cho lỗi 429 + User-
+Agent tuân thủ chính sách Wikimedia (tên bot + link liên hệ) — **VẪN 0/87 mục mới** (y hệt lần 1).
+Đối chiếu với batch Thổ Nhĩ Kỳ (chạy CÙNG kỹ thuật, giãn cách CHỈ 2 giây/request, chỉ 7 trang) mà
+**THÀNH CÔNG 100%** ngay trong cùng phiên làm việc này → **bác bỏ giả thuyết "cần giãn cách chậm
+hơn" của checkpoint 60** — vấn đề thật sự nhiều khả năng là: **phiên/IP này đã bị Wikipedia tiếng
+Trung áp mức giới hạn RIÊNG (có thể theo domain zh.wikipedia.org cụ thể, không phải giới hạn chung
+mọi Wikipedia) kéo dài nhiều giờ sau đợt gọi dồn dập ở checkpoint 59-60**, không phải vấn đề tốc độ
+gọi hiện tại. **Việc mở cho lượt sau: nếu muốn tiếp tục batch TQ, nên đợi cách xa (vài giờ/khác
+phiên) hoặc đổi hẳn kỹ thuật (vd `action=query&prop=revisions&rvprop=content` thay vì
+`action=parse`, có thể nằm trong nhóm giới hạn khác) thay vì lặp lại đúng cách gọi cũ.**
+
+**Kết quả merge:** `ROSTER`: 20067 → **20070** (+3, toàn Thổ Nhĩ Kỳ). Đơn vị trên bản đồ: 20076 →
+**20079** (+3, giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111,
+6/6), Browser pane đọc đúng "20079 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`),
+push.
+
+**Còn thiếu ~9921.** **Việc mở:** (1) 87 trang TQ còn lại — ĐỪNG thử lại ngay trong cùng phiên/IP
+này, để cách xa hoặc đổi kỹ thuật gọi API; (2) Thổ Nhĩ Kỳ coi như đã khai thác hết (chỉ 9 trang
+trong category); (3) tiếp tục tìm category ngôn ngữ khác chưa thử (Hy Lạp, Do Thái, Ả Rập,
+Indonesia, Thái) hoặc quay về InBIA/nguồn phi-Wikipedia.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 60 — **3 việc song song: (1) fallback wikitext cho ~94 khu công
 nghệ cao TQ còn thiếu `P856` (việc mở checkpoint 59) — CHỈ CỨU ĐƯỢC 2/94 vì bị Wikipedia RATE-LIMIT
 (429) suốt lượt gọi hàng loạt, không phải do thiếu trường thực sự; (2) Wikipedia tiếng Hàn
 `분류:테크노파크` (mạng lưới TechnoPark 17 tỉnh) — xác nhận LẠI 3 tỉnh Daegu/Gwangju/Gyeonggi Daejin
