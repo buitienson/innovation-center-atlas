@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20274 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20284 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,58 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 68 — **Hiệp hội thứ 3: Retis Innovation (Pháp, trước đây "France
+**Lần cuối:** 2026-09-11 (checkpoint 69 — **Hiệp hội thứ 4: APTE (Asociación de Parques Científicos y
+Tecnológicos de España) — domain sống `apte.org`, danh bạ 61 hội viên qua WordPress REST API
+(`wp-json/wp/v2/miembro`), lọc taxonomy `tipo-de-miembro=Socio` (53/61, loại "Afiliado"/"Colaborador"
+— hội viên liên kết/nhà tài trợ, không phải khu công nghệ thật) — Tây Ban Nha đã được rà RẤT KỸ qua
+nhiều checkpoint trước (28/53 trùng ROSTER ngay, tỉ lệ trùng 53%) nên chỉ còn **+10 mục thật** — còn
+thiếu ~9716 lúc cuối phiên.
+
+**Không có trường website sạch trong REST API (ACF rỗng) — phải cào từng trang hồ sơ lấy link
+ngoài đầu tiên** (loại trừ mạng xã hội/domain hiệp hội, đúng kỹ thuật đã dùng ở UKSPA) — 51/53 hồ sơ
+cào thành công lượt đầu, 2 ca timeout (Castilla-La Mancha, Sevilla TechPark) cứu lại bằng retry
+timeout dài hơn NHƯNG CẢ HAI ĐỀU HOÁ RA ĐÃ CÓ SẴN TRONG ROSTER từ trước (Sevilla TechPark = domain
+`sevillatechpark.es` đã thêm ở checkpoint 50 dưới tên "Cartuja93"; Castilla-La Mancha đã thêm ở
+checkpoint 57) — xác nhận đúng, không phải trùng nhầm.
+
+**Tỉ lệ sống RẤT THẤP sau lọc trùng — 11/23 (48%), thấp hơn hẳn 3 hiệp hội trước (58-88%):** rà tay
+qua browser UA + retry nhiều lần xác nhận phần lớn KHÔNG PHẢI lỗi mạng thoáng qua mà là site thật sự
+không phản hồi/DNS chết (`ciudaddelconocimento.com` — DNS không phân giải; nhiều domain
+`.es`/`.cat` của các khu công nghệ vùng nhỏ timeout nhất quán qua 3 lần thử cách nhau) — Tây Ban Nha
+dường như có tỉ lệ hạ tầng web khu công nghệ vùng nhỏ kém ổn định hơn Anh/Đức/Pháp đã gặp. 2 ca
+"cross-domain redirect" đọc tay LOẠI cả hai: `Parque Tecnológico de Vigo`→`zonafrancavigo.com`
+(redirect về CỔNG THÔNG TIN CHUNG của "Consorcio Zona Franca de Vigo" — cơ quan phát triển kinh tế
+VÙNG rộng hơn nhiều, không phải trang riêng khu công nghệ — đúng nguyên tắc loại cổng thông tin bên
+thứ ba quá rộng); `València Parc Tecnològic`→`ptpaterna.es` (timeout cả 2 lần thử, không xác minh
+được). **1 ca phát hiện qua rà tay sau `check_url()` báo "ok"** — "Parque Tecnológico de Gran Canaria
+Área Experimental de Economía Circular" (`e-circularcanarias.es`) có `<title>` MẶC ĐỊNH của WordPress
+chưa cấu hình ("Mancomunidad" trần trụi, không phải tên dự án) và nội dung trang chỉ có CSS, không
+có nội dung thân trang nào đọc được trong 80KB đầu — loại vì không xác nhận được đây là trang thật
+đang hoạt động, dù `check_url()` không bắt được (trang trả 200 hợp lệ về mặt kỹ thuật).
+
+**Kết quả cuối: 10 mục thật.** Toàn bộ Tây Ban Nha, gồm cả 1 ca gán tên tổ chức quản lý thay vì
+tên khu công nghệ khi tên khu không tự đứng riêng: "Parque Tecnológic i d'Innovació del Tecnoparc de
+Reus" → giữ tên gốc APTE nhưng ghi chú "(REDESSA)" vì `<title>` trang xác nhận đúng REDESSA là đơn
+vị vận hành thật (không phải cổng thông tin thứ ba). 0 Việt Nam.
+
+**Kết quả merge:** `ROSTER`: 20274 → **20284** (+10). Đơn vị trên bản đồ: 20283 → **20293** (+10,
+giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
+pane đọc đúng "20293 đơn vị được lập bản đồ" / "20284 trong danh mục mở rộng", console sạch.
+
+**Còn thiếu ~9716.** **Việc mở, bài học chiến lược cho lượt sau:** (1) APTE/Tây Ban Nha coi như đã
+khai thác gần hết (53 Socio, 28 đã có sẵn, 15 chết/không xác minh được, chỉ 10 mới) — đừng quay lại
+trừ khi tìm được nguồn khác (vd hiệp hội cấp vùng riêng của Catalunya/Andalucía/Galicia); (2) tiếp
+tục hướng "hiệp hội quốc gia tương tự BVIZ/UKSPA/Retis" cho Mỹ/Brazil/Nhật/Hàn — Ý (APSTI) đã xác
+nhận GIẢI THỂ/sáp nhập vào "InnovUp" (tổ chức kế thừa nhưng danh bạ lẫn quá nhiều loại hội viên
+khác nhau — startup, tập đoàn, luật sư — chỉ ~36/400+ đúng phạm vi "khu công nghệ/trung tâm ĐMST",
+và URL không có sẵn trong danh bạ mà phải tra từng hồ sơ — cân nhắc kỹ trước khi đầu tư, độ ưu tiên
+thấp hơn các nước lớn khác); (3) bài học kỹ thuật: khi script cào tuần tự (không dùng
+`ThreadPoolExecutor`) chạy quá lâu trong nền mà `TaskOutput` báo "running" liên tục dù đã đợi rất
+lâu, cân nhắc `TaskStop` sớm và viết lại bằng luồng song song thay vì tiếp tục đợi — tiết kiệm nhiều
+thời gian hơn so với đợi cho hết.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 68 — **Hiệp hội thứ 3: Retis Innovation (Pháp, trước đây "France
 Technopoles Entreprises Innovation") — domain sống `retis-innovation.fr`, nhưng danh bạ hội viên
 thật KHÔNG nằm trên trang chính mà nhúng qua 1 bảng Airtable chia sẻ công khai
 (`airtable.com/appXOWsM0IJfK5yPB/shr8ez2crhm2CN039`) — kỹ thuật MỚI hẳn: đọc trực tiếp dữ liệu nội
