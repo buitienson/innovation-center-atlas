@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20322 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20326 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,43 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 71 — **Nhật Bản, hướng hoàn toàn mới sau nhiều lần thất bại cũ:
+**Lần cuối:** 2026-09-11 (checkpoint 72 — **Hàn Quốc: thử lại 3 domain TechnoPark cũ (Daegu/Gwangju/
+Gyeonggi Daejin) — VẪN bị chặn mạng nhất quán (timeout/403), xác nhận lại kết luận các checkpoint
+44/47/60, không tốn thêm công. Chuyển sang Úc/New Zealand: KCA (Knowledge Commercialisation
+Australasia, trước là THETA-KTA — đã LOẠI ở checkpoint 43 vì gate đăng nhập, nay xác nhận trang đã
+đổi cấu trúc, danh bạ hội viên PUBLIC tại `techtransfer.org.au/membership/our-members/`** — 43 link
+tĩnh, đa số (33/43) chỉ là TRANG CHỦ TRẦN của các trường đại học Úc/NZ (loại theo đúng nguyên tắc
+"ROSTER cần đơn vị cụ thể") — sau lọc + trùng ROSTER (Úc/NZ cũng đã rà khá kỹ từ trước, 9/15 ứng
+viên còn lại đã có sẵn) chỉ còn **+4 mục thật** — còn thiếu ~9674 lúc cuối phiên.
+
+**Lọc kỹ hơn cho KCA — 2 loại bị loại mới:** (1) hồ sơ CÁ NHÂN (7 tên người kèm link LinkedIn cá
+nhân — "Individual Member"/"Life Member" của hiệp hội, không phải tổ chức) — loại thẳng, không tính;
+(2) "Campus Plus" (`campusplus.com.au`) — title xác nhận "Experts in University Commercialisation",
+đây là CÔNG TY TƯ VẤN thương mại hoá cho các trường đại học, không phải bản thân 1 tổ chức nghiên
+cứu/CGCN — loại theo đúng nguyên tắc loại nhà cung cấp/tư vấn (giống "Campus Plus" ~ "Kadans Science
+Partners" ở UKSPA, "Stantec"/"Perkins&Will" ở AURP). "Defence Science and Technology" (chính phủ Úc)
+timeout, không xác minh được, loại.
+
+**Giữ 4 mục:** Agriculture Victoria Services (cơ quan nghiên cứu nông nghiệp bang Victoria),
+AgriFutures Australia (tập đoàn R&D nông thôn quốc gia, Wagga Wagga NSW), Grains Research and
+Development Corporation — GRDC (tập đoàn R&D ngũ cốc quốc gia, Canberra), Kiwi Innovation Network —
+KiwiNet (mạng lưới thương mại hoá nghiên cứu New Zealand). 0 Việt Nam.
+
+**Kết quả merge:** `ROSTER`: 20322 → **20326** (+4). Đơn vị trên bản đồ: 20331 → **20335** (+4, giữ
+nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane
+đọc đúng "20335 đơn vị được lập bản đồ" / "20326 trong danh mục mở rộng", console sạch.
+
+**Còn thiếu ~9674.** **Việc mở, đánh giá thực tế sau 5 checkpoint liên tiếp hiệp hội quốc gia
+(68-72):** tốc độ đã giảm mạnh (BVIZ +90 → UKSPA +65 → Retis +37 → APTE +10 → AURP +30 → UNITT +8 →
+KCA +4) — các nước lớn/đã rà kỹ (Đức/Anh/Pháp còn khá nhiều, nhưng Tây Ban Nha/Mỹ/Nhật/Úc/NZ tỉ lệ
+trùng ROSTER RẤT CAO vì đã được Wikidata/CORDIS/ROR/IASP/ANPROTEC phủ từ trước) — **hướng "hiệp hội
+quốc gia" đang tiệm cận bão hoà cho các nước dễ tìm nhất**, cần 1 trong 2 hướng: (1) tìm hiệp hội ở
+các nước CHƯA từng được rà kỹ qua Wikidata (Ấn Độ, Trung Quốc, các nước Đông Nam Á/Mỹ Latinh/Châu
+Phi khác — nơi ROSTER còn mỏng nên tỉ lệ trùng sẽ thấp hơn); (2) quay lại các nguồn quy mô LỚN hơn
+(nghìn+ mục) như InBIA (vẫn gate) hoặc thử tìm biến thể mới của các nguồn lớn cũ.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 71 — **Nhật Bản, hướng hoàn toàn mới sau nhiều lần thất bại cũ:
 UNITT (University Network for Innovation and Technology Transfer, 一般社団法人大学技術移転協議会 —
 hậu thân của "Hội đồng TLO" cũ) — `unitt.jp/en/about/member/`, danh bạ ~76 hội viên (đại học/viện
 nghiên cứu quốc gia/công ty TLO độc lập), MỖI TÊN CÓ SẴN LINK RIÊNG ngay trong HTML tĩnh (không cần
