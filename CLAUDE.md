@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20052 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20056 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,65 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 57 — **Wikipedia tiếng Tây Ban Nha `Categoría:Parques
+**Lần cuối:** 2026-09-11 (checkpoint 58 — **Wikipedia tiếng Nga `Категория:Технопарки` (+ sub-cat
+Россия/Москва/Украина) + `Категория:Бизнес-инкубаторы`, thử tiếng Nhật nhưng KHÔNG tìm ra category
+phù hợp (chỉ trùng "Jurassic Park") — sau lọc trùng ROSTER (khá cao, nhiều tên đã có qua các
+checkpoint Wikidata trước) còn **4 mục thật sự mới (+4)** — bài học kỹ thuật quan trọng: encoding
+tiếng Nga/Cyrillic qua `curl`/bash bị hỏng thành dấu `?`, phải chuyển hẳn sang Python `urllib` +
+ghi file UTF-8 rồi đọc bằng công cụ Read, không print thẳng ra terminal (terminal Windows dùng
+cp1252, không hiển thị được Cyrillic)**) — còn thiếu ~9935 lúc cuối phiên.
+
+**Bài học kỹ thuật mới, áp dụng cho MỌI ngôn ngữ chữ khác Latin từ giờ:** lượt trước (tiếng Việt/
+Đức/Pháp/Ý/Tây Ban Nha/Bồ Đào Nha) đều gõ trực tiếp chuỗi có dấu vào lệnh `curl --data-urlencode`
+qua bash và chạy tốt. Với tiếng Nga, `curl -G --data-urlencode "srsearch=Технопарк"` trả về
+`totalhits:0` SAI — kiểm bằng cách tra ngược `action=query&titles=` cho thấy chuỗi đã bị bash/
+terminal chuyển thành toàn dấu `?` (mất chữ Cyrillic) trước khi tới `curl`. **Chuyển hẳn sang chạy
+qua Python `urllib.request` + `urllib.parse.urlencode()` (không qua `curl` dòng lệnh) và ghi mọi
+kết quả ra file bằng `json.dump(..., ensure_ascii=False, encoding='utf-8')` rồi ĐỌC FILE bằng công
+cụ Read (không `print()` thẳng — Windows terminal dùng codepage cp1252, `print()` một chuỗi Cyrillic
+sẽ crash `UnicodeEncodeError` hoặc âm thầm in sai)** — kỹ thuật này giải quyết đúng gốc rễ, đáng
+dùng ngay từ đầu cho các ngôn ngữ Nga/Trung/Nhật/Hàn/Ả Rập/Hy Lạp ở các lượt sau thay vì dò lỗi lại.
+
+**Nguồn:** `Категория:Технопарки` (17 trang gốc, nhiều trang khái niệm chung như "Кластер
+(экономика)"/"Технопарк" bỏ qua) + sub-cat Россия (11), Москва (5), Украина (1), Иран (0, rỗng),
+Великобритания (0, rỗng) + `Категория:Бизнес-инкубаторы` (12 trang, nhiều trang khái niệm/quốc tế
+đã có sẵn như Y Combinator/Station F bỏ qua). 23 trang chọn lọc → 23/23 có QID → 13/23 có `P856` →
+sau lọc trùng ROSTER (5/13 đã có sẵn: Ленполиграфмаш, Технополис GS, Университетский, Южный
+IT-Парк, МАТАМ) → 8 ứng viên → `check_url()` chỉ 3 sống thẳng + 1 redirect xác minh được → **4 mục**.
+
+**Xác minh redirect:** `yedinstitute.org`→`yedi.ca`, `<title>` "Home - YEDI" xác nhận đúng tổ chức
+(York Entrepreneurship Development Institute, Canada — không phải York nước Anh như tên tiếng Nga
+"Йоркский" gợi ý, đây là York University ở Toronto) — đổi tên "YEDI (York Entrepreneurship
+Development Institute)". Loại: `Venture for America` (chết), `Анкудиновка`/`itpark-nn.com` (trang
+mỏng, redirect cũng mỏng), `Plug and Play Dagestan` (chết), `IdeaLab` (trang đỗ tên miền GoDaddy —
+tổ chức thật `idealab.com` đã ngừng hoạt động/domain hết hạn, đáng tiếc vì đây là vườn ươm nổi
+tiếng California).
+
+**Giữ 4:** Nagatino i-Land (Nga, trung tâm kinh doanh Moscow), UNIT.City (Ukraine, công viên ĐMST
+Kyiv — xác nhận `<title>` tiếng Ukraina "Інноваційний парк UNIT.City"), Innopolis (Nga, đặc khu kinh
+tế công nghệ Tatarstan), YEDI (Canada). 0 Việt Nam. Toạ độ: Nagatino có `P625` thật; 3 còn lại tra
+tay theo địa danh (Kyiv, Tatarstan, York/Toronto).
+
+**Nhật Bản: thử nhưng KHÔNG tìm ra nguồn dùng được** — `list=search&srnamespace=14` cho các từ khoá
+"サイエンスパーク"/"リサーチパーク"/"インキュベーション施設"/"テクノパーク" đều 0 kết quả thật
+(chỉ "テクノパーク" khớp nhầm "Category:ジュラシック・パーク" = Jurassic Park!), "産業技術総合研究所"
+(AIST) chỉ ra category về 1 viện nghiên cứu duy nhất, không phải danh bạ nhiều tổ chức. **Kết luận:
+Wikipedia tiếng Nhật KHÔNG có cấu trúc category tương đương cho chủ đề này** — đừng thử lại các từ
+khoá này, có thể cần tìm nguồn tiếng Nhật ngoài Wikipedia nếu muốn mở rộng Nhật Bản.
+
+**Kết quả merge:** `ROSTER`: 20052 → **20056** (+4). Đơn vị trên bản đồ: 20061 → **20065** (+4, giữ
+nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane
+đọc đúng "20065 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+
+**Còn thiếu ~9935.** **Việc mở:** (1) category tiếng Nga còn ít trang chưa xử lý (Иран/Великобритания
+rỗng, có thể do đổi tên category — chưa dò kỹ); (2) Nhật Bản cần nguồn NGOÀI Wikipedia category (có
+thể thử `list=search` toàn văn thay vì chỉ category, hoặc METI/JETRO như các checkpoint rất sớm đã
+thử và bị chặn 403 — có thể thử lại); (3) áp dụng kỹ thuật Python-urllib-UTF8-file cho MỌI ngôn ngữ
+chữ khác Latin từ giờ, không riêng tiếng Nga; (4) còn Trung Quốc/Hàn Quốc/Ả Rập/Hy Lạp chưa thử qua
+Wikipedia category (dù Wikidata keyword search đa ngôn ngữ đã thử 1 phần ở checkpoint 43).
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 57 — **Wikipedia tiếng Tây Ban Nha `Categoría:Parques
 tecnológicos` (+ sub-cat España/Uruguay) + `Incubadoras de empresas`, VÀ tiếng Bồ Đào Nha `Categoria:
 Parques tecnológicos` (+ sub-cat Brasil) + `Incubadoras`/`Aceleradoras de negócios` — 2 nguồn ngôn
 ngữ mới trong 1 checkpoint theo đúng tinh thần "tự động, không dừng" — sau lọc + xác minh (tỉ lệ
