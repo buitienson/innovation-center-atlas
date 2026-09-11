@@ -322,6 +322,7 @@ KiwiNet (mạng lưới thương mại hoá nghiên cứu New Zealand). 0 Việt
 **Kết quả merge:** `ROSTER`: 20322 → **20326** (+4). Đơn vị trên bản đồ: 20331 → **20335** (+4, giữ
 nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane
 đọc đúng "20335 đơn vị được lập bản đồ" / "20326 trong danh mục mở rộng", console sạch.
+Commit `b760374`, `git push origin main`.
 
 **Còn thiếu ~9674.** **Việc mở, đánh giá thực tế sau 5 checkpoint liên tiếp hiệp hội quốc gia
 (68-72):** tốc độ đã giảm mạnh (BVIZ +90 → UKSPA +65 → Retis +37 → APTE +10 → AURP +30 → UNITT +8 →
