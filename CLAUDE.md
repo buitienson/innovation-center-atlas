@@ -343,7 +343,7 @@ Quốc, 1984 — case lịch sử quan trọng), Shanghai Chemical Industry Park
 
 **Kết quả merge:** `ROSTER`: 20072 → **20078** (+6). Đơn vị trên bản đồ: 20081 → **20087** (+6, giữ
 nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane
-đọc đúng "20087 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+đọc đúng "20087 đơn vị được lập bản đồ", console sạch. Commit `8548dd1`, `git push origin main`.
 
 **Còn thiếu ~9913.** **Việc mở ưu tiên:** (1) `Category:国家级经济技术开发区` còn ~72 trang chưa xử
 lý hết (chỉ 20/92 có `P856`, phần còn lại CHƯA thử fallback nào — nhưng đã xác nhận wikitext-fallback
