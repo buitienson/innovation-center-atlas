@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20056 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20064 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,51 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 58 — **Wikipedia tiếng Nga `Категория:Технопарки` (+ sub-cat
+**Lần cuối:** 2026-09-11 (checkpoint 59 — **Wikipedia tiếng Trung `Category:国家级高新技术产业开发区`
+(danh sách ~100 Khu phát triển công nghiệp công nghệ cao cấp quốc gia Trung Quốc — ĐÚNG hệ thống
+mà `chinatorch.gov.cn` (China Torch) đã bị chặn mạng suốt nhiều checkpoint từ rất sớm, nay vòng qua
+được bằng Wikipedia làm trung gian!) + `Category:企业孵化器`/`Category:种子加速器` — sau lọc + xác
+minh (loại 1 ca phạm vi sai — cổng thông tin CHÍNH QUYỀN QUẬN chung chung dù nằm trong category) còn
+**8 mục thật sự mới (+8)** — còn thiếu ~9927 lúc cuối phiên.
+
+**Phát hiện đột phá:** domain `.gov.cn` của TỪNG khu công nghệ cao RIÊNG LẺ (`fzgxq.fuzhou.gov.cn`,
+`shidz.gov.cn`, `whctp.gov.cn`, `wehdz.gov.cn`, `lyctp.gov.cn`, `tsgxq.gov.cn`, `zizhupark.com`)
+KHÔNG bị chặn mạng như `chinatorch.gov.cn` (cổng trung ương) — 9/15 ứng viên sống ngay, tỉ lệ khá
+cao so với các lần thử trực tiếp domain trung ương trước đây. **Bài học quan trọng: 1 domain trung
+ương bị chặn KHÔNG có nghĩa mọi domain con-quan/địa phương cùng hệ thống cũng bị chặn — đáng thử
+riêng từng domain thay vì suy luận cả hệ thống đã bế tắc.**
+
+**Nguồn:** 114 trang (110 có QID) từ `Category:国家级高新技术产业开发区` (danh sách chính thức các
+khu công nghệ cao cấp quốc gia, mỗi khu 1 bài riêng) + vài trang từ `Category:企业孵化器`/
+`Category:种子加速器`. Chỉ 16/110 có `P856` trên Wikidata (tỉ lệ điền thấp — dữ liệu Wikidata cho
+thực thể Trung Quốc thường thiếu trường website hơn ngôn ngữ khác) → sau lọc trùng ROSTER (1 trùng
+— Plug and Play qua `plugandplaytechcenter.com`) → 15 ứng viên → `check_url()` 9 sống.
+
+**Loại 1 ca sai phạm vi phát hiện qua đọc tay `<title>`:** "江海区" (Jianghai District, Giang Môn/
+Jiangmen) — `<title>` "江门市江海区人民政府门户网站" (Cổng thông tin CHÍNH QUYỀN QUẬN Jianghai,
+Jiangmen) — đây là cổng UBND quận CHUNG, không phải trang riêng của khu công nghệ cao (khu công
+nghệ chỉ là MỘT PHẦN của quận này) — loại, đúng nguyên tắc không lấy cổng chính quyền địa phương
+chung chung. Cùng loại lỗi 2 ca khác ("钱塘区"/Qiantang, "滨江区"/Binjiang) cũng bị loại trước đó vì
+chết mạng (không cần xét phạm vi).
+
+**Kết quả cuối: 8 mục** — Fuzhou/Shijiazhuang/Weihai/Wuhan (Đông Hồ, tức "Thung lũng Quang học
+Trung Quốc")/Linyi/Tangshan/Zizhu High-tech Industrial Development Zones + `SOSV` (quỹ đầu tư mạo
+hiểm/accelerator toàn cầu, gốc Trung Quốc — Chinaccelerator — nay trụ sở Princeton, Mỹ). 0 Việt Nam.
+Toạ độ: Linyi/Zizhu có `P625` thật; 6 còn lại tra tay theo tên thành phố.
+
+**Kết quả merge:** `ROSTER`: 20056 → **20064** (+8). Đơn vị trên bản đồ: 20065 → **20073** (+8, giữ
+nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane
+đọc đúng "20073 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+
+**Còn thiếu ~9927.** **Việc mở:** (1) `Category:国家级高新技术产业开发区` còn ~90 trang chưa xử lý
+(chỉ 16/110 có `P856`, 94 trang còn lại CHƯA thử fallback wikitext để tìm URL — đáng làm tiếp, đây
+là mỏ lớn nhất tìm được trong nhiều checkpoint, ước tính có thể còn thêm hàng chục mục nếu tìm được
+URL qua wikitext/tìm tay từng khu); (2) tiếp tục áp dụng bài học "domain con không nhất thiết bị
+chặn theo domain trung ương" cho các hệ thống chính phủ khác đã từng bị chặn (Nhật/Hàn/Ấn Độ...);
+(3) `企业孵化器`/`种子加速器` category tiếng Trung còn nhỏ, hầu hết đã trùng — coi như cạn.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 58 — **Wikipedia tiếng Nga `Категория:Технопарки` (+ sub-cat
 Россия/Москва/Украина) + `Категория:Бизнес-инкубаторы`, thử tiếng Nhật nhưng KHÔNG tìm ra category
 phù hợp (chỉ trùng "Jurassic Park") — sau lọc trùng ROSTER (khá cao, nhiều tên đã có qua các
 checkpoint Wikidata trước) còn **4 mục thật sự mới (+4)** — bài học kỹ thuật quan trọng: encoding
