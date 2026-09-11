@@ -352,6 +352,7 @@ dùng THẲNG lat/lng CHÍNH XÁC có sẵn trong `window.locations` — không 
 **Kết quả merge:** `ROSTER`: 20284 → **20314** (+30). Đơn vị trên bản đồ: 20293 → **20323** (+30,
 giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
 pane đọc đúng "20323 đơn vị được lập bản đồ" / "20314 trong danh mục mở rộng", console sạch.
+Commit `d5a7a4b`, `git push origin main`.
 
 **Còn thiếu ~9686.** **Việc mở, bài học chiến lược cho lượt sau:** (1) tiếp tục hướng "hiệp hội quốc
 gia tương tự" cho Brazil/Nhật/Hàn; (2) kỹ thuật "đọc biến JS toàn cục nhúng sẵn qua `javascript_tool`"
