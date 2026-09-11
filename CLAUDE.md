@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20172 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20237 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,77 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 66 — **ĐỘT PHÁ sau 10 checkpoint sụt giảm: tìm ra và khai thác
+**Lần cuối:** 2026-09-11 (checkpoint 67 — **Áp dụng đúng bài học checkpoint 66 cho hiệp hội thứ 2:
+UKSPA (UK Science Park Association) — WebSearch xác nhận domain sống `ukspa.org.uk`, danh bạ hội
+viên 202 thành viên qua WordPress REST API (`wp-json/wp/v2/member`), phân loại 118 "Full Member"
+(khoa học/công nghệ park thật) vs 77 "Affiliate Member" (nhà cung cấp/vendor) qua taxonomy
+`membership-type` — sau cào từng trang hồ sơ lấy URL thật + lọc trùng + `check_url()` + quét
+title bổ sung + xác minh tay còn **+65 mục thật** — còn thiếu ~9754 lúc cuối phiên.**
+
+**Khác BVIZ ở bước lấy URL:** REST API base fields của UKSPA (`link`, `content.rendered`, `acf`)
+KHÔNG có trường website sạch — `link` là URL hồ sơ trên chính `ukspa.org.uk`, không phải site
+riêng của từng park. Phải cào HTML từng trong 118 trang hồ sơ, tìm đúng nút bấm
+`<a class="elementor-button elementor-button-link ...">` ĐẦU TIÊN không trỏ về `ukspa.org.uk` —
+xác nhận qua mẫu "York Science Park": nút đầu tiên loại này chính là link "Visit Website", các
+nút sau đó (email, nút vô hiệu `#`) không phải. Kỹ thuật mới, khác hẳn kiểu "trang danh bạ liệt
+kê hết trên 1 trang" của BVIZ — đáng nhớ khi gặp hiệp hội có REST API nhưng trường dữ liệu cơ bản
+không đủ, cần cào thêm trang chi tiết.
+
+**Lọc theo `membership-type` (taxonomy) để loại nhà cung cấp:** mẫu đầu tiên kiểm tay
+("Spacewell – A Nemetschek Company") hoá ra là "Affiliate Member" — công ty phần mềm quản lý bất
+động sản bán dịch vụ CHO các science park, không phải bản thân 1 khu công nghệ — xác nhận đúng lo
+ngại ban đầu. Lọc lại đúng `membership-type=7` (Full Member, 118 mục) loại hẳn 77 Affiliate + 7
+Associate — đúng nguyên tắc "chỉ lấy đơn vị thật, không lấy nhà cung cấp/đối tác thương mại".
+
+**Kết quả qua từng bước lọc:** 118 Full Member → 37 trùng ROSTER (qua `base_domain`/
+`normalize_name`, phần lớn các UKSPA park lớn đã có sẵn từ trước) → 81 ứng viên → `check_url()`
+giữ 58 "ok" ngay + phát hiện thêm 9 ca "cross-domain redirect" (đọc `<title>` xác nhận tay) và 14
+ca lỗi mạng — sau xác minh: **6/9 redirect XÁC NHẬN ĐÚNG** (MIRA Technology Park→miratechpark.com,
+National Innovation Centre for Ageing→uknica.co.uk, Bicester Innovation Centre→
+pointofdifference.co.uk [mô tả trang có nhắc rõ "Bicester" trong meta], Milton Park→miltonpark.co.uk,
+Arise-ARU's Innovation Hubs→title khớp "Arise", Wellcome Genome Campus→wellcomegenomecampus.com),
+**1/9 LOẠI vì trang mạng chung không nêu tên riêng** (Bracknell Enterprise & Innovation Hub redirect
+tới cổng "Oxford Innovation Space" — mạng lưới NHIỀU trung tâm gộp chung 1 trang, quét cả 68KB HTML
+KHÔNG thấy chữ "Bracknell" nào — đúng nguyên tắc cũ "không lấy cổng thông tin đại diện nhiều tổ
+chức"), **1/9 LOẠI vì trùng nội bộ batch** (Stockport Business & Innovation Centre redirect
+→ `innovatestockport.co.uk`, CÙNG domain với "Merchants House" đã có trong 58 "ok" — 2 tên UKSPA
+khác nhau cho cùng 1 toà nhà đã đổi thương hiệu, giữ 1 dưới tên "Merchants House (Innovate
+Stockport)"), **1/9 LOẠI vì 403 không xác minh được** (Allia Future Business Centres). Trong 14 ca
+"lỗi mạng": retry với User-Agent trình duyệt thật cứu thêm **2** (Aberystwyth Innovation and
+Enterprise Campus → domain đúng là `aberinnovation.com` không phải `/en/`; University of
+Southampton Science Park → `science-park.co.uk`, lỗi cũ chỉ là SSL context của `check_url()`), còn
+lại 12 ca là 403/DNS/SSL thật không xác minh được — loại theo đúng kỷ luật "không đoán khi không
+xác minh được", kể cả các tên nghe quen (Sci-Tech Daresbury, Space Park Leicester).
+
+**Quét bổ sung `<title>` cho toàn bộ ứng viên còn lại (đúng bước chuẩn từ checkpoint 66):** 65
+ứng viên đều có tiêu đề riêng khớp rõ tên tổ chức — các cờ đỏ tự động bắt được ("404", "parking",
+"default page") đều là dương tính giả (khớp nhầm cụm từ "on-site car **parking**" trong mô tả tiện
+ích văn phòng cho thuê — phổ biến ở các trang UKSPA vì đa số là science park cho thuê văn phòng/
+lab, không phải trang lỗi thật). Riêng "Scottish Enterprise Technology Park" bị LOẠI: `check_url()`
+báo "ok" cho `colliers.com/en-gb` nhưng đây là trang chủ QUỐC GIA của hãng môi giới bất động sản
+thương mại Colliers, không nhắc "Scottish Enterprise" ở đâu — đúng loại "cổng thông tin bên thứ ba
+đại diện cho nhiều bất động sản", không phải trang riêng.
+
+**Kết quả cuối: 65 mục thật**, toàn bộ Anh (England/Scotland/Wales/Northern Ireland — gộp chung
+"United Kingdom" theo đúng quy ước ROSTER hiện có cho UK). Toạ độ tra tay theo thành phố/thị trấn
+thật ghi trong tên hoặc xác nhận qua nội dung trang (dùng 1 agent phụ xác nhận vị trí "Riverlabs"
+— Ware, Hertfordshire, cựu khuôn viên GSK). 0 Việt Nam.
+
+**Kết quả merge:** `ROSTER`: 20172 → **20237** (+65). Đơn vị trên bản đồ: 20181 → **20246** (+65,
+giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
+pane đọc đúng "20246 đơn vị được lập bản đồ" / "20237 trong danh mục mở rộng", console sạch.
+
+**Còn thiếu ~9754.** **Việc mở, bài học chiến lược cho lượt sau:** (1) hướng "hiệp hội quốc gia
+tương tự BVIZ/UKSPA" tiếp tục hiệu quả — còn Pháp/Ý/Tây Ban Nha/Mỹ/Brazil/Nhật/Hàn chưa thử; (2)
+khi hiệp hội có REST API nhưng thiếu trường website sạch, kỹ thuật "cào trang hồ sơ tìm nút bấm
+CTA đầu tiên không trỏ về chính site hiệp hội" dùng lại được cho các hiệp hội WordPress khác; (3)
+luôn lọc theo taxonomy/loại hội viên nếu có (Full Member vs Affiliate/Associate) trước khi cào
+hàng loạt — tránh lẫn nhà cung cấp/đối tác thương mại vào ROSTER; (4) 12 ca UKSPA còn lại bị 403/
+SSL/DNS chưa xác minh được — có thể thử lại từ mạng khác hoặc qua Browser pane thật nếu muốn vét
+nốt.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 66 — **ĐỘT PHÁ sau 10 checkpoint sụt giảm: tìm ra và khai thác
 đúng hiệp hội Đức đã ghi từ checkpoint 54 ("Bundesverband Deutscher Innovations-, Technologie- und
 Gründerzentren e.V." / BVIZ) — domain cũ `innovation.de` đã CHẾT (410 Gone), nhưng tổ chức còn sống
 dưới tên miền mới `innovationszentren.de` (tìm ra qua WebSearch, không phải Wikipedia) — trang danh
