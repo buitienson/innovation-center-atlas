@@ -347,7 +347,7 @@ chức + địa chỉ khớp đúng trước khi gán toạ độ, không đoán
 
 **Kết quả merge:** `ROSTER`: 20082 → **20172** (+90). Đơn vị trên bản đồ: 20091 → **20181** (+90,
 giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
-pane đọc đúng "20181 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+pane đọc đúng "20181 đơn vị được lập bản đồ", console sạch. Commit `d44a0a9`, `git push origin main`.
 
 **Còn thiếu ~9819.** **Việc mở, bài học chiến lược cho lượt sau:** (1) **hướng "hiệp hội/liên đoàn
 ngành đã biết tên nhưng chưa xác nhận domain sống" đáng đào sâu tiếp** — CLAUDE.md có nhiều tên hiệp
