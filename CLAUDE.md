@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20237 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20274 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,66 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 67 — **Áp dụng đúng bài học checkpoint 66 cho hiệp hội thứ 2:
+**Lần cuối:** 2026-09-11 (checkpoint 68 — **Hiệp hội thứ 3: Retis Innovation (Pháp, trước đây "France
+Technopoles Entreprises Innovation") — domain sống `retis-innovation.fr`, nhưng danh bạ hội viên
+thật KHÔNG nằm trên trang chính mà nhúng qua 1 bảng Airtable chia sẻ công khai
+(`airtable.com/appXOWsM0IJfK5yPB/shr8ez2crhm2CN039`) — kỹ thuật MỚI hẳn: đọc trực tiếp dữ liệu nội
+bộ ứng dụng React của Airtable qua Fiber tree (không qua API/CSV export vì view này bị khoá
+`canBeExported:false`) — sau lọc trùng + `check_url()` + quét title bổ sung + xác minh tay còn
+**+37 mục thật** — còn thiếu ~9726 lúc cuối phiên.
+
+**Kỹ thuật mới — đọc dữ liệu Airtable share-view qua React Fiber, không qua export chính thức:**
+trang gallery view của Airtable là ứng dụng React ảo hoá (`react-virtualized`) — cuộn chuột/`
+scrollTop` bằng JS KHÔNG cập nhật DOM khi tab Browser pane đang ở nền (rAF bị trình duyệt tạm dừng
+khi tab ẩn, xác nhận qua lỗi "Browser pane đang ẩn" khi dùng `requestAnimationFrame` để chờ) — thử
+`get_page_text`/cuộn từng đoạn đều chỉ đọc được đúng cụm đầu (~38 dòng) và cụm cuối (~6 dòng) của
+danh sách, KHÔNG cách nào cuộn lấy đủ phần giữa qua thao tác UI. **Giải pháp:** truy cập thẳng dữ
+liệu ĐÃ TẢI SẴN trong bộ nhớ ứng dụng (Airtable tải toàn bộ record khi mở 1 shared view, chỉ ảo hoá
+phần RENDER, không ảo hoá phần fetch dữ liệu) — dò qua thuộc tính `__reactFiber$...`/
+`__reactInternalInstance$...` gắn trên DOM node của lưới, đi ngược `fiber.return` tìm tới component
+cha mang `props.queryModel` (đối tượng model dữ liệu bảng nội bộ của Airtable) → gọi thẳng
+`queryModel.getAllRowIds()` + `queryModel._tableModel.getCellValue(rowId, columnId)` (chú ý dùng bản
+KHÔNG "Live" — bản `getCellValueLive` báo lỗi "Can only call `live()` inside of a reactive context"
+khi gọi từ ngoài React) — lấy được **TOÀN BỘ 61 dòng** (tên, thành phố, nhãn phân loại dạng ID lựa
+chọn, URL website) trong 1 lệnh, không cần cuộn/phân trang gì cả. **Bài học đáng nhớ cho lượt sau:
+khi gặp component ảo hoá (react-virtualized/react-window) không chịu render đủ qua cuộn UI, đừng cố
+ép cuộn — tìm React Fiber của node gốc, đi ngược tìm model/store dữ liệu, gọi thẳng phương thức
+đọc (không "live"/reactive) của nó.**
+
+**Lọc + xác minh:** 61 dòng → 16 trùng ROSTER (base_domain/normalize_name) → 45 ứng viên →
+`check_url()` giữ 36 "ok" ngay + retry timeout dài cứu thêm 2 (Communauté Urbaine Creusot Montceau,
+Castres-Mazamet Technopole) = 38 → quét title bổ sung phát hiện 1 ca LOẠI vì cổng thông tin chính
+quyền chung chung (Compiègne Pôle Technologique → trang "Développement économique" của TRANG WEB
+CHÍNH THỨC thành phố Compiègne/ARC, không phải trang riêng của khu công nghệ — đúng nguyên tắc cũ)
+→ **37 mục cuối cùng**. 5 ca không xác minh được LOẠI hẳn: EU|BIC Plein Sud Entreprises (domain bị
+CHIẾM DỤNG cho 1 công ty data center hoàn toàn khác — "Adamentis Group Perpignan"), UPPERION/Thélème
+Innovation (trang chỉ còn "Bienvenue sur upperion.fr" — trang placeholder rỗng, không phải nội dung
+thật), Technopole Anticipa (503 lỗi máy chủ, không xác minh được), La Technopole ATLLAS + TVT
+Innovation (timeout kết nối nhất quán), Métropole Aix-Marseille-Provence + Technopôle Marseille
+Provence Château-Gombert (DNS không phân giải được — domain chết thật).
+
+**2 quốc gia/vùng lãnh thổ MỚI trong ROSTER:** Guadeloupe (I-Nova Guadeloupe — đã có tiền lệ
+"Guadeloupe" tách riêng khỏi "France" trong ROSTER từ trước) và **Martinique lần đầu xuất hiện**
+(Technopole Martinique) — theo đúng quy ước ROSTER coi lãnh thổ hải ngoại Pháp là quốc gia/vùng
+riêng (giống Guadeloupe/Réunion đã có), không gộp vào "France". CEEI CimArk (Sion, Thuỵ Sĩ) là
+1 thành viên Retis ở NƯỚC NGOÀI (Retis có vài hội viên liên kết ngoài Pháp) — giữ đúng quốc gia
+thật (Switzerland), không gán nhầm France.
+
+**Kết quả merge:** `ROSTER`: 20237 → **20274** (+37). Đơn vị trên bản đồ: 20246 → **20283** (+37,
+giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
+pane đọc đúng "20283 đơn vị được lập bản đồ" / "20274 trong danh mục mở rộng", console sạch.
+
+**Còn thiếu ~9726.** **Việc mở, bài học chiến lược cho lượt sau:** (1) tiếp tục hướng "hiệp hội
+quốc gia tương tự BVIZ/UKSPA/Retis" — còn Ý/Tây Ban Nha/Mỹ/Brazil/Nhật/Hàn chưa thử; (2) kỹ thuật
+"đọc React Fiber → tìm queryModel/store → gọi phương thức non-live" đáng dùng lại cho BẤT KỲ trang
+nào nhúng dữ liệu qua Airtable share-view (nhiều hiệp hội nhỏ dùng Airtable làm danh bạ công khai,
+không chỉ Retis) — không cần thử scroll/UI nữa, đi thẳng vào bước Fiber; (3) Retis chỉ có 61 hội
+viên trong view "Tous les membres" (không phải "gần 100" như mô tả marketing — có thể site đếm cả
+cựu hội viên/đối tác không nằm trong view công khai này) — coi như đã khai thác hết nguồn này; (4)
+5 ca bị loại vì không xác minh được (503/timeout/DNS) có thể thử lại từ mạng khác nếu muốn vét nốt.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 67 — **Áp dụng đúng bài học checkpoint 66 cho hiệp hội thứ 2:
 UKSPA (UK Science Park Association) — WebSearch xác nhận domain sống `ukspa.org.uk`, danh bạ hội
 viên 202 thành viên qua WordPress REST API (`wp-json/wp/v2/member`), phân loại 118 "Full Member"
 (khoa học/công nghệ park thật) vs 77 "Affiliate Member" (nhà cung cấp/vendor) qua taxonomy
