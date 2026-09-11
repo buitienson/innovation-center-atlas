@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20033 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20045 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,59 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 55 — **Wikipedia tiếng Pháp `Catégorie:Technopole` (+ 4 sub-cat
+**Lần cuối:** 2026-09-11 (checkpoint 56 — **Sếp yêu cầu chủ động, không dừng hỏi lại — tiếp tục ngay
+2 category còn mở từ checkpoint 55: Wikipedia tiếng Ý `Categoria:Parchi scientifici tecnologici` +
+tiếng Pháp `Catégorie:Pôle de compétitivité en France` (+ sub-cat Auvergne-Rhône-Alpes) — 33 trang,
+sau lọc trùng + xác minh tay (phát hiện thêm 1 domain bị chiếm dụng khác `up-tex.fr`, 1 ca sáp nhập
+tổ chức thật `PICOM`→`Cap Digital` đã có sẵn nên không tính trùng, 1 ca đổi tên xác nhận
+`ViaMéca`→`CIMES`) còn **12 mục thật sự mới (+12)**) — còn thiếu ~9955 lúc cuối phiên.
+
+**Nguồn:** `Categoria:Parchi scientifici tecnologici` (Wikipedia Ý, 24 trang — dò ra qua
+`list=search&srnamespace=14` vì `allcategories acprefix=` không khớp tên có dấu cách giữa) +
+`Catégorie:Pôle de compétitivité en France` (23 trang) + sub-cat `...en Auvergne-Rhône-Alpes` (6
+trang) — cả 2 sub-cat cùng cây category `Catégorie:Cluster` đã kiểm rỗng ở checkpoint 55, nay tìm
+đúng tên category khác ("Pôle de compétitivité" thay vì "Cluster"). Cùng kỹ thuật P856-hop, 32/33
+có QID, 24/32 có `P856`.
+
+**Phát hiện thêm 2 ca đáng chú ý ngoài các loại false-positive đã biết:**
+1. **`up-tex.fr`** (pôle dệt may UP-TEX, Pháp) — `check_url()` báo "ok" nhưng đọc tay `<title>`
+   ra "Portail sur l'entreprise, la finance & l'immobilier - Up Tex" (cổng tin tài chính/bất động
+   sản chung chung, không có chữ "textile" nào trong trang) — domain đã bị CHIẾM DỤNG/đổi mục đích,
+   chỉ giữ lại đúng tên "Up Tex" một cách trùng hợp. Cùng loại lỗ hổng `neode.ch` phát hiện checkpoint
+   55 — xác nhận đây là rủi ro lặp lại thường xuyên với domain `.fr` cũ hết hạn, không phải ca hiếm.
+2. **`picom.fr`→`capdigital.com`** — redirect xác nhận qua `<title>` "Cap Digital accueille le
+   PICOM !" (Cap Digital tiếp nhận PICOM) — đây là SÁP NHẬP THẬT (PICOM gia nhập cluster Cap Digital
+   lớn hơn), nhưng `Cap Digital` ĐÃ CÓ SẴN trong ROSTER (`capdigital.com`, thêm ở một checkpoint
+   trước) — nên không tính là mục mới, chỉ ghi nhận đây KHÔNG PHẢI trùng giả mà là trùng THẬT do sáp
+   nhập tổ chức. **Bài học: khi 1 redirect trỏ về TỔ CHỨC LỚN HƠN đã có sẵn trong ROSTER (không phải
+   trang chủ nguyên công ty mẹ bất động sản như các ca loại trước), đây là tín hiệu sáp nhập thật —
+   kiểm ROSTER trước khi kết luận trùng hay giữ.**
+
+**1 ca đổi tên xác nhận qua nội dung:** `ViaMéca`→`cimes-hub.com`, `<title>` "CIMES, pôle de
+compétitivité mécanique Auvergne Rhône-Alpes" — đổi tên thành "CIMES (ex-ViaMéca)".
+
+**Kết quả cuối: 12 mục giữ lại** (Virtual Reality & Multi Media Park, Pôle européen de la céramique,
+Environment Park, Parco Scientifico e Tecnologico di Udine "Luigi Danieli"/COSEF, Medicen Paris
+Region, CIMES, Eurasanté, Aquimer, Tenerrdis, i-Trans, Systematic Paris-Region, NextMove) — loại 2
+chết thật (Céréales Vallée, Parco scientifico tecnologico Polaris — cả trang lẫn domain mẹ
+`sardegnaricerche.it` đều không kết nối được), 1 sáp nhập-trùng (PICOM), 1 domain chiếm dụng
+(UP-TEX). Toàn bộ Ý/Pháp, 0 Việt Nam. **Toạ độ:** 2/12 có `P625` thật (Environment Park, Eurasanté);
+10 còn lại tra tay theo địa chỉ/logo thật trên trang (Grenoble cho CIMES — xác nhận qua ảnh logo
+"grenoble.jpg" trên trang; Paris cho NextMove — xác nhận qua địa chỉ đối tác CCFA "75008 Paris" ở
+trang liên hệ, không phải trụ sở chính thức riêng nên độ tin cậy thấp hơn các ca khác).
+
+**Kết quả merge:** `ROSTER`: 20033 → **20045** (+12). Đơn vị trên bản đồ: 20042 → **20054** (+12,
+giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser
+pane đọc đúng "20054 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+
+**Còn thiếu ~9955.** **Việc mở:** (1) category Ý/Pháp liên quan coi như cạn cho lượt này; (2)
+jawiki/es.wikipedia.org/pt.wikipedia.org đã thử `list=search` với cú pháp OR nhưng công cụ tìm kiếm
+nội bộ các site đó không hỗ trợ OR đáng tin — cần dò từng từ khoá riêng lẻ thay vì gộp; (3) sếp đã
+chốt: **tự động tiếp tục toàn bộ, không dừng hỏi lại** — phiên này chạy qua `/loop` tự pace, mỗi lượt
+tự chọn nguồn tiếp theo.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 55 — **Wikipedia tiếng Pháp `Catégorie:Technopole` (+ 4 sub-cat
 quốc gia France/Belgique/Canada/États-Unis) + `Catégorie:Pépinière d'entreprises`, kỹ thuật Wikidata
 P856-hop quen thuộc, HƯỚNG MỞ đã ghi từ checkpoint 54 — nguồn vừa (75 trang), sau lọc + xác minh tay
 kỹ hơn hẳn (phát hiện 1 domain bị chiếm dụng bán casino, 1 trang server mặc định chết, 1 trang rỗng)
