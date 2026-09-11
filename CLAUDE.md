@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20314 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20322 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,50 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 70 — **Hiệp hội thứ 5: AURP (Association of University Research
+**Lần cuối:** 2026-09-11 (checkpoint 71 — **Nhật Bản, hướng hoàn toàn mới sau nhiều lần thất bại cũ:
+UNITT (University Network for Innovation and Technology Transfer, 一般社団法人大学技術移転協議会 —
+hậu thân của "Hội đồng TLO" cũ) — `unitt.jp/en/about/member/`, danh bạ ~76 hội viên (đại học/viện
+nghiên cứu quốc gia/công ty TLO độc lập), MỖI TÊN CÓ SẴN LINK RIÊNG ngay trong HTML tĩnh (không cần
+JS/API) — khác hẳn thất bại cũ của JPO/METI (403) và Wikipedia tiếng Nhật (0 category phù hợp). Sau
+lọc trùng ROSTER (64/76 đã có sẵn — Nhật Bản hoá ra đã được rà khá kỹ qua các nguồn khác trước đây,
+có thể qua Wikidata `research institute` toàn cầu) + loại 3 ca trang chủ trường đại học trần + 1 ca
+chết (RIKEN Innovation) — **+8 mục thật** — còn thiếu ~9678 lúc cuối phiên.
+
+**Bài học kỹ thuật:** trang UNITT không cần trình duyệt/JS — `curl --compressed` tĩnh đã đủ trích
+hết 76 link `<a href>` kèm tên tổ chức viết hoa toàn bộ, đơn giản hơn hẳn 4 hiệp hội trước. Việc mở
+để lại từ agent nghiên cứu: JASPA (日本サイエンスパーク協会, `ksp.or.jp/jaspa/`) chỉ có ~10 hội viên —
+quá nhỏ để làm nguồn chính riêng, có thể gộp thêm nếu cần vét nốt Nhật Bản sau.
+
+**Lọc bare-university-homepage (đúng nguyên tắc cũ):** loại "Jichi Medical University" (jichi.ac.jp/
+english/ — trang chủ CHUNG của cả trường, không phải văn phòng CGCN riêng), "Kitasato University"
+(title chỉ ra "Top｜KITASATO UNIVERSITY" — trang chủ chung dù tên gốc ghi "Center for Research
+Strategy"), "Kumamoto University" (title "Kumamoto University" — trang chủ chung, URL `ewww.` là
+subdomain tiếng Anh CHUNG không phải văn phòng CGCN riêng) — cả 3 đều tên gốc UNITT gợi ý đơn vị cụ
+thể nhưng URL thật trỏ về trang chủ trường, xác nhận qua `<title>` không nêu tên đơn vị cụ thể nào.
+"RIKEN INNOVATION" (innovation-riken.jp) — HTTPError, loại.
+
+**Giữ 8 mục qua xác nhận `<title>` khớp tên đơn vị cụ thể** (không phải trang chủ trường): Tokushima
+University Center for Research Administration & Collaboration, Gifu University Research Promotion
+& Industry-Academia-Government Collaboration Headquarters, Tokyo Metropolitan Institute of Medical
+Science - Technology Licensing Office, Tokyo University of Marine Science and Technology - Ocean
+Research Strategy Management Organization, Okinawa TLO Co., Ltd., Tokyo Metropolitan University
+Research Portal (TMU), National Cerebral and Cardiovascular Center (viện nghiên cứu y sinh quốc gia,
+giữ theo tiền lệ chấp nhận viện nghiên cứu quốc gia rộng), Tech Manage Corp. (công ty TLO, toạ độ
+dùng Tokyo vì không xác định được thành phố cụ thể). 0 Việt Nam.
+
+**Kết quả merge:** `ROSTER`: 20314 → **20322** (+8). Đơn vị trên bản đồ: 20323 → **20331** (+8, giữ
+nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane
+đọc đúng "20331 đơn vị được lập bản đồ" / "20322 trong danh mục mở rộng", console sạch.
+
+**Còn thiếu ~9678.** **Việc mở cho lượt sau:** (1) Hàn Quốc — mạng lưới TechnoPark đã dùng 1 phần từ
+checkpoint 44, còn 3 domain Daegu/Gwangju/Gyeonggi Daejin từng bị chặn mạng nhất quán qua nhiều
+checkpoint — đáng thử lại xem có đỡ chặn hơn không, hoặc tìm hiệp hội TechnoPark cấp quốc gia (nếu
+có) làm nguồn tổng hợp thay vì tra từng tỉnh; (2) JASPA Nhật Bản (~10 hội viên, `ksp.or.jp/jaspa/`) —
+nhỏ, có thể gộp sau nếu cần vét nốt; (3) tiếp tục tìm hiệp hội quốc gia tương tự BVIZ/UKSPA/Retis/
+APTE/AURP/UNITT cho các nước lớn khác chưa thử (Ấn Độ, Trung Quốc, Úc, các nước Bắc Âu).
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 70 — **Hiệp hội thứ 5: AURP (Association of University Research
 Parks, Mỹ + Canada) — trang danh bạ `aurp.org/members/our-members/` không lộ bảng tĩnh (chỉ có bản
 đồ Google Maps), nhưng dữ liệu ĐÃ NHÚNG SẴN dạng biến JS toàn cục `window.locations` (113 mục, có
 sẵn tên+website+địa chỉ+toạ độ CHÍNH XÁC — không cần geocode) — đọc thẳng qua `javascript_tool`, đơn
