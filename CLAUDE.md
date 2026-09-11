@@ -331,7 +331,7 @@ Toạ độ: Linyi/Zizhu có `P625` thật; 6 còn lại tra tay theo tên thàn
 
 **Kết quả merge:** `ROSTER`: 20056 → **20064** (+8). Đơn vị trên bản đồ: 20065 → **20073** (+8, giữ
 nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane
-đọc đúng "20073 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+đọc đúng "20073 đơn vị được lập bản đồ", console sạch. Commit `59024f5`, `git push origin main`.
 
 **Còn thiếu ~9927.** **Việc mở:** (1) `Category:国家级高新技术产业开发区` còn ~90 trang chưa xử lý
 (chỉ 16/110 có `P856`, 94 trang còn lại CHƯA thử fallback wikitext để tìm URL — đáng làm tiếp, đây
