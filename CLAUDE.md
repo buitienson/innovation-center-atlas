@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20078 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20081 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,59 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 63 — **Wikipedia tiếng Trung `Category:国家级经济技术开发区`
+**Lần cuối:** 2026-09-11 (checkpoint 64 — **2 nguồn: (1) Trung Quốc — hệ zone thứ 3 `Category:
+国家级新区` (Khu mới cấp quốc gia, 19 khu quy mô thành phố như Phố Đông Thượng Hải/Tân Giang Bắc
+Trùng Khánh) + `Category:综合保税区` (khu bảo thuế tổng hợp) — đa số khu "quốc gia" nổi tiếng
+(Hùng An/Phố Đông/Tân Giang/Tân Bân Hải...) đều KHÔNG kết nối được (khác hẳn các khu nhỏ hơn ở
+checkpoint 59/63), chỉ **+1**; (2) Ấn Độ — lần đầu thử tiếng Anh cho SEZ/industrial park/software
+tech park Ấn Độ (`Category:Special Economic Zones of India` + `Industrial parks in India` +
+`Software technology parks in India` theo 4 thành phố) — sau lọc + loại 2 ca thương hiệu bất động
+sản còn **+2**. Tổng checkpoint này **+3** — còn thiếu ~9910 lúc cuối phiên.
+
+**Trung Quốc — hệ zone thứ 3 xác nhận, nhưng khó tiếp cận hơn 2 hệ trước:** `Category:国家级新区`
+(19 khu, đa số là "Tân khu" quy mô THÀNH PHỐ — Phố Đông/Tân Giang/Tân Bân Hải/Hùng An... — đây là
+các khu VĨ MÔ nhất trong 3 hệ, thường do chính website cấp trung ương/tỉnh vận hành) — 9/19 có
+`P856` nhưng **7/9 domain chính (`.gov.cn`) không kết nối được** (Hùng An, Lưỡng Giang, Tân Giang,
+Bân Hải, Phố Đông, Điền Trung Vân Nam, Tây Hàm) — khác hẳn tỉ lệ sống khá của 2 hệ trước, có thể do
+đây là các trang cấp cao hơn (tỉnh/thành phố) bị chặn nghiêm ngặt hơn cấp khu/quận. 1 ca
+(`大连金普新区`) chỉ ra được link BÀI BÁO `chinadaily.com.cn`, không phải trang chính chủ — loại.
+`Category:综合保税区` (7 khu bảo thuế) → chỉ 1 sống + xác nhận đúng: **Tianjin Dongjiang Bonded
+Zone** (`dongjiang.gov.cn`, `<title>` "天津东疆综合保税区（东疆港区）欢迎您！").
+
+**Ấn Độ (tiếng Anh, không có vấn đề encoding):** 95 trang duy nhất từ 7 category (SEZ + industrial
+park + software tech park theo 4 thành phố Pune/Bengaluru/Kerala/Chennai) → 75/95 có QID → chỉ
+10/75 có `P856` (tỉ lệ thấp, giống mẫu hình các nước đã khai thác nhiều qua Wikidata trước — DPIIT/
+ROR/CORDIS trước đây có thể đã phủ phần lớn Ấn Độ) → 8 ứng viên sau lọc trùng → `check_url()` 4
+sống. **Loại 2 ca đọc tay phát hiện là trang BẤT ĐỘNG SẢN THƯƠNG MẠI, không phải tổ chức ĐMST:**
+`Magarpatta` (`magarpattacity.com`, `<title>` "Home - Magarpattacity" — khu đô thị hỗn hợp dân cư/
+thương mại, thương hiệu bất động sản, không phải trung tâm CGCN/ĐMST cụ thể); `Global Village Tech
+Park` (`sattvagroup.com/commercial/sattva-global-city/`, `<title>` "Sattva Global City - Premium
+Commercial Spaces in Bengaluru" — trang QUẢNG CÁO CHO THUÊ VĂN PHÒNG của 1 tập đoàn bất động sản,
+không phải trang riêng của khu công nghệ). **Bài học mới: khi tên gọi "tech park"/"cybercity" gắn
+với 1 dự án bất động sản thương mại lớn (Ấn Độ có nhiều dự án kiểu này), luôn đọc `<title>` để phân
+biệt "trang tổ chức quản lý khu" với "trang quảng cáo thuê mặt bằng của chủ đầu tư"** — dấu hiệu:
+từ khoá "Premium"/"Commercial Spaces"/"overview"/tên thương hiệu bất động sản trong tiêu đề.
+
+**Giữ 2 (Ấn Độ):** SEEPZ (Santacruz Electronics Export Processing Zone, Mumbai — khu chế xuất điện
+tử ĐẦU TIÊN của Ấn Độ, xác nhận qua `og:description` "Official website of SEEPZ Mumbai, a
+Government of India export processing zone"), Cochin Special Economic Zone (`<title>` khớp chính
+xác). 0 Việt Nam.
+
+**Kết quả merge:** `ROSTER`: 20078 → **20081** (+3: Tianjin Dongjiang, SEEPZ, Cochin SEZ). Đơn vị
+trên bản đồ: 20087 → **20090** (+3, giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch,
+thẻ cân bằng (111/111, 6/6), Browser pane đọc đúng "20090 đơn vị được lập bản đồ", console sạch.
+Commit (xem `git log`), push.
+
+**Còn thiếu ~9910.** **Việc mở:** (1) Trung Quốc coi như đã khai thác 3/3 hệ zone lớn tìm được
+(cao/kinh tế-kỹ thuật/tân khu+bảo thuế) — các khu cấp thành phố/tỉnh lớn (Phố Đông, Hùng An...)
+không kết nối được, không đáng thử lại trừ khi đổi mạng; (2) Ấn Độ — category tiếng Anh cho SEZ/
+industrial park CÒN NHIỀU trang chưa xử lý hết (chỉ 10/75 có `P856`, chưa thử wikitext-fallback
+— nhưng đã xác nhận kỹ thuật này không đáng tin cậy nên cân nhắc kỹ trước khi đầu tư thêm); (3) bài
+học "trang bất động sản thương mại" đáng nhớ khi mở rộng sang các nước có nhiều dự án tư nhân gắn
+mác "tech park"/"IT park" (Ấn Độ, Việt Nam ngoài phạm vi, Philippines, Indonesia).
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 63 — **Wikipedia tiếng Trung `Category:国家级经济技术开发区`
 (hệ thống Khu phát triển kinh tế-kỹ thuật cấp quốc gia — KHÁC HẲN "khu công nghệ cao" đã khai thác ở
 checkpoint 59, đây là hệ thống zone thứ 2 của Trung Quốc, tìm ra qua `list=search` khi đang định thử
 lại wikitext-fallback) — sau lọc + xác minh tay kỹ (loại 2 ca mơ hồ/rỗng) còn **+6 mục thật**; retry
