@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20072 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20078 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,64 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 62 — **Quét nhanh nhiều ngôn ngữ nhỏ trong 1 lượt: Indonesia
+**Lần cuối:** 2026-09-11 (checkpoint 63 — **Wikipedia tiếng Trung `Category:国家级经济技术开发区`
+(hệ thống Khu phát triển kinh tế-kỹ thuật cấp quốc gia — KHÁC HẲN "khu công nghệ cao" đã khai thác ở
+checkpoint 59, đây là hệ thống zone thứ 2 của Trung Quốc, tìm ra qua `list=search` khi đang định thử
+lại wikitext-fallback) — sau lọc + xác minh tay kỹ (loại 2 ca mơ hồ/rỗng) còn **+6 mục thật**; retry
+lần 3 wikitext-fallback cho 87 trang cũ (rate-limit ĐÃ HẾT theo test đơn lẻ, nhưng batch vẫn 0/87 —
+xác nhận DỨT ĐIỂM kỹ thuật này KHÔNG dùng được cho 87 trang đó, không phải do rate-limit) — tổng
+checkpoint này **+6** — còn thiếu ~9913 lúc cuối phiên.
+
+**Phát hiện quan trọng — Trung Quốc có ÍT NHẤT 2 hệ thống khu phát triển cấp quốc gia riêng biệt,
+mỗi hệ có category Wikipedia RIÊNG:** (1) `国家级高新技术产业开发区` (High-tech Industrial
+Development Zone — khai thác checkpoint 59, ~100 khu, do Bộ KH&CN quản lý) và (2)
+`国家级经济技术开发区` (Economic-Technological Development Zone/ETDZ — khai thác checkpoint này,
+~230 khu thực tế dù category chỉ có 104 trang, do Bộ Thương mại quản lý — TEDA Thiên Tân là khu đầu
+tiên 1984). Hai hệ THƯỜNG CÙNG TỒN TẠI trong 1 thành phố (khác khu, khác tên, khác tổ chức quản lý)
+— vd Đại Liên có cả "大连经济技术开发区" (ETDZ, batch này — chết mạng) LẪN "大连高新技术产业开发区"
+(high-tech, checkpoint trước) — không phải trùng lặp, PHẢI XỬ LÝ NHƯ 2 NGUỒN TÁCH BIỆT. **Việc mở:
+có thể còn hệ thứ 3+ (vd khu bảo thuế/khu công nghiệp cấp tỉnh) chưa dò — thử `list=search` với
+"综合保税区"/"保税区"/"工业园区" nếu muốn đào tiếp Trung Quốc.**
+
+**Retry wikitext-fallback lần 3 cho 87 trang cũ (checkpoint 60-61 để mở) — XÁC NHẬN DỨT ĐIỂM KHÔNG
+DÙNG ĐƯỢC:** kiểm 1 request đơn lẻ trước → **HTTP 200 thành công** (rate-limit đã hết thật) — nhưng
+chạy batch 87 trang y hệt kỹ thuật cũ (giãn cách 2s/request lần này, còn nhanh hơn lần 2) vẫn
+**0/87 mục mới**. Kết hợp với batch ETDZ mới (99 trang, tốc độ gọi TƯƠNG ĐƯƠNG, dùng route `P856`
+trực tiếp thay vì wikitext) chạy THÀNH CÔNG bình thường trong cùng phiên này → **bác bỏ hẳn giả
+thuyết rate-limit của checkpoint 60, xác nhận vấn đề nằm Ở CHÍNH 87 TRANG ĐÓ/hoặc ở kỹ thuật regex
+wikitext, không phải ở tốc độ gọi hay rate-limit chung**. **Kết luận dứt điểm: NGỪNG thử lại 87
+trang này bằng wikitext-fallback — nếu muốn khai thác tiếp, cần đọc tay từng trang xem thực sự có
+field `web=` hay không trước khi viết script, đừng giả định lại "chỉ cần gọi đúng cách".**
+
+**Xác minh tay các ca mơ hồ trong batch ETDZ:** `鲅鱼圈区` (Bayuquan, Wikidata gắn nhãn
+"administrative district" giống ca `江海区` đã loại ở checkpoint 59) — nhưng LẦN NÀY `<title>` xác
+nhận rõ "营口市鲅鱼圈区人民政府、**营口经济技术开发区**" (chính quyền quận VÀ ETDZ cùng tên miền,
+khác `江海区` không hề nhắc tới khu công nghệ nào) → **GIỮ, ngoại lệ có căn cứ** (bài học: không
+loại máy móc theo nhãn P31 "administrative district", phải đọc `<title>` xem có nêu rõ tên khu công
+nghiệp hay không). `临沂经济技术开发区` (Linyi ETDZ) → `<title>` ra "临沂沂河新区" (Linyi Yihe New
+District — tên khác hẳn, không xác nhận đúng là ETDZ) — loại vì không khớp tên. `长兴岛 (大连)`
+(Changxing Island) → trang rỗng không đọc được `<title>` — loại.
+
+**Giữ 6:** Shanghai Hongqiao ETDZ (`shudc.com`, xác nhận "上海虹桥开发区联合发展有限公司"), Beijing
+Economic-Technological Development Area/BDA, Yingkou ETDZ (Bayuquan), Shanghai Caohejing Hi-Tech
+Park (xác nhận qua đọc nội dung trang vì `<title>` rỗng), Tianjin TEDA (khu ETDZ ĐẦU TIÊN của Trung
+Quốc, 1984 — case lịch sử quan trọng), Shanghai Chemical Industry Park. 0 Việt Nam. Toạ độ: 5/6 có
+`P625` thật; Hongqiao tra tay theo khu vực Hongqiao, Thượng Hải.
+
+**Kết quả merge:** `ROSTER`: 20072 → **20078** (+6). Đơn vị trên bản đồ: 20081 → **20087** (+6, giữ
+nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111, 6/6), Browser pane
+đọc đúng "20087 đơn vị được lập bản đồ", console sạch. Commit (xem `git log`), push.
+
+**Còn thiếu ~9913.** **Việc mở ưu tiên:** (1) `Category:国家级经济技术开发区` còn ~72 trang chưa xử
+lý hết (chỉ 20/92 có `P856`, phần còn lại CHƯA thử fallback nào — nhưng đã xác nhận wikitext-fallback
+không đáng tin, nên nếu đào tiếp cần đọc tay từng trang thay vì viết script hàng loạt); (2) thử thêm
+hệ thống zone TQ khác (`综合保税区`/khu bảo thuế tổng hợp, `工业园区`/khu công nghiệp cấp tỉnh) —
+tiềm năng lớn nhưng cần category riêng, chưa dò; (3) 87 trang khu công nghệ cao TQ cũ COI NHƯ ĐÃ
+KHAI THÁC HẾT bằng kỹ thuật hiện có — đừng thử lại wikitext-fallback nữa; (4) tiếp tục cân nhắc
+InBIA hoặc đăng ký chính phủ phi-Wikipedia nếu muốn đổi hẳn hướng.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 62 — **Quét nhanh nhiều ngôn ngữ nhỏ trong 1 lượt: Indonesia
 (`Kategori:Taman sains`), Ả Rập (`تصنيف:حاضنة أعمال` + sub-cat Tunisia/Ả Rập Xê Út), Hebrew (0 kết
 quả — chỉ khớp nhầm "Jurassic Park"), Thụy Điển/Đan Mạch/Phần Lan/Na Uy — hầu hết category RẤT NHỎ
 hoặc gần như trùng hết với ROSTER hiện có (nhiều tên nổi tiếng đã có từ trước qua các checkpoint
