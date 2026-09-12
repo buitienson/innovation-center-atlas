@@ -415,6 +415,40 @@ các nước CHƯA từng được rà kỹ qua Wikidata (Ấn Độ, Trung Qu�
 Phi khác — nơi ROSTER còn mỏng nên tỉ lệ trùng sẽ thấp hơn); (2) quay lại các nguồn quy mô LỚN hơn
 (nghìn+ mục) như InBIA (vẫn gate) hoặc thử tìm biến thể mới của các nguồn lớn cũ.
 
+**Ngay sau checkpoint 72 (2026-09-11→12), đã thử 2 hướng nữa NHƯNG CHƯA MERGE — ghi lại để phiên sau
+khỏi lặp lại công đã đổ:**
+
+1. **Ấn Độ — STPI (`stpi.in/en/stpi-centers`, ~73 trung tâm) — LOẠI HẲN, chặn THẬT.** Trang trả
+   `403 Forbidden` không chỉ qua `curl`/`urllib` (đã quen) mà cả qua **Browser pane thật** (đã điều
+   hướng bằng `navigate`, đọc `get_page_text` ra đúng trang lỗi "YOU ARE NOT AUTHORIZED TO ACCESS
+   THIS PAGE") — xác nhận đây là chặn theo IP/khu vực ở tầng server, không phải chặn bot-script như
+   nhiều ca trước. Đừng thử lại trừ khi đổi hẳn vị trí mạng.
+
+2. **Trung Quốc — CADZ (中国开发区协会, `cadz.org.cn`) — TÌM RA NGUỒN MỚI (~2897 khu, gồm cả cấp
+   TỈNH chưa từng khai thác qua Wikipedia trước đây) NHƯNG XÁC NHẬN LOẠI HẲN sau khi tự kiểm tay kỹ,
+   khác với đánh giá lạc quan ban đầu của agent nghiên cứu.** Kỹ thuật: trang danh sách
+   `/index.php/Develop/index.html` có form `#kfq_form` gọi AJAX POST tới
+   `/index.php/Develop/kfq_ajax_data.html` (tham số `kfq_p`=số trang, `kfq_diqu`/`kfq_shengfen`/
+   `kfq_lv`/`kfq_type`="0"=tất cả) trả JSON `{page, data}` — `data[i]['url']` **tưởng là URL ngoài**
+   nhưng hoá ra chỉ là link nội bộ `/index.php/Kai/index/id/<N>.html` (trang hồ sơ), không phải
+   website thật. Cào thử ~15 trang hồ sơ (trải đều ID thấp/cao, tổng 2897 mục) qua `urllib` xác nhận
+   **trường "网址：" (website) TRỐNG 100%** ở mọi mẫu, kể cả các khu nổi tiếng — CADZ có vẻ chỉ thu
+   thập tên/địa chỉ/điện thoại, không thu thập/hiển thị website. Cộng thêm **~40% request lỗi
+   502/timeout** (server portal nhỏ, không ổn định) khiến việc cào hàng loạt vừa vô ích vừa tốn kém.
+   **Kết luận: LOẠI HẲN, đừng thử lại** — đây là bài học mới bổ sung cho danh sách "nguồn lớn nhưng
+   thiếu URL" (cùng nhóm với Startup India, PARP Ba Lan, Atal Incubation Centres PDF).
+
+3. **Indonesia — AIBI (Asosiasi Inkubator Bisnis Indonesia, `aibinetwork.com/anggota-aibi/`) — CHƯA
+   XONG, agent bị dừng giữa chừng (sếp yêu cầu tạm dừng tiết kiệm token).** Domain gốc hiện có vẻ
+   không truy cập được trực tiếp (agent phải quay sang Wayback Machine); đã tìm được **33 lượt crawl
+   lưu trữ từ 15/10/2016 đến 29/6/2023** cho đúng trang `anggota-aibi/` (danh sách hội viên) —
+   **bản lưu trữ gần nhất 29/6/2023 CHƯA ĐỌC ĐƯỢC NỘI DUNG** (agent bị dừng ngay khi vừa điều hướng
+   tới, trước khi `get_page_text`). **Việc mở cho lượt sau:** mở lại
+   `https://web.archive.org/web/20230629000000/https://aibinetwork.com/anggota-aibi/` qua Browser
+   pane, đọc danh sách hội viên (có thể chỉ có TÊN, không có URL — cần kiểm), đối chiếu xem domain
+   gốc `aibinetwork.com` hiện tại còn sống không trước khi quyết định dùng bản lưu trữ hay bản sống.
+   Malaysia (MRANTI/MaGIC/TAM) và Philippines chưa được agent đó kiểm tới nơi — vẫn còn mở.
+
 ---
 **Lần trước:** 2026-09-11 (checkpoint 71 — **Nhật Bản, hướng hoàn toàn mới sau nhiều lần thất bại cũ:
 UNITT (University Network for Innovation and Technology Transfer, 一般社団法人大学技術移転協議会 —
