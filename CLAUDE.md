@@ -358,7 +358,7 @@ cân bằng (111/111 div, 6/6 section), Browser pane (`static-server` qua `.clau
 phục vụ cả thư mục `InnovationAdvisory` nên phải mở đúng đường dẫn con
 `/Innovation-Center-Atlas/index.html`) đọc đúng "20392 đơn vị được lập bản đồ" / "20383 trong danh
 mục mở rộng" / "20383 mục / 20383" ở ô đếm bảng tìm kiếm, console sạch (chỉ lỗi favicon.ico 404,
-không liên quan). Commit `[XEM GIT LOG]`, `git push origin main`.
+không liên quan). Commit `716e3ba`, `git push origin main`.
 
 **Còn thiếu ~9617.** **Việc mở cho lượt sau:** (1) ISBA còn ~34 mục "Associate Members" và vài
 "Primary Members" bị loại vì lý do URL kỹ thuật (domain chết DNS thật/ECONNREFUSED xác nhận qua 2
