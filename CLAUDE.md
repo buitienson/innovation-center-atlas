@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20326 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20383 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,89 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-11 (checkpoint 72 — **Hàn Quốc: thử lại 3 domain TechnoPark cũ (Daegu/Gwangju/
+**Lần cuối:** 2026-09-12 (checkpoint 73 — **Ấn Độ, hướng hoàn toàn mới: ISBA (Indian STEP &
+Business Incubator Association, `isba.in/member-directory`) — hiệp hội quốc gia của các TBI/STEP
+Ấn Độ, KHÁC HẲN mọi nguồn Ấn Độ đã thử/loại trước đây (DPIIT, Startup India, AIC portal/PDF,
+BIRAC BioNEST PDF hỏng — xem checkpoint 23) vì đây là danh bạ hội viên hiệp hội nghề nghiệp, không
+phải cổng đăng ký chính phủ.** Trang dùng Astro (site tĩnh), toàn bộ 191 hội viên (159 Primary +
+32 Associate, chia theo 6 vùng Central/East/North/North East/South/West) nằm ngay trong HTML tĩnh
+dạng `<li data-member-name="..."><a href="...">` — không cần JS/API, `curl --compressed` một lần
+lấy đủ. Sau lọc trùng ROSTER (79/191 đã có sẵn — phù hợp việc Ấn Độ đã được rà khá kỹ qua OSM/
+Wikidata/DPIIT các checkpoint trước, xem checkpoint 18/33) còn 112, lọc tiếp dịch vụ/tư vấn/VC/
+trang hiệp hội ngành rộng (15 mục: hãng luật IP, quỹ thiên thần, công ty tư vấn thương mại hoá,
+NASSCOM — hiệp hội CNTT quá rộng không phải bản thân 1 TBI) + 3 URL hỏng/giả (`https://In
+Development`, `https://NA`) → 97 ứng viên qua `check_url()` (66 "ok" ngay, 31 fail) → retry timeout
+dài hơn + bỏ qua SSL hết hạn/hostname-mismatch (2 lớp cứu: domain chết thật DNS/ECONNREFUSED xác
+nhận LẠI bằng `WebFetch` chạy trên hạ tầng Anthroic — khác mạng máy này — cho 5 domain vẫn
+ECONNREFUSED, xác nhận chết thật KHÔNG phải chặn mạng cục bộ, giống kiểu xác minh China Torch cũ)
+→ cứu lại 4 (AmpliNxt — xác nhận cross-domain redirect ĐÚNG cùng tổ chức qua schema.org, đổi
+sang domain mới `amplinxtfoundation.com`; INCUB8 loại vì xác nhận đúng là trang rao bán tên miền
+Namecheap dù `check_url()` gắn cờ "parking-page" đúng).
+
+**Lớp lọc MỚI phát hiện qua rà tay `<title>`/nội dung trang sau khi `check_url()` báo "ok" — 3
+loại lỗi khác nhau đều bị công cụ tự động bỏ lọt:** (1) **trang chủ trường/viện TRẦN** (đúng
+nguyên tắc cũ, 7 ca: GLA University, SGBAU, MIT ADT/"mit.asia", Sphoorthy Engineering College,
+JKKN Institutions, SMBT, Acropolis Group — tất cả `<title>` chỉ ghi tên trường chung, không nhắc
+tên đơn vị ươm tạo trong dữ liệu ISBA) + 3 ca phát hiện thêm cùng loại (KG VIP Forum → KGiSL
+Institute of Technology trần; TDIC@CSIR-IITR → trang chủ viện CSIR chung, không phải trang riêng
+của TDIC; GH Raisoni GHR-TBIF → trang chỉ có 58 ký tự chữ thật, tiêu đề lặp lại tên trường, không
+có nội dung TBI nào); (2) **trang "Coming Soon"** (WISE SNDTWU Incubation Centre — trả 200 hợp
+lệ, `check_url()` không bắt được vì không phải parking-page/redirect, nhưng nội dung chỉ có chữ
+"Coming Soon" — CHƯA ra mắt thật); (3) **subdomain/URL trỏ nhầm nội dung** (BSC BioNEST
+Bio-Incubator → `bbb.rcb.res.in` trả về "RCB Online Job Portal", hoàn toàn khác tên/nội dung đăng
+ký — loại vì không xác nhận được đây đúng là trang BioNEST). Riêng "Centre for Entrepreneurship
+Development and Incubation" (NIT Trichy, `nitt-cedi.in`) phát hiện MUỘN ở bước kiểm lại sau khi
+đã gán toạ độ — `check_url()` lần đầu báo "ok" (do thin+redirect check chỉ chạy khi có JS
+redirect rõ ràng) nhưng kiểm lại lần 2 bắt được domain đã thành trang rao bán tên miền
+(`abovedomains.com`) — bài học: **luôn `check_url()` lại lần cuối ngay trước khi merge, không chỉ
+tin kết quả lần kiểm đầu**, nhất là với domain `.in` nhỏ dễ hết hạn.
+
+**1 trùng ROSTER phát hiện MUỘN (sau khi đã "sửa lỗi chính tả" tên gốc):** "Pilani Innovation
+**Enterprenurship** and Development Society" (lỗi chính tả trong dữ liệu gốc ISBA) sau khi tôi tự
+sửa thành "**Entrepreneurship**" đúng chính tả để đưa vào ROSTER mới khớp trùng với entry đã có
+sẵn (`piedsociety.org`, ROSTER cũ dùng chính tả đúng) — bài học: chuẩn hoá chính tả tên TRƯỚC bước
+dedupe bằng `normalize_name()`, không phải sau, nếu không lỗi chính tả trong nguồn gốc sẽ che giấu
+trùng lặp thật.
+
+**Toạ độ:** không có toạ độ sẵn trong nguồn — gán tay theo thành phố đặt trụ sở tổ chức (tra cứu
+qua tên viện/đại học chủ quản, xác nhận qua WebSearch cho ~10 ca không rõ ràng: SREC SPARK→
+Coimbatore, NConverge→Hyderabad, NetraRit→Sangli, Baba Farid SoE→Bathinda, AmpliNxt→Pune, RISE
+Foundation IISER→Kolkata/Mohanpur), toàn bộ verify qua `country_from_latlon.py` (`(lon,lat)`,
+không phải `(lat,lon)`) xác nhận đúng India, 0/58 lệch. Trải khá rộng: Maharashtra, Karnataka,
+Tamil Nadu, Andhra Pradesh, Gujarat, Punjab, Rajasthan, UP, Telangana, J&K, Assam, Bihar, West
+Bengal — không dồn vào 1-2 thành phố lớn như nhiều nguồn Ấn Độ trước.
+
+**Kết quả cuối: 58 mục qua mọi lớp lọc → phát hiện 1 trùng ROSTER ở bước merge cuối (Pilani
+PIEDS, xem trên) → 57 mục thật.** 0 Việt Nam (ISBA chỉ hoạt động ở Ấn Độ).
+
+**Kết quả merge:** `ROSTER`: 20326 → **20383** (+57). Đơn vị trên bản đồ: 20335 → **20392** (+57,
+giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch (script trích từ `index.html`), thẻ
+cân bằng (111/111 div, 6/6 section), Browser pane (`static-server` qua `.claude/launch.json`, root
+phục vụ cả thư mục `InnovationAdvisory` nên phải mở đúng đường dẫn con
+`/Innovation-Center-Atlas/index.html`) đọc đúng "20392 đơn vị được lập bản đồ" / "20383 trong danh
+mục mở rộng" / "20383 mục / 20383" ở ô đếm bảng tìm kiếm, console sạch (chỉ lỗi favicon.ico 404,
+không liên quan). Commit `[XEM GIT LOG]`, `git push origin main`.
+
+**Còn thiếu ~9617.** **Việc mở cho lượt sau:** (1) ISBA còn ~34 mục "Associate Members" và vài
+"Primary Members" bị loại vì lý do URL kỹ thuật (domain chết DNS thật/ECONNREFUSED xác nhận qua 2
+mạng khác nhau: SSU Innovation Foundation, Central University of Punjab R&D, iDeaNA-CDFD, SRM
+IIEC, VIGNAN TBI, Sathyabama TBI, GTU Innovation, Kolhapur KITS-IRF, Yashavantrao Chavan Center,
+Hatchlab SRM-AP, Maker Village, iTNT Hub Tamil Nadu, Savli TBI Gujarat, KALCHURI LNCT, Swarrnim,
+Greenovator, Marathwada MAGIC, GNJERBI Foundation, Sri Ramachandra IIC) — KHÔNG đáng thử lại trừ
+khi các domain này hồi phục sau này; (2) kỹ thuật "hiệp hội TBI/incubator quốc gia" (khác DPIIT/
+đăng ký chính phủ) rất đáng thử cho các nước lớn khác CHƯA áp dụng góc độ này: Trung Quốc (tìm
+hiệp hội TBI/science park cấp hiệp hội nghề nghiệp thay vì cổng chính phủ `chinatorch.gov.cn` đã
+chặn mạng nhiều checkpoint), Brazil (ANPROTEC đã dùng ở checkpoint 18 nhưng có thể có hiệp hội
+vùng/tiểu bang riêng chưa thử), Indonesia/Mexico/Nigeria/Nam Phi (chưa tìm hiệp hội TBI quốc gia
+nào theo góc độ này); (3) tiếp tục hướng "hiệp hội quốc gia tương tự BVIZ/UKSPA/Retis/AURP/UNITT/
+KCA" cho các nước lớn còn lại; (4) bài học kỹ thuật quan trọng nhất phiên này: dùng `WebFetch`
+(hạ tầng Anthropic, mạng khác hẳn máy cục bộ) để phân biệt "domain chết thật" và "bị chặn mạng
+cục bộ" RẤT hiệu quả và rẻ (chỉ vài giây/domain) — nên dùng SỚM hơn cho mọi domain nghi ngờ, không
+đợi đến cuối; (5) chuẩn hoá lỗi chính tả trong dữ liệu nguồn TRƯỚC bước dedupe, không sau (xem bài
+học Pilani PIEDS ở trên) để tránh cả bỏ sót trùng lẫn (nếu làm ngược) tưởng nhầm là trùng.
+
+---
+**Lần trước:** 2026-09-11 (checkpoint 72 — **Hàn Quốc: thử lại 3 domain TechnoPark cũ (Daegu/Gwangju/
 Gyeonggi Daejin) — VẪN bị chặn mạng nhất quán (timeout/403), xác nhận lại kết luận các checkpoint
 44/47/60, không tốn thêm công. Chuyển sang Úc/New Zealand: KCA (Knowledge Commercialisation
 Australasia, trước là THETA-KTA — đã LOẠI ở checkpoint 43 vì gate đăng nhập, nay xác nhận trang đã
