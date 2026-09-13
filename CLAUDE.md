@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20383 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20434 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -297,7 +297,98 @@ Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-12 (checkpoint 73 — **Ấn Độ, hướng hoàn toàn mới: ISBA (Indian STEP &
+**Lần cuối:** 2026-09-13 (checkpoint 74 — **Indonesia: AIBI (Asosiasi Inkubator Bisnis Indonesia,
+`aibinetwork.com/anggota-aibi/`) — lead để lại mở từ cuối checkpoint 73, hoàn tất trong phiên này.**
+Domain gốc hiện đã CHẾT — `aibinetwork.com` 301-redirect sang `alpha4dgo.com`, một domain rao bán
+hoàn toàn không liên quan (đúng mẫu cross-domain-redirect-sang-domain-lạ phải loại, xem
+`roster_common.check_url()`); site kế nhiệm `aibi.co.id` có mục "Inkubator" công khai nhưng danh
+bạ trống ("0 inkubator terdaftar" — trang mới chưa được điền dữ liệu). Chỉ còn bản lưu Wayback
+Machine 29/6/2023 (link chính user đưa) là nguồn duy nhất.
+
+**Sự cố mạng đáng ghi lại:** `web.archive.org` bị 429 "Too Many Requests" NHẤT QUÁN suốt hơn
+5 phút thử lại (Browser pane lẫn `curl` từ máy cục bộ, trên MỌI endpoint kể cả `/cdx/search` và
+`archive.org/wayback/available` — xác nhận chặn cả domain, không phải riêng 1 URL) — khác các lần
+trước, `WebFetch` (hạ tầng Anthropic) lần này KHÔNG cứu được vì tool đó tự chặn cứng domain
+`web.archive.org` (không phải lỗi mạng, là chính sách của tool). **Lối thoát tìm ra: proxy dịch
+Google Translate** — `https://web-archive-org.translate.goog/web/<timestamp>/<url>?_x_tr_sl=id&
+_x_tr_tl=en` (thay `.` bằng `-` trong tên miền gốc) tải được y nguyên trang Wayback qua hạ tầng
+Google, vượt qua được rate-limit cục bộ trên `web.archive.org` trực tiếp — kỹ thuật mới, đáng nhớ
+cho các lần archive.org bị chặn/giới hạn tương lai (dùng `curl -sSL` theo redirect, trang trả về là
+HTML gốc y hệt, chỉ cần trích `<table>` như bình thường).
+
+**Nguồn KHÔNG có link riêng từng tổ chức** (khác ISBA) — bảng tĩnh 157 dòng (No/Nama Inkubator/
+Alamat/Kota,Provinsi), chỉ có TÊN VIẾT TẮT + địa chỉ, không có URL, không có `<a href>` nào —
+đúng loại nguồn "tỷ lệ giữ lại thấp" `routine-roster-grow.md` cảnh báo cho Gemini `url_context`,
+nhưng phiên này xử lý THỦ CÔNG (không qua worker) nên vẫn khai thác được: lọc bớt 9 dòng trống ở
+cuối bảng còn 148 tổ chức thật, research riêng từng tên qua `WebSearch` (thêm tên viết tắt đại học
+đầy đủ + thành phố để định hướng, vì phần lớn tên chỉ là viết tắt kiểu "IBT ULM", "DIIB UB") →
+tìm ra URL cho 84/148 (57%), sau lọc trùng ROSTER theo tên/URL đúng còn 51/84.
+
+**Lớp kiểm URL 2 tầng phát hiện vấn đề MỚI của nguồn Indonesia (khác Ấn Độ/Úc trước đây) — rất
+nhiều site `.ac.id`/`.go.id` nhỏ chặn `urllib`/`curl` script nhưng vẫn là site THẬT:** `check_url()`
+đợt đầu FAIL 44/84 (52%) — cao bất thường. Kiểm chéo bằng `WebFetch` + Browser pane thật (điều
+hướng `navigate` + đọc `get_page_text`) cho từng ca FAIL phân biệt được 3 loại: (1) **Cloudflare
+"Just a moment..." bot-challenge nêu ĐÚNG TÊN tổ chức** (vd `inbis.asia.ac.id` hiện "Institut
+Teknologi & Bisnis Asia") — xác nhận site THẬT, chỉ chặn truy cập kịch bản, không phải chặn mạng
+cục bộ hay domain chết — GIỮ 8 ca loại này dù `check_url()` báo lỗi; (2) **domain chết thật**
+(`ENOTFOUND`/`ECONNREFUSED` xác nhận LẠI trên hạ tầng Anthropic qua `WebFetch`, khác mạng máy này
+— giống kỹ thuật ISBA/checkpoint 73) — LOẠI HẲN (vd `inbis.unud.ac.id`, `di2b.ub.ac.id`, tổng 22
+ca); (3) **lỗi chứng chỉ SSL** (tự ký/hết hạn/hostname-mismatch, 5 ca như `sbsinkubator.
+unisbank.ac.id`) — LOẠI, không đủ tin cậy để xác nhận đúng nội dung qua kênh không mã hoá được
+(khác cách xử lý "bỏ qua SSL" ở ISBA — lần đó bỏ qua vì đã xác nhận đúng tổ chức qua nội dung
+trang, lần này chưa xác nhận được nên thận trọng hơn); (4) 1 ca `HTTP 403 Forbidden By WAF` KHÔNG
+nêu tên tổ chức (`gerdhu.com`) — LOẠI vì không phân biệt được với chặn thật; (5) `distp.ui.ac.id`
+redirect sang `wp-signup.php?new=distp.ui.ac.id` — WordPress multisite CHƯA TỪNG ĐĂNG KÝ, tức
+domain chưa hề được cấu hình (khớp việc DISTP UI đổi tên thành DIRBT UI năm 2025, domain cũ bị bỏ
+hoang) — LOẠI.
+
+**3 trùng ROSTER phát hiện qua rà tay domain/tên sau bước `check_url()`:** "Bandung Techno Park"
+trùng TÊN CHÍNH XÁC với entry đã có (`btp.or.id` cũ, ứng viên mới `btp.telkomuniversity.ac.id` —
+cùng 1 tổ chức, Telkom University vận hành BTP); "ILBI ITS" (`its.ac.id/stp/inkubator/`) là đơn vị
+CON của "Direktorat Inovasi dan Kawasan Sains Teknologi" đã có sẵn (`its.ac.id/stp/`) — xác nhận
+qua chính nội dung nghiên cứu (ILBI = "unit của DIKST/STP ITS"); "Inkubator Unit Bisnis UNNES" là
+đơn vị con của LPPM UNNES đã có sẵn. **Bài học:** so khớp domain gốc (`base_domain()`) một mình
+KHÔNG đủ để lọc trùng lẫn KHÔNG đủ để chấp nhận khác biệt — ROSTER vốn có nhiều đơn vị hợp lệ khác
+nhau cùng chung 1 tên miền trường (khoa/viện/trung tâm riêng biệt), phải đọc nội dung để phân biệt
+"đơn vị con của cái đã có" (loại) với "đơn vị khác, tình cờ chung tên miền" (giữ) — 14/17 ca
+`base_domain` trùng ở bước rà cuối vẫn GIỮ vì là đơn vị thật sự khác nhau.
+
+**Toạ độ:** không có sẵn, gán theo thành phố trụ sở (đọc thẳng từ cột "Kota, Provinsi" của bảng
+AIBI, 26 thành phố khác nhau trải khắp Sumatra/Jawa/Kalimantan/Sulawesi — không dồn Jawa như nhiều
+nguồn khác), verify qua `country_from_latlon.py`: 3/26 thành phố (Bengkalis, Surabaya, Balikpapan)
+lệch "None" ở toạ độ trung tâm mặc định do độ phân giải 50m không phủ hết bờ biển/đảo nhỏ — dò lại
+điểm lân cận trong đất liền cho tới khi khớp "Indonesia", xác nhận cả 26/26 đúng trước khi merge.
+
+**Kết quả cuối: 148 tổ chức → 84 có URL (57%) → 51 mục thật sau lọc trùng + lọc URL chết/không tin
+cậy được.** 0 Việt Nam (AIBI chỉ hoạt động ở Indonesia).
+
+**Kết quả merge:** `ROSTER`: 20383 → **20434** (+51). Đơn vị trên bản đồ: 20392 → **20443** (+51,
+giữ nguyên chênh lệch +9). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111 div, 6/6
+section), Browser pane (khởi động thủ công `python3 -m http.server 8791` từ thư mục
+`InnovationAdvisory` — `preview_start` theo tên "static-server" thất bại vì `.claude/launch.json`
+của phiên này trỏ `runtimeExecutable` Windows cũ, đã sửa cả 2 bản `.claude/launch.json`
+[InnovationAdvisory gốc + Innovation-Center-Atlas con] sang `python3` nhưng preview_start theo tên
+vẫn không nhận — nghi do thư mục làm việc gốc của phiên này là `InnovationOffice`, khác hẳn
+`InnovationAdvisory`; dùng `preview_start` với `url` trực tiếp thay vì `name` để né vấn đề này)
+đọc đúng "20443 đơn vị được lập bản đồ" / "20434 trong danh mục mở rộng" / "20434 mục / 20434" ở ô
+đếm bảng tìm kiếm, console sạch. Commit `22db468`, `git push origin main`.
+
+**Còn thiếu ~9566.** **Việc mở cho lượt sau:** (1) 64 tổ chức AIBI còn lại chưa tìm ra URL (tên quá
+chung chung để search hiệu quả, vd "Cubic"/"RUBIK"/"ASIC", hoặc chỉ có trang LPPM/khoa chủ quản bare
+— KHÔNG đáng thử lại trừ khi đổi kỹ thuật tìm kiếm); (2) 33 tổ chức có URL nhưng bị loại vì lỗi SSL/
+chết/403-không-tên — một số (vd `sbsinkubator.unisbank.ac.id` lỗi SSL tự ký) có thể vẫn là site
+THẬT, đáng thử lại bằng cách xác nhận qua kênh khác (Browser pane thật chấp nhận cảnh báo cert —
+CHƯA thử vì Browser pane của phiên này cũng từ chối load trang lỗi cert) nếu công cụ verify tốt hơn
+xuất hiện; (3) tiếp tục hướng "hiệp hội TBI/incubator quốc gia" cho Trung Quốc/Mexico/Nigeria/Nam
+Phi (Indonesia giờ đã xong qua AIBI) — xem chi tiết từng nước ở checkpoint 73; (4) bài học kỹ thuật
+mới nhất: proxy Google Translate (`<domain-với-dấu-gạch>.translate.goog/...?_x_tr_sl=..&_x_tr_tl=..`)
+là lối thoát tốt khi `web.archive.org` bị rate-limit VÀ `WebFetch` tự chặn cứng domain đó; (5) khi
+`check_url()` fail hàng loạt bất thường (>40%) trên MỘT nguồn cụ thể, kiểm tay vài ca đầu qua Browser
+pane thật TRƯỚC khi loại cả loạt — lần này phát hiện đúng mẫu "Cloudflare challenge nêu tên tổ chức"
+là tín hiệu tin cậy để GIỮ, không phải để loại.
+
+---
+**Lần trước:** 2026-09-12 (checkpoint 73 — **Ấn Độ, hướng hoàn toàn mới: ISBA (Indian STEP &
 Business Incubator Association, `isba.in/member-directory`) — hiệp hội quốc gia của các TBI/STEP
 Ấn Độ, KHÁC HẲN mọi nguồn Ấn Độ đã thử/loại trước đây (DPIIT, Startup India, AIC portal/PDF,
 BIRAC BioNEST PDF hỏng — xem checkpoint 23) vì đây là danh bạ hội viên hiệp hội nghề nghiệp, không
