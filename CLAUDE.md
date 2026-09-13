@@ -277,18 +277,28 @@ sách Miền Bắc/Miền Nam không đại diện, disclaimer trên quả đị
 > (xem mục "Lịch sử tăng trưởng ROSTER" bên dưới, mục đó nối tiếp — Lần cuối/Lần trước —
 > KHÔNG bao giờ ghi đè).
 
-**Lần cuối:** 2026-09-10 14:03 — routine tự động thêm tin + fund/hackathon (theo
-`_claude/routine-tin-tuc.md`), không phải phiên tương tác.
+**Lần cuối:** 2026-09-13 — chạy tay theo yêu cầu (không phải routine tự động lên lịch), theo
+đúng quy trình `_claude/routine-tin-tuc.md`.
 
 **Phần A — Tin tức (3 tin, mảng `NEWS`):**
-- "Đà Nẵng xây dựng hệ sinh thái khởi nghiệp đổi mới sáng tạo bền vững" (Báo Nhân Dân, 2026-09-03).
-- "Concr (Cambridge Enterprise) công bố nền tảng AI 'digital twin' FarrSight dự đoán đáp ứng điều trị ung thư tuyến tụy" (Cambridge Enterprise, 2026-09-03).
-- "FSID của Viện Khoa học Ấn Độ (IISc) bổ nhiệm CEO mới, đặt mục tiêu 300 startup deep-tech đến 2030" (Deccan Herald, 2026-09-09).
+- "Chung kết Bách Khoa Innovation 2026 quy tụ 57 dự án đổi mới sáng tạo trong và ngoài nước" (Việt Nam News, 2026-09-12).
+- "KVector, spin-out của Đại học Birmingham, gọi vốn 3,8 triệu bảng cho công nghệ ăng-ten quét chùm tia bằng metamaterial" (Mercia, 2026-09-11).
+- "Tuần lễ Công nghiệp và Công nghệ Việt Nam 2026 (VITW 2026) khai mạc, quy tụ hơn 2.000 gian hàng" (Báo Nhân Dân, 2026-09-09).
 
 **Phần B — Fund/Hackathon (1 mục, mảng `FUNDING`):**
-- "Khởi nghiệp sáng tạo miền Bắc 2026" — cuộc thi của HSB (ĐHQGHN) cho học sinh THPT, hạn nộp hồ sơ 2026-10-25.
+- "Tài trợ nhiệm vụ KH&CN hợp tác quốc tế Việt Nam - Nga (NAFOSTED - Quỹ Khoa học Nga RSF) năm 2026" — vật lý + khoa học biển, hạn nộp 2026-11-30.
 
-Tất cả link nguồn đã xác minh còn sống (curl trả 200) trước khi thêm.
+Đã cân nhắc thêm nhiều nguồn khác (MIT Solve, James Dyson Award, Google for Startups Accelerator
+SEA, Startup World Cup Vietnam, ASEAN AI Hackathon...) nhưng loại vì hạn đã qua hoặc không xác
+minh được hạn/nội dung chắc chắn — thà thiếu còn hơn đăng sai. Tất cả link nguồn đã xác minh còn
+sống (curl/WebFetch trả 200) và đúng nội dung trước khi thêm.
+
+**Lưu ý vận hành:** lượt này trùng thời điểm với 1 phiên khác đang chạy routine tăng trưởng
+ROSTER trên cùng repo (commit `22db468` + `b56c9a9`) — bài NEWS soạn trước đó đã bị cuốn vào
+commit `22db468` của phiên kia (do cả hai cùng sửa `src/atlas.html` gần như đồng thời), nội dung
+vẫn đúng và đã lên `origin/main`, chỉ là nằm chung message "Grow ROSTER: AIBI Indonesia..." thay vì
+message riêng của routine tin tức — không cần sửa lại lịch sử git vì không ảnh hưởng nội dung hay
+mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 
 
 ## Lịch sử tăng trưởng ROSTER (checkpoint 1-48+)

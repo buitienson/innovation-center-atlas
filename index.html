@@ -2251,6 +2251,20 @@ document.addEventListener('click', function(e){
 // never a placeholder. The site owner adds items here over time — this is
 // not an automated feed.
 var NEWS = [
+  {date:'2026-09-12', source:'Việt Nam News', url:'https://vietnamnews.vn/society/1799522/innovation-competition-drives-young-researchers-tech-startups.html',
+    title:{vi:'Chung kết Bách Khoa Innovation 2026 quy tụ 57 dự án đổi mới sáng tạo trong và ngoài nước', en:'Bách Khoa Innovation 2026 Grand Final brings together 57 innovation projects from Vietnam and abroad'},
+    summary:{vi:'Chung kết Bách Khoa Innovation 2026 diễn ra tại TP.HCM ngày 12/9 với 57 dự án nổi bật, quy mô kỷ lục 408 dự án dự thi (gấp đôi năm 2025), trong đó có 38 dự án từ hơn 20 quốc gia; các đội quán quân gồm FloodGuard Technologies (khối trường đại học) và VIDENVAREN+ (khối start-up).',
+      en:'The Bách Khoa Innovation 2026 Grand Final was held in Ho Chi Minh City on September 12 with 57 standout projects, from a record 408 entries (double 2025\'s total) including 38 projects from over 20 countries; top winners included FloodGuard Technologies (university track) and VIDENVAREN+ (start-up track).'}},
+  {date:'2026-09-11', source:'Mercia', url:'https://www.mercia.co.uk/kvector-raises-3-8m-for-next-generation-antenna-technology/',
+    image:'https://www.mercia.co.uk/wp-content/uploads/KVector-Henry-Nurser.png',
+    title:{vi:'KVector, spin-out của Đại học Birmingham, gọi vốn 3,8 triệu bảng cho công nghệ ăng-ten quét chùm tia bằng metamaterial', en:'KVector, a University of Birmingham spin-out, raises £3.8m for beam-steered metamaterial antenna technology'},
+    summary:{vi:'KVector, doanh nghiệp tách ra từ Đại học Birmingham (thương mại hoá nghiên cứu của TS James Churm và GS Alexandros Feresidis), huy động 3,8 triệu bảng Anh vòng seed từ Midlands Mindforge, Mercia Ventures (MEIF II), UKI2S/Future Planet Capital và Đại học Birmingham — trong đó có 950.000 bảng từ Innovate UK — để phát triển ăng-ten quét chùm tia bằng bề mặt metamaterial, dùng cho radar và vệ tinh, tiêu thụ điện năng thấp hơn nhiều so với ăng-ten mảng pha thông thường.',
+      en:'KVector, a University of Birmingham spin-out commercialising research by Dr James Churm and Prof Alexandros Feresidis, raised a £3.8m seed round from Midlands Mindforge, Mercia Ventures (MEIF II), the UKI2S fund via Future Planet Capital, and the University of Birmingham — including £950,000 from Innovate UK — to develop metamaterial-surface beam-steered antennas for radar and satellite-communications applications that draw far less power than conventional phased-array antennas.'}},
+  {date:'2026-09-09', source:'Báo Nhân Dân', url:'https://nhandan.vn/vitw-2026-quy-tu-hon-2000-gian-hang-cong-nghiep-va-cong-nghe-post987292.html',
+    image:'https://cdn.nhandan.vn/images/IvCZyovHroGqKo00FqhL-EEAa34c9fSL37PLDrvGE7XVN-tA7KAbaG1Sr8FXxEZfHUwozeC8jwWxJAbHucZrB2crlX9y6ryc610E5r_gGp8/le-khai-mac-crop-470.png.webp',
+    title:{vi:'Tuần lễ Công nghiệp và Công nghệ Việt Nam 2026 (VITW 2026) khai mạc, quy tụ hơn 2.000 gian hàng', en:'Vietnam Industry and Technology Week 2026 (VITW 2026) opens with over 2,000 booths'},
+    summary:{vi:'VITW 2026 khai mạc ngày 9/9 tại Trung tâm Triển lãm Việt Nam (VEC), Đông Anh, Hà Nội, quy tụ hơn 2.000 gian hàng công nghiệp/công nghệ trong và ngoài nước trên diện tích hơn 70.000m², diễn ra đến 11/9 với chủ đề "Công nghệ dẫn lối - Công nghiệp chuyển mình - Bứt phá vươn xa", dự kiến đón hơn 70.000 lượt khách.',
+      en:'VITW 2026 opened on September 9 at the Vietnam Exhibition Center (VEC) in Dong Anh, Hanoi, gathering over 2,000 domestic and international industrial/technology booths across more than 70,000 sq m, running through September 11 under the theme "Technology Leading - Industry Transforming - Breaking Through to Advance," with more than 70,000 visits expected.'}},
   {date:'2026-09-09', source:'Deccan Herald', url:'https://www.deccanherald.com/india/karnataka/bengaluru/iiscs-fsid-appoints-omprakash-subbarao-as-ceo-startup-incubator-targets-300-startups-by-2030-4139320',
     image:'https://media.assettype.com/deccanherald%2F2026-09-08%2Fn5uv1vr7%2Ffile87i0uaef1z61hja2bzw.jpeg?rect=0%2C17%2C902%2C474&w=1200&ar=40%3A21&auto=format%2Ccompress&ogImage=true&mode=crop',
     title:{vi:'FSID của Viện Khoa học Ấn Độ (IISc) bổ nhiệm CEO mới, đặt mục tiêu 300 startup deep-tech đến 2030', en:'IISc\'s FSID appoints new CEO, targets 300 deep-tech startups by 2030'},
@@ -2337,6 +2351,14 @@ function renderNews(){
 // "see official page" instead of guessing one. The site owner adds/updates items
 // over time; this is not an automated feed.
 var FUNDING = [
+  {id:'nafosted-rsf-nga-2026', type:'fund', deadline:'2026-11-30',
+    title:{vi:'Tài trợ nhiệm vụ KH&CN hợp tác quốc tế Việt Nam - Nga (NAFOSTED - Quỹ Khoa học Nga RSF) năm 2026', en:'Vietnam-Russia international S&T cooperation funding (NAFOSTED-RSF) 2026'},
+    org:{vi:'Quỹ Phát triển Khoa học và Công nghệ Quốc gia (NAFOSTED), hợp tác với Quỹ Khoa học Nga (RSF)', en:'National Foundation for Science and Technology Development (NAFOSTED), in cooperation with the Russian Science Foundation (RSF)'},
+    theme:{vi:'Nghiên cứu hợp tác Việt - Nga trong 2 lĩnh vực ưu tiên: Vật lý (nguyên tử, phân tử, vật lý chất rắn, hạt nhân, quang học/laser) và Khoa học biển (hoá sinh, sinh học, địa chất, môi trường/sinh thái biển).', en:'Vietnam-Russia collaborative research in two priority fields: Physics (atomic, molecular, condensed matter, nuclear, optics/lasers) and Marine Science (biochemistry, biology, geology, marine environment/ecology).'},
+    location:{vi:'Toàn quốc — hợp tác quốc tế với Nga', en:'Nationwide (Vietnam) — international cooperation with Russia'},
+    prize:{vi:'Tối đa 2,4 tỷ đồng/nhiệm vụ (nghiên cứu cơ bản) hoặc 8 tỷ đồng/nhiệm vụ (nghiên cứu ứng dụng, ngân sách nhà nước hỗ trợ tối đa 80%); dự kiến tài trợ tối đa 10 nhiệm vụ.', en:'Up to VND 2.4 billion per task (basic research) or VND 8 billion per task (applied research, state budget covering up to 80%); up to 10 tasks expected to be funded.'},
+    note:{vi:'Tiếp nhận hồ sơ từ 1/9/2026, hạn nộp trước 17h00 ngày 30/11/2026.', en:'Applications accepted from September 1, 2026, with a submission deadline before 5:00 PM on November 30, 2026.'},
+    url:'https://nafosted.gov.vn/thong-bao-ke-hoach-tai-tro-nhiem-vu-khoa-hoc-va-cong-nghe-trong-khuon-kho-hop-tac-quoc-te-nam-2026-voi-quy-khoa-hoc-nga-rsf-nam-2026/'},
   {id:'khoi-nghiep-mien-bac-2026', type:'competition', deadline:'2026-10-25',
     title:{vi:'Khởi nghiệp sáng tạo miền Bắc 2026 — chủ đề "Sáng tạo số cho tương lai bền vững"', en:'Northern Vietnam Innovation Startup 2026 — theme "Digital creativity for a sustainable future"'},
     org:{vi:'Trường Quản trị và Kinh doanh (HSB), Đại học Quốc gia Hà Nội, phối hợp Sở GD&ĐT Hà Nội, Quảng Ninh, Hưng Yên', en:'HSB School of Business, Vietnam National University Hanoi, with the Departments of Education & Training of Hanoi, Quang Ninh, and Hung Yen'},
