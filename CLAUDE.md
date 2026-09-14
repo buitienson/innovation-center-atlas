@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20476 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20483 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -307,7 +307,48 @@ mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-14 (checkpoint 77 — **tiếp Vùng Vịnh (Qatar/Kuwait/Oman/Bahrain) từ việc mở
+**Lần cuối:** 2026-09-14 (checkpoint 78 — **3 nước Baltic (Lithuania/Latvia/Estonia) từ việc mở
+checkpoint 77 — thử IASP global directory trước, tốn công dựng UI filter nhưng NĂNG SUẤT THẤP nên
+bỏ, quay về research từng nước bằng WebSearch như thường lệ.**
+
+**Thử `iasp.ws/our-members/directory`** (hiệp hội park toàn cầu, ~400 hội viên/77 nước, có filter
+theo quốc gia) — mất công vượt qua cookie-consent + dropdown ẩn (`form_input` báo thành công nhưng
+không đổi kết quả hiển thị, phải đọc network request để xác nhận filter thật sự chạy) + trang lọc
+prepend TOÀN BỘ danh sách quốc gia/ngành trước khi tới kết quả (phải đọc `get_page_text` tới 15000
+ký tự mới thấy kết quả nằm cuối) — cuối cùng Lithuania chỉ ra ĐÚNG 2 mục. **Kết luận: nguồn đúng
+loại (hiệp hội park quốc tế) nhưng chi phí dựng công cụ/lượt không xứng với sản lượng mỏng cho
+nước nhỏ — bỏ, quay lại WebSearch từng tên park cụ thể per nước** (như cách vẫn làm trước
+checkpoint 76, hiệu quả hơn cho nước không có hiệp hội quốc gia riêng).
+
+**Kết quả research từng nước:** Lithuania không có hiệp hội quốc gia lẫn danh mục tập trung —
+research riêng 3 park tên tuổi (Sunrise Valley STP Vilnius, Vilnius City Innovation Industrial
+Park); Kaunas Science and Technology Park **ĐÃ CÓ SẴN TRONG ROSTER** (trùng tên+URL chính xác,
+dedupe bắt đúng — xác nhận công cụ so khớp tên hoạt động tốt cho ca rõ ràng, không chỉ báo false
+positive như các ca "cùng domain khác đơn vị" ở checkpoint 76). Latvia: Latvian Technological
+Center (`techcenter.lv` — URL gốc tìm được là trang con `/en/homepage-english/` trả 404, dò lại
+bằng domain trần mới sống), Latvia Technology Park, RTU Design Factory (trang con `rtu.lv`, vượt
+Cloudflare challenge xác nhận domain thật dù không đọc được nội dung trang con cụ thể — chấp nhận
+vì RTU là đại học kỹ thuật lớn, rõ ràng không mơ hồ, khác các ca "tên chung chung" đã loại trước
+đây). Estonia: Tehnopol **ĐÃ CÓ SẴN TRONG ROSTER** (trùng tên+URL, loại); giữ Tartu Science Park
+(Sparkup) + Tartu Biotechnology Park.
+
+**Kết quả merge:** `ROSTER`: 20476 → **20483** (+7: 2 Lithuania, 3 Latvia, 2 Estonia). Đơn vị trên
+bản đồ: 20485 → **20492** (+7). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111 div, 6/6
+section), Browser pane đọc đúng "20492 đơn vị được lập bản đồ" / "20483 trong danh mục mở rộng",
+lọc ô tìm kiếm thấy "Tartu Biotechnology Park" đúng, console sạch. Commit `5855ee4`,
+`git push origin main`.
+
+**Còn thiếu ~9517.** **Việc mở cho lượt sau:** (1) 3 nước Baltic coi như đã rà xong ở mức "park tên
+tuổi có sẵn qua WebSearch" — không có hiệp hội quốc gia tập trung như Séc nên khó đào sâu thêm nếu
+không đổi hẳn kỹ thuật; (2) bài học IASP: nguồn quốc tế lớn (400+ hội viên) chỉ đáng khai thác khi
+cần phủ NHIỀU nước cùng lúc trong 1 lượt (kiểu batch nhiều nước nhỏ chưa rà), không đáng dựng công
+cụ chỉ để lấy 2 mục/nước — nếu quay lại IASP, nên chọn willy 5-10 nước cùng lúc rồi rà hết 1 lượt
+để bù chi phí dựng UI; (3) tiếp tục kỹ thuật "soi bảng đếm ROSTER theo quốc gia" — ứng viên còn mở:
+Slovenia (66)/Croatia (93)/Serbia (95) vùng Balkan, hoặc quay lại châu Phi/Mỹ Latinh sau khi đã dày
+Trung Đông/Baltic.
+
+---
+**Lần trước:** 2026-09-14 (checkpoint 77 — **tiếp Vùng Vịnh (Qatar/Kuwait/Oman/Bahrain) từ việc mở
 checkpoint 76, đổi cách tiếp cận: dùng MỘT trang tổng hợp bên thứ ba thay vì rà từng nước.**
 
 Tìm ra `gulfcoworking.com/incubators` — thư mục 17 tổ chức hỗ trợ khởi nghiệp trải 6 nước Vùng
