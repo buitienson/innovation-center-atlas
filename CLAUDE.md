@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20503 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20511 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -307,7 +307,46 @@ mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-15 (checkpoint 82 — **Nam Phi (Zimbabwe/Namibia/Botswana) — vòng đầu tiên
+**Lần cuối:** 2026-09-15 (checkpoint 83 — **Trung Mỹ + Caribbean (Panama/Jamaica/Nicaragua/El
+Salvador/Trinidad and Tobago/Belize/Dominican Republic) — theo đúng việc mở checkpoint 82.**
+
+**Tìm ra nguồn nhiều nước cùng lúc:** CENPROMYPE (cơ quan hỗ trợ MSME khu vực Trung Mỹ thuộc SICA)
+xuất bản một tờ infographic 1 trang/quốc gia dạng PDF (`centrorecursos.cenpromype.org`, file
+`Fichas-Incubación_y_coworking.pdf`) liệt kê 1 tổ chức ươm tạo tiêu biểu cho Belize/El Salvador/
+Honduras/Costa Rica/Panama/Cộng hòa Dominica kèm URL — tìm ra qua landing page trước (không có
+danh sách), phải soi `read_network_requests` bắt đúng URL PDF thật rồi tải trực tiếp mới đọc được
+nội dung (bài học kỹ thuật giống ISBA/AIBI trước: trang giới thiệu ≠ dữ liệu thật, phải lần ra file
+gốc). Impact Hub Tegucigalpa (Honduras, từ đúng PDF này) **ĐÃ CÓ SẴN TRONG ROSTER** — xác nhận dedupe
+đúng cho nguồn mới.
+
+**BELTRAIDE (Belize) đổi domain — bài học lặp lại từ checkpoint 81 (itpark.mn):** domain PDF ghi
+(`belizeinvest.org.bz`) đã chết hẳn (`ENOTFOUND`), nhưng đây là cơ quan chính phủ CÓ THẬT (Belize
+Trade and Investment Development Service) — tìm lại bằng WebSearch ra domain mới `beltraide.bz`
+xác nhận đúng tổ chức, KHÔNG bỏ cuộc chỉ vì domain PDF gốc chết.
+
+**CREE Banreservas** — `check_url()` báo lỗi thất thường tuỳ User-Agent (403 với UA trình duyệt
+giả, 200 với UA trần) — dấu hiệu bot-filter nhẹ, không phải chết — Browser pane thật xác nhận nội
+dung đúng ("Cree es el programa de emprendimiento de Banreservas...").
+
+**Kết quả merge:** `ROSTER`: 20503 → **20511** (+8: Belize, El Salvador, Panama, Dominican
+Republic, 2 Jamaica, Trinidad and Tobago, Nicaragua — 7/8 nước Trung Mỹ+Caribbean nhắm tới đều góp
+được ít nhất 1 mục, chỉ Honduras trùng sẵn có). Đơn vị trên bản đồ: 20512 → **20520** (+8). Kiểm
+sau ghi: `node --check` sạch, thẻ cân bằng (111/111 div, 6/6 section), Browser pane đọc đúng
+"20520 đơn vị được lập bản đồ" / "20511 trong danh mục mở rộng", lọc ô tìm kiếm thấy "CREE
+Banreservas" đúng URL, console sạch. Commit `d0c5e7f`, `git push origin main`.
+
+**Còn thiếu ~9489.** **Việc mở cho lượt sau:** (1) CENPROMYPE còn nhiều tài liệu liên quan chưa
+khai thác — trang landing đã thấy liệt kê thêm "Diagnóstico regional", "Universidades... región
+SICA", "instituciones gubernamentales... región SICA" — mỗi tài liệu có thể là 1 PDF tương tự với
+nguồn mới cho Guatemala/Costa Rica (còn thiếu ở PDF vừa dùng) và các loại tổ chức khác (đại học,
+cơ quan chính phủ) — đáng khai thác tiếp nếu quay lại khu vực này; (2) Costa Rica xuất hiện trong
+PDF nhưng chỉ có "Intel. Centro de innovación" — một chương trình doanh nghiệp, không rõ có tổ
+chức pháp lý riêng hay chỉ là sáng kiến nội bộ Intel — CHƯA merge, cần xác minh thêm nếu quay lại;
+(3) tổng kết phiên 2026-09-14→15: checkpoint 75-83 (9 checkpoint liên tiếp), ROSTER 20434→20511
+(+77) — đã rà Indonesia(vá)/Séc/UAE/Vùng Vịnh/Baltic/Tây Balkan/Trung Á/Mông Cổ/Nam Phi/Trung Mỹ.
+
+---
+**Lần trước:** 2026-09-15 (checkpoint 82 — **Nam Phi (Zimbabwe/Namibia/Botswana) — vòng đầu tiên
 phiên này thử châu Phi, tỷ lệ giữ lại THẤP vì trùng ROSTER sẵn có.**
 
 6 ứng viên tìm được → **2 trùng tên chính xác ngay** (Basecamp Business Incubator, Botswana Digital
