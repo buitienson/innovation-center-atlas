@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20518 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20522 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -307,7 +307,32 @@ mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-15 (checkpoint 84 — **khai thác tiếp CENPROMYPE: mỗi nước Trung Mỹ có PDF
+**Lần cuối:** 2026-09-15 (checkpoint 85 — **Nam Á (Sri Lanka/Nepal) — tìm hiệp hội khu vực SAARC
+trước, KHÔNG có, quay về research từng nước như thường lệ.**
+
+2 ca trùng ROSTER: Sri Lanka Inventors Commission (trang con `/incubation-centers/` chính là tổ
+chức ĐÃ CÓ dưới domain trần); NABIC (Nepal) — lỗi TLS handshake sâu (526 ngay cả khi bỏ qua xác
+minh chứng chỉ bằng `curl -k`, khác hẳn lỗi tin cậy chứng chỉ thường gặp — máy chủ hỏng thật). Giữ
+4: Hatch + TRACE Expert City (Sri Lanka); National Innovation Center + Nepal Technology Innovation
+Center (Nepal — NTIC là đơn vị KHÁC "Digital Learning Research Lab" dù chung domain `ku.edu.np`).
+
+**Kết quả merge:** `ROSTER`: 20518 → **20522** (+4: 2 Sri Lanka, 2 Nepal). Đơn vị trên bản đồ:
+20527 → **20531** (+4). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111 div, 6/6 section),
+Browser pane đọc đúng "20531 đơn vị được lập bản đồ" / "20522 trong danh mục mở rộng", lọc ô tìm
+kiếm thấy "TRACE Expert City" đúng, `read_network_requests` xác nhận lỗi 403 console là rớt lại từ
+lần điều hướng kiểm NABIC trước đó (không liên quan trang Atlas — mẫu lặp lại giống checkpoint 84).
+Commit `4c11ed3`, `git push origin main`.
+
+**Còn thiếu ~9478.** **Việc mở cho lượt sau:** (1) tổng kết phiên 2026-09-14→15: checkpoint 75-85
+(11 checkpoint liên tiếp không dừng theo yêu cầu sếp), ROSTER 20434→20522 (+88) — đã rà Indonesia
+(vá)/Séc/UAE/Vùng Vịnh/Baltic/Tây Balkan/Trung Á/Mông Cổ/Nam Phi/Trung Mỹ/Nam Á; (2) tỷ lệ giữ lại
+đang giảm dần qua các checkpoint gần đây (nhiều ca trùng ROSTER/domain hỏng hơn) — dấu hiệu các
+nguồn "dễ" đã cạn dần, phiên sau nên cân nhắc đổi hẳn chiến lược (vd quay lại các nguồn lớn còn
+gate như InBIA, hoặc thử kỹ thuật hoàn toàn khác thay vì tiếp tục domino "soi bảng đếm theo quốc
+gia + WebSearch từng tổ chức").
+
+---
+**Lần trước:** 2026-09-15 (checkpoint 84 — **khai thác tiếp CENPROMYPE: mỗi nước Trung Mỹ có PDF
 "ecosistema" riêng dài hơn hẳn tờ infographic dùng ở checkpoint 83.**
 
 Tìm ra pattern URL `Fichas-<Tên_nước>.pdf` trên `centrorecursos.cenpromype.org/media/documentos/`
