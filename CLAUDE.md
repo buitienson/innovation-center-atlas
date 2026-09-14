@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20434 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20435 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -307,7 +307,72 @@ mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-13 (checkpoint 74 — **Indonesia: AIBI (Asosiasi Inkubator Bisnis Indonesia,
+**Lần cuối:** 2026-09-14 (checkpoint 75 — **vá nhỏ + 4 nguồn quốc gia mới thử ĐỀU LOẠI, ghi lại
+để khỏi lặp công.**
+
+**Vá nhỏ (+1):** trong 5 ứng viên checkpoint 74 loại vì lỗi SSL, kiểm lại bằng `urllib` bỏ qua xác
+minh chứng chỉ (`ssl.CERT_NONE`) + đọc nội dung thật (không chỉ tin trạng thái kết nối) phát hiện
+`bicube.stialanbandung.ac.id` (BICUBE, Politeknik STIA LAN Bandung) THẬT SỰ sống, `<title>` đúng
+tên tổ chức, nội dung đầy đủ (>11000 ký tự) — chỉ là chứng chỉ tự ký/không tin cậy, không phải
+domain chết. **Giữ 1, loại lại 4 ca còn lại sau khi đọc nội dung xác nhận:** `sbsinkubator.
+unisbank.ac.id` → 404 thật (trang đã gỡ); `balitbangnovdasumsel.com` → 500 lỗi server; `lpbi.unair.
+ac.id/inkubator` → trang "Request Rejected" (WAF chặn, không phải nội dung thật); `inwinov.brida.
+jatengprov.go.id` → "Dalam Pemeliharaan" (đang bảo trì thật, CHƯA chắc chết hẳn — đáng thử lại lượt
+sau). **Bài học kỹ thuật:** lỗi SSL (tự ký/hết hạn/hostname-mismatch) không tự động đồng nghĩa
+"không tin cậy được" như checkpoint 74 từng thận trọng — đọc THẲNG nội dung trang (title + độ dài
+văn bản thật) sau khi bỏ qua xác minh chứng chỉ vẫn phân biệt được thật/giả, tương tự cách ISBA
+(checkpoint 73) từng làm nhưng khắt khe hơn: chỉ giữ khi nội dung cụ thể, đúng tên tổ chức, không
+phải trang lỗi/chặn.
+
+**4 nguồn "hiệp hội TBI quốc gia" mới thử cho các nước còn lại trong danh sách "việc mở" checkpoint
+73 — TẤT CẢ ĐỀU LOẠI, không phải vì thiếu sót tìm kiếm mà vì hạ tầng nguồn thật sự hỏng/không có:**
+
+1. **Nigeria — `nigeriantechhubs.com`** ("largest directory of Technology Hubs in Nigeria", cấu
+   trúc từng hub có trang riêng kèm URL/địa chỉ thật, vd `DS-iHub` → `dsihub.org.ng` xác nhận đúng
+   qua `WebFetch`) — **TÌM RA CẤU TRÚC ĐÚNG NHƯNG BACKEND CHẾT.** Site là Nuxt SPA, dữ liệu tải qua
+   API riêng `admins.nigeriantechhubs.com` — kiểm qua Browser pane thật (đọc console) bắt được lỗi
+   CORS lộ đúng URL API, gọi thẳng bằng `curl` trả **HTTP 521 "Web Server Is Down"** (Cloudflare
+   xác nhận origin chết) — tức trang vỏ (frontend) vẫn còn nhưng dữ liệu thật đã ngừng phục vụ,
+   chỉ còn đúng 6 hub mẫu cứng trong phần "Top Hubs" ở trang chủ (không đáng 1 checkpoint riêng).
+   **Đừng thử lại trừ khi backend hồi phục** (kiểm nhanh bằng `curl admins.nigeriantechhubs.com/
+   api/states` trước khi đầu tư lại).
+2. **Mexico — TecNM (Tecnológico Nacional de México, ~200+ viện thành viên, mỗi viện có đơn vị
+   ươm tạo riêng) — trang danh mục trung tâm CŨ (`dgest.gob.mx/vinculacion/incubadoras-de-
+   empresas`, `sitio.tecnm.mx/...`) đã NGỪNG TỒN TẠI** (`sitio.tecnm.mx` không còn phân giải DNS
+   — xác nhận cả `host`/`curl` lẫn `WebFetch`). Site chính `tecnm.mx` mới đã tái cấu trúc, không
+   còn mục "Vinculación" liệt kê trung tâm ươm tạo tập trung — muốn khai thác phải vào tay từng
+   viện riêng lẻ (200+ viện, chi phí quá cao so với lợi ích chưa rõ) — **LOẠI, không đáng làm trừ
+   khi có cách liệt kê tập trung khác**.
+3. **Nam Phi — SARIMA (Southern African Research and Innovation Management Association,
+   `sarima.co.za`) — xác nhận KHÔNG có trang danh bạ hội viên công khai** (site có bảo vệ Sucuri
+   CloudProxy JS-challenge, Browser pane thật vượt qua được sau ~8s nhưng menu chỉ có "Join/Renew/
+   Membership fees/Membership types" — không có mục "Members"/"Directory" nào, đúng như nghi ngờ ở
+   checkpoint 73). SARIMA là hội viên CÁ NHÂN (practitioners), không phải hội viên TỔ CHỨC như ISBA/
+   AIBI/KCA — bản chất khác hẳn, không có danh sách tổ chức để khai thác. **LOẠI HẲN.**
+4. **Trung Quốc — tìm nhầm `chinacace.org` (nghe giống "china incubator association" qua từ khoá
+   tiếng Trung trùng lặp) — hoá ra là 中国循环经济协会 (China Circular Economy Association), hội
+   viên là các tập đoàn lớn (Huawei, Tesla, Tencent, Baowu Steel...), không phải vườn ươm/trung tâm
+   ĐMST, không có URL từng hội viên. **LOẠI, không liên quan** — CADZ (checkpoint 73/74 note) vẫn
+   là kết luận cuối cho hướng "hiệp hội TBI Trung Quốc": chưa tìm ra nguồn khả thi nào.
+
+**Kết quả merge:** `ROSTER`: 20434 → **20435** (+1). Đơn vị trên bản đồ: 20443 → **20444** (+1).
+Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111 div, 6/6 section), Browser pane (khởi
+động thủ công `python3 -m http.server 8791` từ `InnovationAdvisory`, mở bằng `url` trực tiếp —
+`preview_start` theo tên "static-server" vẫn không nhận dù đã sửa `.claude/launch.json`, xem ghi
+chú checkpoint 74) đọc đúng "20444 đơn vị được lập bản đồ" / "20435 trong danh mục mở rộng", console
+sạch, tìm thấy "BICUBE STIA LAN" trong bảng. Commit `b66625b`, `git push origin main`.
+
+**Còn thiếu ~9565.** **Việc mở cho lượt sau:** (1) `inwinov.brida.jatengprov.go.id` đang bảo trì
+thật (không phải chết) — thử lại sau vài tuần xem đã phục hồi chưa; (2) `nigeriantechhubs.com` kiểm
+lại backend API trước khi bỏ hẳn — có thể chỉ là sự cố tạm thời của 1 site nhỏ; (3) 63 tổ chức AIBI
+còn lại chưa tìm ra URL + 4 ca SSL/lỗi-server loại hẳn ở trên — không đáng thử lại; (4) 4 nước lớn
+(Nigeria/Mexico/Nam Phi/Trung Quốc) coi như đã rà hết hướng "hiệp hội TBI quốc gia" hiện có — cần
+đổi hẳn kỹ thuật tìm kiếm (vd tìm theo tên chương trình chính phủ cụ thể thay vì hiệp hội ngành,
+hoặc quay lại các nguồn lớn cũ còn gate như InBIA) cho lượt sau, KHÔNG lặp lại đúng truy vấn
+"national incubator association directory" đã dùng ở đây.
+
+---
+**Lần trước:** 2026-09-13 (checkpoint 74 — **Indonesia: AIBI (Asosiasi Inkubator Bisnis Indonesia,
 `aibinetwork.com/anggota-aibi/`) — lead để lại mở từ cuối checkpoint 73, hoàn tất trong phiên này.**
 Domain gốc hiện đã CHẾT — `aibinetwork.com` 301-redirect sang `alpha4dgo.com`, một domain rao bán
 hoàn toàn không liên quan (đúng mẫu cross-domain-redirect-sang-domain-lạ phải loại, xem
