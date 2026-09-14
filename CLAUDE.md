@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20483 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20491 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -307,7 +307,42 @@ mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-14 (checkpoint 78 — **3 nước Baltic (Lithuania/Latvia/Estonia) từ việc mở
+**Lần cuối:** 2026-09-14 (checkpoint 79 — **Tây Balkan (Slovenia/Croatia/Serbia) từ việc mở
+checkpoint 78, cùng kỹ thuật "research từng park tên tuổi qua WebSearch" vì không có hiệp hội quốc
+gia tập trung ở cả 3 nước.**
+
+Thử `spica-directory.net` (nguồn có vẻ hứa hẹn — "science park & innovation center associations
+directory", URL dạng `/centers/?c=<mã nước>` phủ nhiều nước kể cả Ukraine/Đan Mạch/Áo) nhưng **toàn
+site trả `503 Service Unavailable` suốt phiên này** — ghi lại để thử lại sau, không phải do tìm sai
+cách. Quay về research tên riêng từng nước như Baltic.
+
+**12 ứng viên tìm được → 3 trùng ROSTER sẵn có (tên+URL khớp chính xác):** Technology Park
+Ljubljana, ZICER (Zagreb Innovation Centre), BITF (Business Technology Incubator Belgrade) — cả 3
+xác nhận công cụ dedupe hoạt động đúng cho tên rõ ràng. **1 ca loại vì lỗi TLS sâu, không phải lỗi
+chứng chỉnh thông thường:** Styrian Technology Park (`stp.si`) — `SSLV3_ALERT_HANDSHAKE_FAILURE`
+ngay cả khi hạ `SECLEVEL` xuống 1 (chấp nhận cipher yếu hơn), khác hẳn các ca "tự ký/hết hạn chứng
+chỉ" trước đây (những ca đó vẫn bắt tay TLS được, chỉ chain xác thực sai) — máy chủ này từ chối bắt
+tay hoàn toàn, có thể dùng bộ mã hoá cổ/hỏng thật sự. **Giữ 8:** ABC Accelerator + SAŠA Incubator
+(Slovenia); Technology Park Split + STEP RI Rijeka + PISMO Novska (Croatia); Science and Technology
+Park Belgrade/Niš/Novi Sad (Serbia).
+
+**Kết quả merge:** `ROSTER`: 20483 → **20491** (+8: 2 Slovenia, 3 Croatia, 3 Serbia). Đơn vị trên
+bản đồ: 20492 → **20500** (+8, tròn mốc 20500). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng
+(111/111 div, 6/6 section), Browser pane đọc đúng "20500 đơn vị được lập bản đồ" / "20491 trong
+danh mục mở rộng", lọc ô tìm kiếm thấy "STEP RI Science and Technology Park" đúng, console sạch.
+Commit `876755c`, `git push origin main`.
+
+**Còn thiếu ~9509.** **Việc mở cho lượt sau:** (1) `spica-directory.net` — thử lại xem đã phục hồi
+chưa, nếu sống thì đáng khai thác nhiều nước cùng lúc (đúng dạng nguồn hiệu quả cao như SVTP/
+GulfCoworking); (2) Styrian Technology Park (`stp.si`) — thử lại xem lỗi TLS đã được vá chưa; (3)
+Bắc Macedonia/Albania/Bosnia and Herzegovina/Montenegro — chưa kiểm số ROSTER, khả năng cũng mỏng
+như Serbia/Croatia trước khi rà, cùng khu vực Tây Balkan nên tiện rà tiếp nếu quay lại vùng này;
+(4) tiếp tục kỹ thuật "soi bảng đếm ROSTER theo quốc gia" cho khu vực chưa rà — Trung Á (Kazakhstan
+46/Uzbekistan 111 khá ổn nhưng Kyrgyzstan/Tajikistan/Turkmenistan chưa kiểm số) hoặc Nam Á
+(Bangladesh 111/Pakistan 63/Sri Lanka 36/Nepal 51).
+
+---
+**Lần trước:** 2026-09-14 (checkpoint 78 — **3 nước Baltic (Lithuania/Latvia/Estonia) từ việc mở
 checkpoint 77 — thử IASP global directory trước, tốn công dựng UI filter nhưng NĂNG SUẤT THẤP nên
 bỏ, quay về research từng nước bằng WebSearch như thường lệ.**
 
