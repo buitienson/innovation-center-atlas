@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20500 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20503 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -307,7 +307,33 @@ mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-14 (checkpoint 81 — **Mông Cổ (11) + Trung Á mỏng (Kyrgyzstan 20/Tajikistan
+**Lần cuối:** 2026-09-15 (checkpoint 82 — **Nam Phi (Zimbabwe/Namibia/Botswana) — vòng đầu tiên
+phiên này thử châu Phi, tỷ lệ giữ lại THẤP vì trùng ROSTER sẵn có.**
+
+6 ứng viên tìm được → **2 trùng tên chính xác ngay** (Basecamp Business Incubator, Botswana Digital
+& Innovation Hub — Botswana đóng góp 0 mục mới); 1 chết thật (Namibia Innovation !Hub, domain trả
+404); giữ 3: Tech Hub Harare + ZCHPC Incubation Hub (Zimbabwe), Namibia Business Innovation
+Institute (NBII, `nust.na` — trùng domain gốc với "INCEIT" đã có nhưng khác đơn vị cụ thể, giữ theo
+đúng nguyên tắc checkpoint 76). **Nhận xét:** châu Phi có vẻ đã được rà khá kỹ ở các checkpoint rất
+sớm (1-50) nên tỷ lệ trùng cao hơn khu vực Đông Âu/Trung Á vừa rà — không phải dấu hiệu xấu, chỉ là
+đã bão hoà hơn.
+
+**Kết quả merge:** `ROSTER`: 20500 → **20503** (+3: 2 Zimbabwe, 1 Namibia). Đơn vị trên bản đồ:
+20509 → **20512** (+3). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111 div, 6/6 section),
+Browser pane đọc đúng "20512 đơn vị được lập bản đồ" / "20503 trong danh mục mở rộng", lọc ô tìm
+kiếm thấy "ZCHPC Incubation Hub" đúng, console sạch. Commit `4585791`, `git push origin main`.
+
+**Còn thiếu ~9497.** **Việc mở cho lượt sau:** (1) châu Phi có vẻ bão hoà hơn dự kiến — nếu quay
+lại, ưu tiên nước THỰC SỰ mỏng (Congo-Brazzaville 3, Gabon 7) thay vì nước "mỏng vừa" như Botswana/
+Namibia (dễ trùng); (2) Mỹ Latinh/Caribbean CHƯA thử kỹ thuật này trong phiên — ứng viên: Panama
+(12)/Jamaica (4)/Nicaragua (9)/El Salvador (12)/Trinidad and Tobago (9), đáng thử tiếp; (3) tổng kết
+phiên 2026-09-14→15: checkpoint 75-82 (8 checkpoint liên tiếp không dừng theo yêu cầu), ROSTER
+20434→20503 (+69), đã rà qua Indonesia(vá)/Séc/UAE/Vùng Vịnh/Baltic/Tây Balkan/Trung Á/Mông Cổ/
+Nam Phi — phạm vi địa lý đã trải khá rộng, nên cân nhắc đổi hẳn kỹ thuật (không chỉ đổi nước) nếu
+tỷ lệ giữ lại tiếp tục giảm.
+
+---
+**Lần trước:** 2026-09-14 (checkpoint 81 — **Mông Cổ (11) + Trung Á mỏng (Kyrgyzstan 20/Tajikistan
 18) — vòng nhỏ, gộp 3 nước vào 1 checkpoint vì mỗi nước chỉ ra 1 mục thật sau lọc.**
 
 Mông Cổ: URL tìm được ban đầu (`eng.itpark.mn`) KHÔNG phân giải DNS, nhưng dò domain trần
