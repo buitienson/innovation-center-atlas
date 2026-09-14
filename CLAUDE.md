@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20511 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20518 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -307,7 +307,45 @@ mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-15 (checkpoint 83 — **Trung Mỹ + Caribbean (Panama/Jamaica/Nicaragua/El
+**Lần cuối:** 2026-09-15 (checkpoint 84 — **khai thác tiếp CENPROMYPE: mỗi nước Trung Mỹ có PDF
+"ecosistema" riêng dài hơn hẳn tờ infographic dùng ở checkpoint 83.**
+
+Tìm ra pattern URL `Fichas-<Tên_nước>.pdf` trên `centrorecursos.cenpromype.org/media/documentos/`
+(dò qua `read_network_requests` khi bấm vào từng trang nước) — tải được 7 PDF: Guatemala/Honduras/
+Belice/El Salvador/Costa Rica/Panama/República Dominicana (Nicaragua KHÔNG có PDF riêng, trang chỉ
+nhúng lại đúng file infographic vùng đã dùng trước). Mỗi PDF là 1 trang RẤT DÀI (poster cuộn, cao
+tới 4320pt so với khổ thường 792pt), liệt kê 5-10 tổ chức/nước theo nhóm (Universidades/
+Aceleradoras/Instituciones gubernamentales...).
+
+**Khác tờ infographic trước — URL phần lớn chỉ nằm trong ảnh QR code, KHÔNG trích được bằng
+`pdftotext`** (trừ Belice, tình cờ có text ẩn phía sau QR) — phải quay lại kiểu research từng tổ
+chức bằng WebSearch như đợt AIBI, không tận dụng được toàn bộ danh sách tự động.
+
+**2 ca trùng ROSTER phát hiện qua `base_domain()`** (đúng bài học checkpoint 80 nhắc lại):
+PROINNOVA (UCR) trùng URL CHÍNH XÁC với entry đã có; CATI-DIGI (USAC) trùng domain với entry
+"Dirección General de Investigación ... CATI-DIGI" đã có. **1 ca phân biệt rõ "bị chặn cứng" khác
+"đang xác minh":** CONAMYPE (El Salvador) — Cloudflare trả thẳng trang "Sorry, you have been
+blocked" (không phải "Just a moment..." đang xác minh) — LOẠI vì chưa từng thấy nội dung thật, khác
+hẳn các ca SENACYT Guatemala/Ciudad del Saber vừa giữ (đúng "Just a moment" rồi qua được).
+
+**Kết quả merge:** `ROSTER`: 20511 → **20518** (+7: 2 Guatemala, 2 Costa Rica, 3 Panama). Đơn vị
+trên bản đồ: 20520 → **20527** (+7). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111 div,
+6/6 section), Browser pane đọc đúng "20527 đơn vị được lập bản đồ" / "20518 trong danh mục mở
+rộng", lọc ô tìm kiếm thấy "CAPATEC" đúng URL, console có 1 lỗi 403 nhưng xác nhận qua
+`read_network_requests` là lỗi RỚT LẠI từ lần điều hướng trước đó (kiểm CAMTIC/CONAMYPE), không
+phải từ chính trang Atlas — không liên quan. Commit `97dff7f`, `git push origin main`.
+
+**Còn thiếu ~9482.** **Việc mở cho lượt sau:** (1) IHCIETI/ICTI-UFG/CAMTIC — thử lại từ mạng khác,
+cả 3 đều thất bại trên MỌI kênh phiên này (DNS SERVFAIL/NXDOMAIN/ECONNREFUSED), có thể là sự cố
+tạm thời; (2) CENPROMYPE còn PDF Honduras/El Salvador/Belice/Rep. Dominicana đã đọc nhưng CHƯA
+research URL cho phần lớn tổ chức liệt kê (chỉ lấy được vài mục "rõ ràng nhất" mỗi nước) — nếu
+quay lại, còn nhiều mục tiềm năng (Fusades, ESEN, CENTA ở El Salvador; INTECO, PROCOMER ở Costa
+Rica...) nhưng cần cân nhắc kỹ phạm vi ROSTER trước (nhiều mục là "cơ quan chính phủ nói chung",
+không phải trung tâm ĐMST cụ thể); (3) tổng kết phiên 2026-09-14→15: checkpoint 75-84 (10
+checkpoint liên tiếp không dừng), ROSTER 20434→20518 (+84).
+
+---
+**Lần trước:** 2026-09-15 (checkpoint 83 — **Trung Mỹ + Caribbean (Panama/Jamaica/Nicaragua/El
 Salvador/Trinidad and Tobago/Belize/Dominican Republic) — theo đúng việc mở checkpoint 82.**
 
 **Tìm ra nguồn nhiều nước cùng lúc:** CENPROMYPE (cơ quan hỗ trợ MSME khu vực Trung Mỹ thuộc SICA)
