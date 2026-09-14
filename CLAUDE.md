@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20497 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20500 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -307,7 +307,40 @@ mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-14 (checkpoint 80 — **3 nước mỏng nhất Balkan còn lại: Bosnia and Herzegovina
+**Lần cuối:** 2026-09-14 (checkpoint 81 — **Mông Cổ (11) + Trung Á mỏng (Kyrgyzstan 20/Tajikistan
+18) — vòng nhỏ, gộp 3 nước vào 1 checkpoint vì mỗi nước chỉ ra 1 mục thật sau lọc.**
+
+Mông Cổ: URL tìm được ban đầu (`eng.itpark.mn`) KHÔNG phân giải DNS, nhưng dò domain trần
+(`itpark.mn`) sống, redirect 308 sang `www.itpark.mn` với nội dung tiếng Mông Cổ thật xác nhận
+đúng "Мэдээллийн Технологийн Үндэсний Парк" (National IT Park) — **bài học lặp lại: domain con/
+tiền tố "eng." hay biến mất trước, domain trần vẫn còn — luôn thử domain trần khi biến thể có tiền
+tố chết**. Startup Mongolia (`startupmongolia.com`) phân giải DNS nhưng từ chối kết nối mọi kênh —
+chết thật. Science Park of Mongolia và Ulaanbaatar Yurt Accelerator không tìm ra domain riêng nào.
+
+Kyrgyzstan: High Technology Park (`htp.kg`) sống ngay. "Technopark IT Hub" (cơ sở mới hơn ở Bishkek)
+không tìm ra domain riêng, có rủi ro trùng với HTP nên bỏ qua thay vì đoán.
+
+Tajikistan: IT Park Dushanbe (`it-park.tj`) sống ngay. State Business Incubator of Tajikistan
+(`bizincubator.tj`) trả `401 Unauthorized` ngay trang chủ — bất thường cho site chính phủ công khai,
+giữ lại KHÔNG merge vì chưa xác nhận được nội dung thật (khác các ca 403/bot-challenge đã chấp nhận
+trước — 401 nghĩa là máy chủ đòi xác thực, không phải chặn bot).
+
+**Kết quả merge:** `ROSTER`: 20497 → **20500** (+3, tròn mốc 20500: 1 Mông Cổ, 1 Kyrgyzstan, 1
+Tajikistan). Đơn vị trên bản đồ: 20506 → **20509** (+3). Kiểm sau ghi: `node --check` sạch, thẻ
+cân bằng (111/111 div, 6/6 section), Browser pane đọc đúng "20509 đơn vị được lập bản đồ" / "20500
+trong danh mục mở rộng", lọc ô tìm kiếm thấy "IT Park Dushanbe" đúng, console sạch. Commit
+`21a5fd2`, `git push origin main`.
+
+**Còn thiếu ~9500.** **Việc mở cho lượt sau:** (1) Turkmenistan (6 mục, mỏng nhất Trung Á) —
+CHƯA thử lượt này, các checkpoint cũ đã ghi nhận Turkmenistan hay bị chặn mạng, cần kiểm tay kỹ
+qua WebFetch/Browser pane trước khi kết luận; (2) `bizincubator.tj` — thử lại xem lỗi 401 có phải
+tạm thời; (3) sau khi rà khá rộng Đông Âu/Balkan/Trung Á/Vùng Vịnh/Baltic trong phiên này (checkpoint
+75-81, tổng +66), nên cân nhắc quay lại kỹ thuật "hiệp hội TBI quốc gia" cho châu Phi/Mỹ Latinh —
+2 khu vực chưa được thử kỹ thuật "soi bảng đếm" trong phiên này dù vẫn còn nhiều nước mỏng
+(Zimbabwe 15, Venezuela 31, Ethiopia 32...).
+
+---
+**Lần trước:** 2026-09-14 (checkpoint 80 — **3 nước mỏng nhất Balkan còn lại: Bosnia and Herzegovina
 (chỉ 1 mục!), Montenegro (3 mục!), North Macedonia (16 mục) — soi bảng đếm phát hiện ra, mỏng hơn
 hẳn Serbia/Croatia/Slovenia vừa rà ở checkpoint 79.**
 
