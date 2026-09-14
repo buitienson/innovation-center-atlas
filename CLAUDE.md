@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20526 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20527 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -307,7 +307,33 @@ mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-15 (checkpoint 86 — **Brunei + Bhutan — 2 nước Đông Nam Á/Nam Á mỏng nhất
+**Lần cuối:** 2026-09-15 (checkpoint 87 — **Thái Bình Dương — xác nhận đúng giả thuyết cuối
+checkpoint 86: hạ tầng ĐMST thật sự khan hiếm ở đây, không phải do research chưa kỹ.**
+
+Kiểm Fiji/Papua New Guinea + toàn khu vực: "Pacific Innovation Hub Programme" hoá ra là cơ chế TÀI
+TRỢ của chính phủ New Zealand (mfat.govt.nz), không phải một tổ chức có trụ sở/website riêng —
+không hợp lệ cho ROSTER; "Kumul Game Changers" (PNG) không tìm ra domain nào (kết quả tìm kiếm lẫn
+với đội tuyển rugby PNG cùng tên "Kumuls"). **Chỉ 1 ứng viên thật sự vững:** Fiji Innovation Hub.
+
+**Kết quả merge:** `ROSTER`: 20526 → **20527** (+1: Fiji). Đơn vị trên bản đồ: 20535 → **20536**
+(+1). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111 div, 6/6 section), Browser pane đọc
+đúng "20536 đơn vị được lập bản đồ" / "20527 trong danh mục mở rộng", lọc ô tìm kiếm thấy "Fiji
+Innovation Hub" đúng, console sạch (403 còn lại xác nhận không liên quan qua network log). Commit
+`817a8d3`, `git push origin main`.
+
+**Còn thiếu ~9473.** **Việc mở cho lượt sau:** (1) **KẾT LUẬN cho khu vực Thái Bình Dương: đừng
+đầu tư thêm công riêng lẻ cho Timor-Leste/Papua New Guinea/Vanuatu/Solomon Is./Tonga/Samoa —
+checkpoint 87 đã xác nhận hạ tầng thật sự quá mỏng, không phải do tìm chưa đủ kỹ** — nếu quay lại,
+nên thử cách khác hẳn (vd tra cứu qua ADB/World Bank project database thay vì WebSearch thường);
+(2) **TỔNG KẾT TOÀN PHIÊN 2026-09-14→15: 13 checkpoint liên tiếp** (75-87) theo đúng yêu cầu "làm
+tới khi tôi bảo dừng" — ROSTER **20434 → 20527 (+93)**, đã rà qua gần như tất cả khu vực mỏng dễ
+tiếp cận (Đông Âu/Baltic/Balkan/Vùng Vịnh/Trung Á/Mông Cổ/Nam Phi/Trung Mỹ/Caribbean/Nam Á/Đông Nam
+Á/Thái Bình Dương) — **các nước/khu vực còn mỏng thật sự bây giờ đều thuộc loại khó khai thác hơn
+hẳn** (đảo quốc nhỏ, kinh tế kém phát triển, hoặc đã bão hoà từ checkpoint 1-50) — phiên sau nên
+cân nhắc nghiêm túc đổi HẲN chiến lược thay vì tiếp tục domino quốc gia nhỏ.
+
+---
+**Lần trước:** 2026-09-15 (checkpoint 86 — **Brunei + Bhutan — 2 nước Đông Nam Á/Nam Á mỏng nhất
 còn sót (5 và 9 mục). Tìm hiệp hội ASEAN-wide trước, không có dữ liệu cấu trúc, quay về research
 từng nước.** Lào cũng thử nhưng hệ sinh thái còn quá non, không tìm ra tổ chức nào đáng thêm (chỉ
 có mô tả chung "đang manh nha hình thành"). Trang "Entrepreneurship Innovation Centre" của Bộ Giáo
