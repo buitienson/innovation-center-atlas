@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20522 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20526 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -307,7 +307,33 @@ mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-15 (checkpoint 85 — **Nam Á (Sri Lanka/Nepal) — tìm hiệp hội khu vực SAARC
+**Lần cuối:** 2026-09-15 (checkpoint 86 — **Brunei + Bhutan — 2 nước Đông Nam Á/Nam Á mỏng nhất
+còn sót (5 và 9 mục). Tìm hiệp hội ASEAN-wide trước, không có dữ liệu cấu trúc, quay về research
+từng nước.** Lào cũng thử nhưng hệ sinh thái còn quá non, không tìm ra tổ chức nào đáng thêm (chỉ
+có mô tả chung "đang manh nha hình thành"). Trang "Entrepreneurship Innovation Centre" của Bộ Giáo
+dục Brunei (`moe.gov.bn`) chết (404).
+
+**Giữ 4:** iCentre + Brunei Innovation Lab (Brunei, cùng khu Anggerek Desa Technology Park);
+Thimphu TechPark + Bhutan Innovation and Technology Centre — BITC (Bhutan, giữ cả 2 dù chung domain
+`thimphutechpark.bt` vì BITC là chương trình ươm tạo cụ thể bên trong toà nhà TechPark, khác đơn vị
+"bất động sản/khu công nghệ" chung).
+
+**Kết quả merge:** `ROSTER`: 20522 → **20526** (+4: 2 Brunei, 2 Bhutan). Đơn vị trên bản đồ:
+20531 → **20535** (+4). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111 div, 6/6 section),
+Browser pane đọc đúng "20535 đơn vị được lập bản đồ" / "20526 trong danh mục mở rộng", lọc ô tìm
+kiếm thấy "Thimphu TechPark" đúng, console 403 rớt lại từ lần kiểm EIC trước đó (xác nhận qua
+`read_network_requests`, không liên quan trang Atlas). Commit `5a66777`, `git push origin main`.
+
+**Còn thiếu ~9474.** **Việc mở cho lượt sau:** (1) tổng kết phiên 2026-09-14→15: **12 checkpoint
+liên tiếp** (75-86) theo đúng yêu cầu "làm tới khi tôi bảo dừng", ROSTER 20434→20526 (+92); (2)
+Timor-Leste (2)/Papua New Guinea (2)/Fiji (3)/Vanuatu (1)/Solomon Is. (0) — cực mỏng, thuộc Thái
+Bình Dương, CHƯA thử — khả năng cao ít tổ chức thật sự tồn tại (đảo quốc nhỏ, kinh tế non), nên cân
+nhắc kỹ trước khi đầu tư nhiều công; (3) tỷ lệ giữ lại tiếp tục ở mức khiêm tốn (4/vòng gần đây) —
+các nước còn "mỏng thật" ngày càng nhỏ/khó (đảo quốc, kinh tế kém phát triển) nên sản lượng mỗi
+vòng giảm dần là điều tự nhiên, không phải dấu hiệu làm sai.
+
+---
+**Lần trước:** 2026-09-15 (checkpoint 85 — **Nam Á (Sri Lanka/Nepal) — tìm hiệp hội khu vực SAARC
 trước, KHÔNG có, quay về research từng nước như thường lệ.**
 
 2 ca trùng ROSTER: Sri Lanka Inventors Commission (trang con `/incubation-centers/` chính là tổ
