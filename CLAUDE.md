@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20435 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20467 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -307,7 +307,56 @@ mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-14 (checkpoint 75 — **vá nhỏ + 4 nguồn quốc gia mới thử ĐỀU LOẠI, ghi lại
+**Lần cuối:** 2026-09-14 (checkpoint 76 — **đổi hẳn kỹ thuật chọn nước theo đúng gợi ý cuối
+checkpoint 75: soi bảng đếm ROSTER theo quốc gia tìm nước MỎNG BẤT THƯỜNG so với nước cùng tầm,
+thay vì lặp lại truy vấn "national incubator association directory" đã cạn.**
+
+**Séc (Czechia) — mỏng bất thường: chỉ 9 mục, toàn bộ là chương trình EDIH (digital innovation
+hub) hiện đại, KHÔNG có nhóm khoa học/công nghệ park truyền thống nào, trong khi Ba Lan 365/Romania
+129/Hy Lạp 115/Bồ Đào Nha 161.** Tìm ra SVTP (Společnost vědeckotechnických parků ČR — hiệp hội
+khoa học/công nghệ park quốc gia, hoạt động từ 1990) có "eCatalog" công khai tại `svtp.cz/en/
+catalog/` — 27 mục kèm trang chi tiết riêng (`?park=<id>`), mỗi trang có URL/địa chỉ tổ chức thật.
+Kiểm từng trang qua `WebFetch` (không phải cào hàng loạt vì chỉ 27 trang, đọc tay chính xác hơn) →
+`check_url()` xác nhận 26/27 sống ngay lần đầu (tỷ lệ cao bất thường so với các đợt Indonesia/Ấn Độ
+trước — domain `.cz` viện nghiên cứu/công ty nói chung ổn định hơn hẳn `.ac.id` nhỏ lẻ, không bị
+Cloudflare bot-challenge chặn). 1 ca loại: Agritec Šumperk (`agritec.cz`) trả `HTTP 509 Bandwidth
+Limit Exceeded` (giới hạn băng thông hosting, KHÔNG phải domain chết, nhưng chưa đọc được nội dung
+thật để xác nhận — giữ thận trọng, chưa merge, đáng thử lại).
+
+**UAE — cũng mỏng (19 mục) nhưng thiếu đúng loại tổ chức trọng yếu nhất: các quỹ/trung tâm khởi
+nghiệp cấp liên bang/tiểu vương quốc nổi tiếng (Sheraa, MBRIF...) lại chưa có mục nào**, dù ROSTER
+đã có nhiều đơn vị nhỏ lẻ (FabLab, Tashkeel...). Nguồn: trang "Entrepreneurship Support Entities"
+của Bộ Kinh tế & Du lịch UAE (`moet.gov.ae/en/entrepreneurship-support-entities`) — 8 mục, mỗi mục
+có trang riêng dẫn URL tổ chức thật (khác domain `moet.gov.ae`). Giữ 6/8: Khalifa Fund, RAK SME,
+Ajman ED (Taziz Programme), Sheraa, MBRIF (2 ca sau đọc nội dung bỏ qua xác minh chứng chỉ SSL —
+cùng kỹ thuật vá ở checkpoint 75); **"Dubai SME" phát hiện đã REBRAND** — domain cũ `sme.ae`
+redirect sang `dubaifoundershq.com` ("Dubai Founders HQ"), xác nhận đúng cùng tổ chức/cùng nước qua
+Browser pane thật (không phải domain lạ bị rao bán) nên đổi tên+URL theo bản mới. **Loại 2 ca:**
+RUWAD (`ruwad.ae`) — `ECONNREFUSED` xác nhận cả `WebFetch` lẫn máy cục bộ, domain chết thật; Emirates
+Development Bank — ngân hàng cho vay SME nói chung, KHÔNG phải vườn ươm/tổ chức ĐMST, ngoài phạm vi
+ROSTER dù có trong danh sách 8 mục gốc.
+
+**Kết quả merge:** `ROSTER`: 20435 → **20467** (+32: 26 Séc + 6 UAE). Đơn vị trên bản đồ: 20444 →
+**20476** (+32). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111 div, 6/6 section), Browser
+pane (`python3 -m http.server 8791` thủ công như checkpoint 74/75) đọc đúng "20476 đơn vị được lập
+bản đồ" / "20467 trong danh mục mở rộng" / "20467 mục / 20467"; **bài học xác nhận lại đúng câu
+"chỉ hiện 300 dòng đầu" đã ghi ở checkpoint 73/74** — `find()` trên cây accessibility KHÔNG thấy
+"Sheraa"/"BIC Plzeň" cho tới khi gõ thẳng vào ô tìm kiếm bảng để lọc còn vài dòng, mới `find()` thấy
+— nhắc lại: đừng tin `find()` suông là "không có" khi bảng đang hiện dạng rút gọn, phải lọc qua ô
+tìm kiếm trước. Console sạch. Commit `f9d6898`, `git push origin main`.
+
+**Còn thiếu ~9533.** **Việc mở cho lượt sau:** (1) tiếp tục đúng kỹthuật "soi bảng đếm theo quốc gia
+tìm nước mỏng bất thường" — check nhanh bằng script Python (`Counter(r[2] for r in roster)`) trước
+khi chọn nước, đã hiệu quả hơn hẳn "national association directory" lặp lại; ứng viên tiếp theo còn
+để mở: Slovakia/Hungary/Bulgaria (láng giềng Séc, khả năng cũng có hiệp hội park quốc gia tương tự
+SVTP chưa thử), Qatar/Kuwait/Oman (13/10/10 mục, các nước vùng Vịnh còn lại ngoài UAE/Saudi); (2)
+Agritec Šumperk (`agritec.cz`) — thử lại xem hết giới hạn băng thông hosting chưa; (3) `inwinov.
+brida.jatengprov.go.id` (checkpoint 75, đang bảo trì) — thử lại xem đã phục hồi; (4) nếu quay lại
+Indonesia AIBI: 63 tổ chức còn thiếu URL, đa số tên quá chung chung, không đáng thử lại trừ khi đổi
+hẳn kỹ thuật search.
+
+---
+**Lần trước:** 2026-09-14 (checkpoint 75 — **vá nhỏ + 4 nguồn quốc gia mới thử ĐỀU LOẠI, ghi lại
 để khỏi lặp công.**
 
 **Vá nhỏ (+1):** trong 5 ứng viên checkpoint 74 loại vì lỗi SSL, kiểm lại bằng `urllib` bỏ qua xác
