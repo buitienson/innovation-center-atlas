@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20467 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20476 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -307,7 +307,54 @@ mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-14 (checkpoint 76 — **đổi hẳn kỹ thuật chọn nước theo đúng gợi ý cuối
+**Lần cuối:** 2026-09-14 (checkpoint 77 — **tiếp Vùng Vịnh (Qatar/Kuwait/Oman/Bahrain) từ việc mở
+checkpoint 76, đổi cách tiếp cận: dùng MỘT trang tổng hợp bên thứ ba thay vì rà từng nước.**
+
+Tìm ra `gulfcoworking.com/incubators` — thư mục 17 tổ chức hỗ trợ khởi nghiệp trải 6 nước Vùng
+Vịnh (UAE/Saudi/Qatar/Kuwait/Bahrain/Oman), mỗi mục có trang chi tiết riêng dẫn URL tổ chức thật
+(nút "Visit Website") — cùng dạng nguồn hiệu quả như `moet.gov.ae` ở checkpoint 76 nhưng phủ nhiều
+nước cùng lúc, tiết kiệm công rà từng nước riêng lẻ. 2/17 đã có sẵn ROSTER (Hub71, Sheraa — thêm ở
+checkpoint 76), còn 15 ứng viên mới.
+
+**check_url() fail cao (9/14, ~64%) — kiểm chéo từng ca qua WebFetch/Browser pane/DNS/curl độc lập
+mới phân loại đúng, học đúng bài học "509/403/429 không phải domain chết" đã đúc kết trước:**
+- **Giữ 9 ca xác nhận thật:** QSTP, DIC, QDB (Qatar) — cả 3 sống ngay `check_url()`; Tamkeen
+  (Bahrain) sống ngay; DTEC (UAE) sống ngay; **National Fund for SME Development (Kuwait)** — ban
+  đầu `HTTPError` do Sucuri CloudProxy JS-challenge (giống mẫu SARIMA checkpoint 75), Browser pane
+  đợi ~6s vượt qua, xác nhận nội dung thật ("National Fund", đầy đủ menu dịch vụ); **FinTech Hive
+  at DIFC** — ban đầu `HTTPError`/429, Browser pane xác nhận trang "Programmes" thật; **KAUST
+  Entrepreneurship Center** — sống ngay; **Badir Program** — domain `badir.com.sa` GulfCoworking
+  ghi SAI/CHẾT thật (`NXDOMAIN` cả 2 mạng), nhưng dò ra domain ĐÚNG là `badir.sa` (bỏ "com"), xác
+  nhận `<title>Badir</title>` thật — **bài học: đừng bỏ cuộc ngay khi 1 domain biến thể chết, thử
+  vài biến thể gần đúng (bỏ bớt 1 nhãn phụ) trước khi loại hẳn.**
+- **Loại 4 ca domain chết thật, xác nhận `NXDOMAIN`/`ECONNREFUSED` trên ≥2 kênh độc lập:** Wa'ed
+  Ventures (`waed.net`), National Business Centre Oman (`nbc.om`), **Rowad Oman (`rowad.om`) —
+  GulfCoworking vẫn còn liệt kê nhưng domain đã ngừng tồn tại HẲN sau khi họ cào dữ liệu** (khác
+  các ca trước — đây là nguồn thứ 3 vừa xác nhận đúng tên/nước qua trang chi tiết GulfCoworking
+  vừa xác nhận domain đã chết, không phải do research sai).
+- **2 ca "có thể thật nhưng KHÔNG xác nhận được qua bất kỳ kênh nào phiên này" — bỏ qua thay vì
+  đoán:** in5 (UAE, TECOM Group, rất nổi tiếng — DNS phân giải bình thường nhưng port 443 timeout
+  nhất quán qua `curl`/`WebFetch`/Browser pane, giống kiểu chặn mạng có chọn lọc, KHÁC domain chết
+  thật); Monsha'at (cơ quan SME chính phủ Saudi, cũng nổi tiếng — `ECONNREFUSED` cả 3 kênh). **Ghi
+  lại rõ để lượt sau/mạng khác thử lại, KHÔNG merge vì chưa đọc được nội dung thật.**
+
+**Kết quả merge:** `ROSTER`: 20467 → **20476** (+9: 3 Qatar, 2 UAE, 2 Saudi Arabia, 1 Kuwait, 1
+Bahrain). Đơn vị trên bản đồ: 20476 → **20485** (+9). Kiểm sau ghi: `node --check` sạch, thẻ cân
+bằng (111/111 div, 6/6 section), Browser pane đọc đúng "20485 đơn vị được lập bản đồ" / "20476
+trong danh mục mở rộng", lọc qua ô tìm kiếm bảng thấy "Badir Program..." đúng URL `badir.sa`,
+console sạch. Commit `aae569c`, `git push origin main`.
+
+**Còn thiếu ~9524.** **Việc mở cho lượt sau:** (1) in5/Monsha'at — thử lại từ mạng khác (WebFetch
+tuy trên hạ tầng Anthropic nhưng vẫn timeout/refuse giống mạng cục bộ — có thể 2 site này chặn IP
+theo dải/ASN cụ thể chứ không phải theo quốc gia); (2) `gulfcoworking.com` còn nhiều trang con khác
+(coworking spaces, tổng hợp theo ngành) chưa khai thác — nếu quay lại Vùng Vịnh; (3) sau khi rà 5/6
+nước Vùng Vịnh (còn Saudi Arabia đã tương đối dày 63+2 mục, ổn), nên quay lại kỹ thuật "soi bảng
+đếm ROSTER theo quốc gia" cho khu vực khác — ứng viên tiếp theo: Baltic (Lithuania 45/Latvia
+35/Estonia 38, khá mỏng so với Bắc Âu khác), hoặc Balkan (Slovenia 66/Bắc Macedonia/Albania chưa
+kiểm số).
+
+---
+**Lần trước:** 2026-09-14 (checkpoint 76 — **đổi hẳn kỹ thuật chọn nước theo đúng gợi ý cuối
 checkpoint 75: soi bảng đếm ROSTER theo quốc gia tìm nước MỎNG BẤT THƯỜNG so với nước cùng tầm,
 thay vì lặp lại truy vấn "national incubator association directory" đã cạn.**
 
