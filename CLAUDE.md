@@ -6,7 +6,7 @@ lưới ĐMST Việt Nam (HANISA, VNEI, các quỹ), xếp hạng ĐMST đại h
 Fund/Hackathon (nguồn tài trợ/cuộc thi/đề xuất nhiệm vụ KHCN&ĐMST đang mở), và Thuật ngữ
 (glossary ĐMST/khởi nghiệp/chính sách, có liên kết chéo giữa các mục). Tin tức + Fund/
 Hackathon do routine tự động hằng ngày cập nhật (xem `_claude/routine-tin-tuc.md`); danh
-mục mở rộng (`ROSTER`, 20491 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
+mục mở rộng (`ROSTER`, 20497 mục ở tab Toàn cầu — đếm lại bằng script, đừng chép số cũ; mục tiêu
 hiện tại **30000**, sếp nâng từ 25000 sau checkpoint 48) có hạ
 tầng mở rộng bằng Gemini `url_context` đã chạy tay thành công nhiều lượt (xem
 `_claude/routine-roster-grow.md`), **chưa lên cloud routine tự động**; các mục còn lại Sơn
@@ -307,7 +307,46 @@ mục "Lịch sử tăng trưởng ROSTER" bên dưới.
 > BAO GIỜ ghi đè/xoá lịch sử cũ (khác hẳn mục tin tức ở trên). Đây là lịch sử chi tiết các
 > nguồn đã thử/loại khi mở rộng danh mục ROSTER — giữ nguyên để tránh lặp lại công sức.
 
-**Lần cuối:** 2026-09-14 (checkpoint 79 — **Tây Balkan (Slovenia/Croatia/Serbia) từ việc mở
+**Lần cuối:** 2026-09-14 (checkpoint 80 — **3 nước mỏng nhất Balkan còn lại: Bosnia and Herzegovina
+(chỉ 1 mục!), Montenegro (3 mục!), North Macedonia (16 mục) — soi bảng đếm phát hiện ra, mỏng hơn
+hẳn Serbia/Croatia/Slovenia vừa rà ở checkpoint 79.**
+
+**Bài học dedupe quan trọng nhất phiên này — so khớp tên chính xác KHÔNG ĐỦ, phải so cả domain:**
+kiểm dedupe ban đầu bằng `normalize_name()` (so tên) báo 0 trùng cho cả 10 ứng viên, nhưng thêm một
+lớp kiểm `base_domain()` so với MỌI URL đã có trong ROSTER thì bắt ra **3 trùng thật bị tên khác
+nhau che giấu:** "INTERA Technology Park" (ứng viên) trùng domain với entry đã có "Foundation for
+innovation and technology development, INTERA Technology Park (INTERA Technology Park)" — tên gốc
+bọc thêm nhiều chữ khiến so tên chính xác không khớp; "INNOFEIT" trùng domain với "INNOFEIT (Centre
+for Technology Transfer and Innovations)" đã có (khác "Center"/"Centre" + vị trí ngoặc đơn);
+"SEEUTechPark" trùng domain gốc với "SEEU TechPark EDIH" đã có (URL khác subdomain nhưng cùng base
+domain, cùng tổ chức chương trình EU). **Từ nay: LUÔN chạy thêm bước so `base_domain()` toàn ROSTER
+bên cạnh so tên trước khi merge, không chỉ tin so tên chính xác** — đây là ca đầu tiên bắt được
+false-negative của phép so tên kể từ khi bắt đầu dùng `base_domain()` phổ biến (trước giờ
+`base_domain` overlap luôn là false-positive/đơn vị khác thật, lần này ngược lại — cả 2 hướng đều
+cần rà tay, không được bỏ qua).
+
+**1 ca xác nhận chết thật khác mẫu trước:** SPARK Business Park (Mostar, `spark.ba`) — Cloudflare
+trả thẳng `521 Web server is down` (không phải bot-challenge như các ca "Just a moment..." từng
+GIỮ) — máy chủ gốc đã tắt hẳn, Cloudflare chỉ còn là proxy trỏ vào chỗ trống. **Phân biệt rõ:**
+`521` = origin chết thật (loại), "Just a moment... bot-challenge" = origin sống, chỉ chặn script
+(giữ nếu xác nhận được tên tổ chức).
+
+**Kết quả merge:** `ROSTER`: 20491 → **20497** (+6, sau khi loại 3 trùng + 1 chết thật trong 10 ứng
+viên ban đầu: 2 Bosnia and Herzegovina, 2 Montenegro, 2 North Macedonia). Đơn vị trên bản đồ:
+20500 → **20506** (+6). Kiểm sau ghi: `node --check` sạch, thẻ cân bằng (111/111 div, 6/6 section),
+Browser pane đọc đúng "20506 đơn vị được lập bản đồ" / "20497 trong danh mục mở rộng", lọc ô tìm
+kiếm thấy "HUB387" đúng URL, console sạch. Commit `fd2f32e`, `git push origin main`.
+
+**Còn thiếu ~9503.** **Việc mở cho lượt sau:** (1) toàn khu vực Balkan coi như đã rà đủ 7/7 nước
+qua 3 checkpoint liên tiếp (76 Séc lẻ ra khỏi Balkan nhưng cùng đợt Đông Âu, 79+80 đủ Slovenia/
+Croatia/Serbia/Bosnia/Montenegro/Bắc Macedonia) — dừng hướng này, chuyển khu vực khác; (2) áp dụng
+NGAY bài học `base_domain()` 2 chiều cho MỌI checkpoint sau, kể cả khi so tên đã báo sạch; (3) tiếp
+tục kỹ thuật "soi bảng đếm" — ứng viên mở: Trung Á (Kyrgyzstan 20/Tajikistan 18/Turkmenistan 6 —
+rất mỏng, nhưng đã biết Turkmenistan/nhiều nước Trung Á hay bị chặn mạng ở các checkpoint cũ, cần
+kiểm tay từng ca) hoặc Mông Cổ (11, rất mỏng, chưa từng thử).
+
+---
+**Lần trước:** 2026-09-14 (checkpoint 79 — **Tây Balkan (Slovenia/Croatia/Serbia) từ việc mở
 checkpoint 78, cùng kỹ thuật "research từng park tên tuổi qua WebSearch" vì không có hiệp hội quốc
 gia tập trung ở cả 3 nước.**
 
