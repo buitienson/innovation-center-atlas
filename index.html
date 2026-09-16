@@ -296,6 +296,17 @@
   .fund-source a:hover{text-decoration:underline;}
   .fund-note{font-size:11.5px; color:var(--text-muted); font-style:italic;}
   .fund-empty{color:var(--text-muted); font-size:14px; padding:20px 0;}
+  .expert-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(min(220px,100%),1fr)); gap:16px; padding:6px 0 50px;}
+  .expert-card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 16px; box-shadow:var(--shadow); display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center;}
+  .expert-card .expert-photo{width:88px; height:88px; border-radius:50%; object-fit:cover; background:var(--surface-2); display:block;}
+  .expert-card .expert-photo-ph{width:88px; height:88px; border-radius:50%; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; color:var(--text-muted);}
+  .expert-card .expert-name{font-size:15px; font-weight:700; line-height:1.35; margin-top:4px;}
+  .expert-card .expert-title{font-size:12.5px; color:var(--accent-ink); font-weight:600; line-height:1.4;}
+  .expert-card .expert-org{font-size:11.5px; color:var(--text-muted);}
+  .expert-card .expert-bio{font-size:12.5px; color:var(--text-muted); line-height:1.55; text-align:left; margin:4px 0 0; max-width:none;}
+  .expert-card .expert-link{font-size:11.5px; color:var(--accent-ink); font-weight:600; text-decoration:none; margin-top:4px;}
+  .expert-card .expert-link:hover{text-decoration:underline;}
+  .expert-empty{color:var(--text-muted); font-size:14px; padding:20px 0;}
 
   /* ============ TAB : GLOSSARY ============ */
   .gloss-toolbar{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:14px 0 10px;}
@@ -378,6 +389,7 @@
       <div class="tabnav" role="tablist">
         <button data-tab="global" class="active" data-i18n="tabGlobal">Toàn cầu</button>
         <button data-tab="vietnam" data-i18n="tabVietnam">Việt Nam</button>
+        <button data-tab="experts" data-i18n="tabExperts">Chuyên gia</button>
         <button data-tab="rankings" data-i18n="tabRankings">Xếp hạng</button>
         <button data-tab="news" data-i18n="tabNews">Tin tức</button>
         <button data-tab="funding" data-i18n="tabFunding">Fund/Hackathon</button>
@@ -408,6 +420,7 @@
       <summary data-i18n="guideToggle">Hướng dẫn sử dụng</summary>
       <div class="about-body">
         <p><strong data-i18n="guideGlobalLbl">Tab Toàn cầu / Việt Nam.</strong> <span data-i18n="guideGlobalVal">Kéo chuột (hoặc vuốt) để xoay quả cầu 3D; chạm một điểm sáng để xem case; nút ⟲ ở góc đặt lại góc nhìn. Trình duyệt không hỗ trợ WebGL sẽ tự chuyển sang bản đồ 2D theo khu vực bên dưới. Danh sách case có ô tìm kiếm và lọc theo quốc gia.</span></p>
+        <p><strong data-i18n="guideExpertsLbl">Tab Chuyên gia.</strong> <span data-i18n="guideExpertsVal">Lọc theo đơn vị bằng chip phía trên, hoặc gõ tìm theo tên/chức danh/đơn vị. Bấm "Trang nguồn" để mở trang chính thức.</span></p>
         <p><strong data-i18n="guideRankLbl">Tab Xếp hạng.</strong> <span data-i18n="guideRankVal">Bấm vào một hạng mục (chip) phía trên bảng để lọc theo hạng mục đó, hoặc chọn "Tất cả".</span></p>
         <p><strong data-i18n="guideNewsLbl">Tab Tin tức.</strong> <span data-i18n="guideNewsVal">Mỗi tin có tóm tắt và link nguồn — bấm vào tên nguồn để đọc bài gốc đầy đủ.</span></p>
         <p><strong data-i18n="guideFundLbl">Tab Fund/Hackathon.</strong> <span data-i18n="guideFundVal">Lọc theo loại (hackathon, cuộc thi, quỹ tài trợ, đề xuất nhiệm vụ KHCN&amp;ĐMST) bằng chip phía trên, hoặc gõ từ khoá; bấm "Trang chính thức" để nộp hồ sơ. Nhãn hạn nộp đổi màu theo mức khẩn: đỏ (≤7 ngày), cam (≤30 ngày), xanh (còn xa).</span></p>
@@ -533,6 +546,21 @@
 
   </section>
 
+  <!-- ================= TAB : EXPERTS ================= -->
+  <section id="panel-experts" class="tabpanel">
+    <div class="catalogue-head">
+      <h2 data-i18n="expertsTitle">Chuyên gia đổi mới sáng tạo</h2>
+      <p data-i18n="expertsSub" style="color:var(--text-muted); font-size:14px; margin:6px 0 0;">Lãnh đạo, chuyên gia của các mạng lưới/cơ quan ĐMST &amp; khởi nghiệp Việt Nam — tổng hợp từ trang chính thức của từng đơn vị.</p>
+      <div class="chips" id="expertOrgChips"></div>
+    </div>
+    <div class="fund-toolbar">
+      <input type="text" id="expertSearch" class="roster-input" data-i18n-ph="expertsSearchPh">
+      <span class="fund-count" id="expertCount"></span>
+    </div>
+    <div class="expert-grid" id="expertGrid"></div>
+    <div class="note-box" data-i18n="expertsNote">Tổng hợp từ trang "Về chúng tôi"/"Đội ngũ" công khai của từng đơn vị — chưa đầy đủ, ảnh/chức danh có thể đã thay đổi so với thời điểm cập nhật; đối chiếu trang chính thức nếu cần chính xác.</div>
+  </section>
+
   <!-- ================= TAB 3 : RANKINGS ================= -->
   <section id="panel-rankings" class="tabpanel">
     <div class="catalogue-head">
@@ -622,8 +650,21 @@ var STR = {
   siteTitle: {vi:"Atlas Trung tâm Đổi mới sáng tạo", en:"Atlas of Innovation Centers"},
   tabGlobal: {vi:"Toàn cầu", en:"Global"},
   tabVietnam: {vi:"Việt Nam", en:"Vietnam"},
+  tabExperts: {vi:"Chuyên gia", en:"Experts"},
   tabRankings: {vi:"Xếp hạng", en:"Rankings"},
   tabNews: {vi:"Tin tức", en:"News"},
+  guideExpertsLbl: {vi:"Tab Chuyên gia.", en:"Experts tab."},
+  guideExpertsVal: {vi:'Lọc theo đơn vị bằng chip phía trên, hoặc gõ tìm theo tên/chức danh/đơn vị. Bấm "Trang nguồn" để mở trang chính thức.',
+    en:'Filter by organization using the chips above, or search by name/title/organization. Click "Source page" to open the official page.'},
+  expertsTitle: {vi:"Chuyên gia đổi mới sáng tạo", en:"Innovation Experts"},
+  expertsSub: {vi:"Lãnh đạo, chuyên gia của các mạng lưới/cơ quan ĐMST & khởi nghiệp Việt Nam — tổng hợp từ trang chính thức của từng đơn vị.",
+    en:"Leaders and experts from Vietnam's innovation & startup networks/agencies — compiled from each organization's official pages."},
+  expertsSearchPh: {vi:"Tìm theo tên, chức danh, đơn vị...", en:"Search by name, title, organization..."},
+  expertsEmpty: {vi:"Không tìm thấy chuyên gia phù hợp.", en:"No matching experts found."},
+  expertsNote: {vi:'Tổng hợp từ trang "Về chúng tôi"/"Đội ngũ" công khai của từng đơn vị — chưa đầy đủ, ảnh/chức danh có thể đã thay đổi so với thời điểm cập nhật; đối chiếu trang chính thức nếu cần chính xác.',
+    en:'Compiled from each organization\'s public "About us"/"Team" pages — not exhaustive; photos/titles may have changed since compilation, check the official page for accuracy.'},
+  expertSourceLbl: {vi:"Trang nguồn", en:"Source page"},
+  expertCountLabel: {vi:" chuyên gia", en:" experts"},
   rankingsTitle: {vi:"Xếp hạng đổi mới sáng tạo đại học", en:"University Innovation Rankings"},
   rankingsSub: {vi:"Tổng hợp từ các bảng xếp hạng công khai chuyên về đổi mới sáng tạo/tác động thực tiễn của đại học.",
     en:"Compiled from public rankings focused on university innovation and real-world impact."},
@@ -1398,6 +1439,8 @@ function applyI18n(){
   renderCards();
   renderVNNetChips();
   renderVNNetGrid();
+  renderExpertChips();
+  renderExperts();
   renderRankings();
   renderNews();
   renderFundChips();
@@ -1430,6 +1473,7 @@ document.querySelectorAll('.tabnav button').forEach(function(btn){
     var tab = btn.getAttribute('data-tab');
     document.getElementById('panel-global').classList.toggle('active', tab==='global');
     document.getElementById('panel-vietnam').classList.toggle('active', tab==='vietnam');
+    document.getElementById('panel-experts').classList.toggle('active', tab==='experts');
     document.getElementById('panel-rankings').classList.toggle('active', tab==='rankings');
     document.getElementById('panel-news').classList.toggle('active', tab==='news');
     document.getElementById('panel-funding').classList.toggle('active', tab==='funding');
@@ -2079,6 +2123,174 @@ function renderVNNetGrid(){
     '</div>';
   }).join('');
 }
+
+/* ======================================================================
+   DATA — experts (Vietnam innovation & startup ecosystem)
+====================================================================== */
+// Each item: {id, name, title, org, orgKey, photo:url|null, bio:string|null,
+// url:sourceUrl}. title/org/bio are plain Vietnamese strings (no English
+// translation available yet, same convention as VN_NET_CATS' host/city
+// fields above) — `tf()` is NOT used on them. `photo:null` renders a plain
+// initials avatar instead of guessing an image URL. Compiled 2026-09-16 from
+// each organization's public team/leadership page — not exhaustive, titles
+// may change; see expertsNote in the UI. Sources: vicee.vn (đội ngũ chuyên
+// gia đào tạo và cố vấn), vnei.edu.vn + báo VOV (ban chấp hành VNEI nhiệm kỳ
+// mới), sati.gov.vn (Cục Đổi mới sáng tạo — SATI, Bộ KH&CN), mst.gov.vn
+// (Cục Khởi nghiệp và Doanh nghiệp công nghệ, Bộ KH&CN).
+var EXPERT_ORG_LABELS = {
+  vicee: {vi:'VICEE', en:'VICEE'},
+  vnei: {vi:'VNEI', en:'VNEI'},
+  sati: {vi:'Cục Đổi mới sáng tạo (SATI) — Bộ KH&CN', en:'State Agency for Technology and Innovation (SATI) — MOST'},
+  ckndn: {vi:'Cục Khởi nghiệp và Doanh nghiệp công nghệ — Bộ KH&CN', en:'Dept. of Startups & Technology Enterprises — MOST'}
+};
+var EXPERTS = [
+  // --- VICEE — Viện Đổi mới sáng tạo Văn hoá, Giáo dục và Khởi nghiệp ---
+  {id:'vicee-le-an-na', orgKey:'vicee', name:'ThS. Lê An Na',
+    title:'Viện trưởng VICEE', org:'Viện Đổi mới sáng tạo Văn hoá, Giáo dục và Khởi nghiệp (VICEE)',
+    photo:'https://cdn11212.cdn4s10.io.vn/media/2026/06/09/vqraelibg4wzh017cxyo.webp',
+    bio:'Người sáng lập và đứng đầu VICEE, đồng thời sáng lập Học viện Phong thái và Nghi thức Việt Nam (PAVI).',
+    url:'https://vicee.vn/doi-ngu-chuyen-gia-dao-tao-va-co-van'},
+  {id:'vicee-bui-tien-son', orgKey:'vicee', name:'TS. Bùi Tiến Sơn',
+    title:'Phó Viện trưởng VICEE', org:'Viện Đổi mới sáng tạo Văn hoá, Giáo dục và Khởi nghiệp (VICEE)',
+    photo:'https://cdn11212.cdn4s10.io.vn/media/2026/06/09/cnz8ib1jdtwxs390rh2g.webp',
+    bio:'Nhà sáng lập phòng thí nghiệm "Robot mềm"; thành viên VNEI; tác giả của trang Atlas này.',
+    url:'https://vicee.vn/doi-ngu-chuyen-gia-dao-tao-va-co-van'},
+  {id:'vicee-tran-anh-phuong', orgKey:'vicee', name:'TS. Trần Ánh Phương',
+    title:'Phó Viện trưởng VICEE · Chuyên gia Khởi nghiệp sáng tạo', org:'Viện Đổi mới sáng tạo Văn hoá, Giáo dục và Khởi nghiệp (VICEE)',
+    photo:'https://cdn11212.cdn4s10.io.vn/media/2026/06/09/kqic0tyn4jdm6ora1zxu.webp', bio:null,
+    url:'https://vicee.vn/doi-ngu-chuyen-gia-dao-tao-va-co-van'},
+  {id:'vicee-nguyen-thi-oanh', orgKey:'vicee', name:'TS. Nguyễn Thị Oanh',
+    title:'Phó Viện trưởng VICEE · Chuyên gia Khởi nghiệp sáng tạo', org:'Viện Đổi mới sáng tạo Văn hoá, Giáo dục và Khởi nghiệp (VICEE)',
+    photo:'https://cdn11212.cdn4s10.io.vn/media/2026/06/09/f9loavzgxcbrksy7pet1.webp', bio:null,
+    url:'https://vicee.vn/doi-ngu-chuyen-gia-dao-tao-va-co-van'},
+  {id:'vicee-dao-thi-dieu-linh', orgKey:'vicee', name:'TS. Đào Thị Diệu Linh',
+    title:'Trưởng Khoa Tâm lý - Giáo dục Khai phóng, ĐH Ngoại ngữ - ĐHQGHN', org:'Chuyên gia cố vấn VICEE',
+    photo:'https://cdn11212.cdn4s10.io.vn/media/2026/06/09/4fpcd7uti683n2rjesl0.webp', bio:null,
+    url:'https://vicee.vn/doi-ngu-chuyen-gia-dao-tao-va-co-van'},
+  {id:'vicee-nguyen-thi-lan-huong', orgKey:'vicee', name:'ThS. Nguyễn Thị Lan Hường',
+    title:'Phó Trưởng Phòng KHCN - Hợp tác Phát triển, ĐH Ngoại ngữ - ĐHQGHN', org:'Chuyên gia cố vấn VICEE',
+    photo:'https://cdn11212.cdn4s10.io.vn/media/2026/06/09/adkr7m586fvtlwxeu32p.webp', bio:null,
+    url:'https://vicee.vn/doi-ngu-chuyen-gia-dao-tao-va-co-van'},
+  {id:'vicee-pham-duong-hong-ngoc', orgKey:'vicee', name:'TS. Phạm Dương Hồng Ngọc',
+    title:'Trưởng khoa Ngôn ngữ & Văn hoá Nga, ĐH Ngoại ngữ - ĐHQGHN', org:'Chuyên gia Giáo dục khai phóng — VICEE',
+    photo:'https://cdn11212.cdn4s10.io.vn/media/2026/06/09/71p9d6tmzwfn5ykqg8bj.webp', bio:null,
+    url:'https://vicee.vn/doi-ngu-chuyen-gia-dao-tao-va-co-van'},
+  {id:'vicee-pham-hue-dan', orgKey:'vicee', name:'Phạm Huệ Đan',
+    title:'CEO & Founder, Học viện huấn luyện Master Đẹp', org:'Chuyên gia cố vấn VICEE',
+    photo:'https://cdn11212.cdn4s10.io.vn/media/2026/06/09/3916ripwnhxa0z7ejlgu.webp', bio:null,
+    url:'https://vicee.vn/doi-ngu-chuyen-gia-dao-tao-va-co-van'},
+  // --- VNEI — Mạng lưới ĐMST & Khởi nghiệp Đại học, Cao đẳng Việt Nam ---
+  {id:'vnei-nguyen-trung-dung', orgKey:'vnei', name:'TS. Nguyễn Trung Dũng',
+    title:'Chủ tịch VNEI · Tổng Giám đốc BK Holdings, ĐH Bách Khoa Hà Nội', org:'VNEI',
+    photo:null, bio:'Chủ tịch nhiệm kỳ mới của VNEI.',
+    url:'https://vov.gov.vn/vnei-gioi-thieu-ban-chap-hanh-nhiem-ky-moi-dtnew-626066'},
+  {id:'vnei-truong-ngoc-kiem', orgKey:'vnei', name:'PGS. Trương Ngọc Kiểm',
+    title:'Phó Chủ tịch VNEI · Giám đốc Công viên Công nghệ cao và ĐMST (VNU-TIP), ĐHQGHN', org:'VNEI',
+    photo:null, bio:'Giảng viên ĐH Khoa học Tự nhiên - ĐHQGHN; từng điều hành các nhiệm vụ thuộc Đề án 844.',
+    url:'https://vnei.edu.vn/a/271001/DIEN-GIA-CHUYEN-GIA-ONLINE-INNOVATION-TOUR-8-HO-LA-AI'},
+  {id:'vnei-truong-thi-nam-thang', orgKey:'vnei', name:'PGS. Trương Thị Nam Thắng',
+    title:'Phó Chủ tịch VNEI · ĐH Kinh tế Quốc dân', org:'VNEI', photo:null, bio:null,
+    url:'https://vov.gov.vn/vnei-gioi-thieu-ban-chap-hanh-nhiem-ky-moi-dtnew-626066'},
+  {id:'vnei-le-cong-duc', orgKey:'vnei', name:'ThS. Lê Công Đức',
+    title:'Phó Chủ tịch VNEI · ĐH Vinh', org:'VNEI', photo:null, bio:null,
+    url:'https://vov.gov.vn/vnei-gioi-thieu-ban-chap-hanh-nhiem-ky-moi-dtnew-626066'},
+  {id:'vnei-hoang-kim-toan', orgKey:'vnei', name:'TS. Hoàng Kim Toản',
+    title:'Phó Chủ tịch VNEI · ĐH Huế', org:'VNEI', photo:null, bio:null,
+    url:'https://vov.gov.vn/vnei-gioi-thieu-ban-chap-hanh-nhiem-ky-moi-dtnew-626066'},
+  {id:'vnei-le-nhat-quang', orgKey:'vnei', name:'ThS. Lê Nhật Quang',
+    title:'Phó Chủ tịch VNEI · ĐH Quốc gia TP. Hồ Chí Minh', org:'VNEI', photo:null, bio:null,
+    url:'https://vov.gov.vn/vnei-gioi-thieu-ban-chap-hanh-nhiem-ky-moi-dtnew-626066'},
+  {id:'vnei-nguyen-van-vu-an', orgKey:'vnei', name:'TS. Nguyễn Văn Vũ An',
+    title:'Phó Chủ tịch VNEI · ĐH Trà Vinh', org:'VNEI', photo:null, bio:null,
+    url:'https://vov.gov.vn/vnei-gioi-thieu-ban-chap-hanh-nhiem-ky-moi-dtnew-626066'},
+  {id:'vnei-pham-hong-quang', orgKey:'vnei', name:'PGS.TS. Phạm Hồng Quang',
+    title:'Chủ tịch Hội đồng Khoa học, Cadpro', org:'Diễn giả VNEI Innovation Tour 8',
+    photo:null, bio:'Nhà khoa học ngành Toán ứng dụng và tính toán hiệu năng cao; lãnh đạo phát triển hạ tầng tính toán khoa học tại Viện Hàn lâm KH&CN Việt Nam (VAST).',
+    url:'https://vnei.edu.vn/a/271001/DIEN-GIA-CHUYEN-GIA-ONLINE-INNOVATION-TOUR-8-HO-LA-AI'},
+  {id:'vnei-nguyen-thanh-thao', orgKey:'vnei', name:'Nguyễn Thanh Thảo',
+    title:'Quản lý cấp cao, Phát triển kinh doanh, Qualcomm', org:'Đại diện QVIC · Diễn giả VNEI Innovation Tour 8',
+    photo:null, bio:'18 năm kinh nghiệm điều hành doanh nghiệp công nghệ, tư vấn và huấn luyện startup tại Việt Nam và châu Á; 2 bằng Thạc sĩ từ KAIST (Hàn Quốc).',
+    url:'https://vnei.edu.vn/a/271001/DIEN-GIA-CHUYEN-GIA-ONLINE-INNOVATION-TOUR-8-HO-LA-AI'},
+  {id:'vnei-edward-lim', orgKey:'vnei', name:'Edward Lim',
+    title:'Giám đốc Quốc gia tại Việt Nam, BLOCK71 / NUS Enterprise (ĐH Quốc gia Singapore)', org:'Diễn giả VNEI Innovation Tour 8',
+    photo:null, bio:'Từng là Trưởng bộ phận Đối tác Chiến lược tại VinBrain (Vingroup, sau được Nvidia mua lại); cựu công chức Bộ Thương mại & Công nghiệp và Bộ Tài chính Singapore; sáng lập VSync Network.',
+    url:'https://vnei.edu.vn/a/271001/DIEN-GIA-CHUYEN-GIA-ONLINE-INNOVATION-TOUR-8-HO-LA-AI'},
+  // --- Cục Đổi mới sáng tạo (SATI) — Bộ Khoa học và Công nghệ ---
+  {id:'sati-nguyen-mai-duong', orgKey:'sati', name:'Nguyễn Mai Dương',
+    title:'Cục trưởng', org:'Cục Đổi mới sáng tạo (SATI) — Bộ KH&CN', photo:null, bio:null,
+    url:'https://mst.gov.vn/chi-bo-cuc-doi-moi-sang-tao-chu-dong-thiet-ke-the-che-but-pha-chinh-sach-thuc-day-khoa-hoc-cong-nghe-va-doi-moi-sang-tao-quoc-gia-197250628210602196.htm'},
+  {id:'sati-chu-thuc-dat', orgKey:'sati', name:'Chu Thúc Đạt',
+    title:'Phó Cục trưởng thường trực', org:'Cục Đổi mới sáng tạo (SATI) — Bộ KH&CN', photo:null, bio:null,
+    url:'https://sati.gov.vn/gioi-thieu/'},
+  {id:'sati-pham-viet-hong', orgKey:'sati', name:'Phạm Việt Hồng',
+    title:'Phó Cục trưởng', org:'Cục Đổi mới sáng tạo (SATI) — Bộ KH&CN', photo:null, bio:null,
+    url:'https://sati.gov.vn/gioi-thieu/'},
+  {id:'sati-tran-thi-ngoc-ha', orgKey:'sati', name:'Trần Thị Ngọc Hà',
+    title:'Phó Cục trưởng', org:'Cục Đổi mới sáng tạo (SATI) — Bộ KH&CN', photo:null, bio:null,
+    url:'https://sati.gov.vn/gioi-thieu/'},
+  // --- Cục Khởi nghiệp và Doanh nghiệp công nghệ — Bộ Khoa học và Công nghệ ---
+  {id:'ckndn-hoang-ngoc-nhan', orgKey:'ckndn', name:'Hoàng Ngọc Nhân',
+    title:'Cục trưởng (bổ nhiệm 12/2025, thay ông Phạm Hồng Quất)', org:'Cục Khởi nghiệp và Doanh nghiệp công nghệ — Bộ KH&CN', photo:null, bio:null,
+    url:'https://mst.gov.vn/cuc-khoi-nghiep-va-doanh-nghiep-khoa-hoc-va-cong-nghe-197250225093105494.htm'},
+  {id:'ckndn-pham-duc-nghiem', orgKey:'ckndn', name:'Phạm Đức Nghiệm',
+    title:'Phó Cục trưởng', org:'Cục Khởi nghiệp và Doanh nghiệp công nghệ — Bộ KH&CN', photo:null, bio:null,
+    url:'https://mst.gov.vn/cuc-khoi-nghiep-va-doanh-nghiep-khoa-hoc-va-cong-nghe-197250225093105494.htm'},
+  {id:'ckndn-tran-xuan-dich', orgKey:'ckndn', name:'Trần Xuân Đích',
+    title:'Phó Cục trưởng', org:'Cục Khởi nghiệp và Doanh nghiệp công nghệ — Bộ KH&CN', photo:null, bio:null,
+    url:'https://mst.gov.vn/cuc-khoi-nghiep-va-doanh-nghiep-khoa-hoc-va-cong-nghe-197250225093105494.htm'}
+];
+function renderExpertChips(){
+  var wrap = document.getElementById('expertOrgChips');
+  if(!wrap) return;
+  var keys = [];
+  EXPERTS.forEach(function(x){ if(keys.indexOf(x.orgKey)===-1) keys.push(x.orgKey); });
+  var orgs = ['all'].concat(keys);
+  wrap.innerHTML = orgs.map(function(k){
+    var label = k==='all' ? t('chipAll') : tf(EXPERT_ORG_LABELS[k] || {vi:k, en:k});
+    return '<button class="chip'+(k===activeExpertOrg?' active':'')+'" data-eorg="'+k+'">'+label+'</button>';
+  }).join('');
+  wrap.querySelectorAll('.chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      activeExpertOrg = btn.getAttribute('data-eorg');
+      renderExpertChips(); renderExperts();
+    });
+  });
+}
+function expertInitials(name){
+  var bare = name.replace(/^(TS\.|ThS\.|PGS\.TS\.|PGS\.|GS\.TS\.|GS\.|KS\.|CN\.|ĐH\.)\s*/, '');
+  return bare.split(/\s+/).map(function(w){ return w.charAt(0); }).slice(-2).join('').toUpperCase();
+}
+function expertCardHTML(x){
+  var initials = expertInitials(x.name);
+  var photo = x.photo
+    ? '<img class="expert-photo" src="'+x.photo.replace(/&/g,'&amp;')+'" alt="" loading="lazy" onerror="this.outerHTML=\'<div class=&quot;expert-photo-ph&quot;>'+initials+'</div>\'">'
+    : '<div class="expert-photo-ph">'+initials+'</div>';
+  return '<article class="expert-card">'+photo+
+    '<div class="expert-name">'+x.name+'</div>'+
+    (x.title ? '<div class="expert-title">'+x.title+'</div>' : '')+
+    (x.org ? '<div class="expert-org">'+x.org+'</div>' : '')+
+    (x.bio ? '<p class="expert-bio">'+x.bio+'</p>' : '')+
+    (x.url ? '<a class="expert-link" href="'+x.url+'" target="_blank" rel="noopener noreferrer">'+t('expertSourceLbl')+' ↗</a>' : '')+
+  '</article>';
+}
+var activeExpertOrg = 'all';
+var expertSearchTerm = '';
+function renderExperts(){
+  var grid = document.getElementById('expertGrid');
+  if(!grid) return;
+  var q = expertSearchTerm.trim().toLowerCase();
+  var list = EXPERTS.filter(function(x){
+    if(activeExpertOrg!=='all' && x.orgKey!==activeExpertOrg) return false;
+    if(!q) return true;
+    var hay = (x.name+' '+(x.title||'')+' '+(x.org||'')).toLowerCase();
+    return hay.indexOf(q)>-1;
+  });
+  grid.innerHTML = list.length ? list.map(expertCardHTML).join('') : '<div class="expert-empty">'+t('expertsEmpty')+'</div>';
+  var countEl = document.getElementById('expertCount');
+  if(countEl) countEl.textContent = list.length + t('expertCountLabel') + ' / ' + EXPERTS.length;
+}
+var __expertSearchEl = document.getElementById('expertSearch');
+if(__expertSearchEl) __expertSearchEl.addEventListener('input', function(e){ expertSearchTerm = e.target.value; renderExperts(); });
 
 /* ======================================================================
    RENDER: Rankings tab
